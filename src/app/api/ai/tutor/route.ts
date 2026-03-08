@@ -71,14 +71,15 @@ export async function POST(req: Request) {
     if (!lessonDoc) {
       return NextResponse.json({ message: 'Lesson not found' }, { status: 404 });
     }
+    // Assert shape for TS (Mongoose .lean() typings are loose)
     const lesson = lessonDoc as unknown as { courseId: unknown; title?: string; content?: string };
     const courseId = lesson.courseId?.toString?.() ?? lesson.courseId;
 
-    const course = await Course.findById(courseId).lean();
-    if (!course) {
+    const courseDoc = await Course.findById(courseId).lean();
+    if (!courseDoc) {
       return NextResponse.json({ message: 'Course not found' }, { status: 404 });
     }
-
+    const course = courseDoc as unknown as { enrolledStudents?: unknown[] };
     const enrolledIds = (course.enrolledStudents ?? []).map((id: unknown) =>
       id?.toString?.() ?? String(id)
     );
