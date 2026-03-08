@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Sidebar from '@/components/Sidebar';
-import { BookOpen, ChevronRight, Sparkles } from 'lucide-react';
+import { BookOpen, ChevronRight, Flame, TrendingUp, Clock } from 'lucide-react';
 
 type User = { _id?: string; name: string; email: string; role: string };
 
@@ -23,6 +23,12 @@ function getGreeting(): string {
   if (h < 17) return 'Good afternoon';
   return 'Good evening';
 }
+
+const MOCK_ROADMAP = [
+  { id: '1', title: 'Web Development Basics', status: 'completed' as const },
+  { id: '2', title: 'Advanced JavaScript', status: 'completed' as const },
+  { id: '3', title: 'React & Modern Frontend', status: 'in_progress' as const },
+];
 
 export default function Dashboard() {
   const router = useRouter();
@@ -65,133 +71,191 @@ export default function Dashboard() {
     fetchEnrolled();
   }, [router]);
 
-  const totalLessonsCompleted = enrolled.reduce((s, e) => s + e.completedCount, 0);
+  const activeCourses = enrolled.filter((e) => e.progressPercent < 100).length;
   const coursesCompleted = enrolled.filter((e) => e.progressPercent >= 100).length;
+  const currentStreak = 12;
 
   return (
     <div className="min-h-screen bg-slate-50 flex font-sans">
       <Sidebar />
       <main className="flex-1 p-6 md:p-8 min-w-0">
-        {/* Welcome */}
-        <section className="mb-8">
-          <div className="bg-gradient-to-br from-sky-500 via-blue-600 to-indigo-600 rounded-2xl p-6 md:p-8 text-white shadow-lg shadow-sky-500/20">
-            <p className="text-sky-100 text-sm font-medium mb-1">{getGreeting()}</p>
-            <h1 className="text-2xl md:text-3xl font-bold">
-              {user?.name ? `${user.name.split(' ')[0]}` : 'Student'}, ready to learn?
-            </h1>
+        {/* Greeting banner */}
+        <section className="mb-6">
+          <div className="bg-gradient-to-br from-sky-500 via-blue-600 to-indigo-600 rounded-2xl p-6 md:p-8 text-white shadow-lg">
+            <h1 className="text-2xl md:text-3xl font-bold">{getGreeting()}</h1>
             <p className="text-sky-100 mt-1 text-sm md:text-base">
-              Continue from where you left off or explore new courses.
+              Ready to continue your learning journey today?
             </p>
             <div className="flex flex-wrap gap-4 mt-6">
-              <div className="bg-white/15 backdrop-blur rounded-xl px-4 py-3">
-                <span className="text-2xl font-bold block">{enrolled.length}</span>
-                <span className="text-sky-100 text-xs">Enrolled courses</span>
+              <div className="bg-white/20 backdrop-blur rounded-xl px-4 py-3 flex items-center gap-2">
+                <Flame className="w-5 h-5" />
+                <span className="font-bold">{currentStreak} Day Streak</span>
               </div>
-              <div className="bg-white/15 backdrop-blur rounded-xl px-4 py-3">
-                <span className="text-2xl font-bold block">{totalLessonsCompleted}</span>
-                <span className="text-sky-100 text-xs">Lessons completed</span>
-              </div>
-              <div className="bg-white/15 backdrop-blur rounded-xl px-4 py-3">
-                <span className="text-2xl font-bold block">{coursesCompleted}</span>
-                <span className="text-sky-100 text-xs">Courses completed</span>
+              <div className="bg-white/20 backdrop-blur rounded-xl px-4 py-3 flex items-center gap-2">
+                <TrendingUp className="w-5 h-5" />
+                <span className="font-bold">{activeCourses} Active Courses</span>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Course progress */}
-        <section className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-slate-800">Continue learning</h2>
-            {enrolled.length > 0 && (
-              <Link href="/my-courses" className="text-sky-600 text-sm font-medium hover:underline flex items-center gap-1">
-                View all <ChevronRight className="w-4 h-4" />
-              </Link>
-            )}
+        {/* Summary cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+          <Link href="/my-courses" className="block no-underline">
+            <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm hover:border-sky-200 hover:shadow transition cursor-pointer flex items-center gap-4">
+              <div className="w-12 h-12 rounded-xl bg-sky-100 flex items-center justify-center flex-shrink-0">
+                <BookOpen className="w-6 h-6 text-sky-600" />
+              </div>
+              <div>
+                <div className="text-sm text-slate-500 font-medium">Active Courses</div>
+                <div className="text-2xl font-extrabold text-slate-800">{activeCourses}</div>
+              </div>
+            </div>
+          </Link>
+          <Link href="/my-courses" className="block no-underline">
+            <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm hover:border-emerald-200 hover:shadow transition cursor-pointer flex items-center gap-4">
+              <div className="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                <span className="text-emerald-600 text-xl">✓</span>
+              </div>
+              <div>
+                <div className="text-sm text-slate-500 font-medium">Completed</div>
+                <div className="text-2xl font-extrabold text-slate-800">{coursesCompleted}</div>
+              </div>
+            </div>
+          </Link>
+          <button
+            type="button"
+            onClick={() => {}}
+            className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm hover:border-amber-200 hover:shadow transition cursor-pointer flex items-center gap-4 text-left w-full"
+          >
+            <div className="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0">
+              <TrendingUp className="w-6 h-6 text-amber-600" />
+            </div>
+            <div>
+              <div className="text-sm text-slate-500 font-medium">Current Streak</div>
+              <div className="text-2xl font-extrabold text-slate-800">{currentStreak} days</div>
+            </div>
+          </button>
+        </div>
+
+        {/* Course Progress + Learning Roadmap */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Course Progress */}
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+            <div className="p-5 border-b border-slate-100 flex items-center justify-between">
+              <h2 className="text-lg font-bold text-slate-800">Course Progress</h2>
+              <BookOpen className="w-5 h-5 text-slate-400" />
+            </div>
+            <div className="p-5">
+              {loading ? (
+                <p className="text-slate-500 text-sm">Loading...</p>
+              ) : enrolled.length === 0 ? (
+                <>
+                  <p className="text-slate-500 text-sm mb-4">No courses yet.</p>
+                  <Link href="/courses" className="inline-flex items-center gap-1 text-sky-600 text-sm font-medium hover:underline">
+                    Browse courses <ChevronRight className="w-4 h-4" />
+                  </Link>
+                </>
+              ) : (
+                <ul className="space-y-5">
+                  {enrolled.slice(0, 2).map((item) => {
+                    const instructor = typeof item.course.teacherId === 'object' && item.course.teacherId?.name
+                      ? item.course.teacherId.name
+                      : 'Instructor';
+                    return (
+                      <li key={item.course._id}>
+                        <Link
+                          href={item.nextLessonId ? `/lesson/${item.nextLessonId}` : `/course/${item.course._id}`}
+                          className="block no-underline group"
+                        >
+                          <div className="flex gap-4">
+                            <div className="relative w-14 h-14 flex-shrink-0">
+                              <svg className="w-14 h-14 -rotate-90" viewBox="0 0 36 36">
+                                <circle cx="18" cy="18" r="16" fill="none" stroke="#e2e8f0" strokeWidth="3" />
+                                <circle
+                                  cx="18"
+                                  cy="18"
+                                  r="16"
+                                  fill="none"
+                                  stroke="#8b5cf6"
+                                  strokeWidth="3"
+                                  strokeDasharray={`${item.progressPercent} 100`}
+                                  strokeLinecap="round"
+                                />
+                              </svg>
+                              <span className="absolute inset-0 flex items-center justify-center text-xs font-bold text-slate-700">
+                                {item.progressPercent}%
+                              </span>
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <h3 className="font-semibold text-slate-800 group-hover:text-sky-600 truncate">{item.course.title}</h3>
+                              <p className="text-xs text-slate-500">{instructor}</p>
+                              <p className="text-xs text-slate-500 mt-0.5">{item.completedCount}/{item.lessonCount} lessons</p>
+                              {item.nextLessonTitle && (
+                                <p className="text-xs text-sky-600 font-medium mt-1">Next: {item.nextLessonTitle}</p>
+                              )}
+                              <div className="mt-2 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                                <div
+                                  className="h-full bg-sky-500 rounded-full"
+                                  style={{ width: `${item.progressPercent}%` }}
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+            </div>
           </div>
 
-          {loading ? (
-            <div className="bg-white rounded-xl border border-slate-200 p-8 text-center text-slate-500">
-              Loading your courses...
+          {/* Learning Roadmap */}
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+            <div className="p-5 border-b border-slate-100 flex items-center justify-between">
+              <h2 className="text-lg font-bold text-slate-800">Learning Roadmap</h2>
+              <Clock className="w-5 h-5 text-slate-400" />
             </div>
-          ) : enrolled.length === 0 ? (
-            <div className="bg-white rounded-xl border border-slate-200 p-8 md:p-12 text-center">
-              <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-sky-100 text-sky-600 mb-4">
-                <BookOpen className="w-7 h-7" />
-              </div>
-              <h3 className="text-lg font-semibold text-slate-800 mb-2">No courses yet</h3>
-              <p className="text-slate-500 text-sm max-w-sm mx-auto mb-6">
-                Enroll in a course to start learning. Your progress will show here.
-              </p>
-              <Link
-                href="/courses"
-                className="inline-flex items-center gap-2 bg-sky-500 text-white px-5 py-2.5 rounded-lg font-medium text-sm hover:bg-sky-600 transition"
-              >
-                <Sparkles className="w-4 h-4" /> Browse courses
-              </Link>
-            </div>
-          ) : (
-            <div className="grid gap-4 md:grid-cols-2">
-              {enrolled.slice(0, 4).map((item) => (
-                <div
-                  key={item.course._id}
-                  className="bg-white rounded-xl border border-slate-200 p-5 hover:border-slate-300 transition shadow-sm"
-                >
-                  <div className="flex justify-between items-start gap-3">
-                    <div className="min-w-0 flex-1">
-                      <h3 className="font-semibold text-slate-800 truncate">{item.course.title}</h3>
-                      <p className="text-xs text-slate-500 mt-0.5">
-                        {typeof item.course.teacherId === 'object' && item.course.teacherId?.name
-                          ? item.course.teacherId.name
-                          : 'Instructor'}
-                      </p>
-                      <div className="mt-3 flex items-center gap-2">
-                        <div className="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
-                          <div
-                            className="h-full bg-sky-500 rounded-full transition-all"
-                            style={{ width: `${item.progressPercent}%` }}
-                          />
-                        </div>
-                        <span className="text-xs font-medium text-slate-600 whitespace-nowrap">
-                          {item.progressPercent}%
-                        </span>
-                      </div>
-                      <p className="text-xs text-slate-500 mt-1">
-                        {item.completedCount} of {item.lessonCount} lessons
-                      </p>
-                    </div>
-                    <Link
-                      href={item.nextLessonId ? `/lesson/${item.nextLessonId}` : `/course/${item.course._id}`}
-                      className="flex-shrink-0 inline-flex items-center gap-1 bg-sky-500 text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-sky-600 transition"
+            <div className="p-5">
+              <ul className="space-y-3">
+                {MOCK_ROADMAP.map((item) => (
+                  <li key={item.id}>
+                    <button
+                      type="button"
+                      onClick={() => router.push('/learning-path')}
+                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition ${
+                        item.status === 'completed'
+                          ? 'bg-emerald-50 text-emerald-800'
+                          : item.status === 'in_progress'
+                            ? 'bg-sky-50 text-sky-800'
+                            : 'bg-slate-50 text-slate-600'
+                      }`}
                     >
-                      {item.nextLessonId ? 'Continue' : 'View'}{' '}
-                      <ChevronRight className="w-4 h-4" />
-                    </Link>
-                  </div>
-                </div>
-              ))}
+                      {item.status === 'completed' ? (
+                        <span className="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center flex-shrink-0">
+                          <span className="text-white text-xs">✓</span>
+                        </span>
+                      ) : item.status === 'in_progress' ? (
+                        <span className="w-2.5 h-2.5 rounded-full bg-sky-500 flex-shrink-0" />
+                      ) : null}
+                      <span className="font-medium flex-1">{item.title}</span>
+                      <span className="text-xs font-medium">
+                        {item.status === 'completed' ? 'Completed' : 'In Progress'}
+                      </span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+              <Link
+                href="/learning-path"
+                className="inline-flex items-center gap-1 mt-4 text-sky-600 text-sm font-medium hover:underline"
+              >
+                View full path <ChevronRight className="w-4 h-4" />
+              </Link>
             </div>
-          )}
-        </section>
-
-        {/* Quick actions */}
-        <section>
-          <h2 className="text-lg font-semibold text-slate-800 mb-4">Quick actions</h2>
-          <div className="flex flex-wrap gap-3">
-            <Link
-              href="/courses"
-              className="inline-flex items-center gap-2 bg-white border border-slate-200 text-slate-700 px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-slate-50 hover:border-slate-300 transition"
-            >
-              <BookOpen className="w-4 h-4 text-sky-500" /> Browse all courses
-            </Link>
-            <Link
-              href="/analytics"
-              className="inline-flex items-center gap-2 bg-white border border-slate-200 text-slate-700 px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-slate-50 hover:border-slate-300 transition"
-            >
-              <Sparkles className="w-4 h-4 text-sky-500" /> View analytics
-            </Link>
           </div>
-        </section>
+        </div>
       </main>
     </div>
   );
