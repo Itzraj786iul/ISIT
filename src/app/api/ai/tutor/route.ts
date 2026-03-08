@@ -71,7 +71,7 @@ export async function POST(req: Request) {
     if (!lessonDoc) {
       return NextResponse.json({ message: 'Lesson not found' }, { status: 404 });
     }
-    const lesson = lessonDoc as { courseId: unknown; title?: string; content?: string };
+    const lesson = lessonDoc as unknown as { courseId: unknown; title?: string; content?: string };
     const courseId = lesson.courseId?.toString?.() ?? lesson.courseId;
 
     const course = await Course.findById(courseId).lean();
