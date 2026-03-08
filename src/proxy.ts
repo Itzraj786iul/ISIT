@@ -80,6 +80,13 @@ export async function proxy(req: NextRequest) {
     }
     return NextResponse.next();
   }
+  if (pathname === '/api/ai/tutor' && method === 'POST') {
+    const payload = await getPayload(req);
+    if (!payload) {
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    }
+    return NextResponse.next();
+  }
 
   // Require login for lesson player (prevents accessing lessons without signing in)
   if (pathname.startsWith('/lesson')) {
@@ -123,6 +130,7 @@ export const config = {
     '/parent/:path*',
     '/lesson/:path*',
     '/checkout',
+    '/api/ai/tutor',
     '/api/course',
     '/api/course/:path*',
     '/api/lesson',
