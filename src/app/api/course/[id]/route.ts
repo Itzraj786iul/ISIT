@@ -36,8 +36,31 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
     }
 
     return NextResponse.json({ course, lessons }, { status: 200 });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error fetching course:", error);
+    return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
+  }
+}
+
+export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  try {
+    await connectToDB();
+
+    const Course = (await import('@/models/Course')).default;
+    const Lesson = (await import('@/models/Lesson')).default;
+
+    const { id } = await params;
+
+    await Lesson.deleteMany({ courseId: id });
+    const course = await Course.findByIdAndDelete(id);
+
+    if (!course) {
+      return NextResponse.json({ message: 'Course not found' }, { status: 404 });
+    }
+
+    return NextResponse.json({ message: 'Course deleted' }, { status: 200 });
+  } catch (error: unknown) {
+    console.error("Error deleting course:", error);
     return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
   }
 }

@@ -37,6 +37,9 @@ export default function LessonPlayerPage() {
   const [inputValue, setInputValue] = useState('');
   const [mobileLessonsOpen, setMobileLessonsOpen] = useState(false);
   const [mobileTutorOpen, setMobileTutorOpen] = useState(false);
+  const [userNotes, setUserNotes] = useState('');
+
+  const NOTES_STORAGE_KEY = (id: string) => `lesson-notes-${id}`;
 
   useEffect(() => {
     if (!lessonId) return;
@@ -90,6 +93,27 @@ export default function LessonPlayerPage() {
 
     loadLessonAndCourse();
   }, [lessonId]);
+
+  useEffect(() => {
+    if (!lessonId || typeof window === 'undefined') return;
+    try {
+      const saved = localStorage.getItem(NOTES_STORAGE_KEY(lessonId));
+      setUserNotes(saved ?? '');
+    } catch {
+      setUserNotes('');
+    }
+  }, [lessonId]);
+
+  const saveUserNotes = (notes: string) => {
+    setUserNotes(notes);
+    if (lessonId && typeof window !== 'undefined') {
+      try {
+        localStorage.setItem(NOTES_STORAGE_KEY(lessonId), notes);
+      } catch {
+        // ignore
+      }
+    }
+  };
 
   const currentIndex = currentLesson
     ? lessonsList.findIndex((l) => l._id === currentLesson._id)
@@ -352,10 +376,21 @@ export default function LessonPlayerPage() {
             </div>
             {currentLesson.content && (
               <div className="mt-6 bg-white p-5 sm:p-6 rounded-xl shadow-sm border border-slate-200">
-                <h3 className="font-semibold text-slate-900 mb-2">Notes</h3>
+                <h3 className="font-semibold text-slate-900 mb-2">From the lesson</h3>
                 <p className="text-slate-700 text-sm whitespace-pre-wrap leading-relaxed">{currentLesson.content}</p>
               </div>
             )}
+            <div className="mt-6 bg-white p-5 sm:p-6 rounded-xl shadow-sm border border-slate-200">
+              <h3 className="font-semibold text-slate-900 mb-2">Your notes</h3>
+              <textarea
+                value={userNotes}
+                onChange={(e) => saveUserNotes(e.target.value)}
+                placeholder="Type your notes here..."
+                rows={6}
+                className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm text-slate-800 placeholder:text-slate-400 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 resize-y min-h-[120px]"
+              />
+              <p className="text-xs text-slate-500 mt-2">Saved automatically on this device.</p>
+            </div>
             <div className="mt-10">
               <h2 className="text-lg font-semibold text-gray-900">Explore More Courses</h2>
               <p className="text-sm text-gray-600 mb-5">Continue your learning journey</p>

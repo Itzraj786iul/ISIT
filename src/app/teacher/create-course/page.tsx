@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { 
@@ -11,7 +11,6 @@ import {
   ChevronLeft, 
   X,
   BookOpen,
-  DollarSign,
   Layers,
   FileText
 } from 'lucide-react';
@@ -22,7 +21,6 @@ type Module = { title: string; lessons: Lesson[] };
 export default function CreateCourse() {
   const router = useRouter();
   
-  // Form State
   const [title, setTitle] = useState('');
   const [subtitle, setSubtitle] = useState('');
   const [description, setDescription] = useState('');
@@ -30,10 +28,29 @@ export default function CreateCourse() {
   const [level, setLevel] = useState('Beginner');
   const [category, setCategory] = useState('Development');
   const [loading, setLoading] = useState(false);
+  const [teacherId, setTeacherId] = useState<string | null>(null);
 
-  // Curriculum State
   const [modules, setModules] = useState<Module[]>([]);
   const [currentModuleIndex, setCurrentModuleIndex] = useState<number | null>(null);
+
+  useEffect(() => {
+    const userStr = typeof window !== 'undefined' ? localStorage.getItem('user') : null;
+    if (!userStr) {
+      router.push('/login');
+      return;
+    }
+    const u = JSON.parse(userStr);
+    const uid = u._id ?? u.id;
+    if (!uid) {
+      router.push('/login');
+      return;
+    }
+    if (u.role?.toLowerCase() !== 'teacher') {
+      router.push('/dashboard');
+      return;
+    }
+    setTeacherId(uid);
+  }, [router]);
 
   // --- Handlers ---
 
@@ -66,16 +83,54 @@ export default function CreateCourse() {
 
   const handlePublish = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!teacherId) {
+      alert('Please sign in as a teacher.');
+      return;
+    }
+    if (!title.trim()) {
+      alert('Please enter a course title.');
+      return;
+    }
+    if (!description.trim()) {
+      alert('Please enter a course description.');
+      return;
+    }
+
     setLoading(true);
+    try {
+      let order = 0;
+      const lessons = modules.flatMap((mod) =>
+        mod.lessons.map((l) => ({
+          title: l.title || 'Untitled Lesson',
+          content: 'Content for this lesson.',
+          order: order++,
+        }))
+      );
 
-    // Simulation of API call
-    console.log({ title, price, modules });
+      const res = await fetch('/api/course', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: title.trim(),
+          description: description.trim(),
+          price: Number(price) || 0,
+          category: category.trim() || 'Development',
+          teacherId,
+          lessons,
+        }),
+      });
 
-    setTimeout(() => {
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.message || 'Failed to create course');
+      }
+      router.push('/teacher/dashboard');
+    } catch (err) {
+      console.error(err);
+      alert(err instanceof Error ? err.message : 'Failed to create course.');
+    } finally {
       setLoading(false);
-      alert('Course Created Successfully!');
-      router.push('/dashboard');
-    }, 1500);
+    }
   };
 
   return (
@@ -94,9 +149,9 @@ export default function CreateCourse() {
         zIndex: 10
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <Link href="/dashboard" style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#64748b', textDecoration: 'none' }}>
+          <Link href="/teacher/dashboard" style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#64748b', textDecoration: 'none' }}>
             <ChevronLeft size={20} />
-            <span style={{ fontSize: 14, fontWeight: 500 }}>Back to Dashboard</span>
+            <span style={{ fontSize: 14, fontWeight: 500 }}>Back to Instructor Dashboard</span>
           </Link>
           <div style={{ height: 20, width: 1, background: '#e2e8f0', margin: '0 8px' }} />
           <h1 style={{ fontSize: 18, fontWeight: 700, color: '#0f172a', margin: 0 }}>Create New Course</h1>
@@ -104,7 +159,7 @@ export default function CreateCourse() {
 
         <button 
           onClick={handlePublish}
-          disabled={loading}
+          disabled={loading || !teacherId}
           style={{
             background: loading ? '#94a3b8' : '#3b82f6',
             color: '#fff',

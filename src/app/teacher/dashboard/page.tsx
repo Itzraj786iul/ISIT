@@ -16,65 +16,35 @@ import {
 } from 'lucide-react';
 
 type User = {
+  _id?: string;
+  id?: string;
   name: string;
   role: string;
 };
 
-type Course = {
-  id: string;
+type ApiCourse = {
+  _id: string;
   title: string;
   category: string;
   price: number;
-  students: number;
-  rating: number;
-  status: 'Published' | 'Draft';
-  publishedAt: string;
+  enrolledStudents?: unknown[];
+  createdAt?: string;
 };
 
 export default function TeacherDashboard() {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
+  const [courses, setCourses] = useState<ApiCourse[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
-  // Mock Data for Teacher
+  const totalStudents = courses.reduce((sum, c) => sum + (c.enrolledStudents?.length ?? 0), 0);
   const stats = {
-    totalRevenue: 145200,
-    totalStudents: 1240,
-    courseRating: 4.8,
-    activeCourses: 4
+    totalRevenue: 0, // Could be extended with payments later
+    totalStudents,
+    courseRating: 0,
+    activeCourses: courses.length
   };
-
-  const [courses, setCourses] = useState<Course[]>([
-    {
-      id: '1',
-      title: 'Complete Full-Stack Web Bootcamp 2026',
-      category: 'Development',
-      price: 3999,
-      students: 845,
-      rating: 4.8,
-      status: 'Published',
-      publishedAt: 'Jan 15, 2026'
-    },
-    {
-      id: '2',
-      title: 'Advanced React Patterns',
-      category: 'Development',
-      price: 2499,
-      students: 320,
-      rating: 4.7,
-      status: 'Published',
-      publishedAt: 'Feb 01, 2026'
-    },
-    {
-      id: '3',
-      title: 'Intro to Python for Data Science',
-      category: 'Data Science',
-      price: 0, // Free course
-      students: 75,
-      rating: 0, // No rating yet
-      status: 'Draft',
-      publishedAt: '-'
-    }
-  ]);
 
   useEffect(() => {
     const userStr = localStorage.getItem('user');
@@ -83,9 +53,8 @@ export default function TeacherDashboard() {
       return;
     }
 
-    const userData = JSON.parse(userStr);
-    
-    // If not a teacher, send to student dashboard (case-insensitive: API may return "Teacher")
+    const userData = JSON.parse(userStr) as User;
+
     if (userData.role?.toLowerCase() !== 'teacher') {
       router.push('/dashboard');
       return;
@@ -94,9 +63,40 @@ export default function TeacherDashboard() {
     setUser(userData);
   }, [router]);
 
-  const handleDelete = (id: string) => {
-    if(confirm('Are you sure you want to delete this course?')) {
-      setCourses(courses.filter(c => c.id !== id));
+  useEffect(() => {
+    const uid = user?._id ?? user?.id;
+    if (!uid) return;
+
+    const load = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch(`/api/courses?teacherId=${encodeURIComponent(uid)}`);
+        if (res.ok) {
+          const data = await res.json();
+          setCourses(Array.isArray(data) ? data : []);
+        }
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    load();
+  }, [user?._id, user?.id]);
+
+  const handleDelete = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this course? This will remove all lessons.')) return;
+    setDeletingId(id);
+    try {
+      const res = await fetch(`/api/course/${id}`, { method: 'DELETE' });
+      if (res.ok) setCourses((prev) => prev.filter((c) => c._id !== id));
+      else alert('Failed to delete course.');
+    } catch (e) {
+      console.error(e);
+      alert('Failed to delete course.');
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -115,7 +115,9 @@ export default function TeacherDashboard() {
         </div>
 
         <nav style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-          <NavItem icon={<BookOpen size={18} />} label="Dashboard" active />
+          <Link href="/teacher/dashboard" style={{ textDecoration: 'none' }}>
+            <NavItem icon={<BookOpen size={18} />} label="Dashboard" active />
+          </Link>
           <NavItem icon={<Users size={18} />} label="Students" />
           <NavItem icon={<DollarSign size={18} />} label="Earnings" />
           <NavItem icon={<TrendingUp size={18} />} label="Analytics" />
@@ -149,7 +151,7 @@ export default function TeacherDashboard() {
         </div>
 
         {/* STATS GRID */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 20, marginBottom: 32 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 20, marginBottom: 32 }}>
           <StatCard 
             label="Total Revenue" 
             value={`₹${stats.totalRevenue.toLocaleString()}`} 
@@ -166,7 +168,7 @@ export default function TeacherDashboard() {
           />
           <StatCard 
             label="Avg Rating" 
-            value={stats.courseRating} 
+            value={stats.courseRating || '-'} 
             icon={<Star size={20} color="#f59e0b" />}
             bg="#fffbeb"
             border="#fde68a"
@@ -184,9 +186,13 @@ export default function TeacherDashboard() {
         <div style={{ background: '#fff', borderRadius: 12, border: '1px solid #e2e8f0', padding: 24 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
             <h2 style={{ fontSize: 18, fontWeight: 700, color: '#1e293b', margin: 0 }}>My Courses</h2>
-            <button style={{ color: '#3b82f6', background: 'none', border: 'none', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>View All</button>
           </div>
 
+          {loading ? (
+            <p style={{ color: '#64748b', padding: 24 }}>Loading courses...</p>
+          ) : courses.length === 0 ? (
+            <p style={{ color: '#64748b', padding: 24 }}>No courses yet. Create your first course to get started.</p>
+          ) : (
           <div style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
               <thead>
@@ -201,11 +207,14 @@ export default function TeacherDashboard() {
                 </tr>
               </thead>
               <tbody>
-                {courses.map((course) => (
-                  <tr key={course.id} style={{ borderBottom: '1px solid #f8fafc' }}>
+                {courses.map((course) => {
+                  const publishedAt = course.createdAt ? new Date(course.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '-';
+                  const students = course.enrolledStudents?.length ?? 0;
+                  return (
+                  <tr key={course._id} style={{ borderBottom: '1px solid #f8fafc' }}>
                     <td style={{ padding: 16 }}>
                       <div style={{ fontWeight: 600, color: '#334155', marginBottom: 4 }}>{course.title}</div>
-                      <div style={{ fontSize: 12, color: '#94a3b8' }}>Published on {course.publishedAt}</div>
+                      <div style={{ fontSize: 12, color: '#94a3b8' }}>Created {publishedAt}</div>
                     </td>
                     <td style={{ padding: 16 }}>
                       <span style={{ background: '#f1f5f9', padding: '4px 8px', borderRadius: 4, fontSize: 12, fontWeight: 500, color: '#475569' }}>
@@ -215,42 +224,42 @@ export default function TeacherDashboard() {
                     <td style={{ padding: 16, fontWeight: 500, color: '#0f172a' }}>
                       {course.price === 0 ? 'Free' : `₹${course.price}`}
                     </td>
-                    <td style={{ padding: 16, color: '#475569' }}>
-                      {course.students}
-                    </td>
+                    <td style={{ padding: 16, color: '#475569' }}>{students}</td>
                     <td style={{ padding: 16 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                        <Star size={14} fill={course.rating > 0 ? '#f59e0b' : 'none'} color="#f59e0b" />
-                        <span>{course.rating > 0 ? course.rating.toFixed(1) : '-'}</span>
+                        <Star size={14} fill="none" color="#f59e0b" />
+                        <span>-</span>
                       </div>
                     </td>
                     <td style={{ padding: 16 }}>
                       <span style={{ 
                         padding: '4px 8px', borderRadius: 99, fontSize: 11, fontWeight: 600, textTransform: 'uppercase',
-                        background: course.status === 'Published' ? '#dcfce7' : '#f1f5f9',
-                        color: course.status === 'Published' ? '#166534' : '#64748b'
+                        background: '#dcfce7', color: '#166534'
                       }}>
-                        {course.status}
+                        Published
                       </span>
                     </td>
                     <td style={{ padding: 16 }}>
                       <div style={{ display: 'flex', gap: 8 }}>
-                        <button style={{ background: '#f1f5f9', border: 'none', padding: 6, borderRadius: 4, cursor: 'pointer' }}>
+                        <Link href={`/course/${course._id}`} style={{ background: '#f1f5f9', border: 'none', padding: 6, borderRadius: 4, cursor: 'pointer', display: 'inline-flex' }} title="View course">
                           <Edit size={14} color="#64748b" />
-                        </button>
+                        </Link>
                         <button 
-                          onClick={() => handleDelete(course.id)}
-                          style={{ background: '#fee2e2', border: 'none', padding: 6, borderRadius: 4, cursor: 'pointer' }}
+                          onClick={() => handleDelete(course._id)}
+                          disabled={deletingId === course._id}
+                          style={{ background: '#fee2e2', border: 'none', padding: 6, borderRadius: 4, cursor: deletingId === course._id ? 'wait' : 'pointer' }}
+                          title="Delete course"
                         >
                           <Trash2 size={14} color="#ef4444" />
                         </button>
                       </div>
                     </td>
                   </tr>
-                ))}
+                );})}
               </tbody>
             </table>
           </div>
+          )}
         </div>
 
       </main>

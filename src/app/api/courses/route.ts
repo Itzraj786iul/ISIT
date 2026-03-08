@@ -13,18 +13,18 @@ const connectToDB = async () => {
   }
 };
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
-    // 1. Connect to DB first
     await connectToDB();
 
-    // 2. Dynamic Imports (Fixes Schema registration error)
-    // This ensures User and Course are loaded AFTER connection
     const Course = (await import('@/models/Course')).default;
     const User = (await import('@/models/User')).default;
 
-    // 3. Fetch all courses (Populate 'teacherId' requires User model to be known)
-    const courses = await Course.find().populate('teacherId', 'name');
+    const { searchParams } = new URL(req.url);
+    const teacherId = searchParams.get('teacherId');
+
+    const filter = teacherId ? { teacherId } : {};
+    const courses = await Course.find(filter).populate('teacherId', 'name');
     return NextResponse.json(courses, { status: 200 });
   } catch (error) {
     console.error('Error fetching courses:', error);
