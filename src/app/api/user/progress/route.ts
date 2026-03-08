@@ -22,12 +22,12 @@ export async function GET(req: Request) {
     await connectToDB();
     const User = (await import('@/models/User')).default;
 
-    const user = await User.findById(userId).select('completedLessons').lean();
+    const user = await User.findById(userId).select('completedLessons').lean() as { completedLessons?: unknown[] } | null;
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    const completedLessonIds = (user.completedLessons || []).map((id: unknown) => String(id));
+    const completedLessonIds = (user.completedLessons ?? []).map((id) => String(id));
     return NextResponse.json({ completedLessonIds });
   } catch (error) {
     console.error('Progress fetch error:', error);

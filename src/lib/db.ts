@@ -15,7 +15,7 @@ if (!MONGO_URI) {
 }
 
 // Global is to prevent multiple connections in development (hot-reloading)
-const globalForMongoose = global as unknown as { conn: mongoose.Connection };
+const globalForMongoose = global as unknown as { conn: Awaited<ReturnType<typeof mongoose.connect>> | undefined };
 
 const connectToDB = async () => {
   if (globalForMongoose.conn) {

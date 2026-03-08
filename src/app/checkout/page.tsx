@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { Suspense, useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
@@ -15,7 +15,7 @@ type CourseType = {
   teacherId?: { name?: string } | string;
 };
 
-export default function CheckoutPage() {
+function CheckoutForm() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const courseId = searchParams.get('id');
@@ -327,6 +327,18 @@ export default function CheckoutPage() {
         </div>
       </main>
     </div>
+  );
+}
+
+export default function CheckoutPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-[#F4F7FA] flex items-center justify-center">
+        <p className="text-gray-500">Loading...</p>
+      </div>
+    }>
+      <CheckoutForm />
+    </Suspense>
   );
 }
 

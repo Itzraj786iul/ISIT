@@ -204,7 +204,7 @@ export default function TeacherDashboard() {
               </thead>
               <tbody>
                 {courses.map((course) => (
-                  <tr key={course.id} style={{ borderBottom: '1px solid #f8fafc', ':hover': { background: '#f8fafc' } }}>
+                  <tr key={course.id} style={{ borderBottom: '1px solid #f8fafc' }}>
                     <td style={{ padding: 16 }}>
                       <div style={{ fontWeight: 600, color: '#334155', marginBottom: 4 }}>{course.title}</div>
                       <div style={{ fontSize: 12, color: '#94a3b8' }}>Published on {course.publishedAt}</div>

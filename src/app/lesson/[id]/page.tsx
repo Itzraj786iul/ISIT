@@ -19,6 +19,8 @@ type CourseType = {
   description?: string;
 };
 
+type ChatMessage = { id: number; sender: 'ai' | 'user'; text: string };
+
 export default function LessonPlayerPage() {
   const params = useParams();
   const router = useRouter();
@@ -29,8 +31,8 @@ export default function LessonPlayerPage() {
   const [currentLesson, setCurrentLesson] = useState<LessonType | null>(null);
   const [completedLessons, setCompletedLessons] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
-  const [messages, setMessages] = useState([
-    { id: 1, sender: 'ai' as const, text: "Hello! I'm your AI Tutor. Ask me anything about this lesson." },
+  const [messages, setMessages] = useState<ChatMessage[]>([
+    { id: 1, sender: 'ai', text: "Hello! I'm your AI Tutor. Ask me anything about this lesson." },
   ]);
   const [inputValue, setInputValue] = useState('');
 
@@ -133,13 +135,13 @@ export default function LessonPlayerPage() {
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
     if (!inputValue.trim()) return;
-    const newMessage = { id: messages.length + 1, sender: 'user' as const, text: inputValue };
+    const newMessage: ChatMessage = { id: messages.length + 1, sender: 'user', text: inputValue };
     setMessages((prev) => [...prev, newMessage]);
     setInputValue('');
     setTimeout(() => {
       setMessages((prev) => [
         ...prev,
-        { id: prev.length + 1, sender: 'ai' as const, text: "Great question! Let me explain that clearly for you..." },
+        { id: prev.length + 1, sender: 'ai', text: "Great question! Let me explain that clearly for you..." },
       ]);
     }, 700);
   };
