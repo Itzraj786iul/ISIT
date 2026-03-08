@@ -56,7 +56,7 @@ export default function StoriesPage() {
             <Link href="/courses" className="hover:text-sky-500 transition">Courses</Link>
             <Link href="/how-it-works" className="hover:text-sky-500 transition">How it Works</Link>
             <Link href="/stories" className="text-black border-b-2 border-sky-500 pb-1">Stories</Link>
-            <a href="#" className="hover:text-sky-500">Blog</a>
+            <Link href="/blog" className="hover:text-sky-500 transition">Blog</Link>
           </nav>
 
           <div className="hidden md:flex items-center gap-6">

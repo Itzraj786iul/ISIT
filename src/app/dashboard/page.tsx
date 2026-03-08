@@ -123,19 +123,17 @@ export default function Dashboard() {
               </div>
             </div>
           </Link>
-          <button
-            type="button"
-            onClick={() => {}}
-            className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm hover:border-amber-200 hover:shadow transition cursor-pointer flex items-center gap-4 text-left w-full"
-          >
-            <div className="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0">
-              <TrendingUp className="w-6 h-6 text-amber-600" />
+          <Link href="/analytics" className="block no-underline">
+            <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm hover:border-amber-200 hover:shadow transition cursor-pointer flex items-center gap-4">
+              <div className="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0">
+                <TrendingUp className="w-6 h-6 text-amber-600" />
+              </div>
+              <div>
+                <div className="text-sm text-slate-500 font-medium">Current Streak</div>
+                <div className="text-2xl font-extrabold text-slate-800">{currentStreak} days</div>
+              </div>
             </div>
-            <div>
-              <div className="text-sm text-slate-500 font-medium">Current Streak</div>
-              <div className="text-2xl font-extrabold text-slate-800">{currentStreak} days</div>
-            </div>
-          </button>
+          </Link>
         </div>
 
         {/* Course Progress + Learning Roadmap */}
@@ -143,8 +141,12 @@ export default function Dashboard() {
           {/* Course Progress */}
           <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
             <div className="p-5 border-b border-slate-100 flex items-center justify-between">
-              <h2 className="text-lg font-bold text-slate-800">Course Progress</h2>
-              <BookOpen className="w-5 h-5 text-slate-400" />
+              <Link href="/my-courses" className="text-lg font-bold text-slate-800 hover:text-sky-600 no-underline">
+                Course Progress
+              </Link>
+              <Link href="/my-courses" className="text-slate-400 hover:text-sky-500" aria-label="My courses">
+                <BookOpen className="w-5 h-5" />
+              </Link>
             </div>
             <div className="p-5">
               {loading ? (
@@ -208,14 +210,23 @@ export default function Dashboard() {
                   })}
                 </ul>
               )}
+              {enrolled.length > 2 && (
+                <Link href="/my-courses" className="inline-flex items-center gap-1 mt-3 text-sky-600 text-sm font-medium hover:underline">
+                  View all courses <ChevronRight className="w-4 h-4" />
+                </Link>
+              )}
             </div>
           </div>
 
           {/* Learning Roadmap */}
           <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
             <div className="p-5 border-b border-slate-100 flex items-center justify-between">
-              <h2 className="text-lg font-bold text-slate-800">Learning Roadmap</h2>
-              <Clock className="w-5 h-5 text-slate-400" />
+              <Link href="/learning-path" className="text-lg font-bold text-slate-800 hover:text-sky-600 no-underline">
+                Learning Roadmap
+              </Link>
+              <Link href="/learning-path" className="text-slate-400 hover:text-sky-500" aria-label="Learning path">
+                <Clock className="w-5 h-5" />
+              </Link>
             </div>
             <div className="p-5">
               <ul className="space-y-3">

@@ -173,7 +173,9 @@ export default function LessonPlayerPage() {
       <aside className="w-72 bg-white border-r border-gray-300 flex flex-col flex-shrink-0">
         <div className="p-5 border-b border-gray-300">
           <h2 className="text-xs font-bold text-blue-700 uppercase">Course</h2>
-          <h3 className="text-sm font-semibold text-gray-900 mt-1">{course.title}</h3>
+          <Link href={`/course/${course._id}`} className="text-sm font-semibold text-gray-900 mt-1 block hover:text-sky-600 no-underline">
+            {course.title}
+          </Link>
           <div className="mt-4">
             <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
               <div
@@ -229,11 +231,22 @@ export default function LessonPlayerPage() {
 
       <div className="flex-1 flex flex-col min-w-0">
         <div className="h-16 bg-white border-b border-gray-300 px-6 flex items-center justify-between flex-shrink-0">
-          <div>
-            <h1 className="text-lg font-bold text-gray-900">
-              Lesson {currentIndex + 1}: {currentLesson.title}
-            </h1>
-            <p className="text-xs text-gray-600">{course.title}</p>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <Link href="/dashboard" className="text-sm text-sky-600 hover:text-sky-700 font-medium">
+                ← Dashboard
+              </Link>
+              <span className="text-gray-300">|</span>
+              <Link href={`/course/${course._id}`} className="text-sm text-sky-600 hover:text-sky-700 font-medium">
+                Course
+              </Link>
+            </div>
+            <div>
+              <h1 className="text-lg font-bold text-gray-900">
+                Lesson {currentIndex + 1}: {currentLesson.title}
+              </h1>
+              <p className="text-xs text-gray-600">{course.title}</p>
+            </div>
           </div>
           <button
             type="button"

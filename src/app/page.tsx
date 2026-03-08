@@ -164,31 +164,66 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
 
           <div>
-            <h1 className="text-5xl font-bold leading-tight">
-              Let's Fall In Love <br />
-              <span className="text-sky-500">with learning</span>
-            </h1>
-
-            <p className="mt-6 text-gray-600 text-lg">
-              Where mistakes are celebrated as steps toward mastery
-            </p>
-
-            <div className="mt-8 flex gap-4">
-              <Link href="/signup"
-                className="bg-black text-white px-6 py-3 rounded-full text-sm font-medium">
-                Try a Free Interactive Lesson
-              </Link>
-
-              <button className="bg-white px-6 py-3 rounded-full border text-sm font-medium shadow-sm">
-                See How Schools Use It
-              </button>
-            </div>
-
-            <div className="mt-12 flex gap-10 text-sm text-gray-600">
-              <span>Used by 500+ schools</span>
-              <span>94% improved understanding</span>
-              <span>CBSE & ICSE aligned</span>
-            </div>
+            {user ? (
+              <>
+                <h1 className="text-5xl font-bold leading-tight">
+                  Welcome back, <br />
+                  <span className="text-sky-500">{user.name?.split(' ')[0] || 'there'}</span>
+                </h1>
+                <p className="mt-6 text-gray-600 text-lg">
+                  Ready to continue your learning journey? Pick up where you left off or explore new courses.
+                </p>
+                <div className="mt-8 flex flex-wrap gap-4">
+                  <Link
+                    href="/dashboard"
+                    className="bg-black text-white px-6 py-3 rounded-full text-sm font-medium hover:bg-gray-800 transition"
+                  >
+                    Go to Dashboard
+                  </Link>
+                  <Link
+                    href="/my-courses"
+                    className="bg-white px-6 py-3 rounded-full border text-sm font-medium shadow-sm hover:bg-slate-50 transition"
+                  >
+                    My Courses
+                  </Link>
+                  <Link
+                    href="/courses"
+                    className="bg-white px-6 py-3 rounded-full border text-sm font-medium shadow-sm hover:bg-slate-50 transition"
+                  >
+                    Browse Courses
+                  </Link>
+                </div>
+                <div className="mt-12 flex flex-wrap gap-6 text-sm text-gray-600">
+                  <Link href="/analytics" className="hover:text-sky-600 transition">Your analytics</Link>
+                  <Link href="/achievements" className="hover:text-sky-600 transition">Achievements</Link>
+                  <Link href="/learning-path" className="hover:text-sky-600 transition">Learning path</Link>
+                </div>
+              </>
+            ) : (
+              <>
+                <h1 className="text-5xl font-bold leading-tight">
+                  Let's Fall In Love <br />
+                  <span className="text-sky-500">with learning</span>
+                </h1>
+                <p className="mt-6 text-gray-600 text-lg">
+                  Where mistakes are celebrated as steps toward mastery
+                </p>
+                <div className="mt-8 flex gap-4">
+                  <Link href="/signup"
+                    className="bg-black text-white px-6 py-3 rounded-full text-sm font-medium">
+                    Try a Free Interactive Lesson
+                  </Link>
+                  <button className="bg-white px-6 py-3 rounded-full border text-sm font-medium shadow-sm">
+                    See How Schools Use It
+                  </button>
+                </div>
+                <div className="mt-12 flex gap-10 text-sm text-gray-600">
+                  <span>Used by 500+ schools</span>
+                  <span>94% improved understanding</span>
+                  <span>CBSE & ICSE aligned</span>
+                </div>
+              </>
+            )}
           </div>
 
           <div className="relative w-full aspect-[4/3] min-h-[280px] rounded-3xl overflow-hidden shadow-xl bg-slate-100">
@@ -237,8 +272,17 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-6 text-center">
           <h2 className="text-3xl font-bold">Explore Learning Paths</h2>
           <p className="text-gray-500 mt-4">
-            Choose from our comprehensive courses designed to fast-track your career
+            {user
+              ? 'Continue your journey or discover new courses to add to your learning path'
+              : 'Choose from our comprehensive courses designed to fast-track your career'}
           </p>
+          {user && (
+            <div className="mt-4">
+              <Link href="/my-courses" className="text-sky-600 font-medium hover:text-sky-700 text-sm">
+                View my enrolled courses →
+              </Link>
+            </div>
+          )}
 
           {loading ? (
             <p className="mt-12">Loading...</p>
@@ -354,15 +398,33 @@ export default function HomePage() {
 
       {/* ================= CTA ================= */}
       <section className="py-20 text-center bg-[#F8FAFC]">
-        <h2 className="text-3xl font-bold">Start Learning with Confidence</h2>
-        <p className="text-gray-500 mt-4">
-          Join thousands of students who are already transforming their careers.
-        </p>
-
-        <Link href="/signup"
-          className="inline-block mt-8 bg-sky-500 text-white px-8 py-3 rounded-full hover:bg-sky-600 transition">
-          Get Start
-        </Link>
+        {user ? (
+          <>
+            <h2 className="text-3xl font-bold">You're on the right path</h2>
+            <p className="text-gray-500 mt-4">
+              Head to your dashboard to track progress, complete lessons, and unlock achievements.
+            </p>
+            <div className="mt-8 flex flex-wrap justify-center gap-4">
+              <Link href="/dashboard" className="inline-block bg-sky-500 text-white px-8 py-3 rounded-full hover:bg-sky-600 transition">
+                Go to Dashboard
+              </Link>
+              <Link href="/courses" className="inline-block bg-white border border-slate-200 text-slate-700 px-8 py-3 rounded-full hover:bg-slate-50 transition">
+                Browse Courses
+              </Link>
+            </div>
+          </>
+        ) : (
+          <>
+            <h2 className="text-3xl font-bold">Start Learning with Confidence</h2>
+            <p className="text-gray-500 mt-4">
+              Join thousands of students who are already transforming their careers.
+            </p>
+            <Link href="/signup"
+              className="inline-block mt-8 bg-sky-500 text-white px-8 py-3 rounded-full hover:bg-sky-600 transition">
+              Get Start
+            </Link>
+          </>
+        )}
       </section>
 
       {/* ================= FOOTER ================= */}

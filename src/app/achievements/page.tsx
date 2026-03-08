@@ -116,11 +116,10 @@ function AchievementsContent() {
         {/* Achievement cards grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {filtered.map((a) => (
-            <button
+            <Link
               key={a.id}
-              type="button"
-              onClick={() => {}}
-              className="bg-white rounded-xl border border-slate-200 p-5 text-left shadow-sm hover:border-sky-200 hover:shadow transition cursor-pointer relative group"
+              href={a.unlocked ? '/my-courses' : '/courses'}
+              className="bg-white rounded-xl border border-slate-200 p-5 text-left shadow-sm hover:border-sky-200 hover:shadow transition cursor-pointer relative block no-underline"
             >
               {a.unlocked && (
                 <div className="absolute top-3 right-3 w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center">
@@ -140,7 +139,7 @@ function AchievementsContent() {
               <p className={`text-xs mt-2 ${a.unlocked ? 'text-emerald-600 font-medium' : 'text-slate-400'}`}>
                 {a.unlocked ? `Unlocked on ${a.unlockedOn}` : 'Locked'}
               </p>
-            </button>
+            </Link>
           ))}
         </div>
 

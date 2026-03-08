@@ -21,8 +21,8 @@ export default function HowItWorksPage() {
             <Link href="/" className="hover:text-sky-500 transition">Home</Link>
             <Link href="/courses" className="hover:text-sky-500 transition">Courses</Link>
             <Link href="/how-it-works" className="text-black border-b-2 border-sky-500 pb-1">How it Works</Link>
-            <a href="#" className="hover:text-sky-500">Stories</a>
-            <a href="#" className="hover:text-sky-500">Blog</a>
+            <Link href="/stories" className="hover:text-sky-500 transition">Stories</Link>
+            <Link href="/blog" className="hover:text-sky-500 transition">Blog</Link>
           </nav>
 
           <div className="hidden md:flex items-center gap-6">

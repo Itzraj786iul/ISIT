@@ -88,19 +88,17 @@ export default function AnalyticsPage() {
               </div>
             </div>
           </Link>
-          <button
-            type="button"
-            onClick={() => {}}
-            className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm hover:border-amber-200 hover:shadow transition cursor-pointer flex items-center gap-4 text-left w-full"
-          >
-            <div className="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0">
-              <TrendingUp className="w-6 h-6 text-amber-600" />
+          <Link href="/achievements?filter=streak" className="block no-underline">
+            <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm hover:border-amber-200 hover:shadow transition cursor-pointer flex items-center gap-4">
+              <div className="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0">
+                <TrendingUp className="w-6 h-6 text-amber-600" />
+              </div>
+              <div>
+                <div className="text-2xl font-extrabold text-slate-800">{currentStreak} days</div>
+                <div className="text-sm text-slate-500 font-medium">Current Streak</div>
+              </div>
             </div>
-            <div>
-              <div className="text-2xl font-extrabold text-slate-800">{currentStreak} days</div>
-              <div className="text-sm text-slate-500 font-medium">Current Streak</div>
-            </div>
-          </button>
+          </Link>
         </div>
 
         {/* Weekly Learning Activity — horizontal bars with hours on the right */}
@@ -111,11 +109,10 @@ export default function AnalyticsPage() {
           </div>
           <div className="p-5 space-y-4">
             {weeklyData.map((d) => (
-              <button
+              <Link
                 key={d.day}
-                type="button"
-                onClick={() => {}}
-                className="w-full flex items-center gap-4 group cursor-pointer"
+                href="/my-courses"
+                className="w-full flex items-center gap-4 group cursor-pointer no-underline"
               >
                 <span className="w-10 text-sm font-medium text-slate-600">{d.day}</span>
                 <div className="flex-1 h-8 bg-slate-100 rounded-lg overflow-hidden relative">
@@ -128,17 +125,16 @@ export default function AnalyticsPage() {
                   </span>
                 </div>
                 <span className="w-14 text-right text-sm font-medium text-slate-600">{d.hours} hrs</span>
-              </button>
+              </Link>
             ))}
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Learning Streak card — clickable */}
-          <button
-            type="button"
-            onClick={() => {}}
-            className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm hover:border-amber-200 hover:shadow transition cursor-pointer text-left"
+          <Link
+            href="/achievements?filter=streak"
+            className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm hover:border-amber-200 hover:shadow transition cursor-pointer text-left no-underline block"
           >
             <h3 className="text-base font-bold text-slate-800 mb-4">Learning Streak</h3>
             <div className="flex items-center gap-4">
@@ -151,13 +147,12 @@ export default function AnalyticsPage() {
                 <div className="text-xs text-slate-400 mt-1">Best: {bestStreak} days</div>
               </div>
             </div>
-          </button>
+          </Link>
 
           {/* This Month card — clickable */}
-          <button
-            type="button"
-            onClick={() => {}}
-            className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm hover:border-sky-200 hover:shadow transition cursor-pointer text-left"
+          <Link
+            href="/my-courses"
+            className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm hover:border-sky-200 hover:shadow transition cursor-pointer text-left no-underline block"
           >
             <h3 className="text-base font-bold text-slate-800 mb-4">This Month</h3>
             <ul className="space-y-2 text-sm">
@@ -175,7 +170,7 @@ export default function AnalyticsPage() {
               </li>
             </ul>
             <p className="text-xs text-slate-400 mt-3">Best: {bestStreak} days</p>
-          </button>
+          </Link>
         </div>
       </main>
     </div>
