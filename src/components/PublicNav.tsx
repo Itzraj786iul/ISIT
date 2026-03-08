@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { Menu, X } from 'lucide-react';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
 
 type PublicNavProps = {
   active?: 'home' | 'courses' | 'how-it-works' | 'stories' | 'blog';
@@ -21,13 +22,13 @@ export default function PublicNav({ active }: PublicNavProps) {
 
   return (
     <>
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
+      <header className="bg-white border-b border-slate-200 sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button
               type="button"
               onClick={() => setMobileNavOpen((o) => !o)}
-              className="md:hidden p-2 -ml-2 text-gray-600 hover:text-gray-900 rounded-lg"
+              className="md:hidden p-2 -ml-2 text-slate-700 hover:text-slate-900 rounded-lg"
               aria-label="Toggle menu"
             >
               {mobileNavOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -42,7 +43,7 @@ export default function PublicNav({ active }: PublicNavProps) {
               <Link
                 key={key}
                 href={href}
-                className={active === key ? 'text-black border-b-2 border-sky-500 pb-1' : 'hover:text-sky-500 transition'}
+                className={active === key ? 'text-slate-900 border-b-2 border-sky-500 pb-1' : 'text-slate-700 hover:text-sky-600 transition'}
               >
                 {label}
               </Link>
@@ -50,7 +51,7 @@ export default function PublicNav({ active }: PublicNavProps) {
           </nav>
 
           <div className="hidden md:flex items-center gap-6">
-            <span className="text-sm text-gray-500">LAN ▾</span>
+            <LanguageSwitcher />
             <Link href="/signup" className="bg-black text-white px-5 py-2 rounded-full text-sm hover:bg-gray-800 transition">
               Sign Up
             </Link>
@@ -68,11 +69,15 @@ export default function PublicNav({ active }: PublicNavProps) {
                   key={href}
                   href={href}
                   onClick={() => setMobileNavOpen(false)}
-                  className="px-4 py-3 rounded-lg font-medium text-gray-700 hover:bg-slate-100"
+                  className="px-4 py-3 rounded-lg font-medium text-slate-700 hover:bg-slate-100"
                 >
                   {label}
                 </Link>
               ))}
+              <div className="px-4 py-3 border-t border-slate-100 mt-2">
+                <span className="text-xs font-medium text-slate-500 uppercase tracking-wide block mb-2">Language</span>
+                <LanguageSwitcher />
+              </div>
               <Link
                 href="/signup"
                 onClick={() => setMobileNavOpen(false)}

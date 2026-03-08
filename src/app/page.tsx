@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { User, LayoutDashboard, BookOpen, LogOut, ChevronDown, Menu, X } from 'lucide-react';
+import Footer from '@/components/Footer';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
 
 type Course = {
   _id: string;
@@ -76,7 +78,7 @@ export default function HomePage() {
     <div className="min-h-screen bg-[#F8FAFC] text-gray-900">
 
       {/* ================= NAVBAR ================= */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
+      <header className="bg-white border-b border-slate-200 sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button type="button" onClick={() => setMobileNavOpen((o) => !o)} className="md:hidden p-2 -ml-2 text-gray-600 hover:text-gray-900 rounded-lg" aria-label="Toggle menu">
@@ -88,17 +90,17 @@ export default function HomePage() {
           </div>
 
           <nav className="hidden md:flex gap-8 lg:gap-10 text-sm font-medium">
-            <Link href="/" className="text-black border-b-2 border-sky-500 pb-1">Home</Link>
-            <Link href="/courses" className="hover:text-sky-500 transition">Courses</Link>
-            <Link href="/how-it-works" className="hover:text-sky-500 transition">How it Works</Link>
-            <Link href="/stories" className="hover:text-sky-500 transition">Stories</Link>
-            <Link href="/blog" className="hover:text-sky-500 transition">Blog</Link>
+            <Link href="/" className="text-slate-900 border-b-2 border-sky-500 pb-1">Home</Link>
+            <Link href="/courses" className="text-slate-700 hover:text-sky-600 transition">Courses</Link>
+            <Link href="/how-it-works" className="text-slate-700 hover:text-sky-600 transition">How it Works</Link>
+            <Link href="/stories" className="text-slate-700 hover:text-sky-600 transition">Stories</Link>
+            <Link href="/blog" className="text-slate-700 hover:text-sky-600 transition">Blog</Link>
           </nav>
 
           <div className="flex items-center gap-2 sm:gap-4" ref={profileRef}>
             {/* Desktop */}
             <div className="hidden md:flex items-center gap-6">
-              <span className="text-sm text-gray-500">LAN ▾</span>
+              <LanguageSwitcher />
               {user ? (
                 <div className="relative">
                   <button
@@ -126,7 +128,7 @@ export default function HomePage() {
                 </div>
               ) : (
                 <>
-                  <Link href="/login" className="text-gray-700 hover:text-sky-500 text-sm font-medium transition">Log in</Link>
+                  <Link href="/login" className="text-slate-700 hover:text-sky-600 text-sm font-medium transition">Log in</Link>
                   <Link href="/signup" className="bg-black text-white px-5 py-2 rounded-full text-sm hover:bg-gray-800 transition">Sign Up</Link>
                 </>
               )}
@@ -151,7 +153,7 @@ export default function HomePage() {
                 </div>
               ) : (
                 <>
-                  <Link href="/login" className="text-gray-700 text-sm font-medium">Log in</Link>
+                  <Link href="/login" className="text-slate-700 text-sm font-medium hover:text-sky-600">Log in</Link>
                   <Link href="/signup" className="bg-black text-white px-4 py-2 rounded-full text-sm">Sign Up</Link>
                 </>
               )}
@@ -272,10 +274,10 @@ export default function HomePage() {
               "Track progress & outcomes",
             ].map((title, i) => (
               <div key={i}
-                className="bg-white p-8 rounded-2xl shadow-md text-left">
-                <div className="text-sky-500 font-bold text-2xl mb-4">{i + 1}</div>
-                <h3 className="font-semibold">{title}</h3>
-                <p className="text-gray-500 text-sm mt-2">
+                className="bg-white border border-slate-200 p-6 sm:p-8 rounded-2xl shadow-sm text-left">
+                <div className="text-sky-600 font-bold text-2xl mb-4">{i + 1}</div>
+                <h3 className="font-semibold text-slate-900">{title}</h3>
+                <p className="text-slate-600 text-sm mt-2">
                   Detailed step description goes here.
                 </p>
               </div>
@@ -307,22 +309,22 @@ export default function HomePage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8 mt-10 sm:mt-16 text-left">
               {courses.slice(0, 3).map(course => (
                 <div key={course._id}
-                  className="bg-white rounded-2xl shadow-md overflow-hidden group">
-                  <div className="h-48 bg-gray-200 relative overflow-hidden">
+                  className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden group">
+                  <div className="h-40 sm:h-48 bg-slate-100 relative overflow-hidden">
                     {/* Image Placeholder */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-sky-50 to-blue-50 flex items-center justify-center">
-                        <span className="text-4xl font-bold text-sky-200">{course.title.charAt(0)}</span>
+                    <div className="absolute inset-0 bg-gradient-to-br from-sky-50 to-blue-100 flex items-center justify-center">
+                        <span className="text-4xl font-bold text-sky-300">{course.title.charAt(0)}</span>
                     </div>
                   </div>
 
-                  <div className="p-6">
-                    <span className="text-xs bg-purple-100 text-purple-600 px-3 py-1 rounded-full">
+                  <div className="p-4 sm:p-6">
+                    <span className="text-xs bg-purple-100 text-purple-700 px-3 py-1 rounded-full">
                       {course.level || "Beginner"}
                     </span>
 
-                    <h3 className="font-semibold mt-4">{course.title}</h3>
+                    <h3 className="font-semibold text-slate-900 mt-3 sm:mt-4">{course.title}</h3>
 
-                    <p className="text-sm text-gray-500 mt-2 line-clamp-2">
+                    <p className="text-sm text-slate-600 mt-2 line-clamp-2">
                       {course.description}
                     </p>
 
@@ -367,18 +369,18 @@ export default function HomePage() {
           {[1,2,3].map(i => (
             <div 
               key={i} 
-              className="bg-white p-8 rounded-2xl shadow-md text-left hover:shadow-lg transition cursor-pointer group" 
+className="bg-white border border-slate-200 p-6 sm:p-8 rounded-2xl shadow-sm text-left hover:shadow-md hover:border-slate-300 transition cursor-pointer group"
               onClick={() => router.push('/stories')}
             >
-              <p className="text-yellow-400 mb-4">★★★★★</p>
-              <p className="text-gray-600 text-sm">
+              <p className="text-amber-500 mb-4">★★★★★</p>
+              <p className="text-slate-700 text-sm">
                 “This platform transformed my career.”
               </p>
               <div className="mt-6 flex items-center gap-4">
-                <div className="w-10 h-10 bg-gray-300 rounded-full"></div>
+                <div className="w-10 h-10 bg-slate-300 rounded-full shrink-0" />
                 <div>
-                  <p className="font-semibold text-sm">Student Name</p>
-                  <p className="text-xs text-gray-500">Company Name</p>
+                  <p className="font-semibold text-sm text-slate-900">Student Name</p>
+                  <p className="text-xs text-slate-600">Company Name</p>
                 </div>
               </div>
             </div>
@@ -406,7 +408,7 @@ export default function HomePage() {
         <div className="flex flex-wrap justify-center gap-3 sm:gap-6 mt-8 sm:mt-10">
           {["Google","Microsoft","Amazon","Meta","Apple"].map(c => (
             <div key={c}
-              className="bg-white shadow-md px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl hover:shadow-lg transition cursor-pointer text-sm sm:text-base">
+              className="bg-white border border-slate-200 shadow-sm px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl hover:shadow-md hover:border-slate-300 transition cursor-pointer text-sm sm:text-base text-slate-800">
               {c}
             </div>
           ))}
@@ -444,39 +446,7 @@ export default function HomePage() {
         )}
       </section>
 
-      {/* ================= FOOTER ================= */}
-      <footer className="bg-black text-gray-400 py-12 sm:py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 grid grid-cols-1 md:grid-cols-2 gap-10 sm:gap-12">
-          <div>
-            <h3 className="text-white text-lg sm:text-xl font-semibold">
-              Indian School of Innovation and Thinking
-            </h3>
-            <p className="mt-3 sm:mt-4 text-sm">
-              Empowering the next generation of thinkers and innovators.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 gap-8 sm:gap-10 text-sm">
-            <div>
-              <p className="text-white mb-4">Quick Links</p>
-              <p className="hover:text-white cursor-pointer transition">Home</p>
-              <p className="hover:text-white cursor-pointer transition">Courses</p>
-              <p className="hover:text-white cursor-pointer transition">How it Works</p>
-              <p className="hover:text-white cursor-pointer transition">Stories</p>
-              <p className="hover:text-white cursor-pointer transition">Blog</p>
-            </div>
-            <div>
-              <p className="text-white mb-4">Legal</p>
-              <p className="hover:text-white cursor-pointer transition">Privacy Policy</p>
-              <p className="hover:text-white cursor-pointer transition">Terms of Services</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="text-center text-xs mt-10 sm:mt-12 px-4">
-          © 2026 Indian School of Innovation and Thinking. All rights reserved.
-        </div>
-      </footer>
+      <Footer />
 
     </div>
   );

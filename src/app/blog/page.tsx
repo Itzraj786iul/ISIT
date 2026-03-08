@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Search, Calendar, Clock, ArrowRight } from 'lucide-react';
 import PublicNav from '@/components/PublicNav';
+import Footer from '@/components/Footer';
 
 export default function BlogPage() {
   const router = useRouter();
@@ -219,39 +220,7 @@ export default function BlogPage() {
 
       </section>
 
-      {/* ================= FOOTER ================= */}
-      <footer className="bg-black text-gray-300 py-16">
-        <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12">
-          <div>
-            <h3 className="text-white text-xl font-semibold">
-              Indian School of Innovation and Thinking
-            </h3>
-            <p className="mt-4 text-sm text-gray-300">
-              Empowering the next generation of thinkers and innovators through world-class education.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 gap-10 text-sm">
-            <div>
-              <p className="text-white mb-4">Quick Links</p>
-              <p className="hover:text-white cursor-pointer">Home</p>
-              <p className="hover:text-white cursor-pointer">Courses</p>
-              <p className="hover:text-white cursor-pointer">How it Works</p>
-              <p className="hover:text-white cursor-pointer">Stories</p>
-              <p className="hover:text-white cursor-pointer">Blog</p>
-            </div>
-            <div>
-              <p className="text-white mb-4">Legal</p>
-              <p className="hover:text-white cursor-pointer">Privacy Policy</p>
-              <p className="hover:text-white cursor-pointer">Terms of Services</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="text-center text-xs mt-12 text-gray-400">
-          © 2026 Indian School of Innovation and Thinking. All rights reserved.
-        </div>
-      </footer>
+      <Footer />
 
     </div>
   );

@@ -40,10 +40,14 @@ function CheckoutForm() {
       return;
     }
     const run = async () => {
-      const meRes = await fetch('/api/auth/me', { credentials: 'include' });
+      const meRes = await fetch(`/api/auth/me?t=${Date.now()}`, {
+        credentials: 'include',
+        cache: 'no-store',
+        headers: { Pragma: 'no-cache', 'Cache-Control': 'no-cache' },
+      });
       if (!meRes.ok) {
         const returnUrl = `/checkout?id=${courseId}`;
-        router.replace(`/login?returnUrl=${encodeURIComponent(returnUrl)}`);
+        window.location.replace(`/login?returnUrl=${encodeURIComponent(returnUrl)}`);
         return;
       }
       try {
@@ -155,12 +159,12 @@ function CheckoutForm() {
 
   return (
     <div className="min-h-screen bg-[#F4F7FA] flex flex-col">
-      <header className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link href="/" className="text-sky-500 font-bold text-xl">
+      <header className="bg-white border-b border-slate-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+          <Link href="/" className="text-sky-600 font-bold text-xl">
             ISIT
           </Link>
-          <Link href="/courses" className="text-sm text-gray-600 hover:text-sky-600">
+          <Link href="/courses" className="text-sm text-slate-700 hover:text-sky-600">
             Back to Courses
           </Link>
         </div>

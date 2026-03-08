@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Search, SlidersHorizontal, Star, Clock, BookOpen } from 'lucide-react';
 import PublicNav from '@/components/PublicNav';
+import Footer from '@/components/Footer';
 
 type Course = {
   _id: string;
@@ -66,19 +67,19 @@ export default function CoursesPage() {
       <div className="border-t border-gray-200"></div>
       
       {/* ================= MAIN CONTENT ================= */}
-      <section className="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 lg:grid-cols-4 gap-8 flex-1">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12 grid grid-cols-1 lg:grid-cols-4 gap-6 sm:gap-8 flex-1">
 
         {/* ================= FILTER SIDEBAR ================= */}
-        <aside className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 h-fit">
+        <aside className="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-slate-200 h-fit lg:order-2">
           <div className="flex items-center gap-2 mb-6">
-            <SlidersHorizontal size={18} className="text-gray-500" />
-            <h3 className="font-bold text-lg text-gray-900">Filters</h3>
+            <SlidersHorizontal size={18} className="text-slate-600" />
+            <h3 className="font-bold text-lg text-slate-900">Filters</h3>
           </div>
 
           {/* Categories */}
           <div className="mb-8">
-            <h4 className="font-semibold mb-4 text-sm text-gray-700 uppercase tracking-wide">Categories</h4>
-            <div className="space-y-3 text-sm text-gray-600">
+            <h4 className="font-semibold mb-4 text-sm text-slate-700 uppercase tracking-wide">Categories</h4>
+            <div className="space-y-3 text-sm text-slate-600">
               {['Development', 'Design', 'Business', 'Marketing', 'Photography', 'Music'].map(cat => (
                 <label key={cat} className="flex items-center gap-3 cursor-pointer hover:text-sky-500 transition">
                   <input type="checkbox" className="rounded border-gray-300 text-sky-500 focus:ring-sky-500" />
@@ -90,9 +91,9 @@ export default function CoursesPage() {
 
           {/* Price */}
           <div className="mb-8">
-            <h4 className="font-semibold mb-4 text-sm text-gray-700 uppercase tracking-wide">Price Range</h4>
-            <input type="range" className="w-full accent-sky-500 h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer" />
-            <div className="flex justify-between text-xs text-gray-500 mt-2 font-medium">
+            <h4 className="font-semibold mb-4 text-sm text-slate-700 uppercase tracking-wide">Price Range</h4>
+            <input type="range" className="w-full accent-sky-500 h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer" />
+            <div className="flex justify-between text-xs text-slate-600 mt-2 font-medium">
               <span>₹0</span>
               <span>₹50,000</span>
             </div>
@@ -100,12 +101,12 @@ export default function CoursesPage() {
 
           {/* Difficulty */}
           <div className="mb-8">
-            <h4 className="font-semibold mb-4 text-sm text-gray-700 uppercase tracking-wide">Difficulty Level</h4>
+            <h4 className="font-semibold mb-4 text-sm text-slate-700 uppercase tracking-wide">Difficulty Level</h4>
             <div className="flex flex-wrap gap-2">
               {['Beginner', 'Intermediate', 'Advanced'].map(level => (
                 <button
                   key={level}
-                  className="px-4 py-2 text-xs border border-gray-200 rounded-full hover:border-sky-500 hover:text-sky-500 bg-white transition"
+                  className="px-4 py-2 text-xs border border-slate-200 rounded-full hover:border-sky-500 hover:text-sky-600 bg-white transition"
                 >
                   {level}
                 </button>
@@ -119,7 +120,7 @@ export default function CoursesPage() {
         </aside>
 
         {/* ================= COURSES GRID ================= */}
-        <div className="lg:col-span-3 order-1 lg:order-2 min-w-0">
+        <div className="lg:col-span-3 order-1 lg:order-1 min-w-0">
 
           {/* Top Bar */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 sm:mb-8 gap-4">
@@ -132,7 +133,7 @@ export default function CoursesPage() {
               </p>
             </div>
 
-            <select className="border border-gray-200 rounded-xl px-4 py-2 text-sm bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-500">
+            <select className="border border-slate-200 rounded-xl px-4 py-2 text-sm bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-500 text-slate-800 w-full sm:w-auto">
               <option>Most Popular</option>
               <option>Newest</option>
               <option>Price: Low to High</option>
@@ -147,19 +148,19 @@ export default function CoursesPage() {
                ))}
              </div>
           ) : courses.length === 0 ? (
-             <div className="text-center py-12 bg-white rounded-2xl border border-gray-100">
-                <p className="text-gray-500">No courses found.</p>
+             <div className="text-center py-12 bg-white rounded-2xl border border-slate-200">
+                <p className="text-slate-600">No courses found.</p>
              </div>
           ) : (
             <div className="grid md:grid-cols-2 gap-6">
               {courses.map(course => (
                 <div
                   key={course._id}
-                  className="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden hover:shadow-lg transition group"
+                  className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-md hover:border-slate-300 transition group"
                 >
                   {/* Image */}
-                  <div className="h-48 bg-gradient-to-br from-sky-50 to-blue-50 flex items-center justify-center relative">
-                    <span className="text-sky-200 text-5xl font-bold">
+                  <div className="h-40 sm:h-48 bg-gradient-to-br from-sky-50 to-blue-100 flex items-center justify-center relative">
+                    <span className="text-sky-300 text-4xl sm:text-5xl font-bold">
                       {course.title.charAt(0)}
                     </span>
                     <div className="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-sky-600 shadow-sm">
@@ -173,11 +174,11 @@ export default function CoursesPage() {
                       {course.level || 'All Levels'}
                     </span>
 
-                    <h4 className="font-bold text-xl text-gray-900 mt-2 mb-2 leading-snug">
+                    <h4 className="font-bold text-lg sm:text-xl text-slate-900 mt-2 mb-2 leading-snug">
                       {course.title}
                     </h4>
 
-                    <p className="text-sm text-gray-500 line-clamp-2 mb-4">
+                    <p className="text-sm text-slate-600 line-clamp-2 mb-4">
                       {course.description}
                     </p>
 
@@ -232,39 +233,7 @@ export default function CoursesPage() {
         </div>
       </section>
 
-      {/* ================= FOOTER (Common Part) ================= */}
-      <footer className="bg-black text-gray-400 py-16">
-        <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12">
-          <div>
-            <h3 className="text-white text-xl font-semibold">
-              Indian School of Innovation and Thinking
-            </h3>
-            <p className="mt-4 text-sm">
-              Empowering the next generation of thinkers and innovators.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 gap-10 text-sm">
-            <div>
-              <p className="text-white mb-4">Quick Links</p>
-              <p>Home</p>
-              <p>Courses</p>
-              <p>How it Works</p>
-              <p>Stories</p>
-              <p>Blog</p>
-            </div>
-            <div>
-              <p className="text-white mb-4">Legal</p>
-              <p>Privacy Policy</p>
-              <p>Terms of Services</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="text-center text-xs mt-12">
-          © 2026 Indian School of Innovation and Thinking. All rights reserved.
-        </div>
-      </footer>
+      <Footer />
 
     </div>
   );

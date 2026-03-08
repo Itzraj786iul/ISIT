@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { BookOpen, ArrowRight } from 'lucide-react';
+import Footer from '@/components/Footer';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
 
 type Course = {
   _id: string;
@@ -32,6 +34,7 @@ export default function CourseDetailsPage() {
   const [enrollment, setEnrollment] = useState<EnrolledItem | null>(null);
   const [enrollmentCheckDone, setEnrollmentCheckDone] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [enrolling, setEnrolling] = useState(false);
 
   useEffect(() => {
     if (!courseId) return;
@@ -115,13 +118,24 @@ export default function CourseDetailsPage() {
       alert("No lessons available yet.");
       return;
     }
-    const meRes = await fetch('/api/auth/me', { credentials: 'include' });
-    if (!meRes.ok) {
-      const returnUrl = `/checkout?id=${course._id}`;
-      router.push(`/login?returnUrl=${encodeURIComponent(returnUrl)}`);
-      return;
+    if (enrolling) return;
+    setEnrolling(true);
+    try {
+      // Force a fresh auth check: no cache, cache-busting param. Never send unauthenticated users to checkout.
+      const meRes = await fetch(`/api/auth/me?t=${Date.now()}`, {
+        credentials: 'include',
+        cache: 'no-store',
+        headers: { Pragma: 'no-cache', 'Cache-Control': 'no-cache' },
+      });
+      if (!meRes.ok) {
+        const returnUrl = `/checkout?id=${course._id}`;
+        window.location.href = `/login?returnUrl=${encodeURIComponent(returnUrl)}`;
+        return;
+      }
+      router.push(`/checkout?id=${course._id}`);
+    } finally {
+      setEnrolling(false);
     }
-    router.push(`/checkout?id=${course._id}`);
   };
 
   const firstLessonId = course?.lessons?.[0]?._id;
@@ -153,7 +167,7 @@ export default function CourseDetailsPage() {
           </div>
 
           <div className="hidden md:flex items-center gap-6">
-            <span className="text-sm cursor-pointer">LAN ▾</span>
+            <LanguageSwitcher />
             {isLoggedIn ? (
               <>
                 <Link href="/dashboard" className="text-sky-600 font-medium hover:underline text-sm">Dashboard</Link>
@@ -282,10 +296,12 @@ export default function CourseDetailsPage() {
                     ₹{course.price}
                   </div>
                   <button
+                    type="button"
                     onClick={handleEnroll}
-                    className="w-full py-4 bg-[#4f9db8] hover:bg-[#3e8aa4] text-white font-bold rounded-xl transition shadow-lg"
+                    disabled={enrolling}
+                    className="w-full py-4 bg-[#4f9db8] hover:bg-[#3e8aa4] disabled:opacity-70 disabled:cursor-not-allowed text-white font-bold rounded-xl transition shadow-lg"
                   >
-                    Start Learning
+                    {enrolling ? 'Checking...' : 'Start Learning'}
                   </button>
                 </>
               )}
@@ -311,12 +327,7 @@ export default function CourseDetailsPage() {
         </div>
       </section>
 
-      {/* FOOTER */}
-      <footer className="bg-black text-gray-400 py-16">
-        <div className="max-w-7xl mx-auto px-6 text-center text-xs">
-          © 2026 Indian School of Innovation and Thinking. All rights reserved.
-        </div>
-      </footer>
+      <Footer />
 
     </div>
   );

@@ -3,10 +3,11 @@
 import Link from 'next/link';
 import { BarChart, BookOpen, Code, Award, Clock, Users, CheckCircle } from 'lucide-react';
 import PublicNav from '@/components/PublicNav';
+import Footer from '@/components/Footer';
 
 export default function HowItWorksPage() {
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-gray-900">
+    <div className="min-h-screen bg-[#F8FAFC] text-slate-900">
       <PublicNav active="how-it-works" />
 
       {/* ================= HERO SECTION ================= */}
@@ -15,15 +16,15 @@ export default function HowItWorksPage() {
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight mb-4 sm:mb-6">
             How It Works
           </h1>
-          <p className="text-base sm:text-xl text-gray-600 max-w-2xl mx-auto">
+          <p className="text-base sm:text-xl text-slate-600 max-w-2xl mx-auto">
             A simple, proven process to take you from beginner to expert.
           </p>
         </div>
       </section>
 
       {/* ================= STEP 1: CHOOSE YOUR PATH ================= */}
-      <section className="py-12 sm:py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center gap-10 sm:gap-16">
+      <section className="py-10 sm:py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center gap-8 sm:gap-16">
           
           {/* Text Content */}
           <div className="md:w-1/2">
@@ -39,7 +40,7 @@ export default function HowItWorksPage() {
                 "Career-focused learning paths",
                 "Industry-recognized certifications"
               ].map((item, i) => (
-                <li key={i} className="flex items-center gap-3 text-gray-700">
+                <li key={i} className="flex items-center gap-3 text-slate-700">
                   <div className="w-6 h-6 bg-sky-100 text-sky-600 rounded-full flex items-center justify-center">
                     <CheckCircle size={14} />
                   </div>
@@ -79,7 +80,7 @@ export default function HowItWorksPage() {
                 "Mobile-friendly interface",
                 "Lifetime access to courses"
               ].map((item, i) => (
-                <li key={i} className="flex items-center gap-3 text-gray-700">
+                <li key={i} className="flex items-center gap-3 text-slate-700">
                   <div className="w-6 h-6 bg-sky-100 text-sky-600 rounded-full flex items-center justify-center">
                     <CheckCircle size={14} />
                   </div>
@@ -119,7 +120,7 @@ export default function HowItWorksPage() {
                 "Instant automated feedback",
                 "Collaborative peer reviews"
               ].map((item, i) => (
-                <li key={i} className="flex items-center gap-3 text-gray-700">
+                <li key={i} className="flex items-center gap-3 text-slate-700">
                   <div className="w-6 h-6 bg-sky-100 text-sky-600 rounded-full flex items-center justify-center">
                     <CheckCircle size={14} />
                   </div>
@@ -159,7 +160,7 @@ export default function HowItWorksPage() {
                 "Shareable certificates",
                 "LinkedIn profile integration"
               ].map((item, i) => (
-                <li key={i} className="flex items-center gap-3 text-gray-700">
+                <li key={i} className="flex items-center gap-3 text-slate-700">
                   <div className="w-6 h-6 bg-sky-100 text-sky-600 rounded-full flex items-center justify-center">
                     <CheckCircle size={14} />
                   </div>
@@ -252,39 +253,7 @@ export default function HowItWorksPage() {
         </div>
       </section>
 
-      {/* ================= FOOTER (Identical to Homepage) ================= */}
-      <footer className="bg-black text-gray-400 py-16">
-        <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12">
-          <div>
-            <h3 className="text-white text-xl font-semibold">
-              Indian School of Innovation and Thinking
-            </h3>
-            <p className="mt-4 text-sm">
-              Empowering the next generation of thinkers and innovators.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 gap-10 text-sm">
-            <div>
-              <p className="text-white mb-4">Quick Links</p>
-              <p>Home</p>
-              <p>Courses</p>
-              <p>How it Works</p>
-              <p>Stories</p>
-              <p>Blog</p>
-            </div>
-            <div>
-              <p className="text-white mb-4">Legal</p>
-              <p>Privacy Policy</p>
-              <p>Terms of Services</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="text-center text-xs mt-12">
-          © 2026 Indian School of Innovation and Thinking. All rights reserved.
-        </div>
-      </footer>
+      <Footer />
 
     </div>
   );

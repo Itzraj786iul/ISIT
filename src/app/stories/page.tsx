@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { Users, Award, TrendingUp, Star, MapPin, Briefcase, Quote } from 'lucide-react';
 import PublicNav from '@/components/PublicNav';
+import Footer from '@/components/Footer';
 
 export default function StoriesPage() {
   
@@ -160,39 +161,7 @@ export default function StoriesPage() {
         </div>
       </section>
 
-      {/* ================= FOOTER (Common Part) ================= */}
-      <footer className="bg-black text-gray-400 py-16">
-        <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12">
-          <div>
-            <h3 className="text-white text-xl font-semibold">
-              Indian School of Innovation and Thinking
-            </h3>
-            <p className="mt-4 text-sm">
-              Empowering the next generation of thinkers and innovators.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 gap-10 text-sm">
-            <div>
-              <p className="text-white mb-4">Quick Links</p>
-              <p>Home</p>
-              <p>Courses</p>
-              <p>How it Works</p>
-              <p>Stories</p>
-              <p>Blog</p>
-            </div>
-            <div>
-              <p className="text-white mb-4">Legal</p>
-              <p>Privacy Policy</p>
-              <p>Terms of Services</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="text-center text-xs mt-12">
-          © 2026 Indian School of Innovation and Thinking. All rights reserved.
-        </div>
-      </footer>
+      <Footer />
 
     </div>
   );
