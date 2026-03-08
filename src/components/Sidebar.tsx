@@ -34,6 +34,19 @@ export default function Sidebar() {
   const router = useRouter();
 
   useEffect(() => {
+    const onResize = () => {
+      if (typeof window !== 'undefined' && window.innerWidth < 768) setOpen(false);
+    };
+    onResize();
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.innerWidth < 768) setOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
     const raw = typeof window !== 'undefined' ? localStorage.getItem('user') : null;
     if (raw) {
       try {
@@ -55,7 +68,15 @@ export default function Sidebar() {
 
   return (
     <>
-      <aside className="w-[var(--sidebar-w)] min-w-[var(--sidebar-w)] bg-white border-r border-slate-200 flex flex-col fixed h-screen z-30 overflow-hidden transition-[width,min-width] duration-200" style={{ '--sidebar-w': open ? '220px' : '0' } as React.CSSProperties}>
+      {/* Mobile backdrop when sidebar open */}
+      {open && (
+        <div
+          className="fixed inset-0 bg-black/50 z-20 md:hidden"
+          aria-hidden="true"
+          onClick={() => setOpen(false)}
+        />
+      )}
+      <aside className="w-[var(--sidebar-w)] min-w-[var(--sidebar-w)] bg-white border-r border-slate-200 flex flex-col fixed h-screen z-30 overflow-hidden transition-[width,min-width] duration-200 shadow-lg md:shadow-none" style={{ '--sidebar-w': open ? '220px' : '0' } as React.CSSProperties}>
         <div className="p-4 flex items-center justify-between border-b border-slate-100">
           <Link href="/dashboard" className="flex items-center gap-2 no-underline">
             <div className="w-8 h-8 rounded-md bg-sky-500 flex items-center justify-center text-white font-bold text-xs">I</div>
@@ -111,8 +132,8 @@ export default function Sidebar() {
       </aside>
 
       {!open && (
-        <button type="button" onClick={() => setOpen(true)} className="fixed left-0 top-5 z-40 bg-white border border-slate-200 border-l-0 rounded-r-lg p-2.5 text-slate-500 shadow-sm hover:bg-slate-50">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="9 18 15 12 9 6" /></svg>
+        <button type="button" onClick={() => setOpen(true)} className="fixed left-0 top-4 z-40 bg-white border border-slate-200 border-l-0 rounded-r-lg p-2.5 text-slate-500 shadow-sm hover:bg-slate-50 md:top-5" aria-label="Open menu">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="9 18 15 12 9 6" /></svg>
         </button>
       )}
 

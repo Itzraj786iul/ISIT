@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Search, Calendar, Clock, ArrowRight } from 'lucide-react';
+import PublicNav from '@/components/PublicNav';
 
 export default function BlogPage() {
   const router = useRouter();
@@ -61,43 +62,15 @@ export default function BlogPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
-
-      {/* ================= NAVBAR ================= */}
-      <header className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-          <Link href="/" className="text-sky-600 font-bold text-xl">
-            ISIT
-          </Link>
-
-          <nav className="hidden md:flex gap-10 text-sm font-medium text-gray-800">
-            <Link href="/">Home</Link>
-            <Link href="/courses">Courses</Link>
-            <Link href="/how-it-works">How it Works</Link>
-            <Link href="/stories">Stories</Link>
-            <Link href="/blog" className="border-b-2 border-sky-600 pb-1">
-              Blog
-            </Link>
-          </nav>
-
-          <div className="hidden md:flex items-center gap-6">
-            <span className="text-sm text-gray-700">LAN ▾</span>
-            <Link
-              href="/signup"
-              className="bg-black text-white px-5 py-2 rounded-full text-sm hover:bg-gray-800 transition"
-            >
-              Sign Up
-            </Link>
-          </div>
-        </div>
-      </header>
+      <PublicNav active="blog" />
 
       {/* ================= HERO ================= */}
-      <section className="bg-[#DCEEF7] py-20 text-center">
-        <h1 className="text-5xl font-bold text-gray-900">
+      <section className="bg-[#DCEEF7] py-12 sm:py-20 text-center px-4 sm:px-6">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900">
           Our <span className="text-sky-600">Blog</span>
         </h1>
 
-        <p className="text-gray-800 mt-4 max-w-2xl mx-auto">
+        <p className="text-gray-800 mt-3 sm:mt-4 max-w-2xl mx-auto text-sm sm:text-base">
           Insights, tips, and resources to help you succeed in your learning journey
         </p>
 

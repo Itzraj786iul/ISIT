@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Search, SlidersHorizontal, Star, Clock, BookOpen } from 'lucide-react';
+import PublicNav from '@/components/PublicNav';
 
 type Course = {
   _id: string;
@@ -36,42 +37,15 @@ export default function CoursesPage() {
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-gray-900 flex flex-col">
-
-      {/* ================= NAVBAR (Identical to Homepage) ================= */}
-      <header className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-          
-          <div className="text-sky-500 font-bold text-xl cursor-pointer">
-            <Link href="/" className="hover:text-sky-600">
-              ISIT
-            </Link>
-          </div>
-
-          <nav className="hidden md:flex gap-10 text-sm font-medium">
-            <Link href="/" className="hover:text-sky-500 transition">Home</Link>
-            <Link href="/courses" className="text-black border-b-2 border-sky-500 pb-1">Courses</Link>
-            <Link href="/how-it-works" className="hover:text-sky-500 transition">How it Works</Link>
-            <Link href="/stories" className="hover:text-sky-500 transition">Stories</Link>
-            <Link href="/blog" className="hover:text-sky-500 transition">Blog</Link>
-          </nav>
-
-          <div className="hidden md:flex items-center gap-6">
-            <span className="text-sm">LAN ▾</span>
-            <Link href="/signup"
-              className="bg-black text-white px-5 py-2 rounded-full text-sm hover:bg-gray-800 transition">
-              Sign Up
-            </Link>
-          </div>
-        </div>
-      </header>
+      <PublicNav active="courses" />
 
       {/* ================= HERO SECTION ================= */}
-      <section className="bg-white pb-12 pt-10">
-        <div className="max-w-7xl mx-auto px-6 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+      <section className="bg-white pb-10 sm:pb-12 pt-8 sm:pt-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4 sm:mb-6">
             Unlock Your Potential
           </h1>
-          <p className="text-gray-500 text-lg max-w-2xl mx-auto mb-8">
+          <p className="text-gray-500 text-base sm:text-lg max-w-2xl mx-auto mb-6 sm:mb-8">
             Discover thousands of courses taught by expert instructors. Start your journey today.
           </p>
 
@@ -145,10 +119,10 @@ export default function CoursesPage() {
         </aside>
 
         {/* ================= COURSES GRID ================= */}
-        <div className="lg:col-span-3">
+        <div className="lg:col-span-3 order-1 lg:order-2 min-w-0">
 
           {/* Top Bar */}
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 sm:mb-8 gap-4">
             <div>
               <h3 className="text-2xl font-bold text-gray-900">
                 {loading ? 'Loading...' : `${courses.length} Courses Found`}

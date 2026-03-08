@@ -78,11 +78,11 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-slate-50 flex font-sans">
       <Sidebar />
-      <main className="flex-1 p-6 md:p-8 min-w-0">
+      <main className="flex-1 p-4 sm:p-6 md:p-8 min-w-0 overflow-x-hidden">
         {/* Greeting banner */}
         <section className="mb-6">
-          <div className="bg-gradient-to-br from-sky-500 via-blue-600 to-indigo-600 rounded-2xl p-6 md:p-8 text-white shadow-lg">
-            <h1 className="text-2xl md:text-3xl font-bold">{getGreeting()}</h1>
+          <div className="bg-gradient-to-br from-sky-500 via-blue-600 to-indigo-600 rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 text-white shadow-lg">
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold">{getGreeting()}</h1>
             <p className="text-sky-100 mt-1 text-sm md:text-base">
               Ready to continue your learning journey today?
             </p>

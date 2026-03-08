@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { User, LayoutDashboard, BookOpen, LogOut, ChevronDown } from 'lucide-react';
+import { User, LayoutDashboard, BookOpen, LogOut, ChevronDown, Menu, X } from 'lucide-react';
 
 type Course = {
   _id: string;
@@ -22,6 +22,7 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<LoggedInUser | null>(null);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -75,26 +76,26 @@ export default function HomePage() {
     <div className="min-h-screen bg-[#F8FAFC] text-gray-900">
 
       {/* ================= NAVBAR ================= */}
-      <header className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-          
-          <div 
-            className="text-sky-500 font-bold text-xl cursor-pointer"
-            onClick={() => router.push('/')}
-          >
-            ISIT
+      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <button type="button" onClick={() => setMobileNavOpen((o) => !o)} className="md:hidden p-2 -ml-2 text-gray-600 hover:text-gray-900 rounded-lg" aria-label="Toggle menu">
+              {mobileNavOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+            <div className="text-sky-500 font-bold text-lg sm:text-xl cursor-pointer" onClick={() => router.push('/')}>
+              ISIT
+            </div>
           </div>
 
-            <nav className="hidden md:flex gap-10 text-sm font-medium">
+          <nav className="hidden md:flex gap-8 lg:gap-10 text-sm font-medium">
             <Link href="/" className="text-black border-b-2 border-sky-500 pb-1">Home</Link>
             <Link href="/courses" className="hover:text-sky-500 transition">Courses</Link>
             <Link href="/how-it-works" className="hover:text-sky-500 transition">How it Works</Link>
             <Link href="/stories" className="hover:text-sky-500 transition">Stories</Link>
-            {/* --- BLOG LINK MUST POINT TO /blog --- */}
             <Link href="/blog" className="hover:text-sky-500 transition">Blog</Link>
-      </nav>
+          </nav>
 
-          <div className="flex items-center gap-4" ref={profileRef}>
+          <div className="flex items-center gap-2 sm:gap-4" ref={profileRef}>
             {/* Desktop */}
             <div className="hidden md:flex items-center gap-6">
               <span className="text-sm text-gray-500">LAN ▾</span>
@@ -159,21 +160,37 @@ export default function HomePage() {
         </div>
       </header>
 
+      {/* Mobile nav overlay */}
+      {mobileNavOpen && (
+        <div className="fixed inset-0 z-30 md:hidden" aria-hidden="true">
+          <div className="absolute inset-0 bg-black/50" onClick={() => setMobileNavOpen(false)} />
+          <div className="absolute top-0 left-0 w-full max-w-sm bg-white shadow-xl h-full py-6 px-4">
+            <nav className="flex flex-col gap-1 pt-4">
+              <Link href="/" onClick={() => setMobileNavOpen(false)} className="px-4 py-3 rounded-lg font-medium text-gray-900 hover:bg-slate-100">Home</Link>
+              <Link href="/courses" onClick={() => setMobileNavOpen(false)} className="px-4 py-3 rounded-lg font-medium text-gray-700 hover:bg-slate-100">Courses</Link>
+              <Link href="/how-it-works" onClick={() => setMobileNavOpen(false)} className="px-4 py-3 rounded-lg font-medium text-gray-700 hover:bg-slate-100">How it Works</Link>
+              <Link href="/stories" onClick={() => setMobileNavOpen(false)} className="px-4 py-3 rounded-lg font-medium text-gray-700 hover:bg-slate-100">Stories</Link>
+              <Link href="/blog" onClick={() => setMobileNavOpen(false)} className="px-4 py-3 rounded-lg font-medium text-gray-700 hover:bg-slate-100">Blog</Link>
+            </nav>
+          </div>
+        </div>
+      )}
+
       {/* ================= HERO ================= */}
-      <section className="bg-gradient-to-r from-[#F8FAFC] via-[#E6F4FA] to-[#F8FAFC] py-20">
-        <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
+      <section className="bg-gradient-to-r from-[#F8FAFC] via-[#E6F4FA] to-[#F8FAFC] py-12 sm:py-16 md:py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 grid md:grid-cols-2 gap-8 md:gap-12 items-center">
 
           <div>
             {user ? (
               <>
-                <h1 className="text-5xl font-bold leading-tight">
+                <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight">
                   Welcome back, <br />
                   <span className="text-sky-500">{user.name?.split(' ')[0] || 'there'}</span>
                 </h1>
-                <p className="mt-6 text-gray-600 text-lg">
+                <p className="mt-4 sm:mt-6 text-gray-600 text-base sm:text-lg">
                   Ready to continue your learning journey? Pick up where you left off or explore new courses.
                 </p>
-                <div className="mt-8 flex flex-wrap gap-4">
+                <div className="mt-6 sm:mt-8 flex flex-wrap gap-3 sm:gap-4">
                   <Link
                     href="/dashboard"
                     className="bg-black text-white px-6 py-3 rounded-full text-sm font-medium hover:bg-gray-800 transition"
@@ -193,7 +210,7 @@ export default function HomePage() {
                     Browse Courses
                   </Link>
                 </div>
-                <div className="mt-12 flex flex-wrap gap-6 text-sm text-gray-600">
+                <div className="mt-8 sm:mt-12 flex flex-wrap gap-4 sm:gap-6 text-sm text-gray-600">
                   <Link href="/analytics" className="hover:text-sky-600 transition">Your analytics</Link>
                   <Link href="/achievements" className="hover:text-sky-600 transition">Achievements</Link>
                   <Link href="/learning-path" className="hover:text-sky-600 transition">Learning path</Link>
@@ -201,14 +218,14 @@ export default function HomePage() {
               </>
             ) : (
               <>
-                <h1 className="text-5xl font-bold leading-tight">
+                <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight">
                   Let's Fall In Love <br />
                   <span className="text-sky-500">with learning</span>
                 </h1>
-                <p className="mt-6 text-gray-600 text-lg">
+                <p className="mt-4 sm:mt-6 text-gray-600 text-base sm:text-lg">
                   Where mistakes are celebrated as steps toward mastery
                 </p>
-                <div className="mt-8 flex gap-4">
+                <div className="mt-6 sm:mt-8 flex flex-wrap gap-3 sm:gap-4">
                   <Link href="/signup"
                     className="bg-black text-white px-6 py-3 rounded-full text-sm font-medium">
                     Try a Free Interactive Lesson
@@ -217,7 +234,7 @@ export default function HomePage() {
                     See How Schools Use It
                   </button>
                 </div>
-                <div className="mt-12 flex gap-10 text-sm text-gray-600">
+                <div className="mt-8 sm:mt-12 flex flex-wrap gap-6 sm:gap-10 text-sm text-gray-600">
                   <span>Used by 500+ schools</span>
                   <span>94% improved understanding</span>
                   <span>CBSE & ICSE aligned</span>
@@ -226,7 +243,7 @@ export default function HomePage() {
             )}
           </div>
 
-          <div className="relative w-full aspect-[4/3] min-h-[280px] rounded-3xl overflow-hidden shadow-xl bg-slate-100">
+          <div className="relative w-full aspect-[4/3] min-h-[200px] sm:min-h-[280px] rounded-2xl sm:rounded-3xl overflow-hidden shadow-xl bg-slate-100 mt-8 md:mt-0">
             <Image
               src="/assets/Hero.png"
               alt="Students learning together"
@@ -240,14 +257,14 @@ export default function HomePage() {
       </section>
 
       {/* ================= HOW IT WORKS ================= */}
-      <section id="how" className="py-24 bg-[#F8FAFC]">
-        <div className="max-w-7xl mx-auto px-6 text-center">
-          <h2 className="text-3xl font-bold">How Learning Works</h2>
-          <p className="text-gray-500 mt-4">
+      <section id="how" className="py-16 sm:py-20 md:py-24 bg-[#F8FAFC]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center">
+          <h2 className="text-2xl sm:text-3xl font-bold">How Learning Works</h2>
+          <p className="text-gray-500 mt-3 sm:mt-4 text-sm sm:text-base">
             A simple, proven process to take you beginner to expert
           </p>
 
-          <div className="grid md:grid-cols-4 gap-8 mt-16">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 mt-10 sm:mt-16">
             {[
               "Choose a learning path",
               "Learn through modules",
@@ -268,10 +285,10 @@ export default function HomePage() {
       </section>
 
       {/* ================= EXPLORE COURSES ================= */}
-      <section className="py-24">
-        <div className="max-w-7xl mx-auto px-6 text-center">
-          <h2 className="text-3xl font-bold">Explore Learning Paths</h2>
-          <p className="text-gray-500 mt-4">
+      <section className="py-16 sm:py-20 md:py-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center">
+          <h2 className="text-2xl sm:text-3xl font-bold">Explore Learning Paths</h2>
+          <p className="text-gray-500 mt-3 sm:mt-4 text-sm sm:text-base">
             {user
               ? 'Continue your journey or discover new courses to add to your learning path'
               : 'Choose from our comprehensive courses designed to fast-track your career'}
@@ -285,9 +302,9 @@ export default function HomePage() {
           )}
 
           {loading ? (
-            <p className="mt-12">Loading...</p>
+            <p className="mt-8 sm:mt-12">Loading...</p>
           ) : (
-            <div className="grid md:grid-cols-3 gap-8 mt-16 text-left">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8 mt-10 sm:mt-16 text-left">
               {courses.slice(0, 3).map(course => (
                 <div key={course._id}
                   className="bg-white rounded-2xl shadow-md overflow-hidden group">
@@ -326,12 +343,12 @@ export default function HomePage() {
       </section>
 
       {/* ================= STATS BAR ================= */}
-      <section className="bg-gradient-to-r from-sky-500 to-blue-600 py-14 text-white">
-        <div className="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 text-center gap-10">
+      <section className="bg-gradient-to-r from-sky-500 to-blue-600 py-10 sm:py-14 text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 grid grid-cols-2 md:grid-cols-4 text-center gap-6 sm:gap-10">
           {["50K+", "95%", "200+", "4.5/5"].map((val, i) => (
             <div key={i}>
-              <h3 className="text-3xl font-bold">{val}</h3>
-              <p className="text-sm mt-2 opacity-80">
+              <h3 className="text-2xl sm:text-3xl font-bold">{val}</h3>
+              <p className="text-xs sm:text-sm mt-1 sm:mt-2 opacity-80">
                 {["Active Learners", "Success Rate", "Expert Instructor", "Average Rating"][i]}
               </p>
             </div>
@@ -340,13 +357,13 @@ export default function HomePage() {
       </section>
 
       {/* ================= SUCCESS STORIES ================= */}
-      <section className="py-24 bg-[#F8FAFC] text-center">
-        <h2 className="text-3xl font-bold">Success Stories</h2>
-        <p className="text-gray-500 mt-4">
+      <section className="py-16 sm:py-20 md:py-24 bg-[#F8FAFC] text-center">
+        <h2 className="text-2xl sm:text-3xl font-bold">Success Stories</h2>
+        <p className="text-gray-500 mt-3 sm:mt-4 text-sm sm:text-base px-4">
           Hear from students who transformed their careers with us
         </p>
 
-        <div className="grid md:grid-cols-3 gap-8 mt-16 max-w-6xl mx-auto px-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8 mt-10 sm:mt-16 max-w-6xl mx-auto px-4 sm:px-6">
           {[1,2,3].map(i => (
             <div 
               key={i} 
@@ -380,16 +397,16 @@ export default function HomePage() {
       </section>
 
       {/* ================= TRUSTED ================= */}
-      <section className="py-20 text-center">
-        <h2 className="text-2xl font-bold">Trusted by Leading Companies</h2>
-        <p className="text-gray-500 mt-3">
+      <section className="py-14 sm:py-20 text-center px-4">
+        <h2 className="text-xl sm:text-2xl font-bold">Trusted by Leading Companies</h2>
+        <p className="text-gray-500 mt-2 sm:mt-3 text-sm sm:text-base">
           Our graduates work at world's most innovative companies
         </p>
 
-        <div className="flex justify-center gap-6 mt-10">
+        <div className="flex flex-wrap justify-center gap-3 sm:gap-6 mt-8 sm:mt-10">
           {["Google","Microsoft","Amazon","Meta","Apple"].map(c => (
             <div key={c}
-              className="bg-white shadow-md px-6 py-3 rounded-xl hover:shadow-lg transition cursor-pointer">
+              className="bg-white shadow-md px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl hover:shadow-lg transition cursor-pointer text-sm sm:text-base">
               {c}
             </div>
           ))}
@@ -397,30 +414,30 @@ export default function HomePage() {
       </section>
 
       {/* ================= CTA ================= */}
-      <section className="py-20 text-center bg-[#F8FAFC]">
+      <section className="py-14 sm:py-20 text-center bg-[#F8FAFC] px-4">
         {user ? (
           <>
-            <h2 className="text-3xl font-bold">You're on the right path</h2>
-            <p className="text-gray-500 mt-4">
+            <h2 className="text-2xl sm:text-3xl font-bold">You're on the right path</h2>
+            <p className="text-gray-500 mt-3 sm:mt-4 text-sm sm:text-base">
               Head to your dashboard to track progress, complete lessons, and unlock achievements.
             </p>
-            <div className="mt-8 flex flex-wrap justify-center gap-4">
-              <Link href="/dashboard" className="inline-block bg-sky-500 text-white px-8 py-3 rounded-full hover:bg-sky-600 transition">
+            <div className="mt-6 sm:mt-8 flex flex-wrap justify-center gap-3 sm:gap-4">
+              <Link href="/dashboard" className="inline-block bg-sky-500 text-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-full hover:bg-sky-600 transition text-sm sm:text-base">
                 Go to Dashboard
               </Link>
-              <Link href="/courses" className="inline-block bg-white border border-slate-200 text-slate-700 px-8 py-3 rounded-full hover:bg-slate-50 transition">
+              <Link href="/courses" className="inline-block bg-white border border-slate-200 text-slate-700 px-6 sm:px-8 py-2.5 sm:py-3 rounded-full hover:bg-slate-50 transition text-sm sm:text-base">
                 Browse Courses
               </Link>
             </div>
           </>
         ) : (
           <>
-            <h2 className="text-3xl font-bold">Start Learning with Confidence</h2>
-            <p className="text-gray-500 mt-4">
+            <h2 className="text-2xl sm:text-3xl font-bold">Start Learning with Confidence</h2>
+            <p className="text-gray-500 mt-3 sm:mt-4 text-sm sm:text-base">
               Join thousands of students who are already transforming their careers.
             </p>
             <Link href="/signup"
-              className="inline-block mt-8 bg-sky-500 text-white px-8 py-3 rounded-full hover:bg-sky-600 transition">
+              className="inline-block mt-6 sm:mt-8 bg-sky-500 text-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-full hover:bg-sky-600 transition text-sm sm:text-base">
               Get Start
             </Link>
           </>
@@ -428,18 +445,18 @@ export default function HomePage() {
       </section>
 
       {/* ================= FOOTER ================= */}
-      <footer className="bg-black text-gray-400 py-16">
-        <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12">
+      <footer className="bg-black text-gray-400 py-12 sm:py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 grid grid-cols-1 md:grid-cols-2 gap-10 sm:gap-12">
           <div>
-            <h3 className="text-white text-xl font-semibold">
+            <h3 className="text-white text-lg sm:text-xl font-semibold">
               Indian School of Innovation and Thinking
             </h3>
-            <p className="mt-4 text-sm">
+            <p className="mt-3 sm:mt-4 text-sm">
               Empowering the next generation of thinkers and innovators.
             </p>
           </div>
 
-          <div className="grid grid-cols-2 gap-10 text-sm">
+          <div className="grid grid-cols-2 gap-8 sm:gap-10 text-sm">
             <div>
               <p className="text-white mb-4">Quick Links</p>
               <p className="hover:text-white cursor-pointer transition">Home</p>
@@ -456,7 +473,7 @@ export default function HomePage() {
           </div>
         </div>
 
-        <div className="text-center text-xs mt-12">
+        <div className="text-center text-xs mt-10 sm:mt-12 px-4">
           © 2026 Indian School of Innovation and Thinking. All rights reserved.
         </div>
       </footer>

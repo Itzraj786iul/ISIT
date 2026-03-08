@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { Users, Award, TrendingUp, Star, MapPin, Briefcase, Quote } from 'lucide-react';
+import PublicNav from '@/components/PublicNav';
 
 export default function StoriesPage() {
   
@@ -40,39 +41,12 @@ export default function StoriesPage() {
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-gray-900 flex flex-col">
-
-      {/* ================= NAVBAR (Identical to Homepage) ================= */}
-      <header className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-          
-          <div className="text-sky-500 font-bold text-xl cursor-pointer">
-            <Link href="/" className="hover:text-sky-600">
-              ISIT
-            </Link>
-          </div>
-
-          <nav className="hidden md:flex gap-10 text-sm font-medium">
-            <Link href="/" className="hover:text-sky-500 transition">Home</Link>
-            <Link href="/courses" className="hover:text-sky-500 transition">Courses</Link>
-            <Link href="/how-it-works" className="hover:text-sky-500 transition">How it Works</Link>
-            <Link href="/stories" className="text-black border-b-2 border-sky-500 pb-1">Stories</Link>
-            <Link href="/blog" className="hover:text-sky-500 transition">Blog</Link>
-          </nav>
-
-          <div className="hidden md:flex items-center gap-6">
-            <span className="text-sm">LAN ▾</span>
-            <Link href="/signup"
-              className="bg-black text-white px-5 py-2 rounded-full text-sm hover:bg-gray-800 transition">
-              Sign Up
-            </Link>
-          </div>
-        </div>
-      </header>
+      <PublicNav active="stories" />
 
       {/* ================= HERO / STATS SECTION ================= */}
-      <section className="bg-white pt-16 pb-12">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-12">
+      <section className="bg-white pt-10 sm:pt-16 pb-8 sm:pb-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-8 sm:mb-12">
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
               Success Stories
             </h1>
@@ -82,7 +56,7 @@ export default function StoriesPage() {
           </div>
 
           {/* Stats Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 border-t border-gray-100 pt-12">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-8 border-t border-gray-100 pt-8 sm:pt-12">
             {[
               { value: "50K+", label: "Active Learners", icon: Users },
               { value: "95%", label: "Success Rate", icon: Award },
@@ -104,18 +78,18 @@ export default function StoriesPage() {
       </section>
 
       {/* ================= STORIES GRID ================= */}
-      <section className="py-20">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Hear From Our Successful Students</h2>
-            <p className="text-gray-500 max-w-2xl mx-auto">
+      <section className="py-12 sm:py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-10 sm:mb-16">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3 sm:mb-4">Hear From Our Successful Students</h2>
+            <p className="text-gray-500 max-w-2xl mx-auto text-sm sm:text-base">
               Join thousands of students who have transformed their careers through our practical, industry-focused courses.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {stories.map((story) => (
-              <div key={story.id} className="bg-white rounded-2xl shadow-md border border-gray-100 p-8 flex flex-col h-full hover:shadow-xl transition">
+              <div key={story.id} className="bg-white rounded-xl sm:rounded-2xl shadow-md border border-gray-100 p-5 sm:p-8 flex flex-col h-full hover:shadow-xl transition">
                 
                 {/* Header: Avatar & Name */}
                 <div className="flex items-start justify-between mb-6">

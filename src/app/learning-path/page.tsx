@@ -55,7 +55,7 @@ export default function LearningPathPage() {
   return (
     <div className="min-h-screen bg-slate-50 flex font-sans">
       <Sidebar />
-      <main className="flex-1 p-6 md:p-8 min-w-0">
+      <main className="flex-1 p-4 sm:p-6 md:p-8 min-w-0 overflow-x-hidden">
         <div className="mb-6">
           <h1 className="text-2xl font-extrabold text-slate-800 tracking-tight">Learning Paths</h1>
           <p className="text-slate-500 text-sm mt-1">Follow structured paths to achieve your goals</p>

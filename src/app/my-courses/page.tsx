@@ -83,7 +83,7 @@ export default function MyCoursesPage() {
   return (
     <div className="min-h-screen bg-slate-50 flex font-sans">
       <Sidebar />
-      <main className="flex-1 p-6 md:p-8 min-w-0">
+      <main className="flex-1 p-4 sm:p-6 md:p-8 min-w-0 overflow-x-hidden">
         {/* Search */}
         <div className="relative max-w-md mb-4">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />

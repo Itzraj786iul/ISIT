@@ -2,54 +2,28 @@
 
 import Link from 'next/link';
 import { BarChart, BookOpen, Code, Award, Clock, Users, CheckCircle } from 'lucide-react';
+import PublicNav from '@/components/PublicNav';
 
 export default function HowItWorksPage() {
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-gray-900">
-
-      {/* ================= NAVBAR (Identical to Homepage) ================= */}
-      <header className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-          
-          <div className="text-sky-500 font-bold text-xl cursor-pointer">
-            <Link href="/" className="hover:text-sky-600">
-              ISIT
-            </Link>
-          </div>
-
-          <nav className="hidden md:flex gap-10 text-sm font-medium">
-            <Link href="/" className="hover:text-sky-500 transition">Home</Link>
-            <Link href="/courses" className="hover:text-sky-500 transition">Courses</Link>
-            <Link href="/how-it-works" className="text-black border-b-2 border-sky-500 pb-1">How it Works</Link>
-            <Link href="/stories" className="hover:text-sky-500 transition">Stories</Link>
-            <Link href="/blog" className="hover:text-sky-500 transition">Blog</Link>
-          </nav>
-
-          <div className="hidden md:flex items-center gap-6">
-            <span className="text-sm">LAN ▾</span>
-            <Link href="/signup"
-              className="bg-black text-white px-5 py-2 rounded-full text-sm hover:bg-gray-800 transition">
-              Sign Up
-            </Link>
-          </div>
-        </div>
-      </header>
+      <PublicNav active="how-it-works" />
 
       {/* ================= HERO SECTION ================= */}
-      <section className="bg-[#F8FAFC] py-24 text-center px-6">
+      <section className="bg-[#F8FAFC] py-16 sm:py-24 text-center px-4 sm:px-6">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-4xl md:text-5xl font-bold leading-tight mb-6">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight mb-4 sm:mb-6">
             How It Works
           </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <p className="text-base sm:text-xl text-gray-600 max-w-2xl mx-auto">
             A simple, proven process to take you from beginner to expert.
           </p>
         </div>
       </section>
 
       {/* ================= STEP 1: CHOOSE YOUR PATH ================= */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center gap-16">
+      <section className="py-12 sm:py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center gap-10 sm:gap-16">
           
           {/* Text Content */}
           <div className="md:w-1/2">

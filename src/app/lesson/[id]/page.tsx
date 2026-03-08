@@ -35,6 +35,7 @@ export default function LessonPlayerPage() {
     { id: 1, sender: 'ai', text: "Hello! I'm your AI Tutor. Ask me anything about this lesson." },
   ]);
   const [inputValue, setInputValue] = useState('');
+  const [mobileLessonsOpen, setMobileLessonsOpen] = useState(false);
 
   useEffect(() => {
     if (!lessonId) return;
@@ -168,98 +169,99 @@ export default function LessonPlayerPage() {
   const defaultVideoUrl = 'https://www.youtube.com/embed/W6NZfCO5SIk';
   const videoUrl = currentLesson.videoUrl || defaultVideoUrl;
 
-  return (
-    <div className="h-screen flex bg-gray-100 overflow-hidden">
-      <aside className="w-72 bg-white border-r border-gray-300 flex flex-col flex-shrink-0">
-        <div className="p-5 border-b border-gray-300">
-          <h2 className="text-xs font-bold text-blue-700 uppercase">Course</h2>
-          <Link href={`/course/${course._id}`} className="text-sm font-semibold text-gray-900 mt-1 block hover:text-sky-600 no-underline">
-            {course.title}
-          </Link>
-          <div className="mt-4">
-            <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-blue-600 transition-all"
-                style={{ width: `${progress}%` }}
-              />
-            </div>
-            <p className="text-xs text-gray-600 mt-1">{Math.round(progress)}% Progress</p>
+  const lessonsSidebar = (
+    <>
+      <div className="p-5 border-b border-gray-300">
+        <h2 className="text-xs font-bold text-blue-700 uppercase">Course</h2>
+        <Link href={`/course/${course._id}`} className="text-sm font-semibold text-gray-900 mt-1 block hover:text-sky-600 no-underline" onClick={() => setMobileLessonsOpen(false)}>
+          {course.title}
+        </Link>
+        <div className="mt-4">
+          <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+            <div className="h-full bg-blue-600 transition-all" style={{ width: `${progress}%` }} />
           </div>
+          <p className="text-xs text-gray-600 mt-1">{Math.round(progress)}% Progress</p>
         </div>
-
-        <div className="flex-1 overflow-y-auto p-5">
-          <h4 className="text-xs font-bold text-gray-500 uppercase mb-3">Lessons</h4>
-          <div className="space-y-2">
-            {lessonsList.map((lesson, index) => (
-              <div
-                key={lesson._id}
-                onClick={() => router.push(`/lesson/${lesson._id}`)}
-                className={`flex items-start gap-3 p-3 rounded-lg cursor-pointer transition ${
-                  lesson._id === currentLesson._id
-                    ? 'bg-blue-100 border border-blue-400'
-                    : 'hover:bg-gray-100'
-                }`}
-              >
-                <div
-                  className={`w-6 h-6 text-xs rounded-full flex items-center justify-center ${
-                    completedLessons.includes(lesson._id)
-                      ? 'bg-green-500 text-white'
-                      : 'bg-blue-600 text-white'
-                  }`}
-                >
-                  {completedLessons.includes(lesson._id) ? '✓' : index + 1}
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-gray-900">{lesson.title}</p>
-                </div>
+      </div>
+      <div className="flex-1 overflow-y-auto p-5">
+        <h4 className="text-xs font-bold text-gray-500 uppercase mb-3">Lessons</h4>
+        <div className="space-y-2">
+          {lessonsList.map((lesson, index) => (
+            <div
+              key={lesson._id}
+              onClick={() => { router.push(`/lesson/${lesson._id}`); setMobileLessonsOpen(false); }}
+              className={`flex items-start gap-3 p-3 rounded-lg cursor-pointer transition ${lesson._id === currentLesson._id ? 'bg-blue-100 border border-blue-400' : 'hover:bg-gray-100'}`}
+            >
+              <div className={`w-6 h-6 text-xs rounded-full flex items-center justify-center ${completedLessons.includes(lesson._id) ? 'bg-green-500 text-white' : 'bg-blue-600 text-white'}`}>
+                {completedLessons.includes(lesson._id) ? '✓' : index + 1}
               </div>
-            ))}
-          </div>
+              <div><p className="text-sm font-semibold text-gray-900">{lesson.title}</p></div>
+            </div>
+          ))}
         </div>
+      </div>
+      <div className="p-5 border-t border-gray-300 flex justify-between text-center text-sm">
+        <div><p className="font-bold text-gray-900">{completedLessons.length}</p><p className="text-gray-600 text-xs">Completed</p></div>
+        <div><p className="font-bold text-gray-900">{lessonsList.length - completedLessons.length}</p><p className="text-gray-600 text-xs">Remaining</p></div>
+      </div>
+    </>
+  );
 
-        <div className="p-5 border-t border-gray-300 flex justify-between text-center text-sm">
-          <div>
-            <p className="font-bold text-gray-900">{completedLessons.length}</p>
-            <p className="text-gray-600 text-xs">Completed</p>
-          </div>
-          <div>
-            <p className="font-bold text-gray-900">{lessonsList.length - completedLessons.length}</p>
-            <p className="text-gray-600 text-xs">Remaining</p>
-          </div>
+  return (
+    <div className="h-screen flex flex-col md:flex-row bg-gray-100 overflow-hidden">
+      {/* Mobile lessons overlay */}
+      {mobileLessonsOpen && (
+        <div className="fixed inset-0 z-50 md:hidden">
+          <div className="absolute inset-0 bg-black/50" onClick={() => setMobileLessonsOpen(false)} aria-hidden />
+          <aside className="absolute left-0 top-0 bottom-0 w-72 max-w-[85vw] bg-white shadow-xl flex flex-col">
+            {lessonsSidebar}
+          </aside>
         </div>
+      )}
+      <aside className="hidden md:flex w-72 bg-white border-r border-gray-300 flex-col flex-shrink-0">
+        {lessonsSidebar}
       </aside>
 
-      <div className="flex-1 flex flex-col min-w-0">
-        <div className="h-16 bg-white border-b border-gray-300 px-6 flex items-center justify-between flex-shrink-0">
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <Link href="/dashboard" className="text-sm text-sky-600 hover:text-sky-700 font-medium">
+      <div className="flex-1 flex flex-col min-w-0 min-h-0">
+        <div className="flex-shrink-0 bg-white border-b border-gray-300 px-4 sm:px-6 py-3 sm:py-0 sm:h-16 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-4 min-w-0">
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <Link href="/dashboard" className="text-xs sm:text-sm text-sky-600 hover:text-sky-700 font-medium">
                 ← Dashboard
               </Link>
-              <span className="text-gray-300">|</span>
-              <Link href={`/course/${course._id}`} className="text-sm text-sky-600 hover:text-sky-700 font-medium">
+              <span className="text-gray-300 hidden sm:inline">|</span>
+              <Link href={`/course/${course._id}`} className="text-xs sm:text-sm text-sky-600 hover:text-sky-700 font-medium">
                 Course
               </Link>
             </div>
-            <div>
-              <h1 className="text-lg font-bold text-gray-900">
+            <div className="min-w-0 w-full sm:w-auto">
+              <h1 className="text-base sm:text-lg font-bold text-gray-900 truncate">
                 Lesson {currentIndex + 1}: {currentLesson.title}
               </h1>
-              <p className="text-xs text-gray-600">{course.title}</p>
+              <p className="text-xs text-gray-600 truncate">{course.title}</p>
             </div>
           </div>
-          <button
-            type="button"
-            onClick={() => alert('Quiz feature coming soon!')}
-            className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg font-medium transition"
-          >
-            Take Quiz
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setMobileLessonsOpen(true)}
+              className="md:hidden px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-gray-700 text-sm rounded-lg font-medium"
+            >
+              Lessons
+            </button>
+            <button
+              type="button"
+              onClick={() => alert('Quiz feature coming soon!')}
+              className="px-4 sm:px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg font-medium transition flex-shrink-0"
+            >
+              Take Quiz
+            </button>
+          </div>
         </div>
 
-        <div className="flex-1 flex overflow-hidden">
-          <div className="flex-1 overflow-y-auto p-8 bg-gray-100">
-            <div className="bg-white p-6 rounded-xl shadow border border-gray-300">
+        <div className="flex-1 flex flex-col md:flex-row overflow-hidden min-h-0">
+          <div className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8 bg-gray-100">
+            <div className="bg-white p-4 sm:p-6 rounded-xl shadow border border-gray-300">
               <div className="aspect-video rounded-xl overflow-hidden">
                 <iframe
                   src={videoUrl}
@@ -317,7 +319,7 @@ export default function LessonPlayerPage() {
             </div>
           </div>
 
-          <div className="w-96 bg-white border-l border-gray-300 flex flex-col flex-shrink-0">
+          <div className="hidden lg:flex w-96 bg-white border-l border-gray-300 flex-col flex-shrink-0">
             <div className="p-4 border-b border-gray-300 bg-gray-50">
               <p className="text-sm font-semibold text-gray-900">AI Tutor</p>
               <p className="text-xs text-green-600 font-medium">● Online</p>

@@ -73,7 +73,7 @@ function AchievementsContent() {
   });
 
   return (
-    <main className="flex-1 p-6 md:p-8 min-w-0">
+    <main className="flex-1 p-4 sm:p-6 md:p-8 min-w-0 overflow-x-hidden">
         <div className="mb-6">
           <h1 className="text-2xl font-extrabold text-slate-800 tracking-tight">Achievements</h1>
           <p className="text-slate-500 text-sm mt-1">Unlock badges as you progress</p>
