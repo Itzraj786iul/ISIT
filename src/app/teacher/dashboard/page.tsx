@@ -85,13 +85,11 @@ export default function TeacherDashboard() {
 
     const userData = JSON.parse(userStr);
     
-    // ================= SECURITY CHECK =================
-    // If a Student tries to access this, send them to Student dashboard
-    if (userData.role !== 'teacher') {
+    // If not a teacher, send to student dashboard (case-insensitive: API may return "Teacher")
+    if (userData.role?.toLowerCase() !== 'teacher') {
       router.push('/dashboard');
       return;
     }
-    // =================================================
 
     setUser(userData);
   }, [router]);

@@ -1,12 +1,7 @@
 'use client';
 
-// FILE LOCATION: src/app/analytics/page.tsx
-// LINKS USED:
-//   /courses       → src/app/courses/page.tsx     (EXISTS)
-//   /course/[id]   → src/app/course/[id]/page.tsx (EXISTS)
-//   /lesson        → src/app/lesson/page.tsx      (EXISTS)
-
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Sidebar from '@/components/Sidebar';
 
@@ -38,7 +33,20 @@ const subjects = [
 const maxHours = Math.max(...weeklyData.map(d => d.hours));
 
 export default function Analytics() {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<'week' | 'month'>('week');
+
+  useEffect(() => {
+    const userStr = localStorage.getItem('user');
+    if (!userStr) {
+      router.push('/login');
+      return;
+    }
+    const user = JSON.parse(userStr);
+    if (user?.role?.toLowerCase() === 'teacher') {
+      router.push('/teacher/dashboard');
+    }
+  }, [router]);
 
   return (
     <div style={{ minHeight: '100vh', background: '#f1f5f9', display: 'flex', fontFamily: "'DM Sans', 'Segoe UI', sans-serif" }}>
