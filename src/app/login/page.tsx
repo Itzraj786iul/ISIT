@@ -1,12 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const returnUrl = searchParams.get('returnUrl');
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -46,17 +48,15 @@ export default function LoginPage() {
         localStorage.setItem('user', JSON.stringify(data.user));
         console.log("User saved to localStorage");
 
-        // ================= THE FIX =================
-        // We use .toLowerCase() to handle 'Teacher' (Capital) vs 'teacher' (Lowercase)
         const userRole = data.user.role?.toLowerCase();
 
         if (userRole === 'teacher') {
           router.push('/teacher/dashboard');
+        } else if (returnUrl && returnUrl.startsWith('/') && !returnUrl.startsWith('//')) {
+          router.push(returnUrl);
         } else {
-          // Students and Parents go to main dashboard
           router.push('/dashboard');
         }
-        // ===========================================
 
       } else {
         console.error("No user data found in response!");
