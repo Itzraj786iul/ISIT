@@ -57,7 +57,7 @@ export default function SignupPage() {
 
     try {
       // Sending data. Note: Image URL is NOT sent to backend in this MVP
-      const response = await fetch('/api/auth/signup', {
+      const response: Response = await fetch('/api/auth/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
@@ -89,10 +89,10 @@ export default function SignupPage() {
       localStorage.setItem('user', JSON.stringify(userToSave));
       
       // Redirect to personalized homepage by role
-      const role = (userToSave.role ?? 'Student').toString().toLowerCase();
-      if (role === 'teacher') {
+      const roleKey = (userToSave.role ?? 'Student').toString().toLowerCase();
+      if (roleKey === 'teacher') {
         router.push('/teacher/dashboard');
-      } else if (role === 'parent') {
+      } else if (roleKey === 'parent') {
         router.push('/parent/dashboard');
       } else {
         router.push('/dashboard');
