@@ -60,7 +60,8 @@ export default function Sidebar() {
     }
   }, []);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
     localStorage.removeItem('user');
     setUser(null);
     router.push('/login');

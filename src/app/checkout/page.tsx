@@ -33,35 +33,50 @@ function CheckoutForm() {
     zip: '',
   });
 
-  // Require course id
+  // Require course id and auth
   useEffect(() => {
     if (!courseId) {
       router.replace('/courses');
       return;
     }
-    const userStr = typeof window !== 'undefined' ? localStorage.getItem('user') : null;
-    if (!userStr) {
-      const returnUrl = `/checkout?id=${courseId}`;
-      router.replace(`/login?returnUrl=${encodeURIComponent(returnUrl)}`);
-      return;
-    }
-    const fetchCourse = async () => {
+    const run = async () => {
+      const meRes = await fetch('/api/auth/me', { credentials: 'include' });
+      if (!meRes.ok) {
+        const returnUrl = `/checkout?id=${courseId}`;
+        router.replace(`/login?returnUrl=${encodeURIComponent(returnUrl)}`);
+        return;
+      }
       try {
-        const res = await fetch(`/api/course/${courseId}`);
-        if (!res.ok) {
+        const [courseRes, enrolledRes] = await Promise.all([
+          fetch(`/api/course/${courseId}`),
+          fetch('/api/student/enrolled-courses', { credentials: 'include' }),
+        ]);
+        if (!courseRes.ok) {
           setError('Course not found');
           setLoading(false);
           return;
         }
-        const data = await res.json();
+        const data = await courseRes.json();
         setCourse(data.course || data);
+        if (enrolledRes.ok) {
+          const enrolled: { course: { _id: string }; nextLessonId?: string | null }[] = await enrolledRes.json();
+          const alreadyEnrolled = enrolled.find((e) => e.course._id === courseId);
+          if (alreadyEnrolled) {
+            if (alreadyEnrolled.nextLessonId) {
+              router.replace(`/lesson/${alreadyEnrolled.nextLessonId}`);
+            } else {
+              router.replace(`/course/${courseId}`);
+            }
+            return;
+          }
+        }
       } catch {
         setError('Failed to load course');
       } finally {
         setLoading(false);
       }
     };
-    fetchCourse();
+    run();
   }, [courseId, router]);
 
   const handleBillingChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -73,17 +88,6 @@ function CheckoutForm() {
     if (!courseId || !course) return;
     setError('');
 
-    const userStr = localStorage.getItem('user');
-    if (!userStr) {
-      router.replace(`/login?returnUrl=${encodeURIComponent(`/checkout?id=${courseId}`)}`);
-      return;
-    }
-    const user = JSON.parse(userStr);
-    if (!user._id) {
-      setError('Invalid session. Please sign in again.');
-      return;
-    }
-
     if (!billing.fullName.trim() || !billing.email.trim()) {
       setError('Please enter your full name and email.');
       return;
@@ -94,9 +98,9 @@ function CheckoutForm() {
       const res = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           courseId,
-          userId: user._id,
           fullName: billing.fullName.trim(),
           email: billing.email.trim(),
           country: billing.country,

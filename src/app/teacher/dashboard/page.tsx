@@ -47,30 +47,24 @@ export default function TeacherDashboard() {
   };
 
   useEffect(() => {
-    const userStr = localStorage.getItem('user');
-    if (!userStr) {
-      router.push('/login');
-      return;
-    }
+    const run = async () => {
+      const meRes = await fetch('/api/auth/me', { credentials: 'include' });
+      if (!meRes.ok) {
+        router.push('/login');
+        return;
+      }
+      const meData = await meRes.json();
+      const userData = meData.user as User;
+      if (!userData || userData.role?.toLowerCase() !== 'teacher') {
+        router.push('/dashboard');
+        return;
+      }
+      setUser(userData);
 
-    const userData = JSON.parse(userStr) as User;
-
-    if (userData.role?.toLowerCase() !== 'teacher') {
-      router.push('/dashboard');
-      return;
-    }
-
-    setUser(userData);
-  }, [router]);
-
-  useEffect(() => {
-    const uid = user?._id ?? user?.id;
-    if (!uid) return;
-
-    const load = async () => {
       setLoading(true);
       try {
-        const res = await fetch(`/api/courses?teacherId=${encodeURIComponent(uid)}`);
+        const uid = userData._id ?? (userData as unknown as { id?: string }).id;
+        const res = await fetch(`/api/courses?teacherId=${encodeURIComponent(uid)}`, { credentials: 'include' });
         if (res.ok) {
           const data = await res.json();
           setCourses(Array.isArray(data) ? data : []);
@@ -81,15 +75,14 @@ export default function TeacherDashboard() {
         setLoading(false);
       }
     };
-
-    load();
-  }, [user?._id, user?.id]);
+    run();
+  }, [router]);
 
   const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to delete this course? This will remove all lessons.')) return;
     setDeletingId(id);
     try {
-      const res = await fetch(`/api/course/${id}`, { method: 'DELETE' });
+      const res = await fetch(`/api/course/${id}`, { method: 'DELETE', credentials: 'include' });
       if (res.ok) setCourses((prev) => prev.filter((c) => c._id !== id));
       else alert('Failed to delete course.');
     } catch (e) {

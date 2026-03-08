@@ -17,6 +17,7 @@ type CourseType = {
   _id: string;
   title: string;
   description?: string;
+  teacherId?: { _id?: string } | string;
 };
 
 type ChatMessage = { id: number; sender: 'ai' | 'user'; text: string };
@@ -38,6 +39,7 @@ export default function LessonPlayerPage() {
   const [mobileLessonsOpen, setMobileLessonsOpen] = useState(false);
   const [mobileTutorOpen, setMobileTutorOpen] = useState(false);
   const [userNotes, setUserNotes] = useState('');
+  const [accessDenied, setAccessDenied] = useState(false);
 
   const NOTES_STORAGE_KEY = (id: string) => `lesson-notes-${id}`;
 
@@ -46,6 +48,7 @@ export default function LessonPlayerPage() {
 
     const loadLessonAndCourse = async () => {
       setLoading(true);
+      setAccessDenied(false);
       try {
         const lessonRes = await fetch(`/api/lesson/${lessonId}`);
         if (!lessonRes.ok) {
@@ -63,26 +66,38 @@ export default function LessonPlayerPage() {
           return;
         }
         const { course: courseObj, lessons } = await courseRes.json();
-        setCourse(courseObj || { _id: courseId, title: 'Course' });
+        const courseData = courseObj || { _id: courseId, title: 'Course' };
+        setCourse(courseData);
         setLessonsList(lessons || []);
 
-        const userStr = typeof window !== 'undefined' ? localStorage.getItem('user') : null;
-        if (userStr) {
-          const user = JSON.parse(userStr);
-          const uid = user._id || user.id;
-          if (uid) {
-            try {
-              const progressRes = await fetch(`/api/user/progress?userId=${encodeURIComponent(uid)}`);
-              if (progressRes.ok) {
-                const { completedLessonIds } = await progressRes.json();
-                if (Array.isArray(completedLessonIds)) {
-                  setCompletedLessons(completedLessonIds);
-                }
-              }
-            } catch {
-              // ignore
+        const [enrolledRes, meRes] = await Promise.all([
+          fetch('/api/student/enrolled-courses', { credentials: 'include' }),
+          fetch('/api/auth/me', { credentials: 'include' }),
+        ]);
+        const enrolledList: { course: { _id: string } }[] = enrolledRes.ok ? await enrolledRes.json() : [];
+        const isEnrolled = enrolledList.some((e) => e.course._id === courseId);
+        const meData = meRes.ok ? await meRes.json() : null;
+        const userId = meData?.user?._id ?? meData?.user?.id;
+        const tid = courseData.teacherId;
+        const isTeacher = Boolean(
+          userId && (typeof tid === 'string' ? tid === userId : (tid as { _id?: string })?._id === userId)
+        );
+        if (!isEnrolled && !isTeacher) {
+          setAccessDenied(true);
+          setLoading(false);
+          return;
+        }
+
+        try {
+          const progressRes = await fetch('/api/user/progress', { credentials: 'include' });
+          if (progressRes.ok) {
+            const { completedLessonIds } = await progressRes.json();
+            if (Array.isArray(completedLessonIds)) {
+              setCompletedLessons(completedLessonIds);
             }
           }
+        } catch {
+          // ignore
         }
       } catch (err) {
         console.error(err);
@@ -123,23 +138,21 @@ export default function LessonPlayerPage() {
 
   const markComplete = async () => {
     if (!currentLesson) return;
-    const userStr = localStorage.getItem('user');
-    if (!userStr) {
-      alert('Please sign in to save your progress.');
-      return;
-    }
-    const user = JSON.parse(userStr);
-    if (!user._id) return;
-
     if (completedLessons.includes(currentLesson._id)) return;
     setCompletedLessons((prev) => [...prev, currentLesson._id]);
 
     try {
-      await fetch('/api/user/complete', {
+      const res = await fetch('/api/user/complete', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: user._id, lessonId: currentLesson._id }),
+        body: JSON.stringify({ lessonId: currentLesson._id }),
+        credentials: 'include',
       });
+      if (!res.ok) {
+        setCompletedLessons((prev) => prev.filter((id) => id !== currentLesson._id));
+        const data = await res.json().catch(() => ({}));
+        alert(data.message || 'Could not save progress. Sign in and enroll in this course.');
+      }
     } catch (err) {
       console.error(err);
       setCompletedLessons((prev) => prev.filter((id) => id !== currentLesson._id));
@@ -185,6 +198,23 @@ export default function LessonPlayerPage() {
       <div className="h-screen flex flex-col items-center justify-center gap-4 bg-gray-100">
         <p className="text-gray-700">Lesson not found.</p>
         <Link href="/dashboard" className="text-sky-600 font-medium hover:underline">
+          Back to Dashboard
+        </Link>
+      </div>
+    );
+  }
+
+  if (accessDenied) {
+    return (
+      <div className="h-screen flex flex-col items-center justify-center gap-4 bg-gray-100 p-4">
+        <p className="text-gray-800 font-medium text-center">You must enroll in this course to view lessons.</p>
+        <Link
+          href={`/course/${course._id}`}
+          className="text-sky-600 font-semibold hover:underline"
+        >
+          Go to course page to enroll
+        </Link>
+        <Link href="/dashboard" className="text-slate-600 text-sm hover:underline">
           Back to Dashboard
         </Link>
       </div>

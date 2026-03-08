@@ -25,27 +25,28 @@ export default function AnalyticsPage() {
   const [completedCount, setCompletedCount] = useState(0);
 
   useEffect(() => {
-    const userStr = localStorage.getItem('user');
-    if (!userStr) {
-      router.push('/login');
-      return;
-    }
-    const userData = JSON.parse(userStr);
-    if (userData?.role?.toLowerCase() === 'teacher') {
-      router.push('/teacher/dashboard');
-      return;
-    }
-    setUser(userData);
-    const uid = userData._id ?? userData.id;
-    if (uid) {
-      fetch(`/api/student/enrolled-courses?userId=${encodeURIComponent(uid)}`)
+    const run = async () => {
+      const meRes = await fetch('/api/auth/me', { credentials: 'include' });
+      if (!meRes.ok) {
+        router.push('/login');
+        return;
+      }
+      const meData = await meRes.json();
+      const userData = meData.user;
+      if (!userData || userData?.role?.toLowerCase() === 'teacher') {
+        router.push('/teacher/dashboard');
+        return;
+      }
+      setUser(userData);
+      fetch('/api/student/enrolled-courses', { credentials: 'include' })
         .then((r) => r.ok ? r.json() : [])
         .then((arr: { progressPercent?: number }[]) => {
           setEnrolledCount(arr.length);
           setCompletedCount(arr.filter((e) => (e.progressPercent ?? 0) >= 100).length);
         })
         .catch(() => {});
-    }
+    };
+    run();
   }, [router]);
 
   const activeCourses = enrolledCount - completedCount;

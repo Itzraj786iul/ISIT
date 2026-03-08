@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import { getAuthFromRequest } from '@/lib/auth';
 
 dotenv.config();
 
@@ -44,23 +45,31 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
 
 export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const auth = await getAuthFromRequest(req);
+    if (!auth || auth.role.toLowerCase() !== 'teacher') {
+      return NextResponse.json({ message: 'Forbidden' }, { status: 403 });
+    }
+
     await connectToDB();
 
     const Course = (await import('@/models/Course')).default;
     const Lesson = (await import('@/models/Lesson')).default;
 
     const { id } = await params;
-
-    await Lesson.deleteMany({ courseId: id });
-    const course = await Course.findByIdAndDelete(id);
-
+    const course = await Course.findById(id);
     if (!course) {
       return NextResponse.json({ message: 'Course not found' }, { status: 404 });
     }
+    if (course.teacherId?.toString() !== auth.userId) {
+      return NextResponse.json({ message: 'Forbidden' }, { status: 403 });
+    }
+
+    await Lesson.deleteMany({ courseId: id });
+    await Course.findByIdAndDelete(id);
 
     return NextResponse.json({ message: 'Course deleted' }, { status: 200 });
   } catch (error: unknown) {
-    console.error("Error deleting course:", error);
+    console.error('Error deleting course:', error);
     return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
   }
 }

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import { getAuthFromRequest } from '@/lib/auth';
 
 dotenv.config();
 
@@ -13,11 +14,11 @@ const connectToDB = async () => {
 
 export async function GET(req: Request) {
   try {
-    const { searchParams } = new URL(req.url);
-    const userId = searchParams.get('userId');
-    if (!userId) {
-      return NextResponse.json({ error: 'userId required' }, { status: 400 });
+    const auth = await getAuthFromRequest(req);
+    if (!auth) {
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
+    const userId = auth.userId;
 
     await connectToDB();
     const User = (await import('@/models/User')).default;

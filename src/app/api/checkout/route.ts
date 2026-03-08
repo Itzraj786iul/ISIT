@@ -13,14 +13,19 @@ const connectToDB = async () => {
 
 export async function POST(request: Request) {
   try {
+    const { getAuthFromRequest } = await import('@/lib/auth');
+    const auth = await getAuthFromRequest(request);
+    if (!auth) {
+      return NextResponse.json({ error: 'Please sign in to enroll.' }, { status: 401 });
+    }
+    const userId = auth.userId;
+
     const body = await request.json();
+    const { courseId, fullName, email } = body;
 
-    // Required: courseId, userId (for enrollment), and billing
-    const { courseId, userId, fullName, email } = body;
-
-    if (!courseId || !userId) {
+    if (!courseId) {
       return NextResponse.json(
-        { error: 'Missing courseId or userId. Please sign in to enroll.' },
+        { error: 'Missing courseId.' },
         { status: 400 }
       );
     }
@@ -41,13 +46,27 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Course not found' }, { status: 404 });
     }
 
+    const alreadyEnrolled = course.enrolledStudents?.some(
+      (id: unknown) => id?.toString() === userId
+    );
+    if (alreadyEnrolled) {
+      const lessons = await Lesson.find({ courseId }).sort({ order: 1 });
+      const firstLesson = lessons[0];
+      return NextResponse.json({
+        success: true,
+        message: 'Already enrolled in this course.',
+        alreadyEnrolled: true,
+        orderId: null,
+        firstLessonId: firstLesson?._id?.toString() ?? null,
+      }, { status: 200 });
+    }
+
     const lessons = await Lesson.find({ courseId }).sort({ order: 1 });
     const firstLesson = lessons[0];
 
     // Mock payment processing
     await new Promise((resolve) => setTimeout(resolve, 1500));
 
-    // Enroll user (add to enrolledStudents if not already)
     await Course.findByIdAndUpdate(courseId, {
       $addToSet: { enrolledStudents: new mongoose.Types.ObjectId(userId) },
     });

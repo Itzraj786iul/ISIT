@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 import dotenv from 'dotenv';
+import { signToken, buildAuthCookie } from '@/lib/auth';
 
 dotenv.config();
 
@@ -15,39 +16,44 @@ const connectToDB = async () => {
 
 export async function POST(req: Request) {
   try {
-    // 1. Connect to DB
     await connectToDB();
-    
+
     const { email, password } = await req.json();
 
-    // 2. Dynamic Import (Ensures User model is loaded correctly)
     const User = (await import('@/models/User')).default;
 
-    // 3. Check if user exists
     const user = await User.findOne({ email });
     if (!user) {
       return NextResponse.json({ message: 'User not found' }, { status: 400 });
     }
 
-    // 4. Check Password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return NextResponse.json({ message: 'Invalid credentials' }, { status: 401 });
     }
 
-    // 5. Return Success + User Data (for frontend localStorage)
-    return NextResponse.json({ 
+    const userId = user._id.toString();
+    const token = await signToken({
+      userId,
+      role: user.role || 'Student',
+      email: user.email,
+    });
+
+    const cookie = buildAuthCookie(token);
+    const response = NextResponse.json({
       message: 'Login successful',
       user: {
-        _id: user._id,
+        _id: userId,
         name: user.name,
         email: user.email,
         role: user.role,
-      }
+      },
     }, { status: 200 });
+    response.headers.set('Set-Cookie', cookie);
 
-  } catch (error: any) {
-    console.error("Login Error:", error);
-    return NextResponse.json({ message: error.message || 'Server error' }, { status: 500 });
+    return response;
+  } catch (error: unknown) {
+    console.error('Login Error:', error);
+    return NextResponse.json({ message: 'Server error' }, { status: 500 });
   }
 }

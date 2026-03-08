@@ -10,6 +10,7 @@ type Course = {
   title: string;
   description: string;
   price: number;
+  image?: string;
   level?: string;
   lessons?: { _id: string }[];
 };
@@ -29,6 +30,8 @@ export default function CourseDetailsPage() {
   const [course, setCourse] = useState<Course | null>(null);
   const [loading, setLoading] = useState(true);
   const [enrollment, setEnrollment] = useState<EnrolledItem | null>(null);
+  const [enrollmentCheckDone, setEnrollmentCheckDone] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
     if (!courseId) return;
@@ -57,23 +60,34 @@ export default function CourseDetailsPage() {
   }, [courseId]);
 
   useEffect(() => {
-    const userStr = typeof window !== 'undefined' ? localStorage.getItem('user') : null;
-    if (!userStr || !courseId) return;
+    if (!courseId) return;
+
+    setEnrollmentCheckDone(false);
+    setEnrollment(null);
 
     const checkEnrollment = async () => {
       try {
-        const user = JSON.parse(userStr);
-        const uid = user._id || user.id;
-        if (!uid) return;
-
-        const res = await fetch(`/api/student/enrolled-courses?userId=${encodeURIComponent(uid)}`);
-        if (!res.ok) return;
-
+        const meRes = await fetch('/api/auth/me', { credentials: 'include', cache: 'no-store' });
+        setIsLoggedIn(meRes.ok);
+        if (!meRes.ok) {
+          setEnrollment(null);
+          setEnrollmentCheckDone(true);
+          return;
+        }
+        const res = await fetch('/api/student/enrolled-courses', { credentials: 'include', cache: 'no-store' });
+        if (!res.ok) {
+          setEnrollment(null);
+          setEnrollmentCheckDone(true);
+          return;
+        }
         const enrolled: EnrolledItem[] = await res.json();
         const found = enrolled.find((e) => e.course._id === courseId);
-        if (found) setEnrollment(found);
+        setEnrollment(found ?? null);
       } catch {
-        // ignore
+        setEnrollment(null);
+        setIsLoggedIn(false);
+      } finally {
+        setEnrollmentCheckDone(true);
       }
     };
 
@@ -96,9 +110,15 @@ export default function CourseDetailsPage() {
     );
   }
 
-  const handleEnroll = () => {
+  const handleEnroll = async () => {
     if (!course.lessons || course.lessons.length === 0) {
       alert("No lessons available yet.");
+      return;
+    }
+    const meRes = await fetch('/api/auth/me', { credentials: 'include' });
+    if (!meRes.ok) {
+      const returnUrl = `/checkout?id=${course._id}`;
+      router.push(`/login?returnUrl=${encodeURIComponent(returnUrl)}`);
       return;
     }
     router.push(`/checkout?id=${course._id}`);
@@ -134,12 +154,24 @@ export default function CourseDetailsPage() {
 
           <div className="hidden md:flex items-center gap-6">
             <span className="text-sm cursor-pointer">LAN ▾</span>
-            <Link
-              href="/signup"
-              className="bg-black text-white px-5 py-2 rounded-full text-sm hover:bg-gray-800 transition"
-            >
-              Sign Up
-            </Link>
+            {isLoggedIn ? (
+              <>
+                <Link href="/dashboard" className="text-sky-600 font-medium hover:underline text-sm">Dashboard</Link>
+                <button
+                  type="button"
+                  onClick={async () => {
+                    await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
+                    if (typeof window !== 'undefined') localStorage.removeItem('user');
+                    router.push('/');
+                  }}
+                  className="bg-slate-200 text-slate-800 px-5 py-2 rounded-full text-sm hover:bg-slate-300 transition"
+                >
+                  Log out
+                </button>
+              </>
+            ) : (
+              <Link href="/signup" className="bg-black text-white px-5 py-2 rounded-full text-sm hover:bg-gray-800 transition">Sign Up</Link>
+            )}
           </div>
         </div>
       </nav>
@@ -166,11 +198,11 @@ export default function CourseDetailsPage() {
               </span>
             </div>
 
-            <div className="rounded-2xl overflow-hidden shadow-lg mb-10">
+            <div className="rounded-2xl overflow-hidden shadow-lg mb-10 bg-slate-200 aspect-video">
               <img
-                src="https://images.unsplash.com/photo-1498050108023-c5249f4df085"
+                src={course.image || 'https://images.unsplash.com/photo-1498050108023-c5249f4df085'}
                 alt={course.title}
-                className="w-full object-cover"
+                className="w-full h-full object-cover"
               />
             </div>
 
@@ -212,7 +244,7 @@ export default function CourseDetailsPage() {
           <div>
             <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 sticky top-24">
 
-              {enrollment ? (
+              {enrollmentCheckDone && isLoggedIn && enrollment ? (
                 <>
                   <h2 className="text-xs font-bold text-emerald-600 uppercase mb-2">
                     You're enrolled

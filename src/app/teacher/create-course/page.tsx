@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { 
@@ -12,7 +12,11 @@ import {
   X,
   BookOpen,
   Layers,
-  FileText
+  FileText,
+  Copy,
+  ExternalLink,
+  CheckCircle,
+  PlayCircle
 } from 'lucide-react';
 
 type Lesson = { title: string; duration: string; type: string };
@@ -29,27 +33,37 @@ export default function CreateCourse() {
   const [category, setCategory] = useState('Development');
   const [loading, setLoading] = useState(false);
   const [teacherId, setTeacherId] = useState<string | null>(null);
+  const [imageUrl, setImageUrl] = useState<string>('');
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const [createdCourseId, setCreatedCourseId] = useState<string | null>(null);
+  const [copySuccess, setCopySuccess] = useState(false);
 
   const [modules, setModules] = useState<Module[]>([]);
   const [currentModuleIndex, setCurrentModuleIndex] = useState<number | null>(null);
 
   useEffect(() => {
-    const userStr = typeof window !== 'undefined' ? localStorage.getItem('user') : null;
-    if (!userStr) {
-      router.push('/login');
-      return;
-    }
-    const u = JSON.parse(userStr);
-    const uid = u._id ?? u.id;
-    if (!uid) {
-      router.push('/login');
-      return;
-    }
-    if (u.role?.toLowerCase() !== 'teacher') {
-      router.push('/dashboard');
-      return;
-    }
-    setTeacherId(uid);
+    const run = async () => {
+      const res = await fetch('/api/auth/me', { credentials: 'include' });
+      if (!res.ok) {
+        router.push('/login');
+        return;
+      }
+      const data = await res.json();
+      const u = data.user;
+      if (!u) {
+        router.push('/login');
+        return;
+      }
+      if (u.role?.toLowerCase() !== 'teacher') {
+        router.push('/dashboard');
+        return;
+      }
+      setTeacherId(u._id ?? u.id);
+    };
+    run();
   }, [router]);
 
   // --- Handlers ---
@@ -79,6 +93,43 @@ export default function CreateCourse() {
     const newModules = [...modules];
     newModules[modIndex].lessons.splice(lessonIndex, 1);
     setModules(newModules);
+  };
+
+  const handleThumbnailClick = () => {
+    setUploadError(null);
+    fileInputRef.current?.click();
+  };
+
+  const handleThumbnailChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadError(null);
+    setUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      const res = await fetch('/api/upload', { method: 'POST', body: formData });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setUploadError(data.message || 'Upload failed');
+        return;
+      }
+      setImageUrl(data.url ?? '');
+    } catch {
+      setUploadError('Upload failed');
+    } finally {
+      setUploading(false);
+      e.target.value = '';
+    }
+  };
+
+  const handleCopyLink = () => {
+    if (!createdCourseId || typeof window === 'undefined') return;
+    const url = `${window.location.origin}/course/${createdCourseId}`;
+    navigator.clipboard.writeText(url).then(() => {
+      setCopySuccess(true);
+      setTimeout(() => setCopySuccess(false), 2000);
+    });
   };
 
   const handlePublish = async (e: React.FormEvent) => {
@@ -115,16 +166,20 @@ export default function CreateCourse() {
           description: description.trim(),
           price: Number(price) || 0,
           category: category.trim() || 'Development',
-          teacherId,
+          ...(imageUrl && { image: imageUrl }),
           lessons,
         }),
+        credentials: 'include',
       });
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
         throw new Error(data.message || 'Failed to create course');
       }
-      router.push('/teacher/dashboard');
+      const data = await res.json();
+      const id = data.course?._id ?? data.course?.id;
+      if (id) setCreatedCourseId(id);
+      else router.push('/teacher/dashboard');
     } catch (err) {
       console.error(err);
       alert(err instanceof Error ? err.message : 'Failed to create course.');
@@ -177,6 +232,44 @@ export default function CreateCourse() {
           {loading ? 'Publishing...' : <><Save size={18} /> Publish Course</>}
         </button>
       </header>
+
+      {/* Success panel after course created */}
+      {createdCourseId && (
+        <div style={{ maxWidth: 1400, margin: '0 auto', padding: '24px 32px' }}>
+          <div style={{ background: 'linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%)', border: '1px solid #a7f3d0', borderRadius: 12, padding: 24 }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16, flexWrap: 'wrap' }}>
+              <CheckCircle size={28} color="#059669" style={{ flexShrink: 0 }} />
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <h3 style={{ fontSize: 18, fontWeight: 700, color: '#065f46', margin: '0 0 8px 0' }}>Course published successfully</h3>
+                <p style={{ fontSize: 14, color: '#047857', marginBottom: 12 }}>Share this link with students. They can enroll and start learning.</p>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center' }}>
+                  <code style={{ background: '#fff', padding: '8px 12px', borderRadius: 8, fontSize: 13, color: '#0f172a', border: '1px solid #a7f3d0', wordBreak: 'break-all' }}>
+                    {typeof window !== 'undefined' ? `${window.location.origin}/course/${createdCourseId}` : `/course/${createdCourseId}`}
+                  </code>
+                  <button
+                    type="button"
+                    onClick={handleCopyLink}
+                    style={{ display: 'flex', alignItems: 'center', gap: 6, background: copySuccess ? '#059669' : '#0d9488', color: '#fff', border: 'none', padding: '8px 16px', borderRadius: 8, fontSize: 14, fontWeight: 600, cursor: 'pointer' }}
+                  >
+                    {copySuccess ? <CheckCircle size={18} /> : <Copy size={18} />}
+                    {copySuccess ? 'Copied!' : 'Copy link'}
+                  </button>
+                  <a href={`/course/${createdCourseId}`} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#0d9488', fontWeight: 600, fontSize: 14, textDecoration: 'none' }}>
+                    <ExternalLink size={18} /> View course
+                  </a>
+                  <button
+                    type="button"
+                    onClick={() => router.push('/teacher/dashboard')}
+                    style={{ display: 'flex', alignItems: 'center', gap: 6, background: '#fff', color: '#047857', border: '1px solid #a7f3d0', padding: '8px 16px', borderRadius: 8, fontSize: 14, fontWeight: 600, cursor: 'pointer' }}
+                  >
+                    Go to dashboard
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div style={{ display: 'flex', maxWidth: 1400, margin: '0 auto', padding: '32px', gap: 32 }}>
         
@@ -343,23 +436,50 @@ export default function CreateCourse() {
           {/* Thumbnail Upload */}
           <section style={{ background: '#fff', borderRadius: 12, padding: 20, border: '1px solid #e2e8f0' }}>
             <h3 style={{ fontSize: 14, fontWeight: 700, marginBottom: 12 }}>Course Thumbnail</h3>
-            <div style={{ 
-              width: '100%', 
-              aspectRatio: 16/9, 
-              border: '2px dashed #e2e8f0', 
-              borderRadius: 8, 
-              display: 'flex', 
-              flexDirection: 'column', 
-              alignItems: 'center', 
-              justifyContent: 'center', 
-              color: '#94a3b8',
-              cursor: 'pointer',
-              background: '#f8fafc'
-            }}>
-              <Upload size={24} style={{ marginBottom: 8 }} />
-              <span style={{ fontSize: 12 }}>Click to upload image</span>
-              <span style={{ fontSize: 11, color: '#cbd5e1' }}>Recommended: 1280x720</span>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp,image/gif"
+              onChange={handleThumbnailChange}
+              style={{ display: 'none' }}
+            />
+            <div
+              role="button"
+              tabIndex={0}
+              onClick={handleThumbnailClick}
+              onKeyDown={(e) => e.key === 'Enter' && handleThumbnailClick()}
+              style={{
+                width: '100%',
+                aspectRatio: 16 / 9,
+                border: '2px dashed #e2e8f0',
+                borderRadius: 8,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#94a3b8',
+                cursor: uploading ? 'wait' : 'pointer',
+                background: imageUrl ? `url(${imageUrl}) center/cover` : '#f8fafc',
+                position: 'relative',
+              }}
+            >
+              {uploading && (
+                <div style={{ position: 'absolute', inset: 0, background: 'rgba(255,255,255,0.8)', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 600, color: '#475569' }}>
+                  Uploading...
+                </div>
+              )}
+              {!imageUrl && !uploading && (
+                <>
+                  <Upload size={24} style={{ marginBottom: 8 }} />
+                  <span style={{ fontSize: 12 }}>Click to upload image</span>
+                  <span style={{ fontSize: 11, color: '#cbd5e1' }}>JPEG, PNG, WebP or GIF · Max 5MB · 1280×720 recommended</span>
+                </>
+              )}
+              {imageUrl && !uploading && (
+                <span style={{ position: 'absolute', bottom: 8, right: 8, background: 'rgba(0,0,0,0.6)', color: '#fff', fontSize: 11, padding: '4px 8px', borderRadius: 4 }}>Change image</span>
+              )}
             </div>
+            {uploadError && <p style={{ fontSize: 12, color: '#dc2626', marginTop: 8 }}>{uploadError}</p>}
           </section>
 
           {/* Course Settings */}
@@ -405,6 +525,31 @@ export default function CreateCourse() {
                 <option>Expert</option>
               </select>
             </div>
+          </section>
+
+          {/* How students will experience this course */}
+          <section style={{ background: '#fff', borderRadius: 12, padding: 20, border: '1px solid #e2e8f0' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
+              <div style={{ background: '#e0f2fe', padding: 8, borderRadius: 8, color: '#0284c7' }}>
+                <PlayCircle size={20} />
+              </div>
+              <h3 style={{ fontSize: 14, fontWeight: 700, margin: 0, color: '#0f172a' }}>How students will experience this course</h3>
+            </div>
+            <ol style={{ margin: 0, paddingLeft: 20, fontSize: 13, color: '#475569', lineHeight: 1.7 }}>
+              <li style={{ marginBottom: 6 }}>Your course appears on the course page with thumbnail and description.</li>
+              <li style={{ marginBottom: 6 }}>Students enroll (or purchase if paid).</li>
+              <li style={{ marginBottom: 6 }}>They see the lesson list and open lessons in order.</li>
+              <li style={{ marginBottom: 6 }}>Each lesson has video, notes, and the AI tutor for questions.</li>
+              <li style={{ marginBottom: 0 }}>Progress is saved; they can take quizzes and get a certificate when complete.</li>
+            </ol>
+            {createdCourseId && (
+              <p style={{ marginTop: 12, fontSize: 12, color: '#64748b' }}>
+                <strong>Course link:</strong>{' '}
+                <a href={`/course/${createdCourseId}`} target="_blank" rel="noopener noreferrer" style={{ color: '#0284c7', textDecoration: 'underline' }}>
+                  Open course page
+                </a>
+              </p>
+            )}
           </section>
         </div>
 

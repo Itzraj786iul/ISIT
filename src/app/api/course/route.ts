@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import { getAuthFromRequest } from '@/lib/auth';
 
 dotenv.config();
 
@@ -15,6 +16,14 @@ type LessonInput = { title: string; content?: string; order: number; videoUrl?: 
 
 export async function POST(req: Request) {
   try {
+    const auth = await getAuthFromRequest(req);
+    if (!auth) {
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    }
+    if (auth.role.toLowerCase() !== 'teacher') {
+      return NextResponse.json({ message: 'Forbidden' }, { status: 403 });
+    }
+
     await connectToDB();
 
     const Course = (await import('@/models/Course')).default;
@@ -26,7 +35,6 @@ export async function POST(req: Request) {
       description,
       price = 3999,
       category,
-      teacherId,
       image,
       lessons = [],
     } = body as {
@@ -34,14 +42,15 @@ export async function POST(req: Request) {
       description: string;
       price?: number;
       category: string;
-      teacherId: string;
       image?: string;
       lessons?: LessonInput[];
     };
 
-    if (!title || !description || !category || !teacherId) {
+    const teacherId = auth.userId;
+
+    if (!title || !description || !category) {
       return NextResponse.json(
-        { message: 'Missing required fields: title, description, category, teacherId' },
+        { message: 'Missing required fields: title, description, category' },
         { status: 400 }
       );
     }

@@ -18,10 +18,18 @@ export async function GET(req: Request) {
     await connectToDB();
 
     const Course = (await import('@/models/Course')).default;
-    const User = (await import('@/models/User')).default;
+    await import('@/models/User'); // Required for populate('teacherId')
 
     const { searchParams } = new URL(req.url);
     const teacherId = searchParams.get('teacherId');
+
+    if (teacherId) {
+      const { getAuthFromRequest } = await import('@/lib/auth');
+      const auth = await getAuthFromRequest(req);
+      if (!auth || auth.userId !== teacherId) {
+        return NextResponse.json({ message: 'Forbidden' }, { status: 403 });
+      }
+    }
 
     const filter = teacherId ? { teacherId } : {};
     const courses = await Course.find(filter).populate('teacherId', 'name');

@@ -26,26 +26,21 @@ export default function MyCoursesPage() {
   const [filter, setFilter] = useState<Filter>('all');
 
   useEffect(() => {
-    const userStr = localStorage.getItem('user');
-    if (!userStr) {
-      router.push('/login');
-      return;
-    }
-    const userData = JSON.parse(userStr) as { _id?: string; id?: string; role?: string };
-    if (userData.role?.toLowerCase() === 'teacher') {
-      router.push('/teacher/dashboard');
-      return;
-    }
+    const run = async () => {
+      const meRes = await fetch('/api/auth/me', { credentials: 'include' });
+      if (!meRes.ok) {
+        router.push('/login');
+        return;
+      }
+      const meData = await meRes.json();
+      const userData = meData.user as { _id?: string; id?: string; role?: string };
+      if (!userData || userData.role?.toLowerCase() === 'teacher') {
+        router.push('/teacher/dashboard');
+        return;
+      }
 
-    const uid = userData._id || userData.id;
-    if (!uid) {
-      setLoading(false);
-      return;
-    }
-
-    const fetchEnrolled = async () => {
       try {
-        const res = await fetch(`/api/student/enrolled-courses?userId=${encodeURIComponent(uid)}`);
+        const res = await fetch('/api/student/enrolled-courses', { credentials: 'include' });
         if (res.ok) setEnrolled(await res.json());
       } catch (e) {
         console.error(e);
@@ -53,7 +48,7 @@ export default function MyCoursesPage() {
         setLoading(false);
       }
     };
-    fetchEnrolled();
+    run();
   }, [router]);
 
   const filtered = useMemo(() => {

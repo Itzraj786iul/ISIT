@@ -22,7 +22,7 @@ const connectToDB = async () => {
     return globalForMongoose.conn;
   }
 
-  const connection = await mongoose.connect(MONGO_URI);
+  const connection = await mongoose.connect(MONGO_URI, { bufferCommands: false });
   globalForMongoose.conn = connection;
 
   return connection;

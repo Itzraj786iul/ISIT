@@ -37,27 +37,26 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const userStr = localStorage.getItem('user');
-    if (!userStr) {
-      router.push('/login');
-      return;
-    }
-    const userData = JSON.parse(userStr) as User;
-    if (userData.role?.toLowerCase() === 'teacher') {
-      router.push('/teacher/dashboard');
-      return;
-    }
-    setUser(userData);
+    const run = async () => {
+      const meRes = await fetch('/api/auth/me', { credentials: 'include' });
+      if (!meRes.ok) {
+        router.push('/login');
+        return;
+      }
+      const meData = await meRes.json();
+      const userData = meData.user as User;
+      if (!userData) {
+        router.push('/login');
+        return;
+      }
+      if (userData.role?.toLowerCase() === 'teacher') {
+        router.push('/teacher/dashboard');
+        return;
+      }
+      setUser(userData);
 
-    const uid = userData._id || (userData as unknown as { id?: string }).id;
-    if (!uid) {
-      setLoading(false);
-      return;
-    }
-
-    const fetchEnrolled = async () => {
       try {
-        const res = await fetch(`/api/student/enrolled-courses?userId=${encodeURIComponent(uid)}`);
+        const res = await fetch('/api/student/enrolled-courses', { credentials: 'include' });
         if (res.ok) {
           const data = await res.json();
           setEnrolled(data);
@@ -68,7 +67,7 @@ export default function Dashboard() {
         setLoading(false);
       }
     };
-    fetchEnrolled();
+    run();
   }, [router]);
 
   const activeCourses = enrolled.filter((e) => e.progressPercent < 100).length;
