@@ -88,9 +88,12 @@ export default function SignupPage() {
       // Save the user to local storage (Auto-login)
       localStorage.setItem('user', JSON.stringify(userToSave));
       
-      // Redirect based on role
-      if (userToSave.role === 'teacher') {
+      // Redirect to personalized homepage by role
+      const role = (userToSave.role ?? 'Student').toString().toLowerCase();
+      if (role === 'teacher') {
         router.push('/teacher/dashboard');
+      } else if (role === 'parent') {
+        router.push('/parent/dashboard');
       } else {
         router.push('/dashboard');
       }

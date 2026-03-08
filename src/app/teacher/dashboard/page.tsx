@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { 
   BookOpen, 
@@ -33,6 +33,7 @@ type ApiCourse = {
 
 export default function TeacherDashboard() {
   const router = useRouter();
+  const pathname = usePathname();
   const [user, setUser] = useState<User | null>(null);
   const [courses, setCourses] = useState<ApiCourse[]>([]);
   const [loading, setLoading] = useState(true);
@@ -63,7 +64,7 @@ export default function TeacherDashboard() {
 
       setLoading(true);
       try {
-        const uid = userData._id ?? (userData as unknown as { id?: string }).id;
+        const uid = userData._id ?? (userData as unknown as { id?: string }).id ?? '';
         const res = await fetch(`/api/courses?teacherId=${encodeURIComponent(uid)}`, { credentials: 'include' });
         if (res.ok) {
           const data = await res.json();
@@ -109,12 +110,20 @@ export default function TeacherDashboard() {
 
         <nav style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
           <Link href="/teacher/dashboard" style={{ textDecoration: 'none' }}>
-            <NavItem icon={<BookOpen size={18} />} label="Dashboard" active />
+            <NavItem icon={<BookOpen size={18} />} label="Dashboard" active={pathname === '/teacher/dashboard'} />
           </Link>
-          <NavItem icon={<Users size={18} />} label="Students" />
-          <NavItem icon={<DollarSign size={18} />} label="Earnings" />
-          <NavItem icon={<TrendingUp size={18} />} label="Analytics" />
-          <NavItem icon={<Star size={18} />} label="Reviews" />
+          <Link href="/teacher/students" style={{ textDecoration: 'none' }}>
+            <NavItem icon={<Users size={18} />} label="Students" active={pathname === '/teacher/students'} />
+          </Link>
+          <Link href="/teacher/earnings" style={{ textDecoration: 'none' }}>
+            <NavItem icon={<DollarSign size={18} />} label="Earnings" active={pathname === '/teacher/earnings'} />
+          </Link>
+          <Link href="/teacher/analytics" style={{ textDecoration: 'none' }}>
+            <NavItem icon={<TrendingUp size={18} />} label="Analytics" active={pathname === '/teacher/analytics'} />
+          </Link>
+          <Link href="/teacher/reviews" style={{ textDecoration: 'none' }}>
+            <NavItem icon={<Star size={18} />} label="Reviews" active={pathname === '/teacher/reviews'} />
+          </Link>
         </nav>
       </aside>
 

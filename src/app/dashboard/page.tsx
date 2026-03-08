@@ -53,6 +53,10 @@ export default function Dashboard() {
         router.push('/teacher/dashboard');
         return;
       }
+      if (userData.role?.toLowerCase() === 'parent') {
+        router.push('/parent/dashboard');
+        return;
+      }
       setUser(userData);
 
       try {
@@ -86,85 +90,88 @@ export default function Dashboard() {
               Ready to continue your learning journey today?
             </p>
             <div className="flex flex-wrap gap-4 mt-6">
-              <div className="bg-white/20 backdrop-blur rounded-xl px-4 py-3 flex items-center gap-2">
+              <Link href="/analytics" className="bg-white/20 backdrop-blur rounded-xl px-4 py-3 flex items-center gap-2 hover:bg-white/30 transition cursor-pointer no-underline text-white">
                 <Flame className="w-5 h-5" />
                 <span className="font-bold">{currentStreak} Day Streak</span>
-              </div>
-              <div className="bg-white/20 backdrop-blur rounded-xl px-4 py-3 flex items-center gap-2">
+              </Link>
+              <Link href="/my-courses" className="bg-white/20 backdrop-blur rounded-xl px-4 py-3 flex items-center gap-2 hover:bg-white/30 transition cursor-pointer no-underline text-white">
                 <TrendingUp className="w-5 h-5" />
                 <span className="font-bold">{activeCourses} Active Courses</span>
-              </div>
+              </Link>
             </div>
           </div>
         </section>
 
-        {/* Summary cards */}
+        {/* Summary cards - all clickable */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-          <Link href="/my-courses" className="block no-underline">
-            <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm hover:border-sky-200 hover:shadow transition cursor-pointer flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-sky-100 flex items-center justify-center flex-shrink-0">
+          <Link href="/my-courses" className="block no-underline group">
+            <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm hover:border-sky-300 hover:shadow-md transition cursor-pointer flex items-center gap-4 group-hover:bg-sky-50/50">
+              <div className="w-12 h-12 rounded-xl bg-sky-100 flex items-center justify-center flex-shrink-0 group-hover:bg-sky-200 transition">
                 <BookOpen className="w-6 h-6 text-sky-600" />
               </div>
               <div>
                 <div className="text-sm text-slate-500 font-medium">Active Courses</div>
                 <div className="text-2xl font-extrabold text-slate-800">{activeCourses}</div>
               </div>
+              <ChevronRight className="w-5 h-5 text-slate-300 group-hover:text-sky-500 ml-auto transition" />
             </div>
           </Link>
-          <Link href="/my-courses" className="block no-underline">
-            <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm hover:border-emerald-200 hover:shadow transition cursor-pointer flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center flex-shrink-0">
+          <Link href="/my-courses" className="block no-underline group">
+            <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm hover:border-emerald-300 hover:shadow-md transition cursor-pointer flex items-center gap-4 group-hover:bg-emerald-50/50">
+              <div className="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center flex-shrink-0 group-hover:bg-emerald-200 transition">
                 <span className="text-emerald-600 text-xl">✓</span>
               </div>
               <div>
                 <div className="text-sm text-slate-500 font-medium">Completed</div>
                 <div className="text-2xl font-extrabold text-slate-800">{coursesCompleted}</div>
               </div>
+              <ChevronRight className="w-5 h-5 text-slate-300 group-hover:text-emerald-500 ml-auto transition" />
             </div>
           </Link>
-          <Link href="/analytics" className="block no-underline">
-            <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm hover:border-amber-200 hover:shadow transition cursor-pointer flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0">
+          <Link href="/analytics" className="block no-underline group">
+            <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm hover:border-amber-300 hover:shadow-md transition cursor-pointer flex items-center gap-4 group-hover:bg-amber-50/50">
+              <div className="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0 group-hover:bg-amber-200 transition">
                 <TrendingUp className="w-6 h-6 text-amber-600" />
               </div>
               <div>
                 <div className="text-sm text-slate-500 font-medium">Current Streak</div>
                 <div className="text-2xl font-extrabold text-slate-800">{currentStreak} days</div>
               </div>
+              <ChevronRight className="w-5 h-5 text-slate-300 group-hover:text-amber-500 ml-auto transition" />
             </div>
           </Link>
         </div>
 
-        {/* Upcoming live & onboarding */}
+        {/* Upcoming live & onboarding - all clickable */}
         <section className="mb-6">
           <h2 className="text-lg font-bold text-slate-800 mb-3">Upcoming live & onboarding</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <Link href="/live/1" className="block no-underline">
-              <div className="bg-white rounded-xl border border-slate-200 p-4 sm:p-5 shadow-sm hover:border-sky-200 hover:shadow transition flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-sky-100 flex items-center justify-center flex-shrink-0">
+            <Link href="/live/1" className="block no-underline group">
+              <div className="bg-white rounded-xl border border-slate-200 p-4 sm:p-5 shadow-sm hover:border-sky-300 hover:shadow-md transition cursor-pointer flex items-center gap-4 group-hover:bg-sky-50/50">
+                <div className="w-12 h-12 rounded-xl bg-sky-100 flex items-center justify-center flex-shrink-0 group-hover:bg-sky-200 transition">
                   <Video className="w-6 h-6 text-sky-600" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="font-semibold text-slate-800 truncate">Python Functions - Live Session</p>
+                  <p className="font-semibold text-slate-800 truncate group-hover:text-sky-700">Python Functions - Live Session</p>
                   <p className="text-xs text-slate-500">Today, 10:00 AM · 1 hour</p>
                 </div>
-                <span className="text-sky-600 text-sm font-medium flex-shrink-0">Join →</span>
+                <span className="text-sky-600 text-sm font-medium flex-shrink-0 group-hover:translate-x-0.5 transition">Join →</span>
               </div>
             </Link>
-            <Link href="/live/onboarding" className="block no-underline">
-              <div className="bg-white rounded-xl border border-slate-200 p-4 sm:p-5 shadow-sm hover:border-violet-200 hover:shadow transition flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-violet-100 flex items-center justify-center flex-shrink-0">
+            <Link href="/live/onboarding" className="block no-underline group">
+              <div className="bg-white rounded-xl border border-slate-200 p-4 sm:p-5 shadow-sm hover:border-violet-300 hover:shadow-md transition cursor-pointer flex items-center gap-4 group-hover:bg-violet-50/50">
+                <div className="w-12 h-12 rounded-xl bg-violet-100 flex items-center justify-center flex-shrink-0 group-hover:bg-violet-200 transition">
                   <Users className="w-6 h-6 text-violet-600" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="font-semibold text-slate-800 truncate">Welcome & Platform Tour</p>
+                  <p className="font-semibold text-slate-800 truncate group-hover:text-violet-700">Welcome & Platform Tour</p>
                   <p className="text-xs text-slate-500">Onboarding · 45 min</p>
                 </div>
-                <span className="text-violet-600 text-sm font-medium flex-shrink-0">View →</span>
+                <span className="text-violet-600 text-sm font-medium flex-shrink-0 group-hover:translate-x-0.5 transition">View →</span>
               </div>
             </Link>
           </div>
-          <Link href="/schedule" className="inline-flex items-center gap-1 mt-2 text-sky-600 text-sm font-medium hover:underline">
+          <Link href="/schedule" className="inline-flex items-center gap-1 mt-3 text-sky-600 text-sm font-medium hover:text-sky-700 hover:underline cursor-pointer">
             View full schedule <ChevronRight className="w-4 h-4" />
           </Link>
         </section>
@@ -187,7 +194,7 @@ export default function Dashboard() {
               ) : enrolled.length === 0 ? (
                 <>
                   <p className="text-slate-500 text-sm mb-4">No courses yet.</p>
-                  <Link href="/courses" className="inline-flex items-center gap-1 text-sky-600 text-sm font-medium hover:underline">
+                  <Link href="/courses" className="inline-flex items-center gap-1 text-sky-600 text-sm font-medium hover:text-sky-700 hover:underline cursor-pointer rounded-lg px-3 py-2 -ml-2 hover:bg-sky-50 transition">
                     Browse courses <ChevronRight className="w-4 h-4" />
                   </Link>
                 </>
@@ -244,7 +251,7 @@ export default function Dashboard() {
                 </ul>
               )}
               {enrolled.length > 2 && (
-                <Link href="/my-courses" className="inline-flex items-center gap-1 mt-3 text-sky-600 text-sm font-medium hover:underline">
+                <Link href="/my-courses" className="inline-flex items-center gap-1 mt-3 text-sky-600 text-sm font-medium hover:text-sky-700 hover:underline cursor-pointer rounded-lg px-2 py-1 -ml-2 hover:bg-sky-50 transition">
                   View all courses <ChevronRight className="w-4 h-4" />
                 </Link>
               )}
@@ -268,12 +275,12 @@ export default function Dashboard() {
                     <button
                       type="button"
                       onClick={() => router.push('/learning-path')}
-                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition ${
+                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition cursor-pointer hover:opacity-90 ${
                         item.status === 'completed'
-                          ? 'bg-emerald-50 text-emerald-800'
+                          ? 'bg-emerald-50 text-emerald-800 hover:bg-emerald-100'
                           : item.status === 'in_progress'
-                            ? 'bg-sky-50 text-sky-800'
-                            : 'bg-slate-50 text-slate-600'
+                            ? 'bg-sky-50 text-sky-800 hover:bg-sky-100'
+                            : 'bg-slate-50 text-slate-600 hover:bg-slate-100'
                       }`}
                     >
                       {item.status === 'completed' ? (
@@ -293,7 +300,7 @@ export default function Dashboard() {
               </ul>
               <Link
                 href="/learning-path"
-                className="inline-flex items-center gap-1 mt-4 text-sky-600 text-sm font-medium hover:underline"
+                className="inline-flex items-center gap-1 mt-4 text-sky-600 text-sm font-medium hover:text-sky-700 hover:underline cursor-pointer rounded-lg px-2 py-1 -ml-2 hover:bg-sky-50 transition"
               >
                 View full path <ChevronRight className="w-4 h-4" />
               </Link>

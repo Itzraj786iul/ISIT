@@ -103,12 +103,24 @@ export async function proxy(req: NextRequest) {
     return NextResponse.next();
   }
 
+  // Require login for parent dashboard
+  if (pathname.startsWith('/parent')) {
+    const payload = await getPayload(req);
+    if (!payload) {
+      const url = new URL('/login', req.url);
+      url.searchParams.set('returnUrl', pathname);
+      return NextResponse.redirect(url);
+    }
+    return NextResponse.next();
+  }
+
   return NextResponse.next();
 }
 
 export const config = {
   matcher: [
     '/teacher/:path*',
+    '/parent/:path*',
     '/lesson/:path*',
     '/checkout',
     '/api/course',

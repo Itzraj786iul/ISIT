@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { User, LayoutDashboard, BookOpen, LogOut, ChevronDown, Menu, X } from 'lucide-react';
+import { User, LayoutDashboard, BookOpen, LogOut, ChevronDown, Menu, X, Settings } from 'lucide-react';
 import Footer from '@/components/Footer';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 
@@ -67,11 +67,19 @@ export default function HomePage() {
     fetchCourses();
   }, []);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
     localStorage.removeItem('user');
     setUser(null);
     setProfileOpen(false);
     router.push('/');
+  };
+
+  const getDashboardHref = () => {
+    const role = user?.role?.toLowerCase();
+    if (role === 'teacher') return '/teacher/dashboard';
+    if (role === 'parent') return '/parent/dashboard';
+    return '/dashboard';
   };
 
   return (
@@ -105,24 +113,26 @@ export default function HomePage() {
                 <div className="relative">
                   <button
                     onClick={() => setProfileOpen((o) => !o)}
-                    className="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 rounded-full pl-3 pr-2 py-2 text-sm font-medium text-gray-800 transition"
+                    className="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 rounded-full pl-3 pr-2 py-2 text-sm font-medium text-slate-800 transition"
+                    aria-label="Profile menu"
                   >
                     <span className="w-7 h-7 rounded-full bg-sky-500 text-white flex items-center justify-center">
                       <User className="w-4 h-4" />
                     </span>
                     <span className="max-w-[120px] truncate">{user.name || 'Profile'}</span>
-                    <ChevronDown className={`w-4 h-4 text-gray-500 transition ${profileOpen ? 'rotate-180' : ''}`} />
+                    <ChevronDown className={`w-4 h-4 text-slate-500 transition ${profileOpen ? 'rotate-180' : ''}`} />
                   </button>
                   {profileOpen && (
-                    <div className="absolute right-0 mt-2 w-52 bg-white rounded-xl shadow-lg border border-gray-200 py-1 z-50">
-                      <div className="px-4 py-2 border-b border-gray-100">
-                        <p className="font-medium text-gray-900 truncate">{user.name}</p>
-                        <p className="text-xs text-gray-500 truncate">{user.email}</p>
+                    <div className="absolute right-0 mt-2 w-52 bg-white rounded-xl shadow-lg border border-slate-200 py-1 z-50">
+                      <div className="px-4 py-2 border-b border-slate-100">
+                        <p className="font-medium text-slate-900 truncate">{user.name}</p>
+                        <p className="text-xs text-slate-500 truncate">{user.email}</p>
                       </div>
-                      <Link href="/dashboard" onClick={() => setProfileOpen(false)} className="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 hover:bg-slate-50"><LayoutDashboard className="w-4 h-4 text-sky-500" /> Dashboard</Link>
-                      <Link href="/my-courses" onClick={() => setProfileOpen(false)} className="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 hover:bg-slate-50"><BookOpen className="w-4 h-4 text-sky-500" /> My Courses</Link>
-                      {user.role?.toLowerCase() === 'teacher' && <Link href="/teacher/dashboard" onClick={() => setProfileOpen(false)} className="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 hover:bg-slate-50"><LayoutDashboard className="w-4 h-4 text-sky-500" /> Teacher Dashboard</Link>}
-                      <button onClick={handleLogout} className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-red-600 hover:bg-red-50"><LogOut className="w-4 h-4" /> Logout</button>
+                      <Link href={getDashboardHref()} onClick={() => setProfileOpen(false)} className="flex items-center gap-2 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50"><LayoutDashboard className="w-4 h-4 text-sky-500" /> My Dashboard</Link>
+                      <Link href="/my-courses" onClick={() => setProfileOpen(false)} className="flex items-center gap-2 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50"><BookOpen className="w-4 h-4 text-sky-500" /> My Courses</Link>
+                      <Link href="/settings" onClick={() => setProfileOpen(false)} className="flex items-center gap-2 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50"><Settings className="w-4 h-4 text-sky-500" /> Settings</Link>
+                      {user.role?.toLowerCase() === 'teacher' && <Link href="/teacher/dashboard" onClick={() => setProfileOpen(false)} className="flex items-center gap-2 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50"><LayoutDashboard className="w-4 h-4 text-sky-500" /> Teacher Dashboard</Link>}
+                      <button type="button" onClick={handleLogout} className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-red-600 hover:bg-red-50"><LogOut className="w-4 h-4" /> Logout</button>
                     </div>
                   )}
                 </div>
@@ -137,17 +147,18 @@ export default function HomePage() {
             <div className="flex md:hidden items-center gap-2">
               {user ? (
                 <div className="relative">
-                  <button onClick={() => setProfileOpen((o) => !o)} className="flex items-center gap-1.5 bg-slate-100 rounded-full p-2">
+                  <button type="button" onClick={() => setProfileOpen((o) => !o)} className="flex items-center gap-1.5 bg-slate-100 rounded-full p-2" aria-label="Profile menu">
                     <User className="w-5 h-5 text-sky-500" />
-                    <ChevronDown className={`w-4 h-4 text-gray-500 ${profileOpen ? 'rotate-180' : ''}`} />
+                    <ChevronDown className={`w-4 h-4 text-slate-500 ${profileOpen ? 'rotate-180' : ''}`} />
                   </button>
                   {profileOpen && (
-                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-200 py-1 z-50">
-                      <div className="px-3 py-2 border-b border-gray-100"><p className="font-medium text-gray-900 text-sm truncate">{user.name}</p></div>
-                      <Link href="/dashboard" onClick={() => setProfileOpen(false)} className="block px-3 py-2 text-sm text-gray-700 hover:bg-slate-50">Dashboard</Link>
-                      <Link href="/my-courses" onClick={() => setProfileOpen(false)} className="block px-3 py-2 text-sm text-gray-700 hover:bg-slate-50">My Courses</Link>
-                      {user.role?.toLowerCase() === 'teacher' && <Link href="/teacher/dashboard" onClick={() => setProfileOpen(false)} className="block px-3 py-2 text-sm text-gray-700 hover:bg-slate-50">Teacher Dashboard</Link>}
-                      <button onClick={handleLogout} className="w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-red-50">Logout</button>
+                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-slate-200 py-1 z-50">
+                      <div className="px-3 py-2 border-b border-slate-100"><p className="font-medium text-slate-900 text-sm truncate">{user.name}</p></div>
+                      <Link href={getDashboardHref()} onClick={() => setProfileOpen(false)} className="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50">My Dashboard</Link>
+                      <Link href="/my-courses" onClick={() => setProfileOpen(false)} className="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50">My Courses</Link>
+                      <Link href="/settings" onClick={() => setProfileOpen(false)} className="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50">Settings</Link>
+                      {user.role?.toLowerCase() === 'teacher' && <Link href="/teacher/dashboard" onClick={() => setProfileOpen(false)} className="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50">Teacher Dashboard</Link>}
+                      <button type="button" onClick={handleLogout} className="w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-red-50">Logout</button>
                     </div>
                   )}
                 </div>

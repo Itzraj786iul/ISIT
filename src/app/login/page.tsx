@@ -48,11 +48,19 @@ function LoginForm() {
         localStorage.setItem('user', JSON.stringify(data.user));
         console.log("User saved to localStorage");
 
-        const userRole = data.user.role?.toLowerCase();
+        const userRole = (data.user.role ?? 'student').toString().toLowerCase();
 
+        // Redirect to personalized homepage by role (ignore returnUrl for teacher/parent)
         if (userRole === 'teacher') {
           router.push('/teacher/dashboard');
-        } else if (returnUrl && returnUrl.startsWith('/') && !returnUrl.startsWith('//')) {
+          return;
+        }
+        if (userRole === 'parent') {
+          router.push('/parent/dashboard');
+          return;
+        }
+        // Student: use returnUrl if present, else dashboard
+        if (returnUrl && returnUrl.startsWith('/') && !returnUrl.startsWith('//')) {
           router.push(returnUrl);
         } else {
           router.push('/dashboard');
