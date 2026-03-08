@@ -20,14 +20,15 @@ export async function GET(req: Request) {
 
     await connectToDB();
     const User = (await import('@/models/User')).default;
-    const user = await User.findById(auth.userId).select('name email role _id').lean();
-    if (!user) {
+    const userDoc = await User.findById(auth.userId).select('name email role _id').lean();
+    if (!userDoc) {
       return NextResponse.json({ message: 'User not found' }, { status: 401 });
     }
+    const user = userDoc as unknown as { _id: unknown; name: string; email: string; role: string };
 
     return NextResponse.json({
       user: {
-        _id: user._id.toString(),
+        _id: user._id?.toString?.() ?? String(user._id),
         name: user.name,
         email: user.email,
         role: user.role,
