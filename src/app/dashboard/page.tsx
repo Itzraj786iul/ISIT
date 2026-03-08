@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Sidebar from '@/components/Sidebar';
-import { BookOpen, ChevronRight, Flame, TrendingUp, Clock } from 'lucide-react';
+import { BookOpen, ChevronRight, Flame, TrendingUp, Clock, Video, Users } from 'lucide-react';
 
 type User = { _id?: string; name: string; email: string; role: string };
 
@@ -135,6 +135,40 @@ export default function Dashboard() {
             </div>
           </Link>
         </div>
+
+        {/* Upcoming live & onboarding */}
+        <section className="mb-6">
+          <h2 className="text-lg font-bold text-slate-800 mb-3">Upcoming live & onboarding</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Link href="/live/1" className="block no-underline">
+              <div className="bg-white rounded-xl border border-slate-200 p-4 sm:p-5 shadow-sm hover:border-sky-200 hover:shadow transition flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-sky-100 flex items-center justify-center flex-shrink-0">
+                  <Video className="w-6 h-6 text-sky-600" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="font-semibold text-slate-800 truncate">Python Functions - Live Session</p>
+                  <p className="text-xs text-slate-500">Today, 10:00 AM · 1 hour</p>
+                </div>
+                <span className="text-sky-600 text-sm font-medium flex-shrink-0">Join →</span>
+              </div>
+            </Link>
+            <Link href="/live/onboarding" className="block no-underline">
+              <div className="bg-white rounded-xl border border-slate-200 p-4 sm:p-5 shadow-sm hover:border-violet-200 hover:shadow transition flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-violet-100 flex items-center justify-center flex-shrink-0">
+                  <Users className="w-6 h-6 text-violet-600" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="font-semibold text-slate-800 truncate">Welcome & Platform Tour</p>
+                  <p className="text-xs text-slate-500">Onboarding · 45 min</p>
+                </div>
+                <span className="text-violet-600 text-sm font-medium flex-shrink-0">View →</span>
+              </div>
+            </Link>
+          </div>
+          <Link href="/schedule" className="inline-flex items-center gap-1 mt-2 text-sky-600 text-sm font-medium hover:underline">
+            View full schedule <ChevronRight className="w-4 h-4" />
+          </Link>
+        </section>
 
         {/* Course Progress + Learning Roadmap */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

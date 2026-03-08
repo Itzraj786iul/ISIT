@@ -14,19 +14,28 @@ type Course = {
   lessons?: { _id: string }[];
 };
 
+type EnrolledItem = {
+  course: { _id: string };
+  nextLessonId: string | null;
+  nextLessonTitle: string | null;
+  progressPercent: number;
+};
+
 export default function CourseDetailsPage() {
   const params = useParams();
   const router = useRouter();
+  const courseId = params.id as string;
 
   const [course, setCourse] = useState<Course | null>(null);
   const [loading, setLoading] = useState(true);
+  const [enrollment, setEnrollment] = useState<EnrolledItem | null>(null);
 
   useEffect(() => {
-    const fetchCourse = async () => {
-      if (!params.id) return;
+    if (!courseId) return;
 
+    const fetchCourse = async () => {
       try {
-        const res = await fetch(`/api/course/${params.id}`);
+        const res = await fetch(`/api/course/${courseId}`);
         const data = await res.json();
 
         if (data.course) {
@@ -45,7 +54,31 @@ export default function CourseDetailsPage() {
     };
 
     fetchCourse();
-  }, [params.id]);
+  }, [courseId]);
+
+  useEffect(() => {
+    const userStr = typeof window !== 'undefined' ? localStorage.getItem('user') : null;
+    if (!userStr || !courseId) return;
+
+    const checkEnrollment = async () => {
+      try {
+        const user = JSON.parse(userStr);
+        const uid = user._id || user.id;
+        if (!uid) return;
+
+        const res = await fetch(`/api/student/enrolled-courses?userId=${encodeURIComponent(uid)}`);
+        if (!res.ok) return;
+
+        const enrolled: EnrolledItem[] = await res.json();
+        const found = enrolled.find((e) => e.course._id === courseId);
+        if (found) setEnrollment(found);
+      } catch {
+        // ignore
+      }
+    };
+
+    checkEnrollment();
+  }, [courseId]);
 
   if (loading) {
     return (
@@ -70,6 +103,13 @@ export default function CourseDetailsPage() {
     }
     router.push(`/checkout?id=${course._id}`);
   };
+
+  const firstLessonId = course?.lessons?.[0]?._id;
+  const continueHref = enrollment?.nextLessonId
+    ? `/lesson/${enrollment.nextLessonId}`
+    : firstLessonId
+      ? `/lesson/${firstLessonId}`
+      : null;
 
   return (
     <div className="min-h-screen bg-[#f3f4f6]">
@@ -172,24 +212,51 @@ export default function CourseDetailsPage() {
           <div>
             <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 sticky top-24">
 
-              <h2 className="text-xs font-bold text-sky-500 uppercase mb-2">
-                Enroll Now
-              </h2>
-
-              <p className="text-sm text-gray-500 mb-4">
-                Start your learning journey today
-              </p>
-
-              <div className="text-4xl font-bold text-gray-900 mb-6">
-                ₹{course.price}
-              </div>
-
-              <button
-                onClick={handleEnroll}
-                className="w-full py-4 bg-[#4f9db8] hover:bg-[#3e8aa4] text-white font-bold rounded-xl transition shadow-lg"
-              >
-                Start Learning
-              </button>
+              {enrollment ? (
+                <>
+                  <h2 className="text-xs font-bold text-emerald-600 uppercase mb-2">
+                    You're enrolled
+                  </h2>
+                  <p className="text-sm text-gray-500 mb-4">
+                    {enrollment.progressPercent > 0
+                      ? `${enrollment.progressPercent}% complete — continue where you left off`
+                      : 'Start watching lessons'}
+                  </p>
+                  {continueHref ? (
+                    <Link
+                      href={continueHref}
+                      className="block w-full py-4 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl transition shadow-lg text-center"
+                    >
+                      {enrollment.nextLessonId ? 'Continue learning' : 'Go to course'}
+                    </Link>
+                  ) : (
+                    <Link
+                      href="/my-courses"
+                      className="block w-full py-4 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl transition shadow-lg text-center"
+                    >
+                      View in My Courses
+                    </Link>
+                  )}
+                </>
+              ) : (
+                <>
+                  <h2 className="text-xs font-bold text-sky-500 uppercase mb-2">
+                    Enroll Now
+                  </h2>
+                  <p className="text-sm text-gray-500 mb-4">
+                    Start your learning journey today
+                  </p>
+                  <div className="text-4xl font-bold text-gray-900 mb-6">
+                    ₹{course.price}
+                  </div>
+                  <button
+                    onClick={handleEnroll}
+                    className="w-full py-4 bg-[#4f9db8] hover:bg-[#3e8aa4] text-white font-bold rounded-xl transition shadow-lg"
+                  >
+                    Start Learning
+                  </button>
+                </>
+              )}
 
               <div className="mt-6 space-y-2 text-sm text-gray-700">
                 <div className="flex items-center gap-2">

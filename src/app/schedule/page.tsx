@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import Sidebar from '@/components/Sidebar';
 import { Video, FileText } from 'lucide-react';
 
@@ -194,13 +195,12 @@ export default function SchedulePage() {
                       {ev.type === 'live' ? 'Live Session' : 'Assignment'}
                     </span>
                     {ev.type === 'live' && (
-                      <button
-                        type="button"
-                        onClick={() => {}}
-                        className="px-3 py-1.5 bg-sky-500 text-white text-sm font-medium rounded-lg hover:bg-sky-600 transition"
+                      <Link
+                        href={`/live/${ev.id}`}
+                        className="inline-block px-3 py-1.5 bg-sky-500 text-white text-sm font-medium rounded-lg hover:bg-sky-600 transition"
                       >
                         Join
-                      </button>
+                      </Link>
                     )}
                   </div>
                 </li>

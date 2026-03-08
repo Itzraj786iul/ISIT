@@ -189,12 +189,29 @@ export default function MyCoursesPage() {
                         style={{ width: `${item.progressPercent}%` }}
                       />
                     </div>
-                    <Link
-                      href={item.nextLessonId ? `/lesson/${item.nextLessonId}` : `/course/${item.course._id}`}
-                      className="mt-4 flex items-center justify-center gap-2 w-full bg-sky-500 text-white py-2.5 rounded-lg text-sm font-semibold hover:bg-sky-600 transition"
-                    >
-                      Continue Course <ChevronRight className="w-4 h-4" />
-                    </Link>
+                    {item.progressPercent >= 100 ? (
+                      <div className="mt-4 flex flex-col gap-2">
+                        <Link
+                          href={`/certificate/${item.course._id}`}
+                          className="flex items-center justify-center gap-2 w-full bg-amber-500 text-white py-2.5 rounded-lg text-sm font-semibold hover:bg-amber-600 transition"
+                        >
+                          View certificate
+                        </Link>
+                        <Link
+                          href={`/course/${item.course._id}`}
+                          className="flex items-center justify-center gap-2 w-full border border-slate-200 text-slate-700 py-2 rounded-lg text-sm font-medium hover:bg-slate-50 transition"
+                        >
+                          Review course
+                        </Link>
+                      </div>
+                    ) : (
+                      <Link
+                        href={item.nextLessonId ? `/lesson/${item.nextLessonId}` : `/course/${item.course._id}`}
+                        className="mt-4 flex items-center justify-center gap-2 w-full bg-sky-500 text-white py-2.5 rounded-lg text-sm font-semibold hover:bg-sky-600 transition"
+                      >
+                        Continue Course <ChevronRight className="w-4 h-4" />
+                      </Link>
+                    )}
                   </div>
                 </div>
               );

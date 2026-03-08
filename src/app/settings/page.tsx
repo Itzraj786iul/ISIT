@@ -4,11 +4,12 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Sidebar from '@/components/Sidebar';
-import { User, ChevronRight } from 'lucide-react';
+import { User, ChevronRight, Bell, HelpCircle } from 'lucide-react';
 
 export default function SettingsPage() {
   const router = useRouter();
   const [user, setUser] = useState<{ name?: string; email?: string; role?: string } | null>(null);
+  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
 
   useEffect(() => {
     const userStr = localStorage.getItem('user');
@@ -53,6 +54,39 @@ export default function SettingsPage() {
               </div>
             </div>
           </div>
+
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+            <div className="p-5 border-b border-slate-100">
+              <h2 className="text-base font-bold text-slate-800">Notifications</h2>
+              <p className="text-sm text-slate-500 mt-0.5">Reminders for live classes, quizzes, and assignments</p>
+            </div>
+            <div className="p-5 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Bell className="w-5 h-5 text-slate-500" />
+                <span className="font-medium text-slate-800">Email & in-app reminders</span>
+              </div>
+              <button
+                type="button"
+                role="switch"
+                aria-checked={notificationsEnabled}
+                onClick={() => setNotificationsEnabled((v) => !v)}
+                className={`relative w-11 h-6 rounded-full transition ${notificationsEnabled ? 'bg-sky-500' : 'bg-slate-200'}`}
+              >
+                <span className={`absolute top-1 w-4 h-4 rounded-full bg-white shadow transition left-1 ${notificationsEnabled ? 'translate-x-5' : 'translate-x-0'}`} />
+              </button>
+            </div>
+          </div>
+
+          <Link
+            href="/help"
+            className="flex items-center justify-between p-4 bg-white rounded-xl border border-slate-200 shadow-sm hover:border-sky-200 hover:shadow transition no-underline text-slate-800"
+          >
+            <div className="flex items-center gap-3">
+              <HelpCircle className="w-5 h-5 text-sky-500" />
+              <span className="font-medium">Help & support</span>
+            </div>
+            <ChevronRight className="w-5 h-5 text-slate-400" />
+          </Link>
 
           <Link
             href="/dashboard"

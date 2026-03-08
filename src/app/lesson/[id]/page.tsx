@@ -36,6 +36,7 @@ export default function LessonPlayerPage() {
   ]);
   const [inputValue, setInputValue] = useState('');
   const [mobileLessonsOpen, setMobileLessonsOpen] = useState(false);
+  const [mobileTutorOpen, setMobileTutorOpen] = useState(false);
 
   useEffect(() => {
     if (!lessonId) return;
@@ -169,6 +170,55 @@ export default function LessonPlayerPage() {
   const defaultVideoUrl = 'https://www.youtube.com/embed/W6NZfCO5SIk';
   const videoUrl = currentLesson.videoUrl || defaultVideoUrl;
 
+  const aiTutorContent = (
+    <>
+      <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-slate-50 min-h-0">
+        {messages.map((msg) => (
+          <div
+            key={msg.id}
+            className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+          >
+            <div
+              className={`px-4 py-3 rounded-2xl text-sm max-w-[85%] sm:max-w-xs shadow ${
+                msg.sender === 'user'
+                  ? 'bg-sky-600 text-white rounded-br-none'
+                  : 'bg-white border border-slate-200 text-gray-900 rounded-bl-none'
+              }`}
+            >
+              {msg.text}
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="p-4 border-t border-gray-200 bg-white flex-shrink-0">
+        <form onSubmit={handleSendMessage} className="flex gap-2">
+          <input
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            placeholder="Ask me anything..."
+            className="flex-1 px-4 py-2.5 border border-slate-300 rounded-xl text-sm text-gray-900 focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+          />
+          <button
+            type="submit"
+            className="bg-sky-600 hover:bg-sky-700 text-white px-4 py-2.5 rounded-xl text-sm font-medium flex-shrink-0"
+          >
+            Send
+          </button>
+        </form>
+      </div>
+    </>
+  );
+
+  const aiTutorPanel = (
+    <>
+      <div className="p-4 border-b border-gray-200 bg-white flex-shrink-0">
+        <p className="text-sm font-semibold text-gray-900">AI Tutor</p>
+        <p className="text-xs text-emerald-600 font-medium">● Online</p>
+      </div>
+      {aiTutorContent}
+    </>
+  );
+
   const lessonsSidebar = (
     <>
       <div className="p-5 border-b border-gray-300">
@@ -249,20 +299,19 @@ export default function LessonPlayerPage() {
             >
               Lessons
             </button>
-            <button
-              type="button"
-              onClick={() => alert('Quiz feature coming soon!')}
-              className="px-4 sm:px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg font-medium transition flex-shrink-0"
+            <Link
+              href={`/lesson/${lessonId}/quiz`}
+              className="px-4 sm:px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg font-medium transition flex-shrink-0 inline-block"
             >
               Take Quiz
-            </button>
+            </Link>
           </div>
         </div>
 
         <div className="flex-1 flex flex-col md:flex-row overflow-hidden min-h-0">
           <div className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8 bg-gray-100">
-            <div className="bg-white p-4 sm:p-6 rounded-xl shadow border border-gray-300">
-              <div className="aspect-video rounded-xl overflow-hidden">
+            <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200">
+              <div className="aspect-video rounded-xl overflow-hidden bg-black">
                 <iframe
                   src={videoUrl}
                   allowFullScreen
@@ -270,41 +319,41 @@ export default function LessonPlayerPage() {
                   title={currentLesson.title}
                 />
               </div>
-              <div className="flex items-center justify-between mt-6">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 mt-6">
                 <button
                   type="button"
                   onClick={goPrev}
                   disabled={currentIndex <= 0}
-                  className="px-4 py-2 border border-gray-400 rounded-lg text-sm text-gray-800 disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="order-2 sm:order-1 px-4 py-2.5 border border-slate-300 rounded-xl text-sm font-medium text-slate-800 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-50"
                 >
                   ← Previous
                 </button>
-                <div className="flex items-center gap-4">
+                <div className="order-1 sm:order-2 flex flex-col sm:flex-row items-center gap-2 sm:gap-4">
+                  <span className="text-sm text-slate-600 font-medium">
+                    Lesson {currentIndex + 1} of {lessonsList.length}
+                  </span>
                   <button
                     type="button"
                     onClick={markComplete}
-                    className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm rounded-lg"
+                    className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-xl"
                   >
                     {completedLessons.includes(currentLesson._id) ? 'Completed ✓' : 'Mark as Complete'}
                   </button>
-                  <span className="text-sm text-gray-700 font-medium">
-                    Lesson {currentIndex + 1} of {lessonsList.length}
-                  </span>
                 </div>
                 <button
                   type="button"
                   onClick={goNext}
                   disabled={currentIndex >= lessonsList.length - 1}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="order-3 px-4 py-2.5 bg-sky-600 hover:bg-sky-700 text-white rounded-xl text-sm font-medium disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   Next →
                 </button>
               </div>
             </div>
             {currentLesson.content && (
-              <div className="mt-6 bg-white p-6 rounded-xl shadow border border-gray-300">
-                <h3 className="font-semibold text-gray-900 mb-2">Notes</h3>
-                <p className="text-gray-700 text-sm whitespace-pre-wrap">{currentLesson.content}</p>
+              <div className="mt-6 bg-white p-5 sm:p-6 rounded-xl shadow-sm border border-slate-200">
+                <h3 className="font-semibold text-slate-900 mb-2">Notes</h3>
+                <p className="text-slate-700 text-sm whitespace-pre-wrap leading-relaxed">{currentLesson.content}</p>
               </div>
             )}
             <div className="mt-10">
@@ -319,47 +368,52 @@ export default function LessonPlayerPage() {
             </div>
           </div>
 
-          <div className="hidden lg:flex w-96 bg-white border-l border-gray-300 flex-col flex-shrink-0">
-            <div className="p-4 border-b border-gray-300 bg-gray-50">
-              <p className="text-sm font-semibold text-gray-900">AI Tutor</p>
-              <p className="text-xs text-green-600 font-medium">● Online</p>
-            </div>
-            <div className="flex-1 overflow-y-auto p-5 space-y-3 bg-gray-100">
-              {messages.map((msg) => (
-                <div
-                  key={msg.id}
-                  className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-                >
-                  <div
-                    className={`px-4 py-3 rounded-2xl text-sm max-w-xs shadow ${
-                      msg.sender === 'user'
-                        ? 'bg-blue-600 text-white rounded-br-none'
-                        : 'bg-white border border-gray-300 text-gray-900 rounded-bl-none'
-                    }`}
-                  >
-                    {msg.text}
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className="p-4 border-t border-gray-300 bg-white">
-              <form onSubmit={handleSendMessage} className="flex gap-2">
-                <input
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  placeholder="Ask me anything..."
-                  className="flex-1 px-4 py-2 border border-gray-400 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-blue-500"
-                />
-                <button
-                  type="submit"
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 rounded-lg text-sm font-medium"
-                >
-                  Send
-                </button>
-              </form>
-            </div>
+          {/* AI Tutor — desktop: sidebar; mobile: FAB + bottom sheet */}
+          <div className="hidden lg:flex w-96 bg-white border-l border-slate-200 flex-col flex-shrink-0">
+            {aiTutorPanel}
           </div>
         </div>
+
+        {/* Mobile: Floating AI Tutor button */}
+        <button
+          type="button"
+          onClick={() => setMobileTutorOpen(true)}
+          className="lg:hidden fixed right-6 z-40 w-14 h-14 rounded-full bg-sky-500 text-white shadow-lg hover:bg-sky-600 flex items-center justify-center"
+          style={{ bottom: 'max(1.5rem, env(safe-area-inset-bottom, 1.5rem))' }}
+          aria-label="Open AI Tutor"
+        >
+          <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+          </svg>
+        </button>
+
+        {/* Mobile: AI Tutor bottom sheet */}
+        {mobileTutorOpen && (
+          <div className="fixed inset-0 z-50 lg:hidden flex flex-col">
+            <div className="absolute inset-0 bg-black/40" onClick={() => setMobileTutorOpen(false)} aria-hidden />
+            <div className="absolute bottom-0 left-0 right-0 top-[15%] sm:top-[20%] bg-white rounded-t-2xl shadow-2xl flex flex-col overflow-hidden">
+              <div className="flex items-center justify-between p-4 border-b border-slate-200 flex-shrink-0">
+                <div>
+                  <p className="text-sm font-semibold text-gray-900">AI Tutor</p>
+                  <p className="text-xs text-emerald-600 font-medium">● Online</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setMobileTutorOpen(false)}
+                  className="p-2 rounded-lg text-slate-500 hover:bg-slate-100"
+                  aria-label="Close"
+                >
+                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+                  </svg>
+                </button>
+              </div>
+              <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
+                {aiTutorContent}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
