@@ -67,12 +67,14 @@ export async function POST(req: Request) {
     const Lesson = (await import('@/models/Lesson')).default;
     const Course = (await import('@/models/Course')).default;
 
-    const lesson = await Lesson.findById(lessonId).lean();
-    if (!lesson) {
+    const lessonDoc = await Lesson.findById(lessonId).lean();
+    if (!lessonDoc) {
       return NextResponse.json({ message: 'Lesson not found' }, { status: 404 });
     }
+    const lesson = lessonDoc as { courseId: unknown; title?: string; content?: string };
+    const courseId = lesson.courseId?.toString?.() ?? lesson.courseId;
 
-    const course = await Course.findById(lesson.courseId).lean();
+    const course = await Course.findById(courseId).lean();
     if (!course) {
       return NextResponse.json({ message: 'Course not found' }, { status: 404 });
     }
