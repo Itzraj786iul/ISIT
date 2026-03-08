@@ -61,6 +61,18 @@ export async function proxy(req: NextRequest) {
     return NextResponse.next();
   }
 
+  if (pathname === '/api/lesson' && method === 'POST') {
+    const payload = await getPayload(req);
+    if (!payload) return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    if (payload.role !== 'teacher') return NextResponse.json({ message: 'Forbidden' }, { status: 403 });
+    return NextResponse.next();
+  }
+  if (pathname.startsWith('/api/lesson/') && (method === 'PATCH' || method === 'DELETE')) {
+    const payload = await getPayload(req);
+    if (!payload) return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    if (payload.role !== 'teacher') return NextResponse.json({ message: 'Forbidden' }, { status: 403 });
+    return NextResponse.next();
+  }
   if (pathname.startsWith('/api/user') || pathname.startsWith('/api/student') || pathname === '/api/checkout') {
     const payload = await getPayload(req);
     if (!payload) {
@@ -101,6 +113,8 @@ export const config = {
     '/checkout',
     '/api/course',
     '/api/course/:path*',
+    '/api/lesson',
+    '/api/lesson/:path*',
     '/api/user/:path*',
     '/api/student/:path*',
     '/api/checkout',

@@ -234,7 +234,7 @@ export default function TeacherDashboard() {
                     </td>
                     <td style={{ padding: 16 }}>
                       <div style={{ display: 'flex', gap: 8 }}>
-                        <Link href={`/course/${course._id}`} style={{ background: '#f1f5f9', border: 'none', padding: 6, borderRadius: 4, cursor: 'pointer', display: 'inline-flex' }} title="View course">
+                        <Link href={`/teacher/course/${course._id}/edit`} style={{ background: '#f1f5f9', border: 'none', padding: 6, borderRadius: 4, cursor: 'pointer', display: 'inline-flex' }} title="Edit course">
                           <Edit size={14} color="#64748b" />
                         </Link>
                         <button 
