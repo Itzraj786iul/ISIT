@@ -1,0 +1,207 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite" // Using SQLite for MVP speed. We can swap to PostgreSQL in production later.
+  url      = env("DATABASE_URL")
+}
+
+// --------------------------------------------------------
+// 1. USERS & AUTH (CORE)
+// --------------------------------------------------------
+enum Role {
+  STUDENT
+  TEACHER
+  PARENT
+  SCHOOL_ADMIN
+}
+
+model User {
+  id             String   @id @default(uuid())
+  name           String
+  email          String   @unique
+  password_hash  String
+  role           Role     @default(STUDENT)
+  phone          String?
+  is_active      Boolean  @default(true)
+  email_verified Boolean  @default(false)
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+
+  // Relations
+  studentProfile     StudentProfile?
+  parentProfile      ParentProfile?
+  
+  // Relations for Enrollment & Progress (Direct link for ease of access)
+  enrollments        Enrollment[]
+  lessonProgress     LessonProgress[]
+  
+  // Relations for Linking (Parent <-> Student)
+  parentLinks        ParentStudentLink[] @relation("ParentLinks")
+  childLinks         ParentStudentLink[] @relation("ChildLinks")
+
+  // Course Creation (Teachers/School Admins)
+  createdCourses     Course[] @relation("CourseCreator")
+}
+
+// --------------------------------------------------------
+// 2. STUDENT PROFILE (EXTENSION)
+// --------------------------------------------------------
+model StudentProfile {
+  id            String   @id @default(uuid())
+  user_id       String   @unique
+  grade         String   // e.g., "10", "12"
+  board         String   // CBSE, ICSE, State
+  school_name   String?
+  learning_level String? // beginner, intermediate
+  created_at    DateTime @default(now())
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+// --------------------------------------------------------
+// 3. PARENT PROFILE & LINKING
+// --------------------------------------------------------
+model ParentProfile {
+  id        String   @id @default(uuid())
+  user_id   String   @unique
+  created_at DateTime @default(now())
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+model ParentStudentLink {
+  id        String   @id @default(uuid())
+  parent_id String
+  student_id String
+  relation  String   // father, mother, guardian
+  created_at DateTime @default(now())
+
+  parent User @relation("ParentLinks", fields: [parent_id], references: [id], onDelete: Cascade)
+  child  User @relation("ChildLinks", fields: [student_id], references: [id], onDelete: Cascade)
+}
+
+// --------------------------------------------------------
+// 4. COURSES & STRUCTURE
+// --------------------------------------------------------
+model Course {
+  id           String   @id @default(uuid())
+  title        String
+  description  String
+  subject      String   // Math, Science, Coding
+  grade        String   // 6-8, 9-10
+  difficulty   String   // easy, medium, hard
+  thumbnail_url String?
+  is_active    Boolean  @default(true)
+  created_at   DateTime @default(now())
+
+
+  createdById String?
+  createdBy   User?    @relation("CourseCreator", fields: [createdById], references: [id])
+  
+  // Relations
+  modules      Module[]
+  enrollments  Enrollment[]
+}
+
+model Module {
+  id          String   @id @default(uuid())
+  course_id   String
+  title       String
+  order_index Int      // To sort modules within a course
+  created_at  DateTime @default(now())
+
+  course   Course   @relation(fields: [course_id], references: [id], onDelete: Cascade)
+  lessons  Lesson[]
+}
+
+model Lesson {
+  id             String   @id @default(uuid())
+  module_id      String
+  title          String
+  content_type   String   // video, interactive, quiz
+  content        String   // JSON / Markdown / URL
+  order_index    Int      // To sort lessons within a module
+  estimated_time Int      // minutes
+  created_at     DateTime @default(now())
+
+  module        Module          @relation(fields: [module_id], references: [id], onDelete: Cascade)
+  progress      LessonProgress[]
+  activities    Activity[]
+}
+
+// --------------------------------------------------------
+// 5. ENROLLMENT & COURSE PROGRESS
+// --------------------------------------------------------
+model Enrollment {
+  id             String   @id @default(uuid())
+  user_id        String
+  course_id      String
+  progress_percent Float   @default(0)
+  last_lesson_id String?   // nullable
+  started_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+
+  user   User   @relation(fields: [user_id], references: [id])
+  course Course @relation(fields: [course_id], references: [id])
+
+  @@unique([user_id, course_id])
+}
+
+// --------------------------------------------------------
+// 7. LESSON LEVEL PROGRESS (VERY IMPORTANT)
+// --------------------------------------------------------
+model LessonProgress {
+  id                String   @id @default(uuid())
+  user_id           String
+  lesson_id         String
+  status            String   @default("not_started") // not_started, in_progress, completed
+  confidence_rating Int?     // 1-5
+  time_spent        Int      @default(0) // seconds
+  updated_at        DateTime @updatedAt
+
+  user   User   @relation(fields: [user_id], references: [id])
+  lesson Lesson @relation(fields: [lesson_id], references: [id])
+
+  @@unique([user_id, lesson_id])
+}
+
+// --------------------------------------------------------
+// 8. ACTIVITIES & QUIZZES (FUTURE READY)
+// --------------------------------------------------------
+model Activity {
+  id        String   @id @default(uuid())
+  lesson_id String
+  type      String   // quiz, drag_drop, simulation
+  config    String   // JSON string
+  created_at DateTime @default(now())
+
+  lesson  Lesson           @relation(fields: [lesson_id], references: [id], onDelete: Cascade)
+  results ActivityResult[]
+}
+
+model ActivityResult {
+  id         String   @id @default(uuid())
+  activity_id String
+  user_id    String
+  score      Float
+  response   String   // JSON string
+  created_at DateTime @default(now())
+
+  activity Activity @relation(fields: [activity_id], references: [id])
+}
+
+// --------------------------------------------------------
+// 9. AI TUTOR LOGS
+// --------------------------------------------------------
+model AIInteraction {
+  id        String   @id @default(uuid())
+  user_id   String
+  lesson_id String?
+  question  String
+  response  String
+  created_at DateTime @default(now())
+}
