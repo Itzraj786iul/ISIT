@@ -21,9 +21,9 @@ export function SubjectsGridSkeleton() {
         <div className="h-5 bg-slate-100 rounded w-32 animate-pulse" />
         <div className="h-4 bg-slate-100 rounded w-16 animate-pulse" />
       </div>
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
         {[1, 2, 3, 4].map((i) => (
-          <div key={i} className="bg-white rounded-xl border border-slate-200 p-5 animate-pulse">
+          <div key={i} className="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 animate-pulse dark:bg-slate-900 dark:border-slate-700">
             <div className="h-10 w-10 bg-slate-100 rounded-xl mb-3" />
             <div className="h-4 bg-slate-100 rounded w-3/4" />
           </div>
@@ -45,27 +45,32 @@ export default function SubjectsGridSection({ loading, subjects }: Props) {
 
   return (
     <section>
-      <div className="flex items-center justify-between mb-3">
-        <h2 className="text-lg font-bold text-slate-800">Your subjects</h2>
-        <Link href="/subjects" className="text-sky-600 text-sm font-medium hover:underline inline-flex items-center gap-1">
-          View all <ChevronRight className="w-4 h-4" />
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3 sm:mb-4 min-w-0">
+        <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-slate-800 dark:text-slate-100">Your subjects</h2>
+        <Link
+          href="/subjects"
+          className="text-sky-600 text-sm sm:text-base font-semibold hover:underline inline-flex items-center gap-1 min-h-[44px] sm:min-h-0 rounded-xl px-1 -ml-1 sm:ml-0 active:scale-[0.98] w-fit"
+        >
+          View all <ChevronRight className="w-4 h-4 shrink-0" />
         </Link>
       </div>
       {subjects.length > 0 ? (
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
           {subjects.map((subject, i) => {
             const color = SUBJECT_COLORS[i % SUBJECT_COLORS.length];
             return (
               <Link
                 key={subject._id}
                 href={`/subject/${subject._id}`}
-                className={`group block bg-white rounded-xl border border-slate-200 p-5 shadow-sm ${color.hover} hover:shadow-md transition no-underline`}
+                className={`group block bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-sm ${color.hover} hover:shadow-md transition no-underline min-h-[44px] active:scale-[0.99] overflow-hidden dark:bg-slate-900 dark:border-slate-700`}
               >
                 <div className={`w-10 h-10 rounded-xl ${color.bg} flex items-center justify-center mb-3`}>
                   <BookOpen className={`w-5 h-5 ${color.icon}`} />
                 </div>
-                <h3 className="font-semibold text-slate-900 text-sm group-hover:text-sky-700 truncate">{subject.name}</h3>
-                <p className="text-xs text-slate-500 mt-1">
+                <h3 className="font-semibold text-slate-900 text-sm sm:text-base group-hover:text-sky-700 dark:text-slate-100 dark:group-hover:text-sky-400 break-words">
+                  {subject.name}
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-500 mt-1 dark:text-slate-400">
                   {subject.grade} · {subject.board}
                 </p>
               </Link>
@@ -78,7 +83,7 @@ export default function SubjectsGridSection({ loading, subjects }: Props) {
           title="No subjects yet"
           description="When your organization adds subjects, they will show up here. Open the full catalog to start your first session."
           action={
-            <Link href="/subjects" className="btn-primary no-underline px-5 py-2.5">
+            <Link href="/subjects" className="btn-primary no-underline px-5 py-3 min-h-[44px] inline-flex items-center justify-center rounded-xl active:scale-[0.98]">
               Browse all subjects
             </Link>
           }

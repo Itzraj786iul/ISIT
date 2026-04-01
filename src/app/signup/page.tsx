@@ -4,11 +4,13 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { persistAuthFromLogin } from '@/lib/client-auth';
+import { useAuth } from '@/lib/auth-context';
 
 type Role = 'Student' | 'Parent' | 'Teacher';
 
 export default function SignupPage() {
   const router = useRouter();
+  const { refresh } = useAuth();
 
   const [role, setRole] = useState<Role>('Student');
   const [profileImage, setProfileImage] = useState<string | null>(null);
@@ -62,6 +64,7 @@ export default function SignupPage() {
       const response: Response = await fetch('/api/auth/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
             name: formData.name,
             email: formData.email,
@@ -82,6 +85,8 @@ export default function SignupPage() {
       if (typeof data.token === 'string' && data.token && data.user) {
         persistAuthFromLogin(data.token, data.user as Record<string, unknown>);
       }
+
+      await refresh({ force: true });
 
       const userObj = data.user || { role };
       const roleKey = (userObj.role ?? 'Student').toString().toLowerCase();

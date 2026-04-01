@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { Lightbulb, ArrowRight } from 'lucide-react';
+import { useT } from '@/lib/t';
 import type { RecommendationItem } from './dashboard-types';
 
 function difficultyStyles(d: RecommendationItem['difficulty']) {
@@ -38,17 +39,21 @@ type Props = {
 };
 
 export default function RecommendationsSection({ loading, items }: Props) {
+  const tr = useT();
+
   if (loading) {
     return <RecommendationsSectionSkeleton />;
   }
 
   return (
     <section>
-      <div className="flex items-center gap-2 mb-4">
-        <Lightbulb className="w-5 h-5 text-violet-500" />
-        <h2 className="text-lg font-bold text-slate-800">Recommended for you</h2>
+      <div className="flex items-center gap-2 mb-3 sm:mb-4">
+        <Lightbulb className="w-5 h-5 text-violet-500 shrink-0" />
+        <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-slate-800 dark:text-slate-100">{tr('recommendedForYou')}</h2>
       </div>
-      <p className="text-sm text-slate-500 -mt-2 mb-4">Topics that match your level and gaps — start when you are ready.</p>
+      <p className="text-sm sm:text-base text-slate-500 -mt-1 mb-4 dark:text-slate-400 leading-relaxed">
+        Topics that match your level and gaps — start when you are ready.
+      </p>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {items.map((item, idx) => {
           const href = item.topicId ? `/topic/${item.topicId}` : '/subjects';
@@ -64,9 +69,9 @@ export default function RecommendationsSection({ loading, items }: Props) {
               <div className="flex-1" />
               <Link
                 href={href}
-                className="mt-4 inline-flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-700 text-white text-sm font-medium px-4 py-2.5 rounded-lg transition no-underline"
+                className="mt-4 inline-flex items-center justify-center gap-2 w-full sm:w-auto min-h-[44px] bg-violet-600 hover:bg-violet-700 text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition no-underline active:scale-[0.98] motion-safe-transition"
               >
-                Start
+                {tr('start')}
                 <ArrowRight className="w-4 h-4" />
               </Link>
             </div>

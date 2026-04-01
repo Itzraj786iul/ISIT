@@ -4,21 +4,24 @@
  * Student nav: includes @legacy MARKETPLACE_LMS links ("My Courses", "Browse All" → /courses).
  * AI-first primary: Subjects + Learning Path. Migration: docs/AI_FIRST_MIGRATION.md
  */
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useLayoutEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { User } from 'lucide-react';
+import { User, Menu } from 'lucide-react';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { useAuth } from '@/lib/auth-context';
+import { useT } from '@/lib/t';
+import type { I18nKey } from '@/lib/t';
 
-const navItems = [
-  { label: 'Dashboard', href: '/dashboard' },
-  { label: 'My Courses', href: '/my-courses' },
-  { label: 'Subjects', href: '/subjects' },
-  { label: 'Browse All', href: '/courses' },
-  { label: 'Analytics', href: '/analytics' },
-  { label: 'Learning Path', href: '/learning-path' },
-  { label: 'Achievements', href: '/achievements' },
-  { label: 'Schedule', href: '/schedule' },
+const navItems: { iconId: string; href: string; labelKey: I18nKey }[] = [
+  { iconId: 'Dashboard', href: '/dashboard', labelKey: 'dashboard' },
+  { iconId: 'My Courses', href: '/my-courses', labelKey: 'myCourses' },
+  { iconId: 'Subjects', href: '/subjects', labelKey: 'subjects' },
+  { iconId: 'Browse All', href: '/courses', labelKey: 'browseAll' },
+  { iconId: 'Analytics', href: '/analytics', labelKey: 'analytics' },
+  { iconId: 'Learning Path', href: '/learning-path', labelKey: 'learningPath' },
+  { iconId: 'Achievements', href: '/achievements', labelKey: 'achievements' },
+  { iconId: 'Schedule', href: '/schedule', labelKey: 'schedule' },
 ];
 
 function SidebarIcon({ name, color }: { name: string; color: string }) {
@@ -35,16 +38,22 @@ function SidebarIcon({ name, color }: { name: string; color: string }) {
 }
 
 export default function Sidebar() {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   const { user, logout } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
+  const tr = useT();
+
+  useLayoutEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (window.innerWidth >= 768) setOpen(true);
+  }, []);
 
   useEffect(() => {
     const onResize = () => {
-      if (typeof window !== 'undefined' && window.innerWidth < 768) setOpen(false);
+      if (typeof window === 'undefined') return;
+      if (window.innerWidth < 768) setOpen(false);
     };
-    onResize();
     window.addEventListener('resize', onResize);
     return () => window.removeEventListener('resize', onResize);
   }, []);
@@ -60,41 +69,65 @@ export default function Sidebar() {
 
   return (
     <>
-      {/* Mobile backdrop when sidebar open */}
       {open && (
         <div
-          className="fixed inset-0 bg-black/50 z-20 md:hidden"
+          className="fixed inset-0 bg-black/50 z-20 md:hidden motion-safe-transition"
           aria-hidden="true"
           onClick={() => setOpen(false)}
         />
       )}
-      <aside className="w-[var(--sidebar-w)] min-w-[var(--sidebar-w)] bg-white border-r border-slate-200 flex flex-col fixed h-screen z-30 overflow-hidden transition-[width,min-width] duration-200 shadow-lg md:shadow-none" style={{ '--sidebar-w': open ? '220px' : '0' } as React.CSSProperties}>
-        <div className="p-4 flex items-center justify-between border-b border-slate-100">
-          <Link href="/dashboard" className="flex items-center gap-2 no-underline">
-            <div className="w-8 h-8 rounded-md bg-sky-500 flex items-center justify-center text-white font-bold text-xs">I</div>
-            <div>
-              <div className="font-bold text-slate-800 text-sm">ISIT</div>
-              <div className="text-[10px] text-slate-500 font-medium">Student Portal</div>
+      <aside
+        id="student-sidebar"
+        className={`flex flex-col fixed left-0 top-0 h-dvh z-30 bg-white border-slate-200 shadow-lg md:shadow-none dark:bg-slate-900 dark:border-slate-700 transition-[width] duration-200 ease-out overflow-hidden ${
+          open ? 'w-[min(85vw,260px)] md:w-[220px] border-r' : 'w-0 border-r-0'
+        }`}
+      >
+        <div className="p-4 flex items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-700 w-[min(85vw,260px)] md:w-[220px] shrink-0">
+          <Link href="/dashboard" className="flex items-center gap-2 no-underline min-w-0" onClick={() => window.innerWidth < 768 && setOpen(false)}>
+            <div className="w-8 h-8 rounded-md bg-sky-500 flex items-center justify-center text-white font-bold text-xs shrink-0">I</div>
+            <div className="min-w-0">
+              <div className="font-bold text-slate-800 text-sm dark:text-slate-100">ISIT</div>
+              <div className="text-[10px] text-slate-500 font-medium dark:text-slate-400">{tr('studentPortal')}</div>
             </div>
           </Link>
-          <button type="button" onClick={() => setOpen(false)} className="p-1.5 text-slate-400 hover:text-slate-600 rounded">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="15 18 9 12 15 6" /></svg>
-          </button>
+          <div className="flex items-center gap-1 shrink-0">
+            <ThemeToggle className="!p-1.5" />
+            <button
+              type="button"
+              onClick={() => setOpen(false)}
+              className="md:hidden min-h-[44px] min-w-[44px] inline-flex items-center justify-center text-slate-500 hover:text-slate-800 rounded-xl dark:hover:text-slate-200 active:scale-95 transition-transform"
+              aria-label="Close menu"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" /></svg>
+            </button>
+            <button
+              type="button"
+              onClick={() => setOpen(false)}
+              className="hidden md:inline-flex p-1.5 text-slate-400 hover:text-slate-600 rounded dark:hover:text-slate-300"
+              aria-label="Collapse sidebar"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="15 18 9 12 15 6" /></svg>
+            </button>
+          </div>
         </div>
 
         {user && (
-          <Link href="/dashboard" className="p-4 flex items-center gap-3 border-b border-slate-100 no-underline hover:bg-slate-50 transition">
-            <div className="w-10 h-10 rounded-full bg-sky-100 text-sky-600 flex items-center justify-center flex-shrink-0">
+          <Link
+            href="/dashboard"
+            className="p-4 flex items-center gap-3 border-b border-slate-100 no-underline hover:bg-slate-50 transition dark:border-slate-700 dark:hover:bg-slate-800 w-[min(85vw,260px)] md:w-[220px] shrink-0"
+            onClick={() => window.innerWidth < 768 && setOpen(false)}
+          >
+            <div className="w-10 h-10 rounded-full bg-sky-100 text-sky-600 flex items-center justify-center flex-shrink-0 dark:bg-sky-900/50 dark:text-sky-300">
               <User className="w-5 h-5" />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="font-semibold text-slate-800 text-sm truncate">{user.name || 'Student'}</p>
-              <p className="text-xs text-slate-500 truncate">{user.email || ''}</p>
+              <p className="font-semibold text-slate-800 text-sm truncate dark:text-slate-100">{user.name || 'Student'}</p>
+              <p className="text-xs text-slate-500 truncate dark:text-slate-400">{user.email || ''}</p>
             </div>
           </Link>
         )}
 
-        <nav className="flex-1 p-2 flex flex-col gap-0.5 overflow-y-auto">
+        <nav className="flex-1 p-2 flex flex-col gap-0.5 overflow-y-auto w-[min(85vw,260px)] md:w-[220px] min-h-0">
           {navItems.map((item) => {
             const active = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
             const color = active ? '#2563eb' : '#64748b';
@@ -102,38 +135,62 @@ export default function Sidebar() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-medium no-underline transition-colors ${active ? 'bg-sky-50 text-sky-600' : 'text-slate-600 hover:bg-slate-50'}`}
+                onClick={() => window.innerWidth < 768 && setOpen(false)}
+                className={`flex items-center gap-3 px-3 py-3 min-h-[44px] rounded-xl text-[13px] font-medium no-underline transition-colors active:scale-[0.99] ${active ? 'bg-sky-50 text-sky-600 dark:bg-sky-950/60 dark:text-sky-400' : 'text-slate-600 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800'}`}
               >
-                <SidebarIcon name={item.label} color={color} />
-                <span className="whitespace-nowrap">{item.label}</span>
+                <SidebarIcon name={item.iconId} color={color} />
+                <span className="whitespace-nowrap">{tr(item.labelKey)}</span>
               </Link>
             );
           })}
         </nav>
 
-        <div className="p-2 border-t border-slate-100">
-          <Link href="/settings" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-medium text-slate-600 hover:bg-slate-50 no-underline">
+        <div className="p-2 border-t border-slate-100 dark:border-slate-700 w-[min(85vw,260px)] md:w-[220px] shrink-0">
+          <Link
+            href="/settings"
+            onClick={() => window.innerWidth < 768 && setOpen(false)}
+            className="flex items-center gap-3 px-3 py-3 min-h-[44px] rounded-xl text-[13px] font-medium text-slate-600 hover:bg-slate-50 no-underline dark:text-slate-300 dark:hover:bg-slate-800 active:scale-[0.99]"
+          >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2"><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" /></svg>
-            Settings
+            {tr('settings')}
           </Link>
-          <Link href="/help" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-medium text-slate-600 hover:bg-slate-50 no-underline">
+          <Link
+            href="/help"
+            onClick={() => window.innerWidth < 768 && setOpen(false)}
+            className="flex items-center gap-3 px-3 py-3 min-h-[44px] rounded-xl text-[13px] font-medium text-slate-600 hover:bg-slate-50 no-underline dark:text-slate-300 dark:hover:bg-slate-800 active:scale-[0.99]"
+          >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-            Help
+            {tr('help')}
           </Link>
-          <button type="button" onClick={handleLogout} className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-[13px] font-medium text-red-600 hover:bg-red-50 border-0 bg-transparent cursor-pointer">
+          <button
+            type="button"
+            onClick={handleLogout}
+            className="flex items-center gap-3 w-full px-3 py-3 min-h-[44px] rounded-xl text-[13px] font-medium text-red-600 hover:bg-red-50 border-0 bg-transparent cursor-pointer dark:hover:bg-red-950/40 active:scale-[0.99]"
+          >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><polyline points="16 17 21 12 16 7" /><line x1="21" y1="12" x2="9" y2="12" /></svg>
-            Logout
+            {tr('logout')}
           </button>
         </div>
       </aside>
 
       {!open && (
-        <button type="button" onClick={() => setOpen(true)} className="fixed left-0 top-4 z-40 bg-white border border-slate-200 border-l-0 rounded-r-lg p-2.5 text-slate-500 shadow-sm hover:bg-slate-50 md:top-5" aria-label="Open menu">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="9 18 15 12 9 6" /></svg>
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          className="fixed top-[max(0.75rem,env(safe-area-inset-top))] left-[max(0.75rem,env(safe-area-inset-left))] z-40 md:hidden min-h-[44px] min-w-[44px] inline-flex items-center justify-center rounded-xl bg-white border border-slate-200 text-slate-700 shadow-md hover:bg-slate-50 dark:bg-slate-800 dark:border-slate-600 dark:text-slate-100 active:scale-95 transition-transform"
+          aria-label="Open menu"
+          aria-controls="student-sidebar"
+          aria-expanded={false}
+        >
+          <Menu className="w-6 h-6" strokeWidth={2} />
         </button>
       )}
 
-      <div className="flex-shrink-0 transition-[width,min-width] duration-200" style={{ width: open ? 220 : 0, minWidth: open ? 220 : 0 }} />
+      <div
+        className="hidden md:block flex-shrink-0 transition-[width] duration-200 ease-out"
+        style={{ width: open ? 220 : 0, minWidth: open ? 220 : 0 }}
+        aria-hidden
+      />
     </>
   );
 }

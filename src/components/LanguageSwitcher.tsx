@@ -2,23 +2,17 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { ChevronDown } from 'lucide-react';
+import { useLanguage, type Language } from '@/lib/use-language';
 
-const LOCALE_KEY = 'isit-locale';
-const options = [
+const options: { value: Language; label: string }[] = [
   { value: 'en', label: 'English' },
   { value: 'hi', label: 'हिंदी' },
 ];
 
 export default function LanguageSwitcher() {
   const [open, setOpen] = useState(false);
-  const [selected, setSelected] = useState('en');
+  const { language, setLanguage } = useLanguage();
   const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const stored = localStorage.getItem(LOCALE_KEY);
-    if (stored && options.some((o) => o.value === stored)) setSelected(stored);
-  }, []);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -28,20 +22,19 @@ export default function LanguageSwitcher() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const handleSelect = (value: string) => {
-    setSelected(value);
-    if (typeof window !== 'undefined') localStorage.setItem(LOCALE_KEY, value);
+  const handleSelect = (value: Language) => {
+    setLanguage(value);
     setOpen(false);
   };
 
-  const currentLabel = options.find((o) => o.value === selected)?.label ?? 'English';
+  const currentLabel = options.find((o) => o.value === language)?.label ?? 'English';
 
   return (
     <div className="relative" ref={ref}>
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="flex items-center gap-1 text-sm text-slate-600 hover:text-slate-900 transition rounded-lg px-2 py-1.5 hover:bg-slate-100"
+        className="flex items-center gap-1 text-sm text-slate-600 hover:text-slate-900 transition rounded-lg px-2 py-1.5 hover:bg-slate-100 dark:text-slate-300 dark:hover:text-white dark:hover:bg-slate-800"
         aria-expanded={open}
         aria-haspopup="listbox"
         aria-label="Select language"
@@ -52,15 +45,17 @@ export default function LanguageSwitcher() {
       {open && (
         <ul
           role="listbox"
-          className="absolute right-0 top-full mt-1 min-w-[120px] bg-white border border-slate-200 rounded-lg shadow-lg py-1 z-50"
+          className="absolute right-0 top-full mt-1 min-w-[120px] bg-white border border-slate-200 rounded-lg shadow-lg py-1 z-50 dark:bg-slate-800 dark:border-slate-600"
         >
           {options.map((opt) => (
-            <li key={opt.value} role="option" aria-selected={selected === opt.value}>
+            <li key={opt.value} role="option" aria-selected={language === opt.value}>
               <button
                 type="button"
                 onClick={() => handleSelect(opt.value)}
                 className={`w-full text-left px-4 py-2.5 text-sm transition ${
-                  selected === opt.value ? 'bg-sky-50 text-sky-700 font-medium' : 'text-slate-700 hover:bg-slate-50'
+                  language === opt.value
+                    ? 'bg-sky-50 text-sky-700 font-medium dark:bg-sky-900/40 dark:text-sky-300'
+                    : 'text-slate-700 hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-700'
                 }`}
               >
                 {opt.label}

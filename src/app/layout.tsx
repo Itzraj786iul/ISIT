@@ -4,9 +4,12 @@
  * Route protection: `src/proxy.ts` (edge; JWT cookie — set `JWT_SECRET` in prod).
  */
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { AuthProvider } from "@/lib/auth-context";
+import { AppProviders } from "@/components/AppProviders";
+
+const themeAndLangBootstrap = `(function(){try{var t=localStorage.getItem('isit-theme');var dark=t==='dark'||(t!=='light'&&window.matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.classList.toggle('dark',dark);var l=localStorage.getItem('isit-language')||localStorage.getItem('isit-locale');document.documentElement.lang=l==='hi'?'hi':'en';}catch(e){}})();`;
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,11 +38,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[var(--background)] text-[var(--foreground)]`}
       >
-        <AuthProvider>{children}</AuthProvider>
+        <Script
+          id="isit-theme-lang-bootstrap"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{ __html: themeAndLangBootstrap }}
+        />
+        <AppProviders>{children}</AppProviders>
       </body>
     </html>
   );

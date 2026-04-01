@@ -12,7 +12,7 @@ type Props = {
 export default function EmptyState({ icon, title, description, action, className = '' }: Props) {
   return (
     <div
-      className={`rounded-2xl border border-dashed border-slate-200 bg-slate-50/60 px-6 py-10 text-center ${className}`}
+      className={`rounded-2xl border border-dashed border-slate-200 bg-slate-50/60 px-4 py-8 sm:px-6 sm:py-10 text-center overflow-x-hidden ${className}`}
     >
       {icon && <div className="flex justify-center mb-3 text-slate-400">{icon}</div>}
       <p className="font-semibold text-slate-800">{title}</p>

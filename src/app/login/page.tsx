@@ -4,9 +4,11 @@ import { Suspense, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { persistAuthFromLogin } from '@/lib/client-auth';
+import { useAuth } from '@/lib/auth-context';
 
 function LoginForm() {
   const router = useRouter();
+  const { refresh } = useAuth();
   const searchParams = useSearchParams();
   const returnUrl = searchParams.get('returnUrl');
   const [formData, setFormData] = useState({
@@ -30,6 +32,7 @@ function LoginForm() {
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ ...formData, rememberMe }),
       });
 
@@ -43,6 +46,8 @@ function LoginForm() {
         if (typeof data.token === 'string' && data.token) {
           persistAuthFromLogin(data.token, data.user as Record<string, unknown>);
         }
+
+        await refresh({ force: true });
 
         const userRole = (data.user.role ?? 'student').toString().toLowerCase();
 

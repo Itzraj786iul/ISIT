@@ -8,7 +8,7 @@ import dynamic from 'next/dynamic';
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Loader2 } from 'lucide-react';
+import { Loader2, ChevronDown, ChevronUp, Bot } from 'lucide-react';
 import SessionHeader from './_components/SessionHeader';
 import LearningPanel, { type PlayerQuestion } from './_components/LearningPanel';
 import type { TutorTab } from './_components/AITutorPanel';
@@ -96,6 +96,9 @@ export default function SessionPlayerPage() {
   const [elapsedSec, setElapsedSec] = useState(0);
   const [confidence, setConfidence] = useState<number | null>(null);
   const [ending, setEnding] = useState(false);
+  const [advancingQuestion, setAdvancingQuestion] = useState(false);
+  const [mobileTutorOpen, setMobileTutorOpen] = useState(false);
+  const [tutorDifficultyLabel, setTutorDifficultyLabel] = useState<string | null>(null);
 
   const questionShownAtRef = useRef<number>(0);
   const sessionIdRef = useRef<string>('');
@@ -107,6 +110,11 @@ export default function SessionPlayerPage() {
 
   useEffect(() => {
     sessionStatsRef.current = { answered: 0, correct: 0 };
+  }, [sessionId]);
+
+  useEffect(() => {
+    setTutorDifficultyLabel(null);
+    setMobileTutorOpen(false);
   }, [sessionId]);
 
   useEffect(() => {
@@ -239,11 +247,18 @@ export default function SessionPlayerPage() {
       setPracticeComplete(true);
       return;
     }
+    setAdvancingQuestion(true);
     setCurrentStep((s) => s + 1);
     setSelectedIndex(null);
     setRevealed(false);
     setIsCorrect(null);
   }, [totalQuestions, revealed, currentStep]);
+
+  useEffect(() => {
+    if (!advancingQuestion) return;
+    const t = window.setTimeout(() => setAdvancingQuestion(false), 240);
+    return () => window.clearTimeout(t);
+  }, [currentStep, advancingQuestion]);
 
   const handleTutorQuestionSent = useCallback(
     (message: string, tab: TutorTab) => {
@@ -256,6 +271,15 @@ export default function SessionPlayerPage() {
       });
     },
     [sessionId]
+  );
+
+  const handleAdaptiveMeta = useCallback(
+    (meta: { difficulty?: string; mode?: string; mastery_score?: number } | null) => {
+      const d = meta?.difficulty?.trim();
+      if (!d) return;
+      setTutorDifficultyLabel(d.charAt(0).toUpperCase() + d.slice(1).toLowerCase());
+    },
+    []
   );
 
   const finishSession = useCallback(async () => {
@@ -337,33 +361,77 @@ export default function SessionPlayerPage() {
   const canGoNext = revealed;
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-100 text-slate-900">
-      <SessionHeader topicName={topicTitle} timerLabel={formatTimer(elapsedSec)} onExit={finishSession} exiting={ending} />
+    <div className="h-[100dvh] min-h-0 flex flex-col bg-slate-100 text-slate-900 overflow-hidden">
+      <SessionHeader
+        topicName={topicTitle}
+        timerLabel={formatTimer(elapsedSec)}
+        onExit={finishSession}
+        exiting={ending}
+        progress={
+          !practiceComplete && totalQuestions > 0 ? { current: currentStep + 1, total: totalQuestions } : null
+        }
+        difficultyLabel={tutorDifficultyLabel}
+      />
 
       <div className="flex-1 flex flex-col lg:flex-row min-h-0 overflow-hidden">
-        <div className="flex-1 lg:w-[70%] p-4 sm:p-6 overflow-y-auto">
-          {practiceComplete ? (
-            <div className="bg-white rounded-xl border border-slate-200 p-8 text-center shadow-sm">
-              <p className="text-lg font-semibold text-slate-900">Nice work!</p>
-              <p className="text-slate-600 text-sm mt-2">You have finished this practice set. Keep exploring with the tutor or end the session.</p>
-            </div>
-          ) : (
-            <LearningPanel
-              loading={loadingQuestions}
-              question={currentQuestion}
-              questionIndex={currentStep}
-              totalQuestions={totalQuestions}
-              selectedIndex={selectedIndex}
-              revealed={revealed}
-              isCorrect={isCorrect}
-              onSelectOption={handleSelectOption}
+        {/* Learning ~70% */}
+        <section className="flex-1 lg:flex-[7] min-h-0 min-w-0 flex flex-col border-slate-200/90 lg:border-r lg:border-slate-200 bg-gradient-to-b from-white via-slate-50/50 to-slate-100/80 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.5)]">
+          <div className="flex-1 min-h-0 overflow-y-auto p-3 sm:p-5 lg:p-6">
+            {practiceComplete ? (
+              <div className="bg-white rounded-2xl border border-slate-200/90 p-8 sm:p-10 text-center shadow-md max-w-lg mx-auto">
+                <p className="text-xl font-bold text-slate-900">Nice work!</p>
+                <p className="text-slate-600 text-sm mt-3 leading-relaxed">
+                  You&apos;ve finished this practice set. Keep going with the AI Tutor or end the session when you&apos;re ready.
+                </p>
+              </div>
+            ) : (
+              <LearningPanel
+                loading={loadingQuestions}
+                advancing={advancingQuestion}
+                question={currentQuestion}
+                questionIndex={currentStep}
+                totalQuestions={totalQuestions}
+                selectedIndex={selectedIndex}
+                revealed={revealed}
+                isCorrect={isCorrect}
+                onSelectOption={handleSelectOption}
+              />
+            )}
+          </div>
+        </section>
+
+        {/* Tutor ~30% — collapsible on small screens */}
+        <aside className="flex flex-col lg:flex-[3] min-h-0 min-w-0 lg:min-w-[280px] xl:min-w-[320px] bg-slate-100 border-t lg:border-t-0 lg:border-l border-slate-200/90 shadow-[0_-8px_30px_-12px_rgba(15,23,42,0.12)] lg:shadow-none">
+          <button
+            type="button"
+            className="lg:hidden flex items-center justify-between gap-3 w-full px-4 py-3 bg-white border-b border-slate-200 text-left shrink-0"
+            onClick={() => setMobileTutorOpen((o) => !o)}
+            aria-expanded={mobileTutorOpen}
+            aria-controls="session-ai-tutor-panel"
+          >
+            <span className="flex items-center gap-2 font-bold text-slate-900">
+              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-violet-100 text-violet-600">
+                <Bot className="w-5 h-5" aria-hidden />
+              </span>
+              AI Tutor
+            </span>
+            {mobileTutorOpen ? (
+              <ChevronUp className="w-5 h-5 text-slate-500 shrink-0" aria-hidden />
+            ) : (
+              <ChevronDown className="w-5 h-5 text-slate-500 shrink-0" aria-hidden />
+            )}
+          </button>
+          <div
+            id="session-ai-tutor-panel"
+            className={`flex-1 min-h-0 flex flex-col p-3 sm:p-4 ${mobileTutorOpen ? 'flex max-h-[min(56vh,520px)]' : 'hidden'} lg:flex lg:max-h-none`}
+          >
+            <AITutorPanel
+              sessionId={sessionId}
+              onTutorQuestionSent={handleTutorQuestionSent}
+              onAdaptiveMeta={handleAdaptiveMeta}
             />
-          )}
-        </div>
-        <div className="lg:w-[30%] border-t lg:border-t-0 lg:border-l border-slate-200 p-4 sm:p-6 bg-slate-50/80 overflow-y-auto min-h-[420px] lg:min-h-0">
-          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-3">AI tutor</p>
-          <AITutorPanel sessionId={sessionId} onTutorQuestionSent={handleTutorQuestionSent} />
-        </div>
+          </div>
+        </aside>
       </div>
 
       <BottomControls
