@@ -7,6 +7,7 @@ const StudentProfileSchema = new mongoose.Schema(
     grade: { type: String },
     board: { type: String },
     learning_preferences: { type: mongoose.Schema.Types.Mixed },
+    /** @legacy MARKETPLACE_LMS — ids of `Lesson` (course player). Prefer Session + MasteryRecord for AI path. */
     completedLessons: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Lesson' }],
   },
   { timestamps: true }

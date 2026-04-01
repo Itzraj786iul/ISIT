@@ -1,3 +1,7 @@
+/**
+ * AI-first curriculum spine — hosts sessions, mastery, videos, notes. Canonical learning unit.
+ * See docs/AI_FIRST_MIGRATION.md
+ */
 import mongoose from 'mongoose';
 
 /**

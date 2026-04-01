@@ -1,5 +1,6 @@
 'use client';
 
+/** Uses @legacy MARKETPLACE_LMS courses to list enrollees. Future: org-wide students + topic progress. */
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import TeacherShell from '../_components/TeacherShell';

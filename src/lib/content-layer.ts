@@ -1,3 +1,7 @@
+/**
+ * AI-first content layer — videos, subtitles, topic notes, question bank, assignments (topic-scoped).
+ * See docs/AI_FIRST_MIGRATION.md
+ */
 import mongoose from 'mongoose';
 import { connectToDB } from '@/lib/db';
 

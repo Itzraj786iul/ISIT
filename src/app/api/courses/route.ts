@@ -1,3 +1,7 @@
+/**
+ * @legacy MARKETPLACE_LMS — List marketplace `Course` documents. AI catalog: GET /api/subjects.
+ * Migration: docs/AI_FIRST_MIGRATION.md
+ */
 import { NextResponse } from 'next/server';
 import mongoose from 'mongoose';
 import { connectToDB } from '@/lib/db';

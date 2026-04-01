@@ -1,5 +1,9 @@
 'use client';
 
+/**
+ * Teacher shell: "Courses" → /teacher/create-course is @legacy MARKETPLACE_LMS.
+ * Curriculum work lives under /teacher/subjects (AI-first). See docs/AI_FIRST_MIGRATION.md
+ */
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';

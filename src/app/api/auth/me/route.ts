@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
-import mongoose from 'mongoose';
 import { getAuthFromRequest } from '@/lib/auth';
 import { connectToDB } from '@/lib/db';
+import { log } from '@/lib/logger';
 
 export async function GET(req: Request) {
   try {
@@ -28,7 +28,7 @@ export async function GET(req: Request) {
       },
     }, { status: 200 });
   } catch (error) {
-    console.error('Auth me error:', error);
+    log.apiError('GET /api/auth/me', error);
     return NextResponse.json({ message: 'Server error' }, { status: 500 });
   }
 }

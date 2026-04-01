@@ -1,5 +1,6 @@
 'use client';
 
+/** AI-first subject catalog — entry to /subject/[id] → /topic/[id]. See docs/AI_FIRST_MIGRATION.md */
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';

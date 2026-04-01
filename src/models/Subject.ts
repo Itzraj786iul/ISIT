@@ -1,3 +1,7 @@
+/**
+ * AI-first curriculum spine — parent of `Topic`. Canonical entry for org-scoped learning.
+ * See docs/AI_FIRST_MIGRATION.md
+ */
 import mongoose from 'mongoose';
 
 const SubjectSchema = new mongoose.Schema(

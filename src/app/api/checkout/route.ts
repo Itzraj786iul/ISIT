@@ -1,3 +1,7 @@
+/**
+ * @legacy MARKETPLACE_LMS — Mock checkout; pushes student onto `Course.enrolledStudents`.
+ * Future: entitlements / topic unlock (see docs/AI_FIRST_MIGRATION.md).
+ */
 import { NextResponse } from 'next/server';
 import mongoose from 'mongoose';
 import { connectToDB } from '@/lib/db';

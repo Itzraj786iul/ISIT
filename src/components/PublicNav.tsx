@@ -1,5 +1,9 @@
 'use client';
 
+/**
+ * Public nav: "Courses" + profile "My Courses" point at @legacy MARKETPLACE_LMS routes.
+ * Prefer highlighting /subjects for AI-first onboarding when ready (docs/AI_FIRST_MIGRATION.md).
+ */
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';

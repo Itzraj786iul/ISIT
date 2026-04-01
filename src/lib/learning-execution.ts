@@ -1,3 +1,7 @@
+/**
+ * AI-first execution layer — Sessions, session events, mastery, knowledge gaps, confusion logs.
+ * Complements @legacy marketplace progress in StudentProfile.completedLessons (docs/AI_FIRST_MIGRATION.md).
+ */
 import mongoose from 'mongoose';
 import { connectToDB } from '@/lib/db';
 
@@ -69,6 +73,13 @@ export async function getSessionById(sessionId: string | mongoose.Types.ObjectId
   return Session.findById(sessionId).lean().exec();
 }
 
+/** Mutable session document (tutor state updates, teachback score, etc.). */
+export async function getSessionDocumentById(sessionId: string | mongoose.Types.ObjectId) {
+  await connectToDB();
+  const Session = (await import('@/models/Session')).default;
+  return Session.findById(sessionId).exec();
+}
+
 export async function endSession(sessionId: string | mongoose.Types.ObjectId) {
   await connectToDB();
   const Session = (await import('@/models/Session')).default;
@@ -87,7 +98,20 @@ export async function endSession(sessionId: string | mongoose.Types.ObjectId) {
 }
 
 // --- Session events ---
-export type SessionEventType = 'question' | 'answer' | 'pause' | 'rewind' | 'play' | 'hint_request' | 'teachback';
+export type SessionEventType =
+  | 'question'
+  | 'answer'
+  | 'pause'
+  | 'rewind'
+  | 'play'
+  | 'hint_request'
+  | 'teachback'
+  | 'teachback_attempt'
+  | 'hint_given'
+  | 'explanation_given'
+  | 'difficulty_changed'
+  | 'session_end'
+  | 'start_learning_click';
 
 export type CreateSessionEventInput = {
   organization_id: mongoose.Types.ObjectId;
@@ -119,6 +143,68 @@ export async function getEventsForSession(sessionId: string | mongoose.Types.Obj
   await connectToDB();
   const SessionEvent = (await import('@/models/SessionEvent')).default;
   return SessionEvent.find({ session_id: sessionId }).sort({ timestamp: 1 }).lean().exec();
+}
+
+/**
+ * After a session ends: roll up `answer` events (with is_correct) into the student's mastery record.
+ * Idempotent per session if only called once from endSession API (session is then completed).
+ */
+export async function applyMasteryFromSessionAnswerEvents(
+  sessionId: string | mongoose.Types.ObjectId,
+  studentId: string
+) {
+  const session = await getSessionById(sessionId);
+  if (!session) return null;
+  const s = session as {
+    student_id?: unknown;
+    topic_id?: unknown;
+    organization_id?: unknown;
+  };
+  if (String(s.student_id) !== studentId) return null;
+
+  const events = await getEventsForSession(sessionId);
+  const answers: { is_correct: boolean }[] = [];
+  for (const raw of events) {
+    const e = raw as { event_type?: string; is_correct?: unknown };
+    if (e.event_type === 'answer' && typeof e.is_correct === 'boolean') {
+      answers.push({ is_correct: e.is_correct });
+    }
+  }
+
+  if (answers.length === 0) return null;
+
+  const sessionAttempts = answers.length;
+  const sessionCorrect = answers.filter((a) => a.is_correct).length;
+
+  const topicOid = new mongoose.Types.ObjectId(String(s.topic_id));
+  const orgOid = new mongoose.Types.ObjectId(String(s.organization_id));
+
+  const existing = await getMasteryRecord(studentId, topicOid, orgOid);
+  const prevAttempt = (existing as { attempt_count?: number } | null)?.attempt_count ?? 0;
+  const prevCorrect = (existing as { correct_answers?: number } | null)?.correct_answers ?? 0;
+
+  const newAttempt = prevAttempt + sessionAttempts;
+  const newCorrect = prevCorrect + sessionCorrect;
+  let masteryScore = newAttempt > 0 ? Math.round((newCorrect / newAttempt) * 100) : 0;
+
+  const teachback = (session as { teachback_score?: number }).teachback_score;
+  if (typeof teachback === 'number' && teachback >= 60) {
+    const bump = teachback >= 85 ? 6 : teachback >= 75 ? 4 : 2;
+    masteryScore = Math.min(100, masteryScore + bump);
+  }
+
+  return createOrUpdateMasteryRecord({
+    organization_id: orgOid,
+    student_id: new mongoose.Types.ObjectId(studentId),
+    topic_id: topicOid,
+    attempt_count: newAttempt,
+    correct_answers: newCorrect,
+    mastery_score: masteryScore,
+    confidence_score: masteryScore,
+    revision_needed: masteryScore < 40,
+    last_session_id: new mongoose.Types.ObjectId(String(sessionId)),
+    last_updated: new Date(),
+  });
 }
 
 // --- Mastery records ---

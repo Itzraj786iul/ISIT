@@ -3,19 +3,44 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, BookOpen, TrendingUp, Loader2 } from 'lucide-react';
-import { fetchChildren, type ParentChild } from '@/lib/parent-children';
+import { ArrowLeft, BookOpen, Loader2, Heart, Lightbulb, CheckCircle2 } from 'lucide-react';
+import { fetchChildren, fetchChildInsights, type ParentChild, type ParentChildInsights } from '@/lib/parent-children';
+import { engagementLabel } from '@/lib/parent-child-insights';
+
+function trendPhrase(t: ParentChildInsights['improvement_trend']): string {
+  if (t === 'up') return 'More learning time than last week';
+  if (t === 'down') return 'A quieter week than before';
+  return 'About the same pace as last week';
+}
 
 export default function ParentChildProgressPage() {
   const params = useParams();
   const id = params.id as string;
   const [child, setChild] = useState<ParentChild | null | undefined>(undefined);
+  const [insights, setInsights] = useState<ParentChildInsights | null>(null);
+  const [insightsLoading, setInsightsLoading] = useState(true);
 
   useEffect(() => {
     fetchChildren().then((kids) => {
       const found = kids.find((c) => c.id === id);
       setChild(found ?? null);
     });
+  }, [id]);
+
+  useEffect(() => {
+    if (!id) return;
+    let cancelled = false;
+    (async () => {
+      setInsightsLoading(true);
+      const data = await fetchChildInsights(id);
+      if (!cancelled) {
+        setInsights(data);
+        setInsightsLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, [id]);
 
   if (child === undefined) {
@@ -53,16 +78,80 @@ export default function ParentChildProgressPage() {
         </div>
       </div>
 
-      <section className="mb-8">
-        <h2 className="text-lg font-bold text-slate-800 mb-4">Progress overview</h2>
-        <div className="bg-white rounded-xl border border-slate-200 p-6">
-          <div className="flex items-center gap-3 text-slate-500">
-            <TrendingUp className="w-5 h-5 text-violet-400" />
-            <p className="text-sm">
-              Progress will appear here once your child signs in with <strong className="text-slate-700">{child.email}</strong> and starts learning.
-            </p>
+      <section className="mb-8" aria-label="Learning insights">
+        <h2 className="text-lg font-bold text-slate-800 mb-4">Learning snapshot</h2>
+        {insightsLoading && (
+          <div className="bg-white rounded-xl border border-slate-200 p-6 text-slate-500 text-sm">Loading…</div>
+        )}
+        {!insightsLoading && insights && (
+          <div className="space-y-5">
+            <div className="bg-white rounded-xl border border-slate-200 p-5">
+              <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide">This week</p>
+              <p className="text-lg font-semibold text-slate-900 mt-1">
+                {insights.recent_activity === 0
+                  ? 'No sessions yet'
+                  : `${insights.recent_activity} learning ${insights.recent_activity === 1 ? 'session' : 'sessions'}`}
+              </p>
+              <p className="text-sm text-slate-500 mt-1">{trendPhrase(insights.improvement_trend)} · {engagementLabel(insights.engagement_score)}</p>
+              <p className="text-sm text-slate-600 mt-3">
+                Overall progress:{' '}
+                <span className="font-semibold text-slate-900">
+                  {insights.linked_account ? `${insights.avg_mastery}%` : '—'}
+                </span>
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="bg-white rounded-xl border border-slate-200 p-4">
+                <div className="flex items-center gap-2 text-emerald-700 font-semibold text-xs mb-2">
+                  <CheckCircle2 className="w-4 h-4" /> Strengths
+                </div>
+                {insights.strong_topics.length === 0 ? (
+                  <p className="text-sm text-slate-500">Highlights will appear with more learning.</p>
+                ) : (
+                  <ul className="text-sm text-slate-800 space-y-1">
+                    {insights.strong_topics.map((t) => (
+                      <li key={t}>• {t}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+              <div className="bg-white rounded-xl border border-slate-200 p-4">
+                <div className="flex items-center gap-2 text-amber-800 font-semibold text-xs mb-2">
+                  <Lightbulb className="w-4 h-4" /> Extra support
+                </div>
+                {insights.weak_topics.length === 0 ? (
+                  <p className="text-sm text-slate-500">Nothing flagged yet.</p>
+                ) : (
+                  <ul className="text-sm text-slate-800 space-y-1">
+                    {insights.weak_topics.map((t) => (
+                      <li key={t}>• {t}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </div>
+
+            <div className="rounded-xl border border-violet-200 bg-gradient-to-br from-violet-50 to-white p-5">
+              <div className="flex items-center gap-2 text-violet-800 font-semibold text-xs mb-2">
+                <Heart className="w-4 h-4" /> For you
+              </div>
+              <p className="text-slate-800 text-sm leading-relaxed">{insights.ai_summary}</p>
+            </div>
+
+            <div className="bg-white rounded-xl border border-slate-200 p-4">
+              <h3 className="font-semibold text-slate-900 text-sm mb-2">Support ideas</h3>
+              <ul className="text-sm text-slate-700 space-y-1">
+                {insights.action_suggestions.map((s, i) => (
+                  <li key={i}>• {s}</li>
+                ))}
+              </ul>
+            </div>
           </div>
-        </div>
+        )}
+        {!insightsLoading && !insights && (
+          <p className="text-sm text-slate-500">Insights are unavailable. Try again later.</p>
+        )}
       </section>
 
       <section>

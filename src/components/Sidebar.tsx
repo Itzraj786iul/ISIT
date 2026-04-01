@@ -1,5 +1,9 @@
 'use client';
 
+/**
+ * Student nav: includes @legacy MARKETPLACE_LMS links ("My Courses", "Browse All" → /courses).
+ * AI-first primary: Subjects + Learning Path. Migration: docs/AI_FIRST_MIGRATION.md
+ */
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';

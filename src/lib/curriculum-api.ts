@@ -1,3 +1,7 @@
+/**
+ * AI-first curriculum data access — subjects & topics (canonical catalog alongside legacy /api/courses).
+ * See docs/AI_FIRST_MIGRATION.md
+ */
 import mongoose from 'mongoose';
 import { connectToDB } from '@/lib/db';
 

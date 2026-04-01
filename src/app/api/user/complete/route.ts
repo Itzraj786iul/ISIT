@@ -1,3 +1,7 @@
+/**
+ * @legacy MARKETPLACE_LMS — Marks a marketplace `Lesson` complete for enrolled students.
+ * AI path: session end + mastery POSTs (docs/AI_FIRST_MIGRATION.md).
+ */
 import { NextResponse } from 'next/server';
 import mongoose from 'mongoose';
 import { getAuthFromRequest } from '@/lib/auth';

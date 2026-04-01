@@ -1,3 +1,7 @@
+/**
+ * @legacy MARKETPLACE_LMS — Paid/listed courses with `enrolledStudents`. Not the AI-first spine.
+ * Target spine: Subject → Topic → Session. Migration: docs/AI_FIRST_MIGRATION.md
+ */
 import mongoose from 'mongoose';
 
 const CourseSchema = new mongoose.Schema({

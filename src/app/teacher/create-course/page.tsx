@@ -1,5 +1,9 @@
 'use client';
 
+/**
+ * @legacy MARKETPLACE_LMS — POST /api/course (+ lessons). Prefer publishing Subject/Topic content long-term.
+ * Migration: docs/AI_FIRST_MIGRATION.md
+ */
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';

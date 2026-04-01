@@ -1,5 +1,6 @@
 'use client';
 
+/** AI-first — lists `Topic` rows for a subject; links to /topic/[id]. See docs/AI_FIRST_MIGRATION.md */
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';

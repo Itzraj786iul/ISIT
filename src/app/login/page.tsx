@@ -3,7 +3,7 @@
 import { Suspense, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import Image from 'next/image';
+import { persistAuthFromLogin } from '@/lib/client-auth';
 
 function LoginForm() {
   const router = useRouter();
@@ -13,6 +13,7 @@ function LoginForm() {
     email: '',
     password: '',
   });
+  const [rememberMe, setRememberMe] = useState(true);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -29,7 +30,7 @@ function LoginForm() {
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, rememberMe }),
       });
 
       const data = await response.json();
@@ -39,6 +40,9 @@ function LoginForm() {
       }
 
       if (data.user) {
+        if (typeof data.token === 'string' && data.token) {
+          persistAuthFromLogin(data.token, data.user as Record<string, unknown>);
+        }
 
         const userRole = (data.user.role ?? 'student').toString().toLowerCase();
 
@@ -134,6 +138,15 @@ function LoginForm() {
                       onChange={handleChange}
                     />
                   </div>
+                  <label className="flex items-center gap-2 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={rememberMe}
+                      onChange={(e) => setRememberMe(e.target.checked)}
+                      className="rounded border-gray-300 text-sky-600 focus:ring-sky-500"
+                    />
+                    <span className="text-sm text-gray-600">Remember me on this device</span>
+                  </label>
               </div>
 
               <div>
@@ -143,7 +156,7 @@ function LoginForm() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-xl text-white bg-sky-500 hover:bg-sky-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                  className="btn-primary w-full py-3"
                 >
                   {loading ? 'Signing in...' : 'Sign in'}
                 </button>

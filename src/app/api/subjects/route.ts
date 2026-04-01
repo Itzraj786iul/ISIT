@@ -1,7 +1,8 @@
+/** AI-first — org or public subject catalog (prefer over GET /api/courses for learning UX). */
 import { getSubjectsForOrganization, getAllPublishedSubjects } from '@/lib/curriculum-api';
 import { successResponse, errorResponse } from '@/lib/api-response';
 
-const CACHE_MAX_AGE = 60; // 1 minute
+const CACHE_MAX_AGE = 120; // 2 minutes — safe for org catalog; revalidate in background
 
 export async function GET(req: Request) {
   try {

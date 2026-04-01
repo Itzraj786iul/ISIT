@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { persistAuthFromLogin } from '@/lib/client-auth';
 
 type Role = 'Student' | 'Parent' | 'Teacher';
 
@@ -27,6 +28,7 @@ export default function SignupPage() {
 
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [rememberMe, setRememberMe] = useState(true);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -60,13 +62,14 @@ export default function SignupPage() {
       const response: Response = await fetch('/api/auth/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
             name: formData.name,
             email: formData.email,
             password: formData.password,
-            role: role, // 'student', 'teacher', or 'parent'
+            role: role,
             grade: formData.academicLevel,
-            extra: formData
+            extra: formData,
+            rememberMe,
         }),
       });
 
@@ -74,6 +77,10 @@ export default function SignupPage() {
 
       if (!response.ok) {
         throw new Error(data.message || 'Signup failed');
+      }
+
+      if (typeof data.token === 'string' && data.token && data.user) {
+        persistAuthFromLogin(data.token, data.user as Record<string, unknown>);
       }
 
       const userObj = data.user || { role };
@@ -308,11 +315,21 @@ export default function SignupPage() {
                 </div>
               )}
 
+              <label className="flex items-center gap-2 cursor-pointer select-none mt-2">
+                <input
+                  type="checkbox"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                  className="rounded border-gray-300 text-sky-600 focus:ring-sky-500"
+                />
+                <span className="text-sm text-gray-600">Remember me on this device</span>
+              </label>
+
               {/* SUBMIT BUTTON */}
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3.5 bg-sky-500 text-white rounded-xl hover:bg-sky-600 transition-all shadow-lg shadow-sky-500/30 font-bold text-sm disabled:opacity-50 disabled:cursor-not-allowed mt-2"
+                className="btn-primary w-full py-3.5 font-bold mt-2 shadow-lg shadow-sky-500/25"
               >
                 {loading ? 'Creating Account...' : 'Create Account'}
               </button>

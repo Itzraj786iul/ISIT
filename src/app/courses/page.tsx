@@ -1,10 +1,15 @@
 'use client';
 
+/**
+ * @legacy MARKETPLACE_LMS — Course catalog (GET /api/courses). Prefer /subjects for AI-first learning.
+ * Migration: docs/AI_FIRST_MIGRATION.md
+ */
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Search, SlidersHorizontal, BookOpen } from 'lucide-react';
 import PublicNav from '@/components/PublicNav';
 import Footer from '@/components/Footer';
+import LegacyMarketplaceBanner from '@/components/LegacyMarketplaceBanner';
 
 type Course = {
   _id: string;
@@ -20,17 +25,21 @@ type Course = {
 export default function CoursesPage() {
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchCourses = async () => {
+      setLoadError(null);
       try {
         const res = await fetch('/api/courses');
         if (res.ok) {
           const data = await res.json();
-          setCourses(data);
+          setCourses(Array.isArray(data) ? data : []);
+        } else {
+          setLoadError('We could not load courses. Please try again.');
         }
-      } catch (error) {
-        console.error('Failed to fetch courses');
+      } catch {
+        setLoadError('Network error. Check your connection and try again.');
       } finally {
         setLoading(false);
       }
@@ -71,6 +80,15 @@ export default function CoursesPage() {
       
       {/* ================= MAIN CONTENT ================= */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12 grid grid-cols-1 lg:grid-cols-4 gap-6 sm:gap-8 flex-1">
+        <div className="lg:col-span-4 order-first">
+          <LegacyMarketplaceBanner />
+        </div>
+
+        {loadError && (
+          <div className="lg:col-span-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+            {loadError}
+          </div>
+        )}
 
         {/* ================= FILTER SIDEBAR ================= */}
         <aside className="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-slate-200 h-fit lg:order-2">
@@ -151,8 +169,17 @@ export default function CoursesPage() {
                ))}
              </div>
           ) : courses.length === 0 ? (
-             <div className="text-center py-12 bg-white rounded-2xl border border-slate-200">
-                <p className="text-slate-600">No courses found.</p>
+             <div className="text-center py-12 bg-white rounded-2xl border border-dashed border-slate-200 px-6">
+                <p className="text-slate-800 font-medium">No courses in the catalog yet</p>
+                <p className="text-slate-500 text-sm mt-2 max-w-md mx-auto">
+                  Try AI-first learning by subject instead — pick a topic and start your first session.
+                </p>
+                <Link
+                  href="/subjects"
+                  className="inline-flex mt-5 btn-primary px-6 py-2.5 no-underline"
+                >
+                  Browse subjects
+                </Link>
              </div>
           ) : (
             <div className="grid md:grid-cols-2 gap-6">

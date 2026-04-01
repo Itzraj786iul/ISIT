@@ -1,3 +1,7 @@
+/**
+ * @legacy MARKETPLACE_LMS — Returns `StudentProfile.completedLessons` (marketplace `Lesson` ids).
+ * AI path: derive progress from `Session` + `MasteryRecord` (docs/AI_FIRST_MIGRATION.md).
+ */
 import { NextResponse } from 'next/server';
 import { getAuthFromRequest } from '@/lib/auth';
 import mongoose from 'mongoose';

@@ -1,5 +1,6 @@
 'use client';
 
+/** Includes @legacy MARKETPLACE_LMS course stats (GET /api/courses?teacherId). Complement with topic/session analytics. */
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import TeacherShell from '../_components/TeacherShell';

@@ -1,5 +1,6 @@
 'use client';
 
+/** Parent nav includes @legacy MARKETPLACE_LMS "Browse Courses" (/courses). See docs/AI_FIRST_MIGRATION.md */
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { BookOpen, Users, Plus, Settings, LogOut, Heart } from 'lucide-react';

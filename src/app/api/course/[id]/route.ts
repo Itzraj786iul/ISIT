@@ -1,3 +1,7 @@
+/**
+ * @legacy MARKETPLACE_LMS — Read/update/delete paid course + lessons.
+ * Migration: docs/AI_FIRST_MIGRATION.md
+ */
 import { NextResponse } from 'next/server';
 import mongoose from 'mongoose';
 import { getAuthFromRequest } from '@/lib/auth';

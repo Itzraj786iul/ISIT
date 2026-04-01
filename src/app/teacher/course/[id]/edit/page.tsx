@@ -1,5 +1,9 @@
 'use client';
 
+/**
+ * @legacy MARKETPLACE_LMS — Edit `Course` + `Lesson` documents and thumbnails ( /api/upload ).
+ * Migration: docs/AI_FIRST_MIGRATION.md
+ */
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';

@@ -11,6 +11,12 @@ const VALID_EVENT_TYPES = [
   'play',
   'hint_request',
   'teachback',
+  'teachback_attempt',
+  'hint_given',
+  'explanation_given',
+  'difficulty_changed',
+  'session_end',
+  'start_learning_click',
 ] as const;
 
 type EventItem = {

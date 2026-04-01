@@ -1,5 +1,9 @@
 'use client';
 
+/**
+ * @legacy MARKETPLACE_LMS — Mock checkout + POST /api/checkout. Replace with topic/org entitlements later.
+ * Migration: docs/AI_FIRST_MIGRATION.md
+ */
 import { Suspense, useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';

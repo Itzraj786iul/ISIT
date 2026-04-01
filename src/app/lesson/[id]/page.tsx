@@ -1,5 +1,10 @@
 'use client';
 
+/**
+ * @legacy MARKETPLACE_LMS — Course lesson player + enrollment gate + AI tutor (lesson context).
+ * AI-first player: /topic/[id] with Session; resume deep link: /session/[sessionId].
+ * Migration: docs/AI_FIRST_MIGRATION.md
+ */
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';

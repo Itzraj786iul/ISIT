@@ -1,5 +1,9 @@
 'use client';
 
+/**
+ * @legacy MARKETPLACE_LMS — Teacher manages paid `Course` rows (list/delete via /api/courses, /api/course).
+ * AI-first teacher work: /teacher/subjects (curriculum). See docs/AI_FIRST_MIGRATION.md
+ */
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -12,6 +16,9 @@ import {
   TrendingUp,
   ChevronRight,
   Layers,
+  Sparkles,
+  AlertTriangle,
+  Activity,
 } from 'lucide-react';
 import TeacherShell from '../_components/TeacherShell';
 
@@ -27,6 +34,23 @@ type ApiCourse = {
 };
 type SubjectItem = { _id: string; name: string; grade: string; board: string; description?: string };
 
+type InsightStudent = {
+  student_id: string;
+  name: string;
+  avg_mastery: number;
+  weak_topics: { topic_id: string; topic_name: string; mastery_score: number }[];
+  recent_sessions_count: number;
+  confusion_score: number;
+  engagement_score: number;
+  needs_attention: boolean;
+};
+
+type InsightsPayload = {
+  overview: { avg_mastery_pct: number; total_students: number; students_struggling: number };
+  students: InsightStudent[];
+  alerts: string[];
+};
+
 export default function TeacherDashboard() {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
@@ -34,8 +58,13 @@ export default function TeacherDashboard() {
   const [subjects, setSubjects] = useState<SubjectItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [insights, setInsights] = useState<InsightsPayload | null>(null);
+  const [insightsLoading, setInsightsLoading] = useState(true);
+  const [filterGrade, setFilterGrade] = useState('');
+  const [filterSubjectId, setFilterSubjectId] = useState('');
 
   const totalStudents = courses.reduce((sum, c) => sum + (c.enrolledStudents?.length ?? 0), 0);
+  const gradeOptions = [...new Set(subjects.map((s) => s.grade))].sort();
 
   useEffect(() => {
     const run = async () => {
@@ -73,6 +102,40 @@ export default function TeacherDashboard() {
     run();
   }, [router]);
 
+  useEffect(() => {
+    if (!user?.organization_id) {
+      setInsights(null);
+      setInsightsLoading(false);
+      return;
+    }
+    const run = async () => {
+      setInsightsLoading(true);
+      try {
+        const params = new URLSearchParams();
+        if (filterSubjectId) params.set('subjectId', filterSubjectId);
+        else if (filterGrade) params.set('grade', filterGrade);
+        const qs = params.toString();
+        const res = await fetch(`/api/teacher/student-insights${qs ? `?${qs}` : ''}`, { credentials: 'include' });
+        const json = await res.json();
+        if (json.success && json.data) {
+          setInsights({
+            overview: json.data.overview,
+            students: json.data.students,
+            alerts: json.data.alerts || [],
+          });
+        } else {
+          setInsights(null);
+        }
+      } catch (e) {
+        console.error(e);
+        setInsights(null);
+      } finally {
+        setInsightsLoading(false);
+      }
+    };
+    run();
+  }, [user?.organization_id, filterGrade, filterSubjectId]);
+
   const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to delete this course? This will remove all lessons.')) return;
     setDeletingId(id);
@@ -99,6 +162,142 @@ export default function TeacherDashboard() {
           <Plus className="w-4 h-4" /> Create Course
         </Link>
       </div>
+
+      {/* AI student insights */}
+      <section className="mb-8 rounded-2xl border border-violet-200/80 bg-gradient-to-br from-violet-50/90 via-white to-sky-50/50 p-6 shadow-sm">
+        <div className="flex flex-wrap items-start justify-between gap-4 mb-5">
+          <div className="flex items-center gap-2">
+            <Sparkles className="w-6 h-6 text-violet-600" />
+            <div>
+              <h2 className="text-lg font-bold text-slate-900">Student insights</h2>
+              <p className="text-xs text-slate-500 mt-0.5">Who needs help and where — from mastery, sessions, and confusion signals</p>
+            </div>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <label className="text-xs text-slate-500 font-medium sr-only" htmlFor="insight-grade">Grade</label>
+            <select
+              id="insight-grade"
+              className="text-sm border border-slate-200 rounded-lg px-3 py-2 bg-white text-slate-800 min-w-[8rem]"
+              value={filterGrade}
+              disabled={!!filterSubjectId}
+              onChange={(e) => setFilterGrade(e.target.value)}
+              title={filterSubjectId ? 'Clear subject to filter by grade' : 'Filter by grade'}
+            >
+              <option value="">All grades</option>
+              {gradeOptions.map((g) => (
+                <option key={g} value={g}>{g}</option>
+              ))}
+            </select>
+            <label className="text-xs text-slate-500 font-medium sr-only" htmlFor="insight-subject">Subject</label>
+            <select
+              id="insight-subject"
+              className="text-sm border border-slate-200 rounded-lg px-3 py-2 bg-white text-slate-800 min-w-[10rem]"
+              value={filterSubjectId}
+              onChange={(e) => {
+                setFilterSubjectId(e.target.value);
+                if (e.target.value) setFilterGrade('');
+              }}
+            >
+              <option value="">All subjects</option>
+              {subjects.map((s) => (
+                <option key={s._id} value={s._id}>{s.name} ({s.grade})</option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {insightsLoading ? (
+          <div className="text-sm text-slate-500 py-6">Loading insights…</div>
+        ) : insights ? (
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+              <div className="rounded-xl bg-white/80 border border-slate-200/80 p-4">
+                <div className="text-xs font-medium text-slate-500 uppercase tracking-wide">Avg mastery</div>
+                <div className="text-2xl font-bold text-slate-900 mt-1">{insights.overview.avg_mastery_pct}%</div>
+                <div className="text-xs text-slate-400 mt-1">Across students in this view</div>
+              </div>
+              <div className="rounded-xl bg-white/80 border border-slate-200/80 p-4">
+                <div className="text-xs font-medium text-slate-500 uppercase tracking-wide">Students</div>
+                <div className="text-2xl font-bold text-slate-900 mt-1">{insights.overview.total_students}</div>
+                <div className="text-xs text-slate-400 mt-1">Active in your organization</div>
+              </div>
+              <div className="rounded-xl bg-white/80 border border-slate-200/80 p-4">
+                <div className="text-xs font-medium text-slate-500 uppercase tracking-wide">Struggling</div>
+                <div className="text-2xl font-bold text-amber-700 mt-1">{insights.overview.students_struggling}</div>
+                <div className="text-xs text-slate-400 mt-1">Low mastery or multiple weak topics</div>
+              </div>
+            </div>
+
+            {insights.alerts.length > 0 && (
+              <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50/80 p-4">
+                <div className="flex items-center gap-2 text-amber-900 font-semibold text-sm mb-2">
+                  <AlertTriangle className="w-4 h-4 flex-shrink-0" /> Alerts
+                </div>
+                <ul className="space-y-1.5 text-sm text-amber-950/90">
+                  {insights.alerts.map((a, i) => (
+                    <li key={i} className="flex gap-2">
+                      <span className="text-amber-600">•</span>
+                      <span>{a}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {insights.students.length === 0 ? (
+              <p className="text-sm text-slate-500 py-2">No students or no curriculum topics match these filters yet.</p>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                {insights.students.map((stu) => (
+                  <div
+                    key={stu.student_id}
+                    className={`rounded-xl border p-4 bg-white/90 ${stu.needs_attention ? 'border-amber-300 ring-1 ring-amber-200/60' : 'border-slate-200'}`}
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <div>
+                        <div className="font-semibold text-slate-900">{stu.name}</div>
+                        <div className="text-xs text-slate-500 mt-0.5">Mastery {stu.avg_mastery}%</div>
+                      </div>
+                      {stu.needs_attention && (
+                        <span className="text-[10px] font-bold uppercase tracking-wide bg-amber-100 text-amber-800 px-2 py-1 rounded-md whitespace-nowrap">
+                          Needs attention
+                        </span>
+                      )}
+                    </div>
+                    <div className="mt-3 flex gap-3 text-xs text-slate-600">
+                      <span className="inline-flex items-center gap-1" title="Sessions (last 30 days)">
+                        <Activity className="w-3.5 h-3.5 text-sky-600" />
+                        {stu.recent_sessions_count} sessions
+                      </span>
+                      <span title="Confusion signal strength">Confusion {stu.confusion_score}</span>
+                      <span title="Engagement from sessions + events">Engagement {stu.engagement_score}</span>
+                    </div>
+                    <div className="mt-3">
+                      <div className="text-[11px] font-semibold text-slate-500 uppercase">Weak topics</div>
+                      {stu.weak_topics.length === 0 ? (
+                        <p className="text-xs text-slate-400 mt-1">None flagged in this view</p>
+                      ) : (
+                        <ul className="mt-1 space-y-1">
+                          {stu.weak_topics.map((t) => (
+                            <li key={t.topic_id} className="text-sm text-slate-700">
+                              {t.topic_name}
+                              {t.mastery_score > 0 && (
+                                <span className="text-slate-400 text-xs ml-1">({t.mastery_score}%)</span>
+                              )}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </>
+        ) : (
+          <p className="text-sm text-slate-500">Insights unavailable. Try again later.</p>
+        )}
+      </section>
 
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">

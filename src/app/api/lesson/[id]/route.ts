@@ -1,3 +1,7 @@
+/**
+ * @legacy MARKETPLACE_LMS — Single marketplace lesson (course player, teacher edit).
+ * Migration: docs/AI_FIRST_MIGRATION.md
+ */
 import { NextResponse } from 'next/server';
 import mongoose from 'mongoose';
 import { getAuthFromRequest } from '@/lib/auth';

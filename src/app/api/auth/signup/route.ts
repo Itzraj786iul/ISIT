@@ -1,8 +1,10 @@
 import { NextResponse } from 'next/server';
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
-import { signToken, buildAuthCookie } from '@/lib/auth';
+import { signToken, buildAuthCookie, resolveJwtMaxAgeSeconds } from '@/lib/auth';
 import { connectToDB } from '@/lib/db';
+import { normalizeEmail, parsePassword, parseRememberMe } from '@/lib/validation';
+import { log } from '@/lib/logger';
 
 function normalizeRole(role: string): 'Student' | 'Teacher' | 'Parent' {
   const r = (role || 'Student').toString().trim();
@@ -23,7 +25,14 @@ export async function POST(req: Request) {
     const ParentProfile = (await import('@/models/ParentProfile')).default;
 
     const body = await req.json();
-    const { name, email, password, role, grade, extra } = body;
+    const { name, role, grade, extra } = body;
+    const email = normalizeEmail(body?.email);
+    const password = parsePassword(body?.password);
+    const rememberMe = parseRememberMe(body?.rememberMe);
+
+    if (!email || !password) {
+      return NextResponse.json({ message: 'Valid email and password required' }, { status: 400 });
+    }
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -44,7 +53,7 @@ export async function POST(req: Request) {
 
     const newUser = await User.create({
       organization_id: organizationId,
-      email,
+      email: email,
       password_hash: hashedPassword,
       role: roleValue,
       status: 'active',
@@ -75,27 +84,36 @@ export async function POST(req: Request) {
       });
     }
 
-    const token = await signToken({
-      userId,
-      role: roleValue,
-      email: newUser.email,
-    });
-
-    const cookie = buildAuthCookie(token);
-    const response = NextResponse.json({
-      message: 'User created successfully',
-      user: {
-        _id: userId,
-        name: newUser.name || name || '',
+    const maxAge = resolveJwtMaxAgeSeconds(rememberMe);
+    const token = await signToken(
+      {
+        userId,
+        role: roleValue,
         email: newUser.email,
-        role: newUser.role,
       },
-    }, { status: 201 });
+      maxAge
+    );
+
+    const cookie = buildAuthCookie(token, maxAge);
+    const response = NextResponse.json(
+      {
+        message: 'User created successfully',
+        token,
+        user: {
+          _id: userId,
+          name: newUser.name || name || '',
+          email: newUser.email,
+          role: newUser.role,
+          organization_id: organizationId.toString(),
+        },
+      },
+      { status: 201 }
+    );
     response.headers.set('Set-Cookie', cookie);
 
     return response;
   } catch (error: unknown) {
-    console.error('Signup Error:', error);
+    log.apiError('POST /api/auth/signup', error);
     return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
   }
 }

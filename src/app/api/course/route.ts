@@ -1,3 +1,7 @@
+/**
+ * @legacy MARKETPLACE_LMS — Create `Course` + optional `Lesson` rows. AI spine uses Subject/Topic APIs.
+ * Migration: docs/AI_FIRST_MIGRATION.md
+ */
 import { NextResponse } from 'next/server';
 import mongoose from 'mongoose';
 import { getAuthFromRequest } from '@/lib/auth';

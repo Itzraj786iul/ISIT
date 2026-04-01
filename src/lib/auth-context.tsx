@@ -1,6 +1,7 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState, useCallback, type ReactNode } from 'react';
+import { clearClientAuth } from '@/lib/client-auth';
 
 type AuthUser = {
   _id?: string;
@@ -29,6 +30,10 @@ let cachedPromise: Promise<AuthUser | null> | null = null;
 async function fetchMe(): Promise<AuthUser | null> {
   try {
     const res = await fetch('/api/auth/me', { credentials: 'include' });
+    if (res.status === 401) {
+      clearClientAuth();
+      return null;
+    }
     if (!res.ok) return null;
     const data = await res.json();
     return data.user ?? null;
@@ -54,6 +59,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = useCallback(async () => {
     await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
+    clearClientAuth();
     setUser(null);
     cachedPromise = null;
   }, []);

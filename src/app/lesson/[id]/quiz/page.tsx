@@ -1,5 +1,9 @@
 'use client';
 
+/**
+ * @legacy MARKETPLACE_LMS URL — quiz currently loads topic questions opportunistically.
+ * Target: /topic/[id]/quiz or session-scoped quiz only (docs/AI_FIRST_MIGRATION.md).
+ */
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';

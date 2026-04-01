@@ -1,3 +1,7 @@
+/**
+ * AI-first learning attempt — links student + `Topic` + `Subject`. Events → Mastery → recommendations.
+ * See docs/AI_FIRST_MIGRATION.md
+ */
 import mongoose from 'mongoose';
 
 const SessionSchema = new mongoose.Schema(
@@ -13,6 +17,12 @@ const SessionSchema = new mongoose.Schema(
     duration_seconds: { type: Number, default: 0 },
     confusion_count: { type: Number, default: 0 },
     teachback_score: { type: Number },
+    /** Adaptive tutor state (persisted on Session). */
+    tutor_current_concept: { type: String, default: '' },
+    tutor_difficulty_level: { type: String, enum: ['easy', 'medium', 'hard'], default: 'medium' },
+    tutor_last_answer_correct: { type: Boolean },
+    tutor_consecutive_wrong: { type: Number, default: 0 },
+    tutor_consecutive_correct: { type: Number, default: 0 },
     completion_status: { type: String, enum: ['in_progress', 'completed', 'abandoned'], default: 'in_progress' },
   },
   { timestamps: true }

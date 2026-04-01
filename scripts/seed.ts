@@ -1,3 +1,7 @@
+/**
+ * @legacy MARKETPLACE_LMS — Seeds Course/Lesson + demo teacher. Curriculum seed: scripts/seed-curriculum.ts
+ * See docs/AI_FIRST_MIGRATION.md
+ */
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import Course from '../src/models/Course';

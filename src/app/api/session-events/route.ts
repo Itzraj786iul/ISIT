@@ -11,6 +11,12 @@ const VALID_EVENT_TYPES = [
   'play',
   'hint_request',
   'teachback',
+  'teachback_attempt',
+  'hint_given',
+  'explanation_given',
+  'difficulty_changed',
+  'session_end',
+  'start_learning_click',
 ] as const;
 
 export async function POST(req: Request) {
@@ -19,7 +25,7 @@ export async function POST(req: Request) {
     if (!auth) return errorResponse('Unauthorized', 401);
 
     const body = await req.json().catch(() => ({}));
-    const { sessionId, eventType, content, metadata } = body;
+    const { sessionId, eventType, content, metadata, is_correct, isCorrect, response_time_ms, responseTimeMs } = body;
 
     if (!sessionId) return errorResponse('sessionId is required', 400);
 
@@ -36,6 +42,14 @@ export async function POST(req: Request) {
     const session = sessionDoc as unknown as { organization_id: unknown; student_id?: unknown };
     if (String(session.student_id) !== auth.userId) return errorResponse('Forbidden', 403);
 
+    const correctVal = typeof is_correct === 'boolean' ? is_correct : typeof isCorrect === 'boolean' ? isCorrect : undefined;
+    const rtVal =
+      typeof response_time_ms === 'number'
+        ? response_time_ms
+        : typeof responseTimeMs === 'number'
+          ? responseTimeMs
+          : undefined;
+
     const event = await createSessionEvent({
       organization_id: session.organization_id as mongoose.Types.ObjectId,
       session_id: new mongoose.Types.ObjectId(sessionId),
@@ -43,6 +57,8 @@ export async function POST(req: Request) {
       event_type: typeVal,
       content: typeof content === 'string' ? content : undefined,
       metadata: metadata ?? undefined,
+      is_correct: correctVal,
+      response_time_ms: rtVal,
     });
 
     const eventObj = event.toObject ? event.toObject() : event;

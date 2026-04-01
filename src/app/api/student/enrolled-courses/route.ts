@@ -1,3 +1,7 @@
+/**
+ * @legacy MARKETPLACE_LMS — Enrolled `Course` list + next `Lesson` id from `StudentProfile.completedLessons`.
+ * AI equivalent: sessions + last-session + topic links (docs/AI_FIRST_MIGRATION.md).
+ */
 import { NextResponse } from 'next/server';
 import mongoose from 'mongoose';
 import { getAuthFromRequest } from '@/lib/auth';

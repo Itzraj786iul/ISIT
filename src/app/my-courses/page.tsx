@@ -1,11 +1,17 @@
 'use client';
 
+/**
+ * @legacy MARKETPLACE_LMS — Enrolled courses (GET /api/student/enrolled-courses).
+ * AI-first hub: dashboard + /subjects + /session/[id] resume links.
+ * Migration: docs/AI_FIRST_MIGRATION.md
+ */
 import { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import Sidebar from '@/components/Sidebar';
 import { BookOpen, ChevronRight, Search } from 'lucide-react';
+import LegacyMarketplaceBanner from '@/components/LegacyMarketplaceBanner';
 
 type EnrolledItem = {
   course: { _id: string; title: string; description?: string; teacherId?: { name?: string }; image?: string };
@@ -93,6 +99,8 @@ export default function MyCoursesPage() {
           <p className="text-slate-500 text-sm mt-1">Track your learning progress</p>
         </div>
 
+        <LegacyMarketplaceBanner />
+
         {/* Filter tabs */}
         <div className="flex flex-wrap gap-2 mb-6">
           {(['all', 'in_progress', 'completed'] as const).map((f) => (
@@ -123,16 +131,24 @@ export default function MyCoursesPage() {
             </h2>
             <p className="text-slate-500 text-sm mb-6 max-w-sm mx-auto">
               {enrolled.length === 0
-                ? 'When you enroll in a course after checkout, it will appear here.'
+                ? 'No activity here yet. Start your first session from Subjects, or enroll in a legacy course below.'
                 : 'Try a different search or filter.'}
             </p>
             {enrolled.length === 0 && (
-              <Link
-                href="/courses"
-                className="inline-flex items-center gap-2 bg-sky-500 text-white px-5 py-2.5 rounded-lg font-medium text-sm hover:bg-sky-600 transition"
-              >
-                Browse courses <ChevronRight className="w-4 h-4" />
-              </Link>
+              <div className="flex flex-wrap gap-3 justify-center">
+                <Link
+                  href="/subjects"
+                  className="inline-flex items-center gap-2 btn-primary px-5 py-2.5 no-underline"
+                >
+                  Start your first session <ChevronRight className="w-4 h-4" />
+                </Link>
+                <Link
+                  href="/courses"
+                  className="inline-flex items-center gap-2 btn-secondary px-5 py-2.5 no-underline"
+                >
+                  Browse courses
+                </Link>
+              </div>
             )}
           </div>
         ) : (

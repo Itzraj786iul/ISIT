@@ -1,5 +1,9 @@
 'use client';
 
+/**
+ * @legacy MARKETPLACE_LMS — Paid course detail + checkout handoff. AI path: /subject/[id] → /topic/[id].
+ * Migration: docs/AI_FIRST_MIGRATION.md
+ */
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';

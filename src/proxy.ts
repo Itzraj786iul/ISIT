@@ -1,3 +1,11 @@
+/**
+ * Edge auth rules — Next.js 16+ uses this file as the proxy/middleware entry (`export default`).
+ * Do not add `middleware.ts` alongside; see https://nextjs.org/docs/messages/middleware-to-proxy
+ *
+ * AI-first routes: `/subjects`, `/subject/*`, `/topic/*`, `/session/*` — curriculum + session telemetry.
+ * Legacy marketplace: `/courses`, `/course/*`, `/lesson/*`, `/checkout`, `/my-courses`, `/certificate/*`.
+ * See docs/AI_FIRST_MIGRATION.md
+ */
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { jwtVerify } from 'jose';
@@ -34,7 +42,8 @@ function forbidden() {
   return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 });
 }
 
-export async function proxy(req: NextRequest) {
+/** Next.js 16+ edge entry — default export required; do not add `middleware.ts` alongside this file. */
+async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const method = req.method;
 
@@ -63,7 +72,7 @@ export async function proxy(req: NextRequest) {
     '/dashboard', '/analytics', '/schedule', '/achievements',
     '/settings', '/help', '/my-courses', '/learning-path',
     '/certificate', '/live', '/lesson', '/checkout',
-    '/subjects', '/subject', '/topic',
+    '/subjects', '/subject', '/topic', '/session',
   ];
   for (const prefix of protectedPages) {
     if (pathname === prefix || pathname.startsWith(prefix + '/')) {
@@ -73,7 +82,14 @@ export async function proxy(req: NextRequest) {
     }
   }
 
-  // --- Teacher-only API routes ---
+  // --- Teacher-only API routes (/api/teacher/*) ---
+  if (pathname.startsWith('/api/teacher/')) {
+    const payload = await getPayload(req);
+    if (!payload) return unauthorized();
+    if (payload.role !== 'teacher') return forbidden();
+    return NextResponse.next();
+  }
+
   if (
     (pathname === '/api/course' && method === 'POST') ||
     (pathname.match(/^\/api\/course\/[^/]+$/) && (method === 'DELETE' || method === 'PATCH')) ||
@@ -89,7 +105,7 @@ export async function proxy(req: NextRequest) {
   // --- Authenticated API routes (any logged-in user) ---
   const authedApiPrefixes = [
     '/api/user', '/api/student', '/api/checkout',
-    '/api/upload', '/api/sessions', '/api/session-events',
+    '/api/upload', '/api/sessions', '/api/session-events', '/api/events',
     '/api/mastery', '/api/performance', '/api/assignments',
     '/api/last-session', '/api/parent',
     '/api/ai/tutor', '/api/ai/generate-quiz',
@@ -105,6 +121,8 @@ export async function proxy(req: NextRequest) {
 
   return NextResponse.next();
 }
+
+export default proxy;
 
 export const config = {
   matcher: [
@@ -125,6 +143,7 @@ export const config = {
     '/subjects',
     '/subject/:path*',
     '/topic/:path*',
+    '/session/:path*',
     '/api/course',
     '/api/course/:path*',
     '/api/lesson',
@@ -135,6 +154,7 @@ export const config = {
     '/api/upload',
     '/api/sessions/:path*',
     '/api/session-events/:path*',
+    '/api/events',
     '/api/mastery',
     '/api/performance',
     '/api/assignments',
@@ -145,5 +165,6 @@ export const config = {
     '/api/questions',
     '/api/videos',
     '/api/topic-notes',
+    '/api/teacher/:path*',
   ],
 };

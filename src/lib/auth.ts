@@ -1,7 +1,18 @@
 import { SignJWT, jwtVerify } from 'jose';
 
 const COOKIE_NAME = 'auth_token';
-const DEFAULT_MAX_AGE = 60 * 60 * 24 * 7; // 7 days
+
+/** Short-lived session when "Remember me" is off (still uses Max-Age; browser close does not clear httpOnly cookie). */
+export const JWT_MAX_AGE_SESSION_SECONDS = 60 * 60 * 24; // 1 day
+
+/** Extended session when "Remember me" is on. */
+export const JWT_MAX_AGE_REMEMBER_SECONDS = 60 * 60 * 24 * 30; // 30 days
+
+const DEFAULT_MAX_AGE = JWT_MAX_AGE_SESSION_SECONDS;
+
+export function resolveJwtMaxAgeSeconds(rememberMe: boolean): number {
+  return rememberMe ? JWT_MAX_AGE_REMEMBER_SECONDS : JWT_MAX_AGE_SESSION_SECONDS;
+}
 
 export type JWTPayload = { userId: string; role: string; email?: string };
 
@@ -53,5 +64,12 @@ export async function getAuthFromRequest(req: Request): Promise<JWTPayload | nul
 export function buildAuthCookie(token: string, maxAge: number = DEFAULT_MAX_AGE): string {
   const isProd = process.env.NODE_ENV === 'production';
   const base = `${COOKIE_NAME}=${token}; Path=/; Max-Age=${maxAge}; HttpOnly; SameSite=Lax`;
+  return isProd ? `${base}; Secure` : base;
+}
+
+/** Clear auth cookie (match flags with `buildAuthCookie` for reliable removal in production). */
+export function buildClearAuthCookie(): string {
+  const isProd = process.env.NODE_ENV === 'production';
+  const base = `${COOKIE_NAME}=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax`;
   return isProd ? `${base}; Secure` : base;
 }

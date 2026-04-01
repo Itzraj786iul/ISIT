@@ -1,3 +1,8 @@
+/**
+ * Hybrid: currently uses marketplace `Lesson` + `Course` enrollment for context.
+ * TODO (AI-first): add topic-based tutor (Topic + TopicNote + session id) and keep this route
+ * backward-compatible until /lesson/* traffic is migrated. See docs/AI_FIRST_MIGRATION.md
+ */
 import { NextResponse } from 'next/server';
 import mongoose from 'mongoose';
 import { getAuthFromRequest } from '@/lib/auth';

@@ -1,6 +1,20 @@
 import mongoose from 'mongoose';
 
-const EVENT_TYPES = ['question', 'answer', 'pause', 'rewind', 'play', 'hint_request', 'teachback'] as const;
+const EVENT_TYPES = [
+  'question',
+  'answer',
+  'pause',
+  'rewind',
+  'play',
+  'hint_request',
+  'teachback',
+  'teachback_attempt',
+  'hint_given',
+  'explanation_given',
+  'difficulty_changed',
+  'session_end',
+  'start_learning_click',
+] as const;
 
 const SessionEventSchema = new mongoose.Schema(
   {

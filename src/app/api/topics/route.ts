@@ -1,7 +1,7 @@
 import { getTopicsForSubject } from '@/lib/curriculum-api';
 import { successResponse, errorResponse } from '@/lib/api-response';
 
-const CACHE_MAX_AGE = 60;
+const CACHE_MAX_AGE = 120;
 
 export async function GET(req: Request) {
   try {

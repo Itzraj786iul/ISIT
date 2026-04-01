@@ -1,3 +1,8 @@
+/**
+ * Hybrid: grounded on marketplace `Lesson` content today.
+ * TODO (AI-first): generate from `Topic` / `TopicNote` and write to `TopicQuestionBank`.
+ * See docs/AI_FIRST_MIGRATION.md
+ */
 import { NextResponse } from 'next/server';
 import mongoose from 'mongoose';
 import { getAuthFromRequest } from '@/lib/auth';

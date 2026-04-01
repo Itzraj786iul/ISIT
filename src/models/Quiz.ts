@@ -1,3 +1,7 @@
+/**
+ * @legacy MARKETPLACE_LMS — Quiz tied to marketplace `Lesson`. Prefer `TopicQuestionBank` + topic-based UX.
+ * Migration: docs/AI_FIRST_MIGRATION.md
+ */
 import mongoose from 'mongoose';
 
 const QuestionSchema = new mongoose.Schema({

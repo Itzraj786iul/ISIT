@@ -1,3 +1,7 @@
+/**
+ * AI-first intelligence — learning plans, goals, performance metrics, AI logs, recommendation feedback.
+ * See docs/AI_FIRST_MIGRATION.md
+ */
 import mongoose from 'mongoose';
 import { connectToDB } from '@/lib/db';
 

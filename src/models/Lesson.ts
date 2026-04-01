@@ -1,3 +1,7 @@
+/**
+ * @legacy MARKETPLACE_LMS — Belongs to `Course` (not `Topic`). Keep until checkout + lesson player are retired.
+ * Migration: docs/AI_FIRST_MIGRATION.md
+ */
 import mongoose from 'mongoose';
 
 const LessonSchema = new mongoose.Schema({

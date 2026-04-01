@@ -1,3 +1,8 @@
+/**
+ * Root layout. AI-first learning routes: /subjects, /subject/*, /topic/*, /session/*.
+ * Legacy marketplace: /courses, /course/*, /lesson/*, /checkout (docs/AI_FIRST_MIGRATION.md).
+ * Route protection: `src/proxy.ts` (edge; JWT cookie — set `JWT_SECRET` in prod).
+ */
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
