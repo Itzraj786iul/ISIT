@@ -1,6 +1,3 @@
-/** Client-side only. Store linked children for parent (MVP: localStorage; later replace with API). */
-export const PARENT_CHILDREN_KEY = 'isit_parent_children';
-
 export type ParentChild = {
   id: string;
   name: string;
@@ -8,38 +5,41 @@ export type ParentChild = {
   addedAt: string;
 };
 
-export function getStoredChildren(): ParentChild[] {
-  if (typeof window === 'undefined') return [];
+export async function fetchChildren(): Promise<ParentChild[]> {
   try {
-    const raw = localStorage.getItem(PARENT_CHILDREN_KEY);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
+    const res = await fetch('/api/parent/children', { credentials: 'include' });
+    if (!res.ok) return [];
+    const data = await res.json();
+    return Array.isArray(data.children) ? data.children : [];
   } catch {
     return [];
   }
 }
 
-export function setStoredChildren(children: ParentChild[]): void {
-  if (typeof window === 'undefined') return;
-  localStorage.setItem(PARENT_CHILDREN_KEY, JSON.stringify(children));
+export async function addChild(child: { name: string; email: string }): Promise<ParentChild | null> {
+  try {
+    const res = await fetch('/api/parent/children', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(child),
+      credentials: 'include',
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data.child ?? null;
+  } catch {
+    return null;
+  }
 }
 
-export function addStoredChild(child: Omit<ParentChild, 'id' | 'addedAt'>): ParentChild {
-  const children = getStoredChildren();
-  const newChild: ParentChild = {
-    ...child,
-    id: `child_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
-    addedAt: new Date().toISOString(),
-  };
-  setStoredChildren([...children, newChild]);
-  return newChild;
-}
-
-export function getStoredChildById(id: string): ParentChild | undefined {
-  return getStoredChildren().find((c) => c.id === id);
-}
-
-export function removeStoredChild(id: string): void {
-  setStoredChildren(getStoredChildren().filter((c) => c.id !== id));
+export async function removeChild(childId: string): Promise<boolean> {
+  try {
+    const res = await fetch(`/api/parent/children?childId=${encodeURIComponent(childId)}`, {
+      method: 'DELETE',
+      credentials: 'include',
+    });
+    return res.ok;
+  } catch {
+    return false;
+  }
 }

@@ -34,19 +34,11 @@ function LoginForm() {
 
       const data = await response.json();
       
-      // === DEBUGGING (Open Browser Console to see this) ===
-      console.log("Login Response Data:", data);
-      console.log("User Role Detected:", data.user?.role);
-      // ==============================================
-
       if (!response.ok) {
         throw new Error(data.message || 'Login failed');
       }
 
-       // Check if user object exists before saving
       if (data.user) {
-        localStorage.setItem('user', JSON.stringify(data.user));
-        console.log("User saved to localStorage");
 
         const userRole = (data.user.role ?? 'student').toString().toLowerCase();
 
@@ -106,40 +98,6 @@ function LoginForm() {
               Sign in to continue your learning journey
             </p>
 
-            {/* Social Login Buttons */}
-            <div className="mt-8 grid grid-cols-2 gap-3">
-              <button
-                type="button"
-                className="w-full flex items-center justify-center py-2.5 border border-gray-200 rounded-xl bg-white text-sm font-medium text-gray-600 hover:bg-gray-50 transition"
-                onClick={() => alert('Google Login: Coming in Phase 2')}
-              >
-                <svg className="h-5 w-5 mr-2" viewBox="0 0 24 24">
-                  <path fill="currentColor" d="M21.35 11.1h-9.17v2.73h6.51c-.33 3.81-3.5 5.44-6.5 5.44C8.36 19.27 5 16.25 5 12c0-4.1 3.2-7.27 7.2-7.27 3.09 0 4.9 1.97 4.9 1.97L19 4.72S16.56 2 12.1 2C6.42 2 2.03 6.8 2.03 12c0 5.05 4.13 10 10.22 10 5.35 0 9.25-3.67 9.25-9.09 0-1.15-.15-1.81-.15-1.81z"/>
-                </svg>
-                Google
-              </button>
-              <button
-                type="button"
-                className="w-full flex items-center justify-center py-2.5 border border-gray-200 rounded-xl bg-white text-sm font-medium text-gray-600 hover:bg-gray-50 transition"
-                onClick={() => alert('Facebook Login: Coming in Phase 2')}
-              >
-                <svg className="h-5 w-5 mr-2" viewBox="0 0 24 24">
-                  <path fill="currentColor" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/>
-                </svg>
-                Facebook
-              </button>
-            </div>
-
-            <div className="mt-6 relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-200"></div>
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">Or continue with email</span>
-              </div>
-            </div>
-
-            {/* Actual Login Form */}
             <form className="mt-8 space-y-4" onSubmit={handleLogin}>
               {error && (
                 <div className="p-3 text-sm text-red-600 bg-red-50 rounded-lg border border-red-200">
@@ -180,7 +138,7 @@ function LoginForm() {
 
               <div>
                 <div className="flex items-center justify-between">
-                   <Link href="#" className="text-sm text-sky-600 hover:underline">Forgot Password?</Link>
+                   <span className="text-sm text-slate-400 cursor-default">Forgot Password?</span>
                 </div>
                 <button
                   type="submit"
@@ -203,17 +161,17 @@ function LoginForm() {
           </div>
         </div>
 
-        {/* LEFT SIDE: Illustration */}
-        <div className="hidden md:block w-1/2 bg-sky-50 relative overflow-hidden order-1 md:order-2">
-           <img 
-             src="/assets/login-illustration.png" 
-             alt="Learning Illustration" 
-             className="absolute inset-0 w-full h-full object-cover"
-             onError={(e) => {
-                (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"; 
-             }}
-           />
-           <div className="absolute inset-0 bg-sky-900 opacity-5"></div>
+        {/* LEFT SIDE */}
+        <div className="hidden md:block w-1/2 bg-gradient-to-br from-sky-500 to-blue-600 relative overflow-hidden order-1 md:order-2">
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="text-center text-white px-8">
+              <div className="w-20 h-20 rounded-2xl bg-white/20 flex items-center justify-center mx-auto mb-6">
+                <span className="text-4xl font-bold">I</span>
+              </div>
+              <h2 className="text-3xl font-bold mb-3">Welcome to ISIT</h2>
+              <p className="text-sky-100 text-sm max-w-sm">Indian School of Innovation and Thinking. Learn at your own pace with AI-powered tutoring.</p>
+            </div>
+          </div>
         </div>
 
       </div>

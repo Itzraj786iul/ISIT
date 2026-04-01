@@ -1,164 +1,227 @@
 'use client';
 
-import { useState, useEffect, useMemo, Suspense } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import Link from 'next/link';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Sidebar from '@/components/Sidebar';
-import { Check } from 'lucide-react';
-
-type Filter = 'all' | 'unlocked' | 'course' | 'streak' | 'skills';
+import { Award, BookOpen, Layers, Target, Loader2 } from 'lucide-react';
 
 type Achievement = {
   id: string;
   title: string;
   description: string;
-  iconBg: string;
   unlocked: boolean;
-  unlockedOn?: string;
-  category: 'course' | 'streak' | 'skills' | 'other';
+  icon: 'award' | 'book' | 'layers' | 'target';
+  color: string;
 };
 
-const MOCK_ACHIEVEMENTS: Achievement[] = [
-  { id: '1', title: 'First Steps', description: 'Complete your first course', iconBg: '#fbbf24', unlocked: true, unlockedOn: 'Jan 15, 2026', category: 'course' },
-  { id: '2', title: 'Quick Learner', description: 'Finish 5 lessons in one day', iconBg: '#3b82f6', unlocked: true, unlockedOn: 'Jan 18, 2026', category: 'course' },
-  { id: '3', title: 'Week Warrior', description: 'Study 7 days in a row', iconBg: '#ec4899', unlocked: false, category: 'streak' },
-  { id: '4', title: 'Course Champion', description: 'Complete 3 full courses', iconBg: '#f97316', unlocked: true, unlockedOn: 'Feb 2, 2026', category: 'course' },
-  { id: '5', title: 'Skill Builder', description: 'Earn 5 skill badges', iconBg: '#22c55e', unlocked: true, unlockedOn: 'Feb 10, 2026', category: 'skills' },
-  { id: '6', title: 'Dedicated', description: '30-day learning streak', iconBg: '#0ea5e9', unlocked: false, category: 'streak' },
-  { id: '7', title: 'Explorer', description: 'Try 5 different courses', iconBg: '#eab308', unlocked: false, category: 'course' },
-  { id: '8', title: 'Quiz Master', description: 'Pass 20 quizzes', iconBg: '#a855f7', unlocked: false, category: 'skills' },
-];
+type MasteryRecord = {
+  topic_id: string;
+  mastery_score: number;
+  attempt_count: number;
+  subject_id?: string;
+};
 
-const FILTERS: { key: Filter; label: string }[] = [
-  { key: 'all', label: 'All' },
-  { key: 'unlocked', label: 'Unlocked' },
-  { key: 'course', label: 'Course' },
-  { key: 'streak', label: 'Streak' },
-  { key: 'skills', label: 'Skills' },
-];
-
-const UNLOCKED_COUNT = MOCK_ACHIEVEMENTS.filter((a) => a.unlocked).length;
-
-function AchievementsContent() {
+export default function AchievementsPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const initialFilter = useMemo(() => {
-    const f = searchParams.get('filter');
-    if (f && (['all', 'unlocked', 'course', 'streak', 'skills'] as Filter[]).includes(f as Filter)) return f as Filter;
-    return 'all';
-  }, [searchParams]);
-  const [filter, setFilter] = useState<Filter>(initialFilter);
-
-  useEffect(() => setFilter(initialFilter), [initialFilter]);
+  const [achievements, setAchievements] = useState<Achievement[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const userStr = localStorage.getItem('user');
-    if (!userStr) {
-      router.push('/login');
-      return;
-    }
-    const user = JSON.parse(userStr);
-    if (user?.role?.toLowerCase() === 'teacher') {
-      router.push('/teacher/dashboard');
-    }
+    const run = async () => {
+      setLoading(true);
+      const meRes = await fetch('/api/auth/me', { credentials: 'include' });
+      if (!meRes.ok) { router.push('/login'); return; }
+      const meData = await meRes.json();
+      const u = meData.user;
+      if (!u || u.role?.toLowerCase() === 'teacher') { router.push('/teacher/dashboard'); return; }
+
+      const achList: Achievement[] = [];
+
+      try {
+        const masteryRes = await fetch('/api/mastery', { credentials: 'include' });
+        let masteryRecords: MasteryRecord[] = [];
+        if (masteryRes.ok) {
+          const masteryJson = await masteryRes.json();
+          if (masteryJson.success && Array.isArray(masteryJson.data)) {
+            masteryRecords = masteryJson.data;
+          }
+        }
+
+        const studiedTopics = masteryRecords.filter((r) => r.attempt_count > 0);
+        const masteredTopics = masteryRecords.filter((r) => r.mastery_score >= 80);
+
+        achList.push({
+          id: 'first-topic',
+          title: 'First Topic Studied',
+          description: 'Study your first topic',
+          unlocked: studiedTopics.length > 0,
+          icon: 'book',
+          color: '#3b82f6',
+        });
+        achList.push({
+          id: 'topic-master',
+          title: 'Topic Master',
+          description: 'Master a topic (80%+ score)',
+          unlocked: masteredTopics.length >= 1,
+          icon: 'award',
+          color: '#f59e0b',
+        });
+        achList.push({
+          id: 'triple-master',
+          title: 'Triple Master',
+          description: 'Master 3 topics',
+          unlocked: masteredTopics.length >= 3,
+          icon: 'award',
+          color: '#ec4899',
+        });
+        achList.push({
+          id: 'five-topics',
+          title: 'Knowledge Builder',
+          description: 'Study 5 different topics',
+          unlocked: studiedTopics.length >= 5,
+          icon: 'book',
+          color: '#ef4444',
+        });
+        achList.push({
+          id: 'ten-mastered',
+          title: 'Scholar',
+          description: 'Master 10 topics',
+          unlocked: masteredTopics.length >= 10,
+          icon: 'award',
+          color: '#a855f7',
+        });
+
+        if (u.organization_id) {
+          const subjRes = await fetch(`/api/subjects?organizationId=${encodeURIComponent(u.organization_id)}`);
+          const subjJson = await subjRes.json();
+          const subjectCount = subjJson.success && Array.isArray(subjJson.data) ? subjJson.data.length : 0;
+
+          achList.push({
+            id: 'explore-subjects',
+            title: 'Explorer',
+            description: 'Have subjects available to study',
+            unlocked: subjectCount > 0,
+            icon: 'layers',
+            color: '#6366f1',
+          });
+        }
+
+        const sessRes = await fetch('/api/sessions', { credentials: 'include' });
+        let sessionCount = 0;
+        if (sessRes.ok) {
+          const sessJson = await sessRes.json();
+          const sessions = sessJson.success && Array.isArray(sessJson.data) ? sessJson.data : [];
+          sessionCount = sessions.length;
+        }
+
+        achList.push({
+          id: 'first-session',
+          title: 'Study Session',
+          description: 'Complete your first learning session',
+          unlocked: sessionCount >= 1,
+          icon: 'target',
+          color: '#22c55e',
+        });
+        achList.push({
+          id: 'sessions-10',
+          title: 'Dedicated Learner',
+          description: 'Complete 10 learning sessions',
+          unlocked: sessionCount >= 10,
+          icon: 'target',
+          color: '#0ea5e9',
+        });
+        achList.push({
+          id: 'sessions-50',
+          title: 'Marathon Runner',
+          description: 'Complete 50 learning sessions',
+          unlocked: sessionCount >= 50,
+          icon: 'award',
+          color: '#a855f7',
+        });
+      } catch (e) {
+        console.error(e);
+      }
+
+      setAchievements(achList);
+      setLoading(false);
+    };
+    run();
   }, [router]);
 
-  const filtered = MOCK_ACHIEVEMENTS.filter((a) => {
-    if (filter === 'all') return true;
-    if (filter === 'unlocked') return a.unlocked;
-    if (filter === 'course') return a.category === 'course';
-    if (filter === 'streak') return a.category === 'streak';
-    if (filter === 'skills') return a.category === 'skills';
-    return true;
-  });
+  const unlocked = achievements.filter((a) => a.unlocked).length;
+
+  const renderIcon = (icon: string, color: string) => {
+    const props = { className: 'w-8 h-8', style: { color } };
+    if (icon === 'book') return <BookOpen {...props} />;
+    if (icon === 'layers') return <Layers {...props} />;
+    if (icon === 'target') return <Target {...props} />;
+    return <Award {...props} />;
+  };
 
   return (
-    <main className="flex-1 p-4 sm:p-6 md:p-8 min-w-0 overflow-x-hidden">
+    <div className="min-h-screen bg-slate-50 flex font-sans">
+      <Sidebar />
+      <main className="flex-1 p-4 sm:p-6 md:p-8 min-w-0 overflow-x-hidden">
         <div className="mb-6">
           <h1 className="text-2xl font-extrabold text-slate-800 tracking-tight">Achievements</h1>
           <p className="text-slate-500 text-sm mt-1">Unlock badges as you progress</p>
         </div>
 
-        {/* Summary cards — clickable, link to same page with filter or dashboard */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-          {[1, 2, 3].map((i) => (
-            <Link
-              key={i}
-              href={i === 1 ? '/achievements' : i === 2 ? '/achievements?filter=unlocked' : '/dashboard'}
-              className="block no-underline"
-            >
-              <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm hover:border-sky-200 hover:shadow transition cursor-pointer">
-                <div className="text-3xl font-extrabold text-slate-800">{UNLOCKED_COUNT}</div>
-                <div className="text-sm text-slate-500 font-medium mt-1">Achievements Unlocked</div>
-              </div>
-            </Link>
-          ))}
-        </div>
-
-        {/* Filter tabs */}
-        <div className="flex flex-wrap gap-2 mb-6">
-          {FILTERS.map((f) => (
-            <button
-              key={f.key}
-              type="button"
-              onClick={() => setFilter(f.key)}
-              className={`px-4 py-2 rounded-lg text-sm font-semibold transition ${
-                filter === f.key
-                  ? 'bg-sky-500 text-white'
-                  : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
-              }`}
-            >
-              {f.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Achievement cards grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {filtered.map((a) => (
-            <Link
-              key={a.id}
-              href={a.unlocked ? '/my-courses' : '/courses'}
-              className="bg-white rounded-xl border border-slate-200 p-5 text-left shadow-sm hover:border-sky-200 hover:shadow transition cursor-pointer relative block no-underline"
-            >
-              {a.unlocked && (
-                <div className="absolute top-3 right-3 w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center">
-                  <Check className="w-3.5 h-3.5 text-white" strokeWidth={3} />
-                </div>
-              )}
-              <div
-                className="w-14 h-14 rounded-xl flex items-center justify-center mb-3"
-                style={{ backgroundColor: a.iconBg + '30' }}
-              >
-                <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke={a.iconBg} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                </svg>
-              </div>
-              <h3 className="font-bold text-slate-800">{a.title}</h3>
-              <p className="text-sm text-slate-500 mt-0.5">{a.description}</p>
-              <p className={`text-xs mt-2 ${a.unlocked ? 'text-emerald-600 font-medium' : 'text-slate-400'}`}>
-                {a.unlocked ? `Unlocked on ${a.unlockedOn}` : 'Locked'}
-              </p>
-            </Link>
-          ))}
-        </div>
-
-        {filtered.length === 0 && (
-          <div className="bg-white rounded-xl border border-slate-200 p-8 text-center text-slate-500">
-            No achievements match this filter. Try another tab.
+        {loading ? (
+          <div className="flex items-center justify-center py-12">
+            <Loader2 className="w-6 h-6 text-slate-400 animate-spin" />
           </div>
-        )}
-    </main>
-  );
-}
+        ) : (
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+              <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+                <div className="text-3xl font-extrabold text-slate-800">{unlocked}</div>
+                <div className="text-sm text-slate-500 font-medium mt-1">Unlocked</div>
+              </div>
+              <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+                <div className="text-3xl font-extrabold text-slate-800">{achievements.length}</div>
+                <div className="text-sm text-slate-500 font-medium mt-1">Total Achievements</div>
+              </div>
+              <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+                <div className="text-3xl font-extrabold text-slate-800">
+                  {achievements.length > 0 ? Math.round((unlocked / achievements.length) * 100) : 0}%
+                </div>
+                <div className="text-sm text-slate-500 font-medium mt-1">Completion</div>
+              </div>
+            </div>
 
-export default function AchievementsPage() {
-  return (
-    <div className="min-h-screen bg-slate-50 flex font-sans">
-      <Sidebar />
-      <Suspense fallback={<main className="flex-1 p-8"><p className="text-slate-500">Loading…</p></main>}>
-        <AchievementsContent />
-      </Suspense>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              {achievements.map((a) => (
+                <div
+                  key={a.id}
+                  className={`bg-white rounded-xl border p-5 shadow-sm relative ${
+                    a.unlocked ? 'border-emerald-200' : 'border-slate-200 opacity-60'
+                  }`}
+                >
+                  {a.unlocked && (
+                    <div className="absolute top-3 right-3 w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center">
+                      <svg className="w-3.5 h-3.5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
+                    </div>
+                  )}
+                  <div
+                    className="w-14 h-14 rounded-xl flex items-center justify-center mb-3"
+                    style={{ backgroundColor: a.color + '20' }}
+                  >
+                    {renderIcon(a.icon, a.color)}
+                  </div>
+                  <h3 className="font-bold text-slate-800">{a.title}</h3>
+                  <p className="text-sm text-slate-500 mt-0.5">{a.description}</p>
+                  <p className={`text-xs mt-2 font-medium ${a.unlocked ? 'text-emerald-600' : 'text-slate-400'}`}>
+                    {a.unlocked ? 'Unlocked' : 'Locked'}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+      </main>
     </div>
   );
 }

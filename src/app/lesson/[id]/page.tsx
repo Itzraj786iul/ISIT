@@ -221,8 +221,7 @@ export default function LessonPlayerPage() {
     );
   }
 
-  const defaultVideoUrl = 'https://www.youtube.com/embed/W6NZfCO5SIk';
-  const videoUrl = currentLesson.videoUrl || defaultVideoUrl;
+  const videoUrl = currentLesson.videoUrl || undefined;
 
   const aiTutorContent = (
     <>

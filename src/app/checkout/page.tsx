@@ -155,7 +155,7 @@ function CheckoutForm() {
     typeof course.teacherId === 'object' && course.teacherId && 'name' in course.teacherId
       ? (course.teacherId as { name?: string }).name
       : 'Instructor';
-  const courseImage = course.image || 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=1000&q=80';
+  const courseImage = course.image || '';
 
   return (
     <div className="min-h-screen bg-[#F4F7FA] flex flex-col">
@@ -266,7 +266,7 @@ function CheckoutForm() {
                   />
                   {paymentMethod === 'upi' && (
                     <input
-                      placeholder="UPI ID (e.g. 7827016924@paytm)"
+                      placeholder="UPI ID (e.g. yourname@upi)"
                       className="w-full rounded-xl border border-gray-200 px-4 py-3 focus:ring-2 focus:ring-sky-500 focus:outline-none"
                     />
                   )}

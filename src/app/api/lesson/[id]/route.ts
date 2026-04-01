@@ -1,16 +1,7 @@
 import { NextResponse } from 'next/server';
 import mongoose from 'mongoose';
-import dotenv from 'dotenv';
 import { getAuthFromRequest } from '@/lib/auth';
-
-dotenv.config();
-
-const connectToDB = async () => {
-  if (mongoose.connection.readyState === 0) {
-    if (!process.env.MONGO_URI) throw new Error('MONGO_URI is missing');
-    await mongoose.connect(process.env.MONGO_URI);
-  }
-};
+import { connectToDB } from '@/lib/db';
 
 async function ensureTeacherOwnsLesson(req: Request, lessonId: string) {
   const auth = await getAuthFromRequest(req);
@@ -27,6 +18,11 @@ async function ensureTeacherOwnsLesson(req: Request, lessonId: string) {
 
 export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const auth = await getAuthFromRequest(req);
+    if (!auth) {
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    }
+
     await connectToDB();
     const { id } = await params;
     const Lesson = (await import('@/models/Lesson')).default;

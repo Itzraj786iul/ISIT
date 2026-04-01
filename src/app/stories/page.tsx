@@ -10,33 +10,33 @@ export default function StoriesPage() {
   const stories = [
     {
       id: 1,
-      name: "Harry Potter",
+      name: "Arjun Mehta",
       location: "Mumbai, India",
       course: "Full Stack Web Development",
-      outcome: "Software Engineer at Google",
+      outcome: "Software Engineer at a leading tech firm",
       salaryGrowth: "60% Salary Hike",
-      image: "HP", // Placeholder for Avatar Initials
-      quote: "The project-based learning approach helped me land my dream job at Google. The mentors were incredibly supportive."
+      image: "AM",
+      quote: "The project-based learning approach helped me build real-world skills. The mentors were incredibly supportive throughout my journey."
     },
     {
       id: 2,
-      name: "Hermione Granger",
+      name: "Priya Sharma",
       location: "New Delhi, India",
       course: "Data Science & Analytics",
-      outcome: "Data Analyst at Microsoft",
+      outcome: "Data Analyst at a Fortune 500 company",
       salaryGrowth: "50% Salary Hike",
-      image: "HG",
-      quote: "I went from knowing nothing about Python to building complex ML models in just 6 months."
+      image: "PS",
+      quote: "I went from knowing nothing about Python to building complex ML models in just 6 months. The structured curriculum made all the difference."
     },
     {
       id: 3,
-      name: "Ron Weasley",
+      name: "Rohan Verma",
       location: "Bangalore, India",
       course: "Cloud Computing",
-      outcome: "DevOps Engineer at Amazon",
+      outcome: "DevOps Engineer at a top cloud provider",
       salaryGrowth: "70% Salary Hike",
-      image: "RW",
-      quote: "The real-world labs gave me the confidence to handle production environments immediately."
+      image: "RV",
+      quote: "The hands-on labs gave me the confidence to handle production environments from day one."
     }
   ];
 
@@ -59,10 +59,10 @@ export default function StoriesPage() {
           {/* Stats Grid */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-8 border-t border-gray-100 pt-8 sm:pt-12">
             {[
-              { value: "50K+", label: "Active Learners", icon: Users },
-              { value: "95%", label: "Success Rate", icon: Award },
-              { value: "40%", label: "Avg Salary Growth", icon: TrendingUp },
-              { value: "4.5/5", label: "Average Rating", icon: Star },
+              { value: "Growing", label: "Active Learners", icon: Users },
+              { value: "High", label: "Success Rate", icon: Award },
+              { value: "Significant", label: "Avg Career Growth", icon: TrendingUp },
+              { value: "Top Rated", label: "Student Satisfaction", icon: Star },
             ].map((stat, i) => (
               <div key={i} className="text-center group">
                 <div className="flex justify-center mb-4">

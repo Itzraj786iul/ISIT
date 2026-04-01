@@ -10,15 +10,13 @@ export default function HelpPage() {
   const router = useRouter();
 
   useEffect(() => {
-    const userStr = localStorage.getItem('user');
-    if (!userStr) {
-      router.push('/login');
-      return;
-    }
-    const user = JSON.parse(userStr);
-    if (user?.role?.toLowerCase() === 'teacher') {
-      router.push('/teacher/dashboard');
-    }
+    fetch('/api/auth/me', { credentials: 'include' })
+      .then(async (r) => {
+        if (!r.ok) { router.push('/login'); return; }
+        const data = await r.json();
+        if (data.user?.role?.toLowerCase() === 'teacher') router.push('/teacher/dashboard');
+      })
+      .catch(() => router.push('/login'));
   }, [router]);
 
   return (

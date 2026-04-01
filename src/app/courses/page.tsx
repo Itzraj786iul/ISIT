@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Search, SlidersHorizontal, Star, Clock, BookOpen } from 'lucide-react';
+import { Search, SlidersHorizontal, BookOpen } from 'lucide-react';
 import PublicNav from '@/components/PublicNav';
 import Footer from '@/components/Footer';
 
@@ -12,6 +12,9 @@ type Course = {
   description: string;
   price: number;
   level?: string;
+  category?: string;
+  lessons?: { _id: string }[];
+  createdAt?: string;
 };
 
 export default function CoursesPage() {
@@ -163,9 +166,11 @@ export default function CoursesPage() {
                     <span className="text-sky-300 text-4xl sm:text-5xl font-bold">
                       {course.title.charAt(0)}
                     </span>
-                    <div className="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-sky-600 shadow-sm">
-                      New
-                    </div>
+                    {course.createdAt && (Date.now() - new Date(course.createdAt).getTime()) < 30 * 24 * 60 * 60 * 1000 && (
+                      <div className="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-sky-600 shadow-sm">
+                        New
+                      </div>
+                    )}
                   </div>
 
                   {/* Content */}
@@ -184,14 +189,13 @@ export default function CoursesPage() {
 
                     {/* Meta */}
                     <div className="flex items-center gap-4 text-xs text-gray-500 border-t border-gray-100 pt-4 mb-4">
-                      <span className="flex items-center gap-1 text-yellow-500 font-medium">
-                        <Star size={14} fill="currentColor" /> 4.6
-                      </span>
+                      {course.category && (
+                        <span className="bg-slate-100 text-slate-600 px-2 py-0.5 rounded-md font-medium">
+                          {course.category}
+                        </span>
+                      )}
                       <span className="flex items-center gap-1">
-                        <Clock size={14} /> 8 weeks
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <BookOpen size={14} /> 32 lessons
+                        <BookOpen size={14} /> {course.lessons?.length ?? 0} lessons
                       </span>
                     </div>
 

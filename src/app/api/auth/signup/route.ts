@@ -1,23 +1,26 @@
 import { NextResponse } from 'next/server';
 import mongoose from 'mongoose';
-import User from '@/models/User';
 import bcrypt from 'bcryptjs';
-import dotenv from 'dotenv';
 import { signToken, buildAuthCookie } from '@/lib/auth';
+import { connectToDB } from '@/lib/db';
 
-dotenv.config();
-
-const MONGO_URI = process.env.MONGO_URI;
-
-const connectToDB = async () => {
-  if (mongoose.connection.readyState === 0) {
-    await mongoose.connect(MONGO_URI!);
-  }
-};
+function normalizeRole(role: string): 'Student' | 'Teacher' | 'Parent' {
+  const r = (role || 'Student').toString().trim();
+  const lower = r.toLowerCase();
+  if (lower === 'teacher') return 'Teacher';
+  if (lower === 'parent') return 'Parent';
+  return 'Student';
+}
 
 export async function POST(req: Request) {
   try {
     await connectToDB();
+
+    const User = (await import('@/models/User')).default;
+    const Organization = (await import('@/models/Organization')).default;
+    const Teacher = (await import('@/models/Teacher')).default;
+    const StudentProfile = (await import('@/models/StudentProfile')).default;
+    const ParentProfile = (await import('@/models/ParentProfile')).default;
 
     const body = await req.json();
     const { name, email, password, role, grade, extra } = body;
@@ -27,21 +30,54 @@ export async function POST(req: Request) {
       return NextResponse.json({ message: 'User already exists with this email' }, { status: 400 });
     }
 
+    let organizationId: mongoose.Types.ObjectId;
+    const existingOrg = await Organization.findOne().lean();
+    if (existingOrg) {
+      organizationId = (existingOrg as { _id: mongoose.Types.ObjectId })._id;
+    } else {
+      const created = await Organization.create({ name: 'Default Organization' });
+      organizationId = created._id;
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
+    const roleValue = normalizeRole(role || 'Student');
 
     const newUser = await User.create({
-      name,
+      organization_id: organizationId,
       email,
-      password: hashedPassword,
-      role: role || 'Student',
-      grade,
-      extra,
+      password_hash: hashedPassword,
+      role: roleValue,
+      status: 'active',
+      email_verified: false,
+      name: name ?? '',
     });
 
     const userId = newUser._id.toString();
+
+    if (roleValue === 'Teacher') {
+      await Teacher.create({
+        organization_id: organizationId,
+        user_id: newUser._id,
+      });
+    } else if (roleValue === 'Student') {
+      await StudentProfile.create({
+        organization_id: organizationId,
+        user_id: newUser._id,
+        grade: grade ?? undefined,
+        board: (extra as { board?: string })?.board,
+        learning_preferences: (extra as { learning_preferences?: unknown })?.learning_preferences,
+        completedLessons: [],
+      });
+    } else {
+      await ParentProfile.create({
+        organization_id: organizationId,
+        user_id: newUser._id,
+      });
+    }
+
     const token = await signToken({
       userId,
-      role: newUser.role || 'Student',
+      role: roleValue,
       email: newUser.email,
     });
 
@@ -50,7 +86,7 @@ export async function POST(req: Request) {
       message: 'User created successfully',
       user: {
         _id: userId,
-        name: newUser.name,
+        name: newUser.name || name || '',
         email: newUser.email,
         role: newUser.role,
       },

@@ -12,21 +12,16 @@ export default function SettingsPage() {
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
 
   useEffect(() => {
-    const userStr = localStorage.getItem('user');
-    if (!userStr) {
-      router.push('/login');
-      return;
-    }
-    try {
-      const u = JSON.parse(userStr);
-      if (u?.role?.toLowerCase() === 'teacher') {
-        router.push('/teacher/dashboard');
-        return;
-      }
-      setUser(u);
-    } catch {
-      router.push('/login');
-    }
+    fetch('/api/auth/me', { credentials: 'include' })
+      .then(async (r) => {
+        if (!r.ok) { router.push('/login'); return; }
+        const data = await r.json();
+        const u = data.user;
+        if (!u) { router.push('/login'); return; }
+        if (u.role?.toLowerCase() === 'teacher') { router.push('/teacher/dashboard'); return; }
+        setUser({ name: u.name, email: u.email, role: u.role });
+      })
+      .catch(() => router.push('/login'));
   }, [router]);
 
   return (

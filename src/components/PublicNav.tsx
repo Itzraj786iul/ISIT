@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Menu, X, User, LayoutDashboard, BookOpen, Settings, LogOut, ChevronDown } from 'lucide-react';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
+import { useAuth } from '@/lib/auth-context';
 
 type PublicNavProps = {
   active?: 'home' | 'courses' | 'how-it-works' | 'stories' | 'blog';
@@ -31,21 +32,8 @@ export default function PublicNav({ active }: PublicNavProps) {
   const router = useRouter();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
-  const [user, setUser] = useState<LoggedInUser | null>(null);
+  const { user, logout } = useAuth();
   const profileRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const raw = typeof window !== 'undefined' ? localStorage.getItem('user') : null;
-    if (raw) {
-      try {
-        setUser(JSON.parse(raw));
-      } catch {
-        setUser(null);
-      }
-    } else {
-      setUser(null);
-    }
-  }, []);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -56,9 +44,7 @@ export default function PublicNav({ active }: PublicNavProps) {
   }, []);
 
   const handleLogout = async () => {
-    await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
-    localStorage.removeItem('user');
-    setUser(null);
+    await logout();
     setProfileOpen(false);
     router.push('/');
   };

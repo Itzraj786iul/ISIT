@@ -1,16 +1,7 @@
 import { NextResponse } from 'next/server';
 import mongoose from 'mongoose';
-import dotenv from 'dotenv';
 import { getAuthFromRequest } from '@/lib/auth';
-
-dotenv.config();
-
-const connectToDB = async () => {
-  if (mongoose.connection.readyState === 0) {
-    if (!process.env.MONGO_URI) throw new Error('MONGO_URI is missing');
-    await mongoose.connect(process.env.MONGO_URI, { bufferCommands: false });
-  }
-};
+import { connectToDB } from '@/lib/db';
 
 type TutorUsageLog = {
   userId: string;

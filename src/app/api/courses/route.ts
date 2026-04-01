@@ -1,17 +1,6 @@
 import { NextResponse } from 'next/server';
 import mongoose from 'mongoose';
-import dotenv from 'dotenv';
-
-dotenv.config();
-
-const MONGO_URI = process.env.MONGO_URI;
-
-const connectToDB = async () => {
-  if (mongoose.connection.readyState === 0) {
-    if (!MONGO_URI) throw new Error('MONGO_URI is missing');
-    await mongoose.connect(MONGO_URI);
-  }
-};
+import { connectToDB } from '@/lib/db';
 
 export async function GET(req: Request) {
   try {

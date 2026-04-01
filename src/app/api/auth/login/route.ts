@@ -1,36 +1,38 @@
 import { NextResponse } from 'next/server';
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
-import dotenv from 'dotenv';
 import { signToken, buildAuthCookie } from '@/lib/auth';
-
-dotenv.config();
-
-const MONGO_URI = process.env.MONGO_URI;
-
-const connectToDB = async () => {
-  if (mongoose.connection.readyState === 0) {
-    await mongoose.connect(MONGO_URI!);
-  }
-};
+import { connectToDB } from '@/lib/db';
 
 export async function POST(req: Request) {
   try {
     await connectToDB();
 
     const { email, password } = await req.json();
+    if (!email || typeof password !== 'string') {
+      return NextResponse.json({ message: 'Email and password required' }, { status: 400 });
+    }
 
     const User = (await import('@/models/User')).default;
 
     const user = await User.findOne({ email });
+    const isDev = process.env.NODE_ENV !== 'production';
     if (!user) {
-      return NextResponse.json({ message: 'User not found' }, { status: 400 });
-    }
-
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
+      if (isDev) console.log('[Login] No user found for email:', email);
       return NextResponse.json({ message: 'Invalid credentials' }, { status: 401 });
     }
+    if (typeof user.password_hash !== 'string' || user.password_hash.length === 0) {
+      if (isDev) console.log('[Login] User found but password_hash is missing/empty for:', email);
+      return NextResponse.json({ message: 'Invalid credentials' }, { status: 401 });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password_hash);
+    if (!isMatch) {
+      if (isDev) console.log('[Login] Password mismatch for:', email);
+      return NextResponse.json({ message: 'Invalid credentials' }, { status: 401 });
+    }
+
+    await User.findByIdAndUpdate(user._id, { last_login: new Date() });
 
     const userId = user._id.toString();
     const token = await signToken({
@@ -44,7 +46,7 @@ export async function POST(req: Request) {
       message: 'Login successful',
       user: {
         _id: userId,
-        name: user.name,
+        name: user.name ?? '',
         email: user.email,
         role: user.role,
       },

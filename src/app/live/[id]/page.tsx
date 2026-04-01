@@ -1,30 +1,20 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Sidebar from '@/components/Sidebar';
-import { Video, Calendar, Clock, ArrowLeft } from 'lucide-react';
-
-const MOCK_SESSIONS: Record<string, { title: string; subtitle: string; time: string; duration: string; type: 'live' | 'onboarding' }> = {
-  '1': { title: 'Python Functions - Live Session', subtitle: 'Introduction to Python', time: '10:00 AM', duration: '1 hour', type: 'live' },
-  '2': { title: 'CSS Grid Assignment Due', subtitle: 'Web Development Basics', time: '11:59 PM', duration: '-', type: 'live' },
-  '3': { title: 'React Hooks Workshop', subtitle: 'Advanced Frontend', time: '2:00 PM', duration: '1.5 hours', type: 'live' },
-  'onboarding': { title: 'Welcome & Platform Tour', subtitle: 'Live onboarding for new students', time: '4:00 PM', duration: '45 min', type: 'onboarding' },
-};
+import { Video, ArrowLeft } from 'lucide-react';
 
 export default function LiveSessionPage() {
-  const params = useParams();
   const router = useRouter();
-  const id = params.id as string;
-  const session = MOCK_SESSIONS[id] || MOCK_SESSIONS['1'];
 
   useEffect(() => {
-    const userStr = localStorage.getItem('user');
-    if (!userStr) {
-      router.push('/login');
-      return;
-    }
+    fetch('/api/auth/me', { credentials: 'include' })
+      .then(async (r) => {
+        if (!r.ok) router.push('/login');
+      })
+      .catch(() => router.push('/login'));
   }, [router]);
 
   return (
@@ -40,36 +30,20 @@ export default function LiveSessionPage() {
             <div className="bg-sky-500 text-white px-6 py-4 flex items-center gap-3">
               <Video className="w-8 h-8" />
               <div>
-                <h1 className="text-xl font-bold">{session.title}</h1>
-                <p className="text-sky-100 text-sm">{session.subtitle}</p>
+                <h1 className="text-xl font-bold">Live Session</h1>
+                <p className="text-sky-100 text-sm">Interactive learning session</p>
               </div>
             </div>
             <div className="p-6 sm:p-8">
-              <div className="flex flex-wrap gap-4 text-slate-600 mb-6">
-                <span className="flex items-center gap-2">
-                  <Calendar className="w-4 h-4" /> {session.time}
-                </span>
-                <span className="flex items-center gap-2">
-                  <Clock className="w-4 h-4" /> {session.duration}
-                </span>
-              </div>
-
               <div className="aspect-video bg-slate-100 rounded-xl flex flex-col items-center justify-center gap-4 p-6 text-center">
                 <Video className="w-16 h-16 text-slate-400" />
                 <p className="text-slate-600 font-medium">Live session will start here</p>
                 <p className="text-slate-500 text-sm max-w-md">
-                  When the session is live, the video stream or meeting link will appear here. You can join from your Schedule or when the teacher starts the class.
+                  When the session is live, the video stream or meeting link will appear here. Check your Schedule for upcoming sessions.
                 </p>
-                <button
-                  type="button"
-                  className="mt-2 px-6 py-3 bg-sky-500 text-white font-medium rounded-xl hover:bg-sky-600 transition"
-                >
-                  Join when live
-                </button>
               </div>
-
               <p className="mt-6 text-slate-500 text-sm">
-                For onboarding classes and live lectures, you will receive a reminder before the session. Make sure notifications are enabled in Settings.
+                You will receive a reminder before the session starts. Make sure notifications are enabled in Settings.
               </p>
             </div>
           </div>

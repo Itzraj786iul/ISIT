@@ -4,10 +4,12 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { User } from 'lucide-react';
+import { useAuth } from '@/lib/auth-context';
 
 const navItems = [
   { label: 'Dashboard', href: '/dashboard' },
   { label: 'My Courses', href: '/my-courses' },
+  { label: 'Subjects', href: '/subjects' },
   { label: 'Browse All', href: '/courses' },
   { label: 'Analytics', href: '/analytics' },
   { label: 'Learning Path', href: '/learning-path' },
@@ -19,6 +21,7 @@ function SidebarIcon({ name, color }: { name: string; color: string }) {
   const size = 16;
   if (name === 'Dashboard') return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline points="9 22 9 12 15 12 15 22" /></svg>;
   if (name === 'My Courses') return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" /></svg>;
+  if (name === 'Subjects') return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" /><path d="M12 6v6" /><path d="M9 9h6" /></svg>;
   if (name === 'Browse All') return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>;
   if (name === 'Analytics') return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10" /><line x1="12" y1="20" x2="12" y2="4" /><line x1="6" y1="20" x2="6" y2="14" /></svg>;
   if (name === 'Learning Path') return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" /><path d="M20 19.5a2.5 2.5 0 0 1-2.5 2.5H2" /><path d="M6.5 2H2v20" /><path d="M8 7l3-3 3 3" /><path d="M12 10v12" /></svg>;
@@ -29,7 +32,7 @@ function SidebarIcon({ name, color }: { name: string; color: string }) {
 
 export default function Sidebar() {
   const [open, setOpen] = useState(true);
-  const [user, setUser] = useState<{ name?: string; email?: string } | null>(null);
+  const { user, logout } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
 
@@ -46,24 +49,8 @@ export default function Sidebar() {
     if (typeof window !== 'undefined' && window.innerWidth < 768) setOpen(false);
   }, [pathname]);
 
-  useEffect(() => {
-    const raw = typeof window !== 'undefined' ? localStorage.getItem('user') : null;
-    if (raw) {
-      try {
-        const u = JSON.parse(raw);
-        setUser({ name: u.name, email: u.email });
-      } catch {
-        setUser(null);
-      }
-    } else {
-      setUser(null);
-    }
-  }, []);
-
   const handleLogout = async () => {
-    await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
-    localStorage.removeItem('user');
-    setUser(null);
+    await logout();
     router.push('/login');
   };
 

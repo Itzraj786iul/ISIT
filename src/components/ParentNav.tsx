@@ -3,14 +3,15 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { BookOpen, Users, Plus, Settings, LogOut, Heart } from 'lucide-react';
+import { useAuth } from '@/lib/auth-context';
 
 export default function ParentNav() {
   const pathname = usePathname();
   const router = useRouter();
+  const { logout } = useAuth();
 
   const handleLogout = async () => {
-    await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
-    if (typeof window !== 'undefined') localStorage.removeItem('user');
+    await logout();
     router.push('/');
   };
 

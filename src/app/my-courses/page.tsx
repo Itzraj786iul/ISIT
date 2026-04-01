@@ -68,11 +68,8 @@ export default function MyCoursesPage() {
 
   const estimateTimeLeft = (item: EnrolledItem) => {
     const remaining = item.lessonCount - item.completedCount;
-    const minutes = remaining * 30;
-    if (minutes < 60) return `${minutes}m left`;
-    const h = Math.floor(minutes / 60);
-    const m = minutes % 60;
-    return `${h}h ${m}m left`;
+    if (remaining <= 0) return 'Complete';
+    return `${remaining} lesson${remaining !== 1 ? 's' : ''} left`;
   };
 
   return (

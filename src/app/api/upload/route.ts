@@ -1,12 +1,18 @@
 import { NextResponse } from 'next/server';
 import { writeFile, mkdir } from 'fs/promises';
 import path from 'path';
+import { getAuthFromRequest } from '@/lib/auth';
 
 const MAX_SIZE_BYTES = 5 * 1024 * 1024; // 5MB
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 
 export async function POST(req: Request) {
   try {
+    const auth = await getAuthFromRequest(req);
+    if (!auth) {
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    }
+
     const formData = await req.formData();
     const file = formData.get('file') ?? formData.get('image');
 

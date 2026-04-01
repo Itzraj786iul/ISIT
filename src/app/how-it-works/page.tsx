@@ -224,7 +224,7 @@ export default function HowItWorksPage() {
                 <Award size={32} />
               </div>
               <h3 className="text-xl font-bold mb-3 text-gray-900">Global Community</h3>
-              <p className="text-gray-500 text-sm">Join 50,000+ learners from around the world.</p>
+              <p className="text-gray-500 text-sm">Join learners from around the world in our growing community.</p>
             </div>
           </div>
         </div>

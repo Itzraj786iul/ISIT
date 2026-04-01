@@ -1,15 +1,7 @@
 import { NextResponse } from 'next/server';
 import mongoose from 'mongoose';
-import dotenv from 'dotenv';
 import { getAuthFromRequest } from '@/lib/auth';
-
-dotenv.config();
-
-const connectToDB = async () => {
-  if (mongoose.connection.readyState === 0 && process.env.MONGO_URI) {
-    await mongoose.connect(process.env.MONGO_URI);
-  }
-};
+import { connectToDB } from '@/lib/db';
 
 export async function GET(req: Request) {
   try {
@@ -20,18 +12,19 @@ export async function GET(req: Request) {
 
     await connectToDB();
     const User = (await import('@/models/User')).default;
-    const userDoc = await User.findById(auth.userId).select('name email role _id').lean();
+    const userDoc = await User.findById(auth.userId).select('name email role _id organization_id').lean();
     if (!userDoc) {
       return NextResponse.json({ message: 'User not found' }, { status: 401 });
     }
-    const user = userDoc as unknown as { _id: unknown; name: string; email: string; role: string };
+    const user = userDoc as unknown as { _id: unknown; name: string; email: string; role: string; organization_id?: unknown };
 
     return NextResponse.json({
       user: {
         _id: user._id?.toString?.() ?? String(user._id),
-        name: user.name,
+        name: user.name ?? '',
         email: user.email,
         role: user.role,
+        organization_id: user.organization_id?.toString?.() ?? (user.organization_id != null ? String(user.organization_id) : undefined),
       },
     }, { status: 200 });
   } catch (error) {

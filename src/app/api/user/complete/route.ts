@@ -1,16 +1,7 @@
 import { NextResponse } from 'next/server';
 import mongoose from 'mongoose';
-import dotenv from 'dotenv';
 import { getAuthFromRequest } from '@/lib/auth';
-
-dotenv.config();
-
-const connectToDB = async () => {
-  if (mongoose.connection.readyState === 0) {
-    if (!process.env.MONGO_URI) throw new Error('MONGO_URI is missing');
-    await mongoose.connect(process.env.MONGO_URI);
-  }
-};
+import { connectToDB } from '@/lib/db';
 
 export async function POST(req: Request) {
   try {
@@ -28,7 +19,7 @@ export async function POST(req: Request) {
 
     await connectToDB();
 
-    const User = (await import('@/models/User')).default;
+    const StudentProfile = (await import('@/models/StudentProfile')).default;
     const Lesson = (await import('@/models/Lesson')).default;
     const Course = (await import('@/models/Course')).default;
 
@@ -52,9 +43,17 @@ export async function POST(req: Request) {
       );
     }
 
-    await User.findByIdAndUpdate(userId, {
-      $addToSet: { completedLessons: lessonId },
-    });
+    const updated = await StudentProfile.findOneAndUpdate(
+      { user_id: userId },
+      { $addToSet: { completedLessons: lessonId } },
+      { new: true }
+    );
+    if (!updated) {
+      return NextResponse.json(
+        { message: 'Student profile not found' },
+        { status: 404 }
+      );
+    }
 
     return NextResponse.json({ message: 'Progress saved!' }, { status: 200 });
   } catch (error: unknown) {

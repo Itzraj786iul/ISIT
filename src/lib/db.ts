@@ -1,31 +1,14 @@
 import mongoose from 'mongoose';
-import dotenv from 'dotenv';
 
-// Import ALL models to ensure they are registered globally
-import User from '@/models/User';
-import Course from '@/models/Course';
-import Lesson from '@/models/Lesson';
+let isConnected = false;
 
-dotenv.config();
-
-const MONGO_URI = process.env.MONGO_URI;
-
-if (!MONGO_URI) {
-  throw new Error('Please define MONGO_URI in .env file');
-}
-
-// Global is to prevent multiple connections in development (hot-reloading)
-const globalForMongoose = global as unknown as { conn: Awaited<ReturnType<typeof mongoose.connect>> | undefined };
-
-const connectToDB = async () => {
-  if (globalForMongoose.conn) {
-    return globalForMongoose.conn;
+export async function connectToDB() {
+  if (isConnected || mongoose.connection.readyState >= 1) {
+    isConnected = true;
+    return;
   }
-
-  const connection = await mongoose.connect(MONGO_URI, { bufferCommands: false });
-  globalForMongoose.conn = connection;
-
-  return connection;
-};
-
-export default connectToDB;
+  const uri = process.env.MONGO_URI;
+  if (!uri) throw new Error('MONGO_URI environment variable is not set');
+  await mongoose.connect(uri);
+  isConnected = true;
+}

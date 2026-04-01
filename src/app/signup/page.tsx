@@ -76,20 +76,8 @@ export default function SignupPage() {
         throw new Error(data.message || 'Signup failed');
       }
 
-      // ================= NEW ROBUST LOGIC =================
-      // If the server sends back the user, use it. 
-      // If the server sends {success: true} but NO user object, create a fallback.
-      const userToSave = data.user || {
-        name: formData.name,
-        email: formData.email,
-        role: role,
-      };
-
-      // Save the user to local storage (Auto-login)
-      localStorage.setItem('user', JSON.stringify(userToSave));
-      
-      // Redirect to personalized homepage by role
-      const roleKey = (userToSave.role ?? 'Student').toString().toLowerCase();
+      const userObj = data.user || { role };
+      const roleKey = (userObj.role ?? 'Student').toString().toLowerCase();
       if (roleKey === 'teacher') {
         router.push('/teacher/dashboard');
       } else if (roleKey === 'parent') {
@@ -97,7 +85,6 @@ export default function SignupPage() {
       } else {
         router.push('/dashboard');
       }
-      // =================================================
 
     } catch (err: any) {
       setError(err.message);
@@ -123,15 +110,17 @@ export default function SignupPage() {
 
       <div className="flex-1 flex flex-col md:flex-row">
         
-        {/* LEFT SIDE: Illustration */}
-        <div className="hidden lg:block w-1/2 bg-sky-50 relative overflow-hidden">
-           <img
-             src="https://images.unsplash.com/photo-1531379410502-63bfe8cdaf6f?q=80&w=387&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-             alt="Learning Illustration"
-             className="w-full h-full object-cover"
-           />
-           {/* Decorative Circle */}
-           <div className="absolute bottom-0 right-0 w-64 h-64 bg-sky-500 rounded-full mix-blend-multiply opacity-20 translate-x-1/2 translate-y-1/2"></div>
+        {/* LEFT SIDE */}
+        <div className="hidden lg:block w-1/2 bg-gradient-to-br from-sky-500 to-blue-600 relative overflow-hidden">
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="text-center text-white px-8">
+              <div className="w-20 h-20 rounded-2xl bg-white/20 flex items-center justify-center mx-auto mb-6">
+                <span className="text-4xl font-bold">I</span>
+              </div>
+              <h2 className="text-3xl font-bold mb-3">Join ISIT</h2>
+              <p className="text-sky-100 text-sm max-w-sm">Start your learning journey with AI-powered tutoring, structured curriculum, and progress tracking.</p>
+            </div>
+          </div>
         </div>
 
         {/* RIGHT SIDE: Form */}

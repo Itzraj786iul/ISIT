@@ -1,75 +1,69 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { 
-  BookOpen, 
-  Users, 
-  DollarSign, 
-  MoreVertical, 
-  Plus, 
-  Edit, 
+import {
+  BookOpen,
+  Users,
+  Plus,
+  Edit,
   Trash2,
   TrendingUp,
-  Star
+  ChevronRight,
+  Layers,
 } from 'lucide-react';
+import TeacherShell from '../_components/TeacherShell';
 
-type User = {
-  _id?: string;
-  id?: string;
-  name: string;
-  role: string;
-};
-
+type User = { _id?: string; name: string; role: string; organization_id?: string };
 type ApiCourse = {
   _id: string;
   title: string;
   category: string;
   price: number;
-  enrolledStudents?: unknown[];
+  enrolledStudents?: string[];
+  lessons?: { _id: string }[];
   createdAt?: string;
 };
+type SubjectItem = { _id: string; name: string; grade: string; board: string; description?: string };
 
 export default function TeacherDashboard() {
   const router = useRouter();
-  const pathname = usePathname();
   const [user, setUser] = useState<User | null>(null);
   const [courses, setCourses] = useState<ApiCourse[]>([]);
+  const [subjects, setSubjects] = useState<SubjectItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const totalStudents = courses.reduce((sum, c) => sum + (c.enrolledStudents?.length ?? 0), 0);
-  const stats = {
-    totalRevenue: 0, // Could be extended with payments later
-    totalStudents,
-    courseRating: 0,
-    activeCourses: courses.length
-  };
 
   useEffect(() => {
     const run = async () => {
       const meRes = await fetch('/api/auth/me', { credentials: 'include' });
-      if (!meRes.ok) {
-        router.push('/login');
-        return;
-      }
+      if (!meRes.ok) { router.push('/login'); return; }
       const meData = await meRes.json();
       const userData = meData.user as User;
-      if (!userData || userData.role?.toLowerCase() !== 'teacher') {
-        router.push('/dashboard');
-        return;
-      }
+      if (!userData || userData.role?.toLowerCase() !== 'teacher') { router.push('/dashboard'); return; }
       setUser(userData);
 
-      setLoading(true);
       try {
-        const uid = userData._id ?? (userData as unknown as { id?: string }).id ?? '';
-        const res = await fetch(`/api/courses?teacherId=${encodeURIComponent(uid)}`, { credentials: 'include' });
-        if (res.ok) {
-          const data = await res.json();
-          setCourses(Array.isArray(data) ? data : []);
+        const uid = userData._id ?? '';
+        const fetches: Promise<void>[] = [
+          fetch(`/api/courses?teacherId=${encodeURIComponent(uid)}`, { credentials: 'include' })
+            .then(async (r) => { if (r.ok) setCourses(await r.json()); }),
+        ];
+
+        if (userData.organization_id) {
+          fetches.push(
+            fetch(`/api/subjects?organizationId=${encodeURIComponent(userData.organization_id)}`, { credentials: 'include' })
+              .then(async (r) => {
+                const json = await r.json();
+                if (json.success && Array.isArray(json.data)) setSubjects(json.data);
+              })
+          );
         }
+
+        await Promise.all(fetches);
       } catch (e) {
         console.error(e);
       } finally {
@@ -86,214 +80,186 @@ export default function TeacherDashboard() {
       const res = await fetch(`/api/course/${id}`, { method: 'DELETE', credentials: 'include' });
       if (res.ok) setCourses((prev) => prev.filter((c) => c._id !== id));
       else alert('Failed to delete course.');
-    } catch (e) {
-      console.error(e);
-      alert('Failed to delete course.');
-    } finally {
-      setDeletingId(null);
-    }
+    } catch { alert('Failed to delete course.'); }
+    finally { setDeletingId(null); }
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: '#f1f5f9', fontFamily: "'DM Sans', sans-serif", display: 'flex' }}>
-      
-      {/* SIDEBAR */}
-      <aside style={{
-        width: 250, background: '#fff', borderRight: '1px solid #e2e8f0',
-        display: 'flex', flexDirection: 'column', padding: '20px 0',
-        position: 'fixed', height: '100vh', top: 0, zIndex: 10
-      }}>
-        <div style={{ padding: '0 24px', marginBottom: 32, display: 'flex', alignItems: 'center', gap: 8 }}>
-          <div style={{ width: 32, height: 32, background: '#3b82f6', borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 800 }}>I</div>
-          <span style={{ fontWeight: 700, fontSize: 18, color: '#0f172a' }}>ISIT Instructor</span>
+    <TeacherShell user={user}>
+      {/* Header */}
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900">Instructor Dashboard</h1>
+          <p className="text-slate-500 text-sm mt-1">Welcome back, {user?.name || 'Instructor'}</p>
         </div>
+        <Link
+          href="/teacher/create-course"
+          className="inline-flex items-center gap-2 bg-sky-600 hover:bg-sky-700 text-white px-5 py-2.5 rounded-lg font-medium text-sm transition no-underline"
+        >
+          <Plus className="w-4 h-4" /> Create Course
+        </Link>
+      </div>
 
-        <nav style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-          <Link href="/teacher/dashboard" style={{ textDecoration: 'none' }}>
-            <NavItem icon={<BookOpen size={18} />} label="Dashboard" active={pathname === '/teacher/dashboard'} />
-          </Link>
-          <Link href="/teacher/students" style={{ textDecoration: 'none' }}>
-            <NavItem icon={<Users size={18} />} label="Students" active={pathname === '/teacher/students'} />
-          </Link>
-          <Link href="/teacher/earnings" style={{ textDecoration: 'none' }}>
-            <NavItem icon={<DollarSign size={18} />} label="Earnings" active={pathname === '/teacher/earnings'} />
-          </Link>
-          <Link href="/teacher/analytics" style={{ textDecoration: 'none' }}>
-            <NavItem icon={<TrendingUp size={18} />} label="Analytics" active={pathname === '/teacher/analytics'} />
-          </Link>
-          <Link href="/teacher/reviews" style={{ textDecoration: 'none' }}>
-            <NavItem icon={<Star size={18} />} label="Reviews" active={pathname === '/teacher/reviews'} />
-          </Link>
-        </nav>
-      </aside>
+      {/* Stats */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <StatCard label="Subjects" value={subjects.length} icon={<Layers className="w-5 h-5 text-sky-600" />} color="sky" />
+        <StatCard label="Courses" value={courses.length} icon={<BookOpen className="w-5 h-5 text-violet-600" />} color="violet" />
+        <StatCard label="Students" value={totalStudents} icon={<Users className="w-5 h-5 text-emerald-600" />} color="emerald" />
+        <StatCard label="Revenue" value={`\u20B9${courses.reduce((sum, c) => sum + (c.price || 0) * (c.enrolledStudents?.length || 0), 0)}`} icon={<TrendingUp className="w-5 h-5 text-amber-600" />} color="amber" />
+      </div>
 
-      {/* MAIN CONTENT */}
-      <main style={{ flex: 1, marginLeft: 250, padding: '32px 40px' }}>
-        
-        {/* Header */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 32 }}>
-          <div>
-            <h1 style={{ fontSize: 28, fontWeight: 700, color: '#1e293b', margin: 0 }}>
-              Instructor Dashboard
-            </h1>
-            <p style={{ color: '#64748b', marginTop: 4, fontSize: 14 }}>
-              Welcome back, {user?.name || 'Instructor'}
-            </p>
+      {/* Subjects Section */}
+      <section className="mb-8">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+            <Layers className="w-5 h-5 text-sky-600" /> Curriculum Subjects
+          </h2>
+          <Link href="/teacher/subjects" className="text-sky-600 text-sm font-medium hover:underline inline-flex items-center gap-1">
+            Manage <ChevronRight className="w-4 h-4" />
+          </Link>
+        </div>
+        {loading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="bg-white rounded-xl border border-slate-200 p-5 animate-pulse">
+                <div className="h-5 bg-slate-100 rounded w-2/3 mb-3" />
+                <div className="h-4 bg-slate-100 rounded w-1/3" />
+              </div>
+            ))}
           </div>
-          <Link 
-            href="/teacher/create-course"
-            style={{
-              background: '#3b82f6', color: '#fff', padding: '10px 20px',
-              borderRadius: 8, fontSize: 14, fontWeight: 600, textDecoration: 'none',
-              display: 'flex', alignItems: 'center', gap: 8
-            }}
-          >
-            <Plus size={18} /> Create New Course
+        ) : subjects.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {subjects.map((s) => (
+              <Link
+                key={s._id}
+                href={`/teacher/subjects/${s._id}`}
+                className="group block bg-white rounded-xl border border-slate-200 p-5 shadow-sm hover:border-sky-300 hover:shadow-md transition no-underline"
+              >
+                <div className="flex items-start justify-between">
+                  <div>
+                    <h3 className="font-semibold text-slate-900 group-hover:text-sky-700">{s.name}</h3>
+                    <div className="flex gap-2 mt-2">
+                      <span className="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-md font-medium">{s.grade}</span>
+                      <span className="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-md font-medium">{s.board}</span>
+                    </div>
+                    {s.description && <p className="text-xs text-slate-500 mt-2 line-clamp-2">{s.description}</p>}
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-slate-300 group-hover:text-sky-500 flex-shrink-0" />
+                </div>
+              </Link>
+            ))}
+          </div>
+        ) : (
+          <div className="bg-white rounded-xl border border-slate-200 p-8 text-center">
+            <Layers className="w-10 h-10 text-slate-300 mx-auto mb-2" />
+            <p className="text-slate-600 text-sm font-medium">No subjects in your organization yet.</p>
+          </div>
+        )}
+      </section>
+
+      {/* Courses Table */}
+      <section>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+            <BookOpen className="w-5 h-5 text-violet-600" /> My Courses
+          </h2>
+          <Link href="/teacher/create-course" className="text-sky-600 text-sm font-medium hover:underline inline-flex items-center gap-1">
+            New course <Plus className="w-4 h-4" />
           </Link>
         </div>
-
-        {/* STATS GRID */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 20, marginBottom: 32 }}>
-          <StatCard 
-            label="Total Revenue" 
-            value={`₹${stats.totalRevenue.toLocaleString()}`} 
-            icon={<DollarSign size={20} color="#3b82f6" />}
-            bg="#eff6ff"
-            border="#bfdbfe"
-          />
-          <StatCard 
-            label="Total Students" 
-            value={stats.totalStudents} 
-            icon={<Users size={20} color="#22c55e" />}
-            bg="#f0fdf4"
-            border="#bbf7d0"
-          />
-          <StatCard 
-            label="Avg Rating" 
-            value={stats.courseRating || '-'} 
-            icon={<Star size={20} color="#f59e0b" />}
-            bg="#fffbeb"
-            border="#fde68a"
-          />
-          <StatCard 
-            label="Active Courses" 
-            value={stats.activeCourses} 
-            icon={<BookOpen size={20} color="#6366f1" />}
-            bg="#eef2ff"
-            border="#c7d2fe"
-          />
-        </div>
-
-        {/* COURSES TABLE */}
-        <div style={{ background: '#fff', borderRadius: 12, border: '1px solid #e2e8f0', padding: 24 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-            <h2 style={{ fontSize: 18, fontWeight: 700, color: '#1e293b', margin: 0 }}>My Courses</h2>
-          </div>
-
+        <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
           {loading ? (
-            <p style={{ color: '#64748b', padding: 24 }}>Loading courses...</p>
+            <div className="p-6 text-slate-500 text-sm">Loading courses...</div>
           ) : courses.length === 0 ? (
-            <p style={{ color: '#64748b', padding: 24 }}>No courses yet. Create your first course to get started.</p>
+            <div className="p-8 text-center">
+              <BookOpen className="w-10 h-10 text-slate-300 mx-auto mb-2" />
+              <p className="text-slate-600 text-sm font-medium">No courses yet. Create your first course to get started.</p>
+            </div>
           ) : (
-          <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
-              <thead>
-                <tr style={{ borderBottom: '2px solid #f1f5f9', textAlign: 'left' }}>
-                  <th style={{ padding: 12, color: '#64748b', fontWeight: 600 }}>Course Title</th>
-                  <th style={{ padding: 12, color: '#64748b', fontWeight: 600 }}>Category</th>
-                  <th style={{ padding: 12, color: '#64748b', fontWeight: 600 }}>Price</th>
-                  <th style={{ padding: 12, color: '#64748b', fontWeight: 600 }}>Students</th>
-                  <th style={{ padding: 12, color: '#64748b', fontWeight: 600 }}>Rating</th>
-                  <th style={{ padding: 12, color: '#64748b', fontWeight: 600 }}>Status</th>
-                  <th style={{ padding: 12, color: '#64748b', fontWeight: 600 }}>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {courses.map((course) => {
-                  const publishedAt = course.createdAt ? new Date(course.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '-';
-                  const students = course.enrolledStudents?.length ?? 0;
-                  return (
-                  <tr key={course._id} style={{ borderBottom: '1px solid #f8fafc' }}>
-                    <td style={{ padding: 16 }}>
-                      <div style={{ fontWeight: 600, color: '#334155', marginBottom: 4 }}>{course.title}</div>
-                      <div style={{ fontSize: 12, color: '#94a3b8' }}>Created {publishedAt}</div>
-                    </td>
-                    <td style={{ padding: 16 }}>
-                      <span style={{ background: '#f1f5f9', padding: '4px 8px', borderRadius: 4, fontSize: 12, fontWeight: 500, color: '#475569' }}>
-                        {course.category}
-                      </span>
-                    </td>
-                    <td style={{ padding: 16, fontWeight: 500, color: '#0f172a' }}>
-                      {course.price === 0 ? 'Free' : `₹${course.price}`}
-                    </td>
-                    <td style={{ padding: 16, color: '#475569' }}>{students}</td>
-                    <td style={{ padding: 16 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                        <Star size={14} fill="none" color="#f59e0b" />
-                        <span>-</span>
-                      </div>
-                    </td>
-                    <td style={{ padding: 16 }}>
-                      <span style={{ 
-                        padding: '4px 8px', borderRadius: 99, fontSize: 11, fontWeight: 600, textTransform: 'uppercase',
-                        background: '#dcfce7', color: '#166534'
-                      }}>
-                        Published
-                      </span>
-                    </td>
-                    <td style={{ padding: 16 }}>
-                      <div style={{ display: 'flex', gap: 8 }}>
-                        <Link href={`/teacher/course/${course._id}/edit`} style={{ background: '#f1f5f9', border: 'none', padding: 6, borderRadius: 4, cursor: 'pointer', display: 'inline-flex' }} title="Edit course">
-                          <Edit size={14} color="#64748b" />
-                        </Link>
-                        <button 
-                          onClick={() => handleDelete(course._id)}
-                          disabled={deletingId === course._id}
-                          style={{ background: '#fee2e2', border: 'none', padding: 6, borderRadius: 4, cursor: deletingId === course._id ? 'wait' : 'pointer' }}
-                          title="Delete course"
-                        >
-                          <Trash2 size={14} color="#ef4444" />
-                        </button>
-                      </div>
-                    </td>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b-2 border-slate-100 text-left">
+                    <th className="px-5 py-3 text-slate-500 font-semibold">Course</th>
+                    <th className="px-5 py-3 text-slate-500 font-semibold">Category</th>
+                    <th className="px-5 py-3 text-slate-500 font-semibold">Price</th>
+                    <th className="px-5 py-3 text-slate-500 font-semibold">Students</th>
+                    <th className="px-5 py-3 text-slate-500 font-semibold">Status</th>
+                    <th className="px-5 py-3 text-slate-500 font-semibold">Actions</th>
                   </tr>
-                );})}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {courses.map((course) => {
+                    const students = course.enrolledStudents?.length ?? 0;
+                    const date = course.createdAt
+                      ? new Date(course.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
+                      : '';
+                    return (
+                      <tr key={course._id} className="border-b border-slate-50 hover:bg-slate-50/50">
+                        <td className="px-5 py-4">
+                          <div className="font-semibold text-slate-800">{course.title}</div>
+                          {date && <div className="text-xs text-slate-400 mt-0.5">Created {date}</div>}
+                        </td>
+                        <td className="px-5 py-4">
+                          <span className="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded-md font-medium">{course.category}</span>
+                        </td>
+                        <td className="px-5 py-4 font-medium text-slate-900">
+                          {course.price === 0 ? 'Free' : `₹${course.price}`}
+                        </td>
+                        <td className="px-5 py-4 text-slate-600">{students}</td>
+                        <td className="px-5 py-4">
+                          <span className={`text-xs font-semibold uppercase px-2 py-0.5 rounded-full ${(course.lessons?.length ?? 0) > 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>
+                            {(course.lessons?.length ?? 0) > 0 ? 'Active' : 'Draft'}
+                          </span>
+                        </td>
+                        <td className="px-5 py-4">
+                          <div className="flex gap-2">
+                            <Link
+                              href={`/teacher/course/${course._id}/edit`}
+                              className="p-1.5 rounded-md bg-slate-100 hover:bg-slate-200 transition"
+                              title="Edit"
+                            >
+                              <Edit className="w-4 h-4 text-slate-600" />
+                            </Link>
+                            <button
+                              onClick={() => handleDelete(course._id)}
+                              disabled={deletingId === course._id}
+                              className="p-1.5 rounded-md bg-red-50 hover:bg-red-100 transition disabled:opacity-50"
+                              title="Delete"
+                            >
+                              <Trash2 className="w-4 h-4 text-red-500" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           )}
         </div>
-
-      </main>
-    </div>
+      </section>
+    </TeacherShell>
   );
 }
 
-function NavItem({ icon, label, active = false }: { icon: React.ReactNode, label: string, active?: boolean }) {
-  return (
-    <div style={{
-      padding: '12px 24px',
-      display: 'flex', alignItems: 'center', gap: 12,
-      color: active ? '#3b82f6' : '#64748b',
-      fontWeight: 500, cursor: 'pointer',
-      borderLeft: active ? '4px solid #3b82f6' : '4px solid transparent',
-      background: active ? '#eff6ff' : 'transparent'
-    }}>
-      {icon}
-      <span>{label}</span>
-    </div>
-  );
-}
+const COLOR_MAP: Record<string, string> = {
+  sky: 'bg-sky-100',
+  violet: 'bg-violet-100',
+  emerald: 'bg-emerald-100',
+  amber: 'bg-amber-100',
+};
 
-function StatCard({ label, value, icon, bg, border }: { label: string, value: string | number, icon: React.ReactNode, bg: string, border: string }) {
+function StatCard({ label, value, icon, color }: { label: string; value: string | number; icon: React.ReactNode; color: string }) {
   return (
-    <div style={{ background: '#fff', padding: 20, borderRadius: 12, border: `1px solid ${border}`, display: 'flex', alignItems: 'center', gap: 16 }}>
-      <div style={{ width: 48, height: 48, borderRadius: 10, background: bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <div className="bg-white rounded-xl border border-slate-200 p-5 flex items-center gap-4 shadow-sm">
+      <div className={`w-11 h-11 rounded-xl ${COLOR_MAP[color] || 'bg-slate-100'} flex items-center justify-center flex-shrink-0`}>
         {icon}
       </div>
       <div>
-        <div style={{ fontSize: 13, color: '#64748b', marginBottom: 2 }}>{label}</div>
-        <div style={{ fontSize: 20, fontWeight: 700, color: '#1e293b' }}>{value}</div>
+        <div className="text-xs text-slate-500 font-medium">{label}</div>
+        <div className="text-xl font-bold text-slate-900">{value}</div>
       </div>
     </div>
   );

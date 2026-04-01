@@ -1,16 +1,7 @@
 import { NextResponse } from 'next/server';
 import mongoose from 'mongoose';
-import dotenv from 'dotenv';
 import { getAuthFromRequest } from '@/lib/auth';
-
-dotenv.config();
-
-const connectToDB = async () => {
-  if (mongoose.connection.readyState === 0) {
-    if (!process.env.MONGO_URI) throw new Error('MONGO_URI is missing');
-    await mongoose.connect(process.env.MONGO_URI);
-  }
-};
+import { connectToDB } from '@/lib/db';
 
 export async function GET(req: Request) {
   try {
@@ -23,10 +14,11 @@ export async function GET(req: Request) {
     await connectToDB();
     const Course = (await import('@/models/Course')).default;
     const Lesson = (await import('@/models/Lesson')).default;
-    const User = (await import('@/models/User')).default;
+    const StudentProfile = (await import('@/models/StudentProfile')).default;
+    await import('@/models/User'); // required for populate('teacherId', 'name')
 
-    const user = await User.findById(userId).select('completedLessons').lean() as { completedLessons?: unknown[] } | null;
-    const completedLessonIds = new Set((user?.completedLessons ?? []).map(String));
+    const profile = await StudentProfile.findOne({ user_id: userId }).select('completedLessons').lean() as { completedLessons?: unknown[] } | null;
+    const completedLessonIds = new Set((profile?.completedLessons ?? []).map(String));
 
     const courses = await Course.find({
       enrolledStudents: new mongoose.Types.ObjectId(userId),

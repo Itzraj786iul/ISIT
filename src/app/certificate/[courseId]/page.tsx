@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Sidebar from '@/components/Sidebar';
-import { Award, Download, ChevronLeft } from 'lucide-react';
+import { Award, Download, ChevronLeft, Loader2 } from 'lucide-react';
 
 export default function CertificatePage() {
   const params = useParams();
@@ -12,36 +12,42 @@ export default function CertificatePage() {
   const courseId = params.courseId as string;
   const [courseTitle, setCourseTitle] = useState<string>('Course');
   const [userName, setUserName] = useState<string>('Student');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const userStr = localStorage.getItem('user');
-    if (!userStr) {
-      router.push('/login');
-      return;
-    }
-    try {
-      const u = JSON.parse(userStr);
-      setUserName(u.name || 'Student');
-    } catch {
-      // keep default
-    }
-  }, [router]);
+    const run = async () => {
+      setLoading(true);
+      const meRes = await fetch('/api/auth/me', { credentials: 'include' });
+      if (!meRes.ok) { router.push('/login'); return; }
+      const meData = await meRes.json();
+      setUserName(meData.user?.name || 'Student');
 
-  useEffect(() => {
-    if (!courseId) return;
-    const fetchCourse = async () => {
-      try {
-        const res = await fetch(`/api/course/${courseId}`);
-        if (res.ok) {
-          const data = await res.json();
-          setCourseTitle(data.course?.title || 'Course');
+      if (courseId) {
+        try {
+          const res = await fetch(`/api/course/${courseId}`);
+          if (res.ok) {
+            const data = await res.json();
+            setCourseTitle(data.course?.title || 'Course');
+          }
+        } catch {
+          // keep default
         }
-      } catch {
-        // keep default
       }
+      setLoading(false);
     };
-    fetchCourse();
-  }, [courseId]);
+    run();
+  }, [courseId, router]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex font-sans">
+        <Sidebar />
+        <main className="flex-1 flex items-center justify-center">
+          <Loader2 className="w-6 h-6 text-slate-400 animate-spin" />
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-50 flex font-sans">
@@ -59,7 +65,7 @@ export default function CertificatePage() {
             <p className="text-xl font-semibold text-slate-700 mb-6">{userName}</p>
             <p className="text-slate-600 mb-1">has successfully completed the course</p>
             <p className="text-lg font-bold text-slate-800 mb-8">{courseTitle}</p>
-            <p className="text-sm text-slate-500">ISIT · Indian School of Innovation and Thinking</p>
+            <p className="text-sm text-slate-500">ISIT &middot; Indian School of Innovation and Thinking</p>
             <p className="text-xs text-slate-400 mt-2">Date: {new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
             <button
               type="button"
