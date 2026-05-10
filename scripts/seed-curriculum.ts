@@ -16,14 +16,30 @@ async function seed() {
   let org = await db.collection('organizations').findOne({});
   if (!org) {
     const res = await db.collection('organizations').insertOne({
-      name: 'ISIT - Indian School of Innovation and Thinking',
+      name: 'ISIC - Indian School of Innovation and Curiosity',
       createdAt: new Date(),
       updatedAt: new Date(),
     });
-    org = { _id: res.insertedId, name: 'ISIT' };
+    org = { _id: res.insertedId, name: 'ISIC' };
     console.log('Created organization');
   }
   const orgId = org._id;
+
+  // 1b. Default class for curriculum (Class → Subjects)
+  let classDoc = await db.collection('classes').findOne({ organization_id: orgId });
+  let classId: mongoose.Types.ObjectId;
+  if (!classDoc) {
+    const classRes = await db.collection('classes').insertOne({
+      name: 'Grade 10',
+      organization_id: orgId,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+    classId = classRes.insertedId as unknown as mongoose.Types.ObjectId;
+    console.log('Created default class: Grade 10');
+  } else {
+    classId = classDoc._id as unknown as mongoose.Types.ObjectId;
+  }
 
   // 2. Update all users to have organization_id and hash passwords
   const users = await db.collection('users').find({}).toArray();
@@ -87,6 +103,7 @@ async function seed() {
     if (!existing) {
       const res = await db.collection('subjects').insertOne({
         organization_id: orgId,
+        class_id: classId,
         ...s,
         curriculum_version: '1.0',
         is_active: true,
@@ -97,6 +114,9 @@ async function seed() {
       console.log(`Created subject: ${s.name}`);
     } else {
       subjectIds[s.name] = existing._id as unknown as mongoose.Types.ObjectId;
+      if (!existing.class_id) {
+        await db.collection('subjects').updateOne({ _id: existing._id }, { $set: { class_id: classId } });
+      }
     }
   }
 

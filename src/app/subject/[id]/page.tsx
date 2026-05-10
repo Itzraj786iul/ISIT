@@ -56,6 +56,7 @@ export default function SubjectDetailPage() {
   const [masteryByTopic, setMasteryByTopic] = useState<Record<string, MasteryData>>({});
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  const [forbidden, setForbidden] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -63,11 +64,18 @@ export default function SubjectDetailPage() {
     const load = async () => {
       setLoading(true);
       setNotFound(false);
+      setForbidden(false);
       try {
         const [subjectRes, topicsRes] = await Promise.all([
           fetch(`/api/subjects/${id}`, { credentials: 'include' }),
           fetch(`/api/topics?subjectId=${encodeURIComponent(id)}`, { credentials: 'include' }),
         ]);
+
+        if (subjectRes.status === 403) {
+          setForbidden(true);
+          setLoading(false);
+          return;
+        }
 
         const subjectJson = (await subjectRes.json()) as { success?: boolean; data?: Subject; error?: string };
         if (!subjectRes.ok || !subjectJson.success || !subjectJson.data) {
@@ -109,7 +117,7 @@ export default function SubjectDetailPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex font-sans">
+      <div className="isit-cosmic-bg min-h-screen flex font-sans text-cyan-50 relative">
         <Sidebar />
         <main className="flex-1 p-4 sm:p-6 md:p-8 min-w-0">
           <div className="max-w-4xl mx-auto animate-pulse">
@@ -127,9 +135,27 @@ export default function SubjectDetailPage() {
     );
   }
 
+  if (forbidden) {
+    return (
+      <div className="isit-cosmic-bg min-h-screen flex font-sans text-cyan-50 relative">
+        <Sidebar />
+        <main className="flex-1 p-4 sm:p-6 md:p-8 min-w-0 flex flex-col items-center justify-center">
+          <AlertCircle className="w-12 h-12 text-amber-500 mb-4" />
+          <h1 className="text-xl font-semibold text-slate-900">Access denied</h1>
+          <p className="text-slate-600 mt-1 text-center max-w-md">
+            You don’t have permission to view this subject. It may be outside your assigned classes or subjects.
+          </p>
+          <Link href="/subjects" className="mt-6 text-sky-600 font-medium hover:underline">
+            Back to Subjects
+          </Link>
+        </main>
+      </div>
+    );
+  }
+
   if (notFound || !subject) {
     return (
-      <div className="min-h-screen bg-slate-50 flex font-sans">
+      <div className="isit-cosmic-bg min-h-screen flex font-sans text-cyan-50 relative">
         <Sidebar />
         <main className="flex-1 p-4 sm:p-6 md:p-8 min-w-0 flex flex-col items-center justify-center">
           <AlertCircle className="w-12 h-12 text-slate-400 mb-4" />
@@ -144,7 +170,7 @@ export default function SubjectDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex font-sans">
+    <div className="isit-cosmic-bg min-h-screen flex font-sans text-cyan-50 relative">
       <Sidebar />
       <main className="flex-1 p-4 sm:p-6 md:p-8 min-w-0 overflow-x-auto">
         <div className="max-w-4xl mx-auto">

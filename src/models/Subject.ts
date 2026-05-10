@@ -7,6 +7,7 @@ import mongoose from 'mongoose';
 const SubjectSchema = new mongoose.Schema(
   {
     organization_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Organization', required: true },
+    class_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Class', required: true },
     name: { type: String, required: true },
     grade: { type: String, required: true },
     board: { type: String, required: true },
@@ -21,5 +22,6 @@ const SubjectSchema = new mongoose.Schema(
 
 SubjectSchema.index({ organization_id: 1, grade: 1 });
 SubjectSchema.index({ organization_id: 1, name: 1 });
+SubjectSchema.index({ class_id: 1, name: 1 });
 
 export default mongoose.models.Subject || mongoose.model('Subject', SubjectSchema);

@@ -2,15 +2,32 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Users, Plus, ChevronRight, Trash2, Loader2 } from 'lucide-react';
+import { Users, Plus, ChevronRight, Trash2 } from 'lucide-react';
 import { fetchChildren, removeChild, type ParentChild } from '@/lib/parent-children';
+import EmptyState from '@/components/EmptyState';
+
+function ChildrenListSkeleton() {
+  return (
+    <div className="space-y-3" aria-hidden>
+      {[1, 2, 3].map((i) => (
+        <div
+          key={i}
+          className="h-[4.5rem] rounded-2xl border border-slate-200 bg-white dark:bg-slate-900 dark:border-slate-700 animate-pulse shadow-sm"
+        />
+      ))}
+    </div>
+  );
+}
 
 export default function ParentChildrenPage() {
   const [children, setChildren] = useState<ParentChild[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchChildren().then((kids) => { setChildren(kids); setLoading(false); });
+    fetchChildren().then((kids) => {
+      setChildren(kids);
+      setLoading(false);
+    });
   }, []);
 
   const handleRemove = async (id: string, name: string) => {
@@ -22,50 +39,65 @@ export default function ParentChildrenPage() {
 
   if (loading) {
     return (
-      <div className="max-w-3xl flex items-center justify-center py-12">
-        <Loader2 className="w-6 h-6 text-slate-400 animate-spin" />
+      <div className="max-w-3xl min-w-0 overflow-x-hidden">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+          <div className="h-9 w-48 bg-slate-200 dark:bg-slate-800 rounded-lg animate-pulse" />
+          <div className="h-11 w-36 bg-slate-200 dark:bg-slate-800 rounded-xl animate-pulse" />
+        </div>
+        <ChildrenListSkeleton />
       </div>
     );
   }
 
   return (
-    <div className="max-w-3xl">
+    <div className="max-w-3xl min-w-0 overflow-x-hidden">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-        <h1 className="text-2xl font-bold text-slate-800">My Children</h1>
-        <Link href="/parent/children/add" className="inline-flex items-center gap-2 px-4 py-2.5 bg-violet-500 text-white rounded-xl text-sm font-medium hover:bg-violet-600 transition no-underline">
-          <Plus className="w-4 h-4" /> Add Child
+        <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">My Children</h1>
+        <Link
+          href="/parent/children/add"
+          className="btn-primary min-h-11 px-5 gap-2 no-underline w-full sm:w-auto justify-center"
+        >
+          <Plus className="w-4 h-4 shrink-0" /> Add Child
         </Link>
       </div>
 
       {children.length === 0 ? (
-        <div className="bg-white rounded-xl border border-slate-200 border-dashed p-10 text-center">
-          <Users className="w-12 h-12 text-slate-300 mx-auto mb-4" />
-          <p className="text-slate-600 font-medium">No children added yet</p>
-          <p className="text-sm text-slate-500 mt-1 max-w-sm mx-auto">
-            {"Add your child's name and email to link their account and track their progress."}
-          </p>
-          <Link href="/parent/children/add" className="inline-flex items-center gap-2 mt-6 px-5 py-2.5 bg-violet-500 text-white rounded-xl text-sm font-medium hover:bg-violet-600 transition no-underline">
-            <Plus className="w-4 h-4" /> Add your first child
-          </Link>
-        </div>
+        <EmptyState
+          icon={Users}
+          title="No children linked yet"
+          description="Add your child's name and email to link their account and follow their learning progress from your parent dashboard."
+          primaryAction={{ label: 'Add your first child', href: '/parent/children/add' }}
+          secondaryAction={{ label: 'Parent dashboard', href: '/parent/dashboard' }}
+        />
       ) : (
         <ul className="space-y-3">
           {children.map((c) => (
-            <li key={c.id} className="flex items-center gap-4 p-4 bg-white rounded-xl border border-slate-200 shadow-sm">
-              <div className="w-11 h-11 rounded-full bg-violet-100 flex items-center justify-center text-violet-600 font-semibold shrink-0">
-                {c.name.charAt(0).toUpperCase()}
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="font-semibold text-slate-800">{c.name}</p>
-                <p className="text-sm text-slate-500 truncate">{c.email}</p>
-              </div>
-              <div className="flex items-center gap-2 shrink-0">
-                <Link href={`/parent/children/${c.id}`} className="inline-flex items-center gap-1 px-3 py-2 text-violet-600 text-sm font-medium hover:bg-violet-50 rounded-lg transition">
-                  View progress <ChevronRight className="w-4 h-4" />
-                </Link>
-                <button type="button" onClick={() => handleRemove(c.id, c.name)} className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition" title="Remove" aria-label={`Remove ${c.name}`}>
-                  <Trash2 className="w-4 h-4" />
-                </button>
+            <li key={c.id}>
+              <div className="flex items-center gap-4 p-4 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm min-w-0">
+                <div className="w-11 h-11 rounded-full bg-violet-100 dark:bg-violet-950 flex items-center justify-center text-violet-600 dark:text-violet-300 font-semibold shrink-0">
+                  {c.name.charAt(0).toUpperCase()}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-slate-800 dark:text-slate-100">{c.name}</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400 truncate">{c.email}</p>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  <Link
+                    href={`/parent/children/${c.id}`}
+                    className="inline-flex items-center gap-1 min-h-11 min-w-[44px] px-3 text-violet-600 dark:text-violet-400 text-sm font-medium hover:bg-violet-50 dark:hover:bg-violet-950/50 rounded-xl transition"
+                  >
+                    View progress <ChevronRight className="w-4 h-4 shrink-0" />
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => handleRemove(c.id, c.name)}
+                    className="min-h-11 min-w-11 inline-flex items-center justify-center text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 rounded-xl transition"
+                    title="Remove"
+                    aria-label={`Remove ${c.name}`}
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
             </li>
           ))}

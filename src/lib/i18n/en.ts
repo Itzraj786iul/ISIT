@@ -38,4 +38,10 @@ export const en = {
   resumeLearning: 'Resume learning',
   browseSubjects: 'Browse subjects',
   teacher: 'Teacher',
+  organization: 'Organization',
+  freeLearningMode: 'Free Learning',
+  teacherLearningMode: 'Teacher Learning',
+  assignedByTeacher: 'Assigned by your teacher',
+  assignedTopics: 'Assigned topics',
+  aiTutor: 'AI Tutor',
 } as const;

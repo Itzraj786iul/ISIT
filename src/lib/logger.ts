@@ -26,4 +26,8 @@ export const log = {
   warn(event: string, payload: Record<string, unknown>) {
     line('warn', event, payload);
   },
+
+  info(event: string, payload: Record<string, unknown>) {
+    line('info', event, payload);
+  },
 };

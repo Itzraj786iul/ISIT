@@ -25,47 +25,47 @@ export default function SettingsPage() {
   }, [router]);
 
   return (
-    <div className="min-h-screen bg-slate-50 flex font-sans">
+    <div className="isit-cosmic-bg min-h-screen flex font-sans text-cyan-50 relative">
       <Sidebar />
-      <main className="flex-1 p-4 sm:p-6 md:p-8 min-w-0 overflow-x-hidden">
+      <main className="flex-1 p-4 sm:p-6 md:p-8 min-w-0 overflow-x-hidden relative z-[1]">
         <div className="mb-6">
-          <h1 className="text-2xl font-extrabold text-slate-800 tracking-tight">Settings</h1>
-          <p className="text-slate-500 text-sm mt-1">Manage your account and preferences</p>
+          <h1 className="text-2xl font-extrabold text-cyan-50 tracking-tight">Settings</h1>
+          <p className="text-cyan-100/70 text-sm mt-1">Manage your account and preferences</p>
         </div>
 
         <div className="max-w-xl space-y-4">
-          <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-            <div className="p-5 border-b border-slate-100">
-              <h2 className="text-base font-bold text-slate-800">Profile</h2>
-              <p className="text-sm text-slate-500 mt-0.5">Your account information</p>
+          <div className="isit-glass rounded-xl overflow-hidden">
+            <div className="p-5 border-b border-cyan-400/15">
+              <h2 className="text-base font-bold text-cyan-50">Profile</h2>
+              <p className="text-sm text-cyan-100/65 mt-0.5">Your account information</p>
             </div>
             <div className="p-5 flex items-center gap-4">
-              <div className="w-14 h-14 rounded-full bg-sky-100 text-sky-600 flex items-center justify-center flex-shrink-0">
+              <div className="w-14 h-14 rounded-full bg-cyan-400/15 text-cyan-300 flex items-center justify-center flex-shrink-0 border border-cyan-400/25">
                 <User className="w-7 h-7" />
               </div>
               <div>
-                <p className="font-semibold text-slate-800">{user?.name || 'Student'}</p>
-                <p className="text-sm text-slate-500">{user?.email || ''}</p>
+                <p className="font-semibold text-cyan-50">{user?.name || 'Student'}</p>
+                <p className="text-sm text-cyan-100/70">{user?.email || ''}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-            <div className="p-5 border-b border-slate-100">
-              <h2 className="text-base font-bold text-slate-800">Notifications</h2>
-              <p className="text-sm text-slate-500 mt-0.5">Reminders for live classes, quizzes, and assignments</p>
+          <div className="isit-glass rounded-xl overflow-hidden">
+            <div className="p-5 border-b border-cyan-400/15">
+              <h2 className="text-base font-bold text-cyan-50">Notifications</h2>
+              <p className="text-sm text-cyan-100/65 mt-0.5">Reminders for live classes, quizzes, and assignments</p>
             </div>
-            <div className="p-5 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <Bell className="w-5 h-5 text-slate-500" />
-                <span className="font-medium text-slate-800">Email & in-app reminders</span>
+            <div className="p-5 flex items-center justify-between gap-4">
+              <div className="flex items-center gap-3 min-w-0">
+                <Bell className="w-5 h-5 text-cyan-300/80 shrink-0" />
+                <span className="font-medium text-cyan-50">Email &amp; in-app reminders</span>
               </div>
               <button
                 type="button"
                 role="switch"
                 aria-checked={notificationsEnabled}
                 onClick={() => setNotificationsEnabled((v) => !v)}
-                className={`relative w-11 h-6 rounded-full transition ${notificationsEnabled ? 'bg-sky-500' : 'bg-slate-200'}`}
+                className={`relative w-11 h-6 rounded-full transition shrink-0 ${notificationsEnabled ? 'bg-cyan-500' : 'bg-slate-600'}`}
               >
                 <span className={`absolute top-1 w-4 h-4 rounded-full bg-white shadow transition left-1 ${notificationsEnabled ? 'translate-x-5' : 'translate-x-0'}`} />
               </button>
@@ -74,21 +74,21 @@ export default function SettingsPage() {
 
           <Link
             href="/help"
-            className="flex items-center justify-between p-4 bg-white rounded-xl border border-slate-200 shadow-sm hover:border-sky-200 hover:shadow transition no-underline text-slate-800"
+            className="flex items-center justify-between p-4 isit-glass rounded-xl no-underline text-cyan-50 hover:border-cyan-300/40 motion-safe-transition"
           >
             <div className="flex items-center gap-3">
-              <HelpCircle className="w-5 h-5 text-sky-500" />
-              <span className="font-medium">Help & support</span>
+              <HelpCircle className="w-5 h-5 text-cyan-400" />
+              <span className="font-medium">Help &amp; support</span>
             </div>
-            <ChevronRight className="w-5 h-5 text-slate-400" />
+            <ChevronRight className="w-5 h-5 text-cyan-300/50" />
           </Link>
 
           <Link
             href="/dashboard"
-            className="flex items-center justify-between p-4 bg-white rounded-xl border border-slate-200 shadow-sm hover:border-sky-200 hover:shadow transition no-underline text-slate-800"
+            className="flex items-center justify-between p-4 isit-glass rounded-xl no-underline text-cyan-50 hover:border-cyan-300/40 motion-safe-transition"
           >
-            <span className="font-medium">Back to Dashboard</span>
-            <ChevronRight className="w-5 h-5 text-slate-400" />
+            <span className="font-medium">Back to dashboard</span>
+            <ChevronRight className="w-5 h-5 text-cyan-300/50" />
           </Link>
         </div>
       </main>

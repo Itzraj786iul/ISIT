@@ -56,7 +56,7 @@ export default function ProgressStats({ loading, timeMinutes, topicsCompleted, m
       icon: BookMarked,
       iconBg: 'bg-sky-100',
       iconColor: 'text-sky-600',
-      href: '/progress',
+      href: '/analytics',
     },
     {
       label: 'Mastery',
@@ -65,7 +65,7 @@ export default function ProgressStats({ loading, timeMinutes, topicsCompleted, m
       icon: Percent,
       iconBg: 'bg-emerald-100',
       iconColor: 'text-emerald-600',
-      href: '/progress',
+      href: '/analytics',
     },
   ] as const;
 

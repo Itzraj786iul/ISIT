@@ -11,6 +11,8 @@ type SessionHeaderProps = {
   progress?: { current: number; total: number } | null;
   /** Optional badge, e.g. adaptive difficulty from tutor context. */
   difficultyLabel?: string | null;
+  /** Teacher-assigned topic session. */
+  teacherAssigned?: boolean;
 };
 
 export default function SessionHeader({
@@ -20,6 +22,7 @@ export default function SessionHeader({
   exiting,
   progress,
   difficultyLabel,
+  teacherAssigned,
 }: SessionHeaderProps) {
   const progressPct =
     progress && progress.total > 0 ? Math.round((progress.current / progress.total) * 100) : null;
@@ -29,6 +32,11 @@ export default function SessionHeader({
       <div className="min-w-0 flex-1 basis-[min(100%,280px)]">
         <div className="flex flex-wrap items-center gap-2 mb-0.5">
           <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Topic</p>
+          {teacherAssigned ? (
+            <span className="text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-200/80">
+              Teacher Assigned Session
+            </span>
+          ) : null}
           {difficultyLabel ? (
             <span className="text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full bg-violet-50 text-violet-700 border border-violet-100">
               {difficultyLabel}

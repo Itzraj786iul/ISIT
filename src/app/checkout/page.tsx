@@ -10,6 +10,19 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { CreditCard, Wallet, Landmark, CheckCircle } from 'lucide-react';
 
+function loadRazorpayScript(): Promise<void> {
+  if (typeof window === 'undefined') return Promise.resolve();
+  if ((window as unknown as { Razorpay?: unknown }).Razorpay) return Promise.resolve();
+  return new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    s.async = true;
+    s.onload = () => resolve();
+    s.onerror = () => reject(new Error('Could not load Razorpay checkout'));
+    document.body.appendChild(s);
+  });
+}
+
 type CourseType = {
   _id: string;
   title: string;
@@ -103,50 +116,130 @@ function CheckoutForm() {
 
     setPaying(true);
     try {
-      const res = await fetch('/api/checkout', {
+      const orderRes = await fetch('/api/checkout/razorpay-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({
-          courseId,
-          fullName: billing.fullName.trim(),
-          email: billing.email.trim(),
-          country: billing.country,
-          state: billing.state,
-          zip: billing.zip,
-        }),
+        body: JSON.stringify({ courseId }),
       });
-      const data = await res.json();
+      const orderData = (await orderRes.json()) as {
+        mock?: boolean;
+        error?: string;
+        key?: string;
+        amount?: number;
+        currency?: string;
+        orderId?: string;
+      };
 
-      if (!res.ok) {
-        throw new Error(data.error || 'Payment failed');
+      if (!orderRes.ok) {
+        throw new Error(orderData.error || 'Could not start checkout');
       }
 
-      if (data.firstLessonId) {
-        router.replace(`/lesson/${data.firstLessonId}`);
-      } else {
-        router.replace(`/course/${courseId}?enrolled=1`);
+      if (orderData.mock) {
+        const res = await fetch('/api/checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({
+            courseId,
+            fullName: billing.fullName.trim(),
+            email: billing.email.trim(),
+            country: billing.country,
+            state: billing.state,
+            zip: billing.zip,
+          }),
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.error || 'Payment failed');
+        }
+
+        if (data.firstLessonId) {
+          router.replace(`/lesson/${data.firstLessonId}`);
+        } else {
+          router.replace(`/course/${courseId}?enrolled=1`);
+        }
+        setPaying(false);
+        return;
       }
+
+      await loadRazorpayScript();
+      const Rzp = (
+        window as unknown as {
+          Razorpay: new (opts: Record<string, unknown>) => { open: () => void };
+        }
+      ).Razorpay;
+
+      const opts = {
+        key: orderData.key,
+        amount: orderData.amount,
+        currency: orderData.currency ?? 'INR',
+        order_id: orderData.orderId,
+        name: 'ISIC',
+        description: course.title,
+        prefill: {
+          name: billing.fullName.trim(),
+          email: billing.email.trim(),
+        },
+        theme: { color: '#0ea5e9' },
+        modal: {
+          ondismiss: () => setPaying(false),
+        },
+        handler: async (response: {
+          razorpay_payment_id: string;
+          razorpay_order_id: string;
+          razorpay_signature: string;
+        }) => {
+          const res = await fetch('/api/checkout/razorpay-verify', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({
+              courseId,
+              fullName: billing.fullName.trim(),
+              email: billing.email.trim(),
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_signature: response.razorpay_signature,
+            }),
+          });
+          const data = await res.json();
+          if (!res.ok) {
+            setError(data.error || 'Payment verification failed');
+            setPaying(false);
+            return;
+          }
+          if (data.firstLessonId) {
+            router.replace(`/lesson/${data.firstLessonId}`);
+          } else {
+            router.replace(`/course/${courseId}?enrolled=1`);
+          }
+          setPaying(false);
+        },
+      };
+
+      const rzp = new Rzp(opts);
+      rzp.open();
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Payment failed');
-    } finally {
       setPaying(false);
     }
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#F4F7FA] flex items-center justify-center">
-        <p className="text-gray-600">Loading...</p>
+      <div className="isit-cosmic-bg min-h-screen flex items-center justify-center text-cyan-200">
+        <p className="text-sm">Loading…</p>
       </div>
     );
   }
 
   if (error && !course) {
     return (
-      <div className="min-h-screen bg-[#F4F7FA] flex flex-col items-center justify-center gap-4">
-        <p className="text-red-600">{error}</p>
-        <Link href="/courses" className="text-sky-600 font-medium hover:underline">
+      <div className="isit-cosmic-bg min-h-screen text-cyan-50 flex flex-col items-center justify-center gap-4 px-4 relative">
+        <p className="text-red-300 text-center text-sm">{error}</p>
+        <Link href="/courses" className="text-cyan-300 font-medium hover:underline">
           Browse courses
         </Link>
       </div>
@@ -162,14 +255,14 @@ function CheckoutForm() {
   const courseImage = course.image || '';
 
   return (
-    <div className="min-h-screen bg-[#F4F7FA] flex flex-col">
-      <header className="bg-white border-b border-slate-200">
+    <div className="isit-cosmic-bg min-h-screen text-cyan-50 flex flex-col relative">
+      <header className="border-b border-cyan-400/15 bg-slate-950/40 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-          <Link href="/" className="text-sky-600 font-bold text-xl">
-            ISIT
+          <Link href="/" className="text-cyan-200 font-bold text-xl no-underline hover:text-cyan-100">
+            ISIC
           </Link>
-          <Link href="/courses" className="text-sm text-slate-700 hover:text-sky-600">
-            Back to Courses
+          <Link href="/courses" className="text-sm text-cyan-200/80 hover:text-cyan-100 no-underline">
+            Back to courses
           </Link>
         </div>
       </header>
@@ -345,8 +438,8 @@ function CheckoutForm() {
 export default function CheckoutPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-[#F4F7FA] flex items-center justify-center">
-        <p className="text-gray-500">Loading...</p>
+      <div className="isit-cosmic-bg min-h-screen flex items-center justify-center text-cyan-200">
+        <p className="text-sm">Loading…</p>
       </div>
     }>
       <CheckoutForm />

@@ -22,19 +22,18 @@ export async function POST(req: Request) {
     const User = (await import('@/models/User')).default;
 
     const user = await User.findOne({ email: email });
-    const isDev = process.env.NODE_ENV !== 'production';
     if (!user) {
-      if (isDev) console.log('[Login] No user found for email:', email);
+      log.warn('login_failed', { reason: 'no_user' });
       return NextResponse.json({ message: 'Invalid credentials' }, { status: 401 });
     }
     if (typeof user.password_hash !== 'string' || user.password_hash.length === 0) {
-      if (isDev) console.log('[Login] User found but password_hash is missing/empty for:', email);
+      log.warn('login_failed', { reason: 'missing_password_hash' });
       return NextResponse.json({ message: 'Invalid credentials' }, { status: 401 });
     }
 
     const isMatch = await bcrypt.compare(password, user.password_hash);
     if (!isMatch) {
-      if (isDev) console.log('[Login] Password mismatch for:', email);
+      log.warn('login_failed', { reason: 'password_mismatch' });
       return NextResponse.json({ message: 'Invalid credentials' }, { status: 401 });
     }
 
@@ -62,6 +61,7 @@ export async function POST(req: Request) {
           email: user.email,
           role: user.role,
           organization_id: user.organization_id?.toString?.() ?? user.organization_id,
+          email_verified: Boolean((user as { email_verified?: boolean }).email_verified),
         },
       },
       { status: 200 }

@@ -8,6 +8,7 @@
  */
 
 import { clearClientAuth } from '@/lib/client-auth';
+import { friendlyNetworkMessage } from '@/lib/api-error-messages';
 
 const AUTH_COOKIE_NAME = 'auth_token';
 const LOCAL_STORAGE_TOKEN_KEYS = ['auth_token', 'access_token'] as const;
@@ -287,7 +288,7 @@ export async function apiRequest<T = unknown>(
       ok: false,
       status: 0,
       data: null,
-      error: 'Network error. Check your connection and API URL.',
+      error: friendlyNetworkMessage(),
       kind: 'network',
     };
   }

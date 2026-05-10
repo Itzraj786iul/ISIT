@@ -10,6 +10,11 @@ const CourseSchema = new mongoose.Schema({
   price: { type: Number, default: 3999 },
   teacherId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   category: { type: String, required: true },
+  level: {
+    type: String,
+    enum: ['Beginner', 'Intermediate', 'Advanced'],
+    default: 'Beginner',
+  },
   enrolledStudents: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   image: { type: String }
 }, { timestamps: true });

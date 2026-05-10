@@ -13,19 +13,51 @@ export function scoreToDifficulty(score: number): RecommendationItem['difficulty
   return 'Easy';
 }
 
-/** Up to 3 picks: weaker practiced topics first, padded with mocks. */
+export type AssignedTopicRecInput = {
+  topic_id: string;
+  topic_name?: string;
+  status: string;
+};
+
+/** Up to 3 picks: incomplete teacher-assigned topics first, then weaker practiced topics, padded with mocks. */
 export function buildRecommendations(
   masteryRecords: MasteryRecord[],
-  topicNames: Record<string, string>
+  topicNames: Record<string, string>,
+  options?: { assignedTopics?: AssignedTopicRecInput[] }
 ): RecommendationItem[] {
+  const usedTopicIds = new Set<string>();
   const usedNames = new Set<string>();
+  const out: RecommendationItem[] = [];
+
+  const assignedIncomplete =
+    options?.assignedTopics?.filter((t) => t.status !== 'completed') ?? [];
+  for (const t of assignedIncomplete) {
+    if (out.length >= 3) break;
+    if (usedTopicIds.has(t.topic_id)) continue;
+    usedTopicIds.add(t.topic_id);
+    const baseName = (t.topic_name || topicNames[t.topic_id] || 'Topic').trim();
+    const name = `${baseName} (assigned)`;
+    usedNames.add(name);
+    const rec = masteryRecords.find((r) => r.topic_id === t.topic_id);
+    const score = rec?.mastery_score ?? 50;
+    out.push({
+      topicId: t.topic_id,
+      name,
+      difficulty: scoreToDifficulty(score),
+    });
+  }
+
   const fromData = masteryRecords
-    .filter((r) => r.mastery_score < 70 && r.attempt_count > 0)
+    .filter(
+      (r) =>
+        !usedTopicIds.has(r.topic_id) && r.mastery_score < 70 && r.attempt_count > 0
+    )
     .sort((a, b) => a.mastery_score - b.mastery_score)
     .slice(0, 3)
     .map((r) => {
       const name = topicNames[r.topic_id] || 'Topic';
       usedNames.add(name);
+      usedTopicIds.add(r.topic_id);
       return {
         topicId: r.topic_id,
         name,
@@ -33,7 +65,11 @@ export function buildRecommendations(
       };
     });
 
-  const out: RecommendationItem[] = [...fromData];
+  for (const item of fromData) {
+    if (out.length >= 3) break;
+    out.push(item);
+  }
+
   for (const m of MOCK_RECOMMENDATIONS) {
     if (out.length >= 3) break;
     if (!usedNames.has(m.name)) {

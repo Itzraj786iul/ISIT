@@ -40,4 +40,10 @@ export const hi = {
   resumeLearning: 'सीखना फिर से शुरू करें',
   browseSubjects: 'विषय देखें',
   teacher: 'शिक्षक',
+  organization: 'संगठन',
+  freeLearningMode: 'मुक्त अध्ययन',
+  teacherLearningMode: 'शिक्षक-निर्देशित अध्ययन',
+  assignedByTeacher: 'आपके शिक्षक द्वारा सौंपा गया',
+  assignedTopics: 'सौंपे गए विषय',
+  aiTutor: 'एआई ट्यूटर',
 } satisfies Record<keyof typeof en, string>;

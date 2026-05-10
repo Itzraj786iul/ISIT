@@ -11,10 +11,12 @@ import { User, Menu } from 'lucide-react';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { useAuth } from '@/lib/auth-context';
 import { useT } from '@/lib/t';
+import { getLearningMode } from '@/lib/learning-mode';
 import type { I18nKey } from '@/lib/t';
 
 const navItems: { iconId: string; href: string; labelKey: I18nKey }[] = [
   { iconId: 'Dashboard', href: '/dashboard', labelKey: 'dashboard' },
+  { iconId: 'AI Tutor', href: '/ai-tutor', labelKey: 'aiTutor' },
   { iconId: 'My Courses', href: '/my-courses', labelKey: 'myCourses' },
   { iconId: 'Subjects', href: '/subjects', labelKey: 'subjects' },
   { iconId: 'Browse All', href: '/courses', labelKey: 'browseAll' },
@@ -34,6 +36,7 @@ function SidebarIcon({ name, color }: { name: string; color: string }) {
   if (name === 'Learning Path') return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" /><path d="M20 19.5a2.5 2.5 0 0 1-2.5 2.5H2" /><path d="M6.5 2H2v20" /><path d="M8 7l3-3 3 3" /><path d="M12 10v12" /></svg>;
   if (name === 'Achievements') return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8 21l4 0" /><path d="M12 21v-4" /><path d="M5 3h14v5a7 7 0 0 1-14 0V3z" /><path d="M5 7H3a2 2 0 0 0 0 4h2" /><path d="M19 7h2a2 2 0 0 1 0 4h-2" /></svg>;
   if (name === 'Schedule') return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></svg>;
+  if (name === 'AI Tutor') return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="6" y="8" width="12" height="10" rx="3"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/><circle cx="10" cy="13" r="1"/><circle cx="14" cy="13" r="1"/><path d="M10 16h4"/></svg>;
   return null;
 }
 
@@ -78,16 +81,21 @@ export default function Sidebar() {
       )}
       <aside
         id="student-sidebar"
-        className={`flex flex-col fixed left-0 top-0 h-dvh z-30 bg-white border-slate-200 shadow-lg md:shadow-none dark:bg-slate-900 dark:border-slate-700 transition-[width] duration-200 ease-out overflow-hidden ${
+        className={`flex flex-col fixed left-0 top-0 h-dvh z-30 bg-slate-950/95 border-cyan-300/20 shadow-lg md:shadow-none transition-[width] duration-200 ease-out overflow-hidden backdrop-blur-xl ${
           open ? 'w-[min(85vw,260px)] md:w-[220px] border-r' : 'w-0 border-r-0'
         }`}
       >
-        <div className="p-4 flex items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-700 w-[min(85vw,260px)] md:w-[220px] shrink-0">
+        <div className="p-4 flex items-center justify-between gap-2 border-b border-cyan-300/20 w-[min(85vw,260px)] md:w-[220px] shrink-0">
           <Link href="/dashboard" className="flex items-center gap-2 no-underline min-w-0" onClick={() => window.innerWidth < 768 && setOpen(false)}>
             <div className="w-8 h-8 rounded-md bg-sky-500 flex items-center justify-center text-white font-bold text-xs shrink-0">I</div>
             <div className="min-w-0">
-              <div className="font-bold text-slate-800 text-sm dark:text-slate-100">ISIT</div>
-              <div className="text-[10px] text-slate-500 font-medium dark:text-slate-400">{tr('studentPortal')}</div>
+              <div className="font-bold text-cyan-100 text-sm">ISIC</div>
+              <div className="text-[10px] text-cyan-200/70 font-medium">{tr('studentPortal')}</div>
+              {user && user.role?.toLowerCase() === 'student' ? (
+                <div className="text-[10px] text-sky-600 dark:text-sky-400 font-semibold mt-0.5">
+                  {getLearningMode(user) === 'teacher_learning' ? tr('teacherLearningMode') : tr('freeLearningMode')}
+                </div>
+              ) : null}
             </div>
           </Link>
           <div className="flex items-center gap-1 shrink-0">
@@ -114,15 +122,15 @@ export default function Sidebar() {
         {user && (
           <Link
             href="/dashboard"
-            className="p-4 flex items-center gap-3 border-b border-slate-100 no-underline hover:bg-slate-50 transition dark:border-slate-700 dark:hover:bg-slate-800 w-[min(85vw,260px)] md:w-[220px] shrink-0"
+            className="p-4 flex items-center gap-3 border-b border-cyan-300/20 no-underline hover:bg-cyan-300/10 transition w-[min(85vw,260px)] md:w-[220px] shrink-0"
             onClick={() => window.innerWidth < 768 && setOpen(false)}
           >
             <div className="w-10 h-10 rounded-full bg-sky-100 text-sky-600 flex items-center justify-center flex-shrink-0 dark:bg-sky-900/50 dark:text-sky-300">
               <User className="w-5 h-5" />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="font-semibold text-slate-800 text-sm truncate dark:text-slate-100">{user.name || 'Student'}</p>
-              <p className="text-xs text-slate-500 truncate dark:text-slate-400">{user.email || ''}</p>
+              <p className="font-semibold text-cyan-100 text-sm truncate">{user.name || 'Student'}</p>
+              <p className="text-xs text-cyan-200/70 truncate">{user.email || ''}</p>
             </div>
           </Link>
         )}
@@ -145,7 +153,7 @@ export default function Sidebar() {
           })}
         </nav>
 
-        <div className="p-2 border-t border-slate-100 dark:border-slate-700 w-[min(85vw,260px)] md:w-[220px] shrink-0">
+        <div className="p-2 border-t border-cyan-300/20 w-[min(85vw,260px)] md:w-[220px] shrink-0">
           <Link
             href="/settings"
             onClick={() => window.innerWidth < 768 && setOpen(false)}
@@ -177,7 +185,7 @@ export default function Sidebar() {
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="fixed top-[max(0.75rem,env(safe-area-inset-top))] left-[max(0.75rem,env(safe-area-inset-left))] z-40 md:hidden min-h-[44px] min-w-[44px] inline-flex items-center justify-center rounded-xl bg-white border border-slate-200 text-slate-700 shadow-md hover:bg-slate-50 dark:bg-slate-800 dark:border-slate-600 dark:text-slate-100 active:scale-95 transition-transform"
+          className="fixed top-[max(0.75rem,env(safe-area-inset-top))] left-[max(0.75rem,env(safe-area-inset-left))] z-40 md:hidden min-h-[44px] min-w-[44px] inline-flex items-center justify-center rounded-xl bg-slate-950/90 border border-cyan-300/25 text-cyan-100 shadow-md hover:bg-cyan-300/10 active:scale-95 transition-transform"
           aria-label="Open menu"
           aria-controls="student-sidebar"
           aria-expanded={false}

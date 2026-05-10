@@ -5,6 +5,16 @@ export type ParentChild = {
   addedAt: string;
 };
 
+export type ParentAssignedTopicInsight = {
+  topic_id: string;
+  topic_name: string;
+  subject_name: string;
+  status: string;
+  mastery_score: number | null;
+  started_at: string | null;
+  completed_at: string | null;
+};
+
 export type ParentChildInsights = {
   child_name: string;
   avg_mastery: number;
@@ -16,6 +26,7 @@ export type ParentChildInsights = {
   ai_summary: string;
   action_suggestions: string[];
   linked_account: boolean;
+  assigned_topics: ParentAssignedTopicInsight[];
 };
 
 export async function fetchChildInsights(childId: string): Promise<ParentChildInsights | null> {
@@ -27,7 +38,11 @@ export async function fetchChildInsights(childId: string): Promise<ParentChildIn
     if (!res.ok) return null;
     const json = await res.json();
     if (!json.success || !json.data) return null;
-    return json.data as ParentChildInsights;
+    const d = json.data as ParentChildInsights;
+    return {
+      ...d,
+      assigned_topics: Array.isArray(d.assigned_topics) ? d.assigned_topics : [],
+    };
   } catch {
     return null;
   }

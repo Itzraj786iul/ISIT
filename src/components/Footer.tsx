@@ -1,43 +1,143 @@
 'use client';
 
 import Link from 'next/link';
+import { Mail, Phone, MapPin, Facebook, Instagram, Linkedin, Youtube } from 'lucide-react';
+
+const social = [
+  { Icon: Facebook, href: 'https://www.facebook.com', label: 'Facebook' },
+  { Icon: Instagram, href: 'https://www.instagram.com', label: 'Instagram' },
+  { Icon: Youtube, href: 'https://www.youtube.com', label: 'YouTube' },
+  { Icon: Linkedin, href: 'https://www.linkedin.com', label: 'LinkedIn' },
+] as const;
+
+const supportEmail = process.env.NEXT_PUBLIC_SUPPORT_EMAIL?.trim() || 'hello@isic.in';
 
 export default function Footer() {
   return (
-    <footer className="relative z-10 bg-black text-gray-300 py-12 sm:py-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 grid grid-cols-1 sm:grid-cols-2 gap-8 sm:gap-10 md:gap-12">
+    <footer className="relative z-10 border-t border-cyan-400/15 bg-slate-950 text-cyan-100/80 py-12 sm:py-16">
+      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-4 sm:grid-cols-2 md:grid-cols-4 sm:gap-10 sm:px-6 md:gap-12">
         <div>
-          <h3 className="text-white text-lg sm:text-xl font-semibold">
-            Indian School of Innovation and Thinking
+          <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-cyan-300/25 bg-slate-900/70 px-3 py-1.5 text-xs font-semibold text-cyan-200">
+            ISIC
+          </div>
+          <h3 className="text-lg font-semibold text-cyan-100 sm:text-xl">
+            Indian School of Innovation and Curiosity
           </h3>
-          <p className="mt-3 sm:mt-4 text-sm text-gray-400 max-w-md">
-            Empowering the next generation of thinkers and innovators.
+          <p className="mt-3 max-w-md text-sm text-cyan-100/70 sm:mt-4">
+            Empowering the next generation of thinkers, creators, and innovators through AI-powered education.
           </p>
+          <div className="mt-5 flex flex-wrap items-center gap-2">
+            {social.map(({ Icon, href, label }) => (
+              <a
+                key={label}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`${label} (opens in new tab)`}
+                className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-cyan-300/25 bg-slate-900/70 text-cyan-200/80 transition hover:border-cyan-300/45 hover:bg-cyan-400/10 hover:text-cyan-100 motion-safe-transition"
+              >
+                <Icon className="h-4 w-4" aria-hidden />
+              </a>
+            ))}
+          </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-6 sm:gap-8 sm:gap-10 text-sm">
-          <div>
-            <p className="text-white font-medium mb-3 sm:mb-4">Quick Links</p>
-            <ul className="space-y-2 sm:space-y-2.5">
-              <li><Link href="/" className="text-gray-400 hover:text-white transition py-1 inline-block min-h-[2.25rem] flex items-center">Home</Link></li>
-              <li><Link href="/courses" className="text-gray-400 hover:text-white transition py-1 inline-block min-h-[2.25rem] flex items-center">Courses</Link></li>
-              <li><Link href="/how-it-works" className="text-gray-400 hover:text-white transition py-1 inline-block min-h-[2.25rem] flex items-center">How it Works</Link></li>
-              <li><Link href="/stories" className="text-gray-400 hover:text-white transition py-1 inline-block min-h-[2.25rem] flex items-center">Stories</Link></li>
-              <li><Link href="/blog" className="text-gray-400 hover:text-white transition py-1 inline-block min-h-[2.25rem] flex items-center">Blog</Link></li>
-            </ul>
-          </div>
-          <div>
-            <p className="text-white font-medium mb-3 sm:mb-4">Legal</p>
-            <ul className="space-y-2 sm:space-y-2.5">
-              <li><Link href="/privacy" className="text-gray-400 hover:text-white transition py-1 inline-block min-h-[2.25rem] flex items-center">Privacy Policy</Link></li>
-              <li><Link href="/terms" className="text-gray-400 hover:text-white transition py-1 inline-block min-h-[2.25rem] flex items-center">Terms of Service</Link></li>
-            </ul>
-          </div>
+        <div>
+          <p className="mb-3 font-medium text-cyan-100 sm:mb-4">Programs</p>
+          <ul className="space-y-2 sm:space-y-2.5">
+            <li>
+              <Link href="/courses" className="inline-flex min-h-[2rem] items-center py-1 text-cyan-100/70 transition hover:text-cyan-200">
+                Browse catalog
+              </Link>
+            </li>
+            <li>
+              <Link href="/subjects" className="inline-flex min-h-[2rem] items-center py-1 text-cyan-100/70 transition hover:text-cyan-200">
+                AI-first subjects
+              </Link>
+            </li>
+            <li>
+              <Link href="/how-it-works" className="inline-flex min-h-[2rem] items-center py-1 text-cyan-100/70 transition hover:text-cyan-200">
+                How it works
+              </Link>
+            </li>
+            <li>
+              <Link href="/ai-tutor" className="inline-flex min-h-[2rem] items-center py-1 text-cyan-100/70 transition hover:text-cyan-200">
+                AI tutor
+              </Link>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <p className="mb-3 font-medium text-cyan-100 sm:mb-4">Company</p>
+          <ul className="space-y-2 sm:space-y-2.5">
+            <li>
+              <Link href="/about-us" className="inline-flex min-h-[2rem] items-center py-1 text-cyan-100/70 transition hover:text-cyan-200">
+                About us
+              </Link>
+            </li>
+            <li>
+              <Link href="/contact" className="inline-flex min-h-[2rem] items-center py-1 text-cyan-100/70 transition hover:text-cyan-200">
+                Contact
+              </Link>
+            </li>
+            <li>
+              <Link href="/stories" className="inline-flex min-h-[2rem] items-center py-1 text-cyan-100/70 transition hover:text-cyan-200">
+                Stories
+              </Link>
+            </li>
+            <li>
+              <Link href="/blog" className="inline-flex min-h-[2rem] items-center py-1 text-cyan-100/70 transition hover:text-cyan-200">
+                Blog
+              </Link>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <p className="mb-3 font-medium text-cyan-100 sm:mb-4">Get in touch</p>
+          <ul className="space-y-2 text-sm text-cyan-100/70">
+            <li className="flex items-start gap-2">
+              <Mail className="mt-0.5 h-4 w-4 shrink-0 text-cyan-300" aria-hidden />
+              <a href={`mailto:${supportEmail}`} className="break-all hover:text-cyan-200">
+                {supportEmail}
+              </a>
+            </li>
+            <li className="flex items-center gap-2">
+              <Phone className="h-4 w-4 shrink-0 text-cyan-300" aria-hidden />
+              <a href="tel:+911234567890" className="hover:text-cyan-200">
+                +91 12345 67890
+              </a>
+            </li>
+            <li className="flex items-center gap-2">
+              <MapPin className="h-4 w-4 shrink-0 text-cyan-300" aria-hidden />
+              India
+            </li>
+          </ul>
+          <Link href="/signup" className="isit-btn-primary mt-6 inline-flex min-h-11 items-center justify-center no-underline">
+            Get started
+          </Link>
         </div>
       </div>
 
-      <div className="text-center text-xs text-gray-500 mt-10 sm:mt-12 px-4">
-        © 2026 Indian School of Innovation and Thinking. All rights reserved.
+      <div className="mt-10 border-t border-cyan-400/15 px-4 pt-5 text-xs text-cyan-100/55 sm:mt-12">
+        <div className="mx-auto flex max-w-7xl flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <p>© {new Date().getFullYear()} ISIC (Indian School of Innovation and Curiosity). All rights reserved.</p>
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+            <Link href="/privacy" className="hover:text-cyan-200">
+              Privacy
+            </Link>
+            <Link href="/terms" className="hover:text-cyan-200">
+              Terms
+            </Link>
+            <Link href="/refund" className="hover:text-cyan-200">
+              Refunds
+            </Link>
+            <Link href="/contact" className="hover:text-cyan-200">
+              Contact
+            </Link>
+          </div>
+        </div>
       </div>
     </footer>
   );

@@ -1,5 +1,6 @@
 import { getTopicById } from '@/lib/curriculum-api';
 import { successResponse, errorResponse } from '@/lib/api-response';
+import { enforceTopicReadForScope } from '@/lib/teacher-scope';
 
 const CACHE_MAX_AGE = 60;
 
@@ -10,6 +11,9 @@ export async function GET(
   try {
     const { id } = await params;
     if (!id) return errorResponse('Topic id is required', 400);
+
+    const access = await enforceTopicReadForScope(req, id);
+    if (!access.ok) return access.response;
 
     const topic = await getTopicById(id);
     if (!topic) return errorResponse('Topic not found', 404);

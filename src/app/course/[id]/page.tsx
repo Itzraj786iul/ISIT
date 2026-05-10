@@ -89,7 +89,7 @@ export default function CourseDetailsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+      <div className="isit-cosmic-bg min-h-screen flex items-center justify-center text-cyan-50">
         <p className="text-lg font-semibold text-gray-700">Loading...</p>
       </div>
     );
@@ -97,7 +97,7 @@ export default function CourseDetailsPage() {
 
   if (!course) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+      <div className="isit-cosmic-bg min-h-screen flex items-center justify-center text-cyan-50">
         <p className="text-lg font-semibold text-red-500">Course not found</p>
       </div>
     );
@@ -137,7 +137,7 @@ export default function CourseDetailsPage() {
   const lessonCount = course.lessons?.length ?? 0;
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="isit-cosmic-bg min-h-screen text-cyan-50">
       <PublicNav active="courses" />
 
       <section className="bg-white py-12">

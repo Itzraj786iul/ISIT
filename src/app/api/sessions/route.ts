@@ -5,6 +5,9 @@ import { createSession, getSessionsForStudent } from '@/lib/learning-execution';
 import type { CompletionStatus } from '@/lib/learning-execution';
 import { getTopicById } from '@/lib/curriculum-api';
 import { successResponse, errorResponse } from '@/lib/api-response';
+import { updateAssignmentStatus } from '@/lib/assignment-lifecycle';
+import { connectToDB } from '@/lib/db';
+import { isTopicAssignedToStudent } from '@/lib/student-assigned-topics-data';
 
 export async function GET(req: Request) {
   try {
@@ -67,14 +70,47 @@ export async function POST(req: Request) {
     const resolvedSubjectId = subjectId ?? topicSubjectId;
     if (!resolvedSubjectId) return errorResponse('subjectId could not be resolved from topic', 400);
 
+    let session_mode: 'teacher_assigned' | 'free_learning' = 'free_learning';
+    let session_source: 'assigned' | 'free' = 'free';
+    if ((auth.role || '').toLowerCase() === 'student') {
+      try {
+        await connectToDB();
+        const User = (await import('@/models/User')).default;
+        const u = await User.findById(auth.userId)
+          .select('class_id organization_id')
+          .lean<{ class_id?: mongoose.Types.ObjectId | null; organization_id?: mongoose.Types.ObjectId } | null>();
+        const orgStr = (orgId as mongoose.Types.ObjectId).toString();
+        if (u?.organization_id?.toString() === orgStr) {
+          const classId = u.class_id?.toString() ?? null;
+          const assigned = await isTopicAssignedToStudent(auth.userId, orgStr, classId, topicId);
+          if (assigned) {
+            session_mode = 'teacher_assigned';
+            session_source = 'assigned';
+          }
+        }
+      } catch (e) {
+        console.error('[POST /api/sessions] assignment detection', e);
+      }
+    }
+
     const session = await createSession({
       organization_id: orgId as mongoose.Types.ObjectId,
       student_id: new mongoose.Types.ObjectId(auth.userId),
       topic_id: new mongoose.Types.ObjectId(topicId),
       subject_id: new mongoose.Types.ObjectId(String(resolvedSubjectId)),
       mode: modeVal,
+      session_mode,
+      session_source,
       start_time: new Date(),
     });
+
+    if ((auth.role || '').toLowerCase() === 'student') {
+      try {
+        await updateAssignmentStatus(auth.userId, topicId, 'in_progress');
+      } catch (assignErr) {
+        console.error('[POST /api/sessions] assignment lifecycle', assignErr);
+      }
+    }
 
     const sessionObj = session.toObject ? session.toObject() : session;
     return successResponse(sessionObj, 201);

@@ -8,6 +8,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { Bot, BookOpen, ChevronLeft, ChevronRight, Sparkles, Video, X } from 'lucide-react';
 
 type LessonType = {
   _id: string;
@@ -192,55 +193,69 @@ export default function LessonPlayerPage() {
 
   if (loading) {
     return (
-      <div className="h-screen flex items-center justify-center bg-gray-100">
-        <p className="text-gray-600">Loading lesson...</p>
+      <div className="h-screen isit-cosmic-bg flex flex-col items-center justify-center text-cyan-200 relative px-4">
+        <div className="isit-glass rounded-2xl p-6 max-w-md w-full space-y-4 relative z-[1]">
+          <div className="aspect-video rounded-xl bg-cyan-400/10 animate-pulse border border-cyan-400/10" />
+          <div className="h-3 rounded-full bg-cyan-400/10 animate-pulse w-4/5" />
+          <div className="h-3 rounded-full bg-cyan-400/10 animate-pulse w-3/5" />
+        </div>
+        <p className="text-sm mt-6 text-cyan-200/75 relative z-[1]">Loading lesson…</p>
       </div>
     );
   }
 
   if (!currentLesson || !course) {
     return (
-      <div className="h-screen flex flex-col items-center justify-center gap-4 bg-gray-100">
-        <p className="text-gray-700">Lesson not found.</p>
-        <Link href="/dashboard" className="text-sky-600 font-medium hover:underline">
-          Back to Dashboard
-        </Link>
+      <div className="h-screen isit-cosmic-bg flex flex-col items-center justify-center gap-6 p-4 text-cyan-50 relative">
+        <div className="isit-glass max-w-md w-full rounded-2xl p-8 text-center relative z-[1]">
+          <BookOpen className="w-12 h-12 text-cyan-400 mx-auto mb-4 opacity-90" aria-hidden />
+          <p className="text-cyan-50 font-semibold">Lesson not found</p>
+          <p className="text-sm text-cyan-100/70 mt-2">It may have been removed or the link is invalid.</p>
+          <Link href="/dashboard" className="isit-btn-primary inline-flex mt-6 min-h-11 px-6 items-center justify-center no-underline">
+            Back to dashboard
+          </Link>
+        </div>
       </div>
     );
   }
 
   if (accessDenied) {
     return (
-      <div className="h-screen flex flex-col items-center justify-center gap-4 bg-gray-100 p-4">
-        <p className="text-gray-800 font-medium text-center">You must enroll in this course to view lessons.</p>
-        <Link
-          href={`/course/${course._id}`}
-          className="text-sky-600 font-semibold hover:underline"
-        >
-          Go to course page to enroll
-        </Link>
-        <Link href="/dashboard" className="text-slate-600 text-sm hover:underline">
-          Back to Dashboard
-        </Link>
+      <div className="h-screen isit-cosmic-bg flex flex-col items-center justify-center gap-6 p-4 text-cyan-50 relative">
+        <div className="isit-glass max-w-md w-full rounded-2xl p-8 text-center relative z-[1]">
+          <p className="text-cyan-50 font-semibold">Enrollment required</p>
+          <p className="text-sm text-cyan-100/75 mt-2 leading-relaxed">
+            You need to enroll in this course to view lessons.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 mt-8 justify-center">
+            <Link href={`/course/${course._id}`} className="isit-btn-primary min-h-11 px-6 inline-flex items-center justify-center no-underline">
+              View course &amp; enroll
+            </Link>
+            <Link href="/dashboard" className="isit-btn-secondary min-h-11 px-6 inline-flex items-center justify-center no-underline">
+              Dashboard
+            </Link>
+          </div>
+        </div>
       </div>
     );
   }
 
-  const videoUrl = currentLesson.videoUrl || undefined;
+  const videoUrl = (currentLesson.videoUrl || '').trim();
+  const hasVideo = Boolean(videoUrl);
 
   const aiTutorContent = (
     <>
-      <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-slate-50 min-h-0">
+      <div className="flex-1 overflow-y-auto p-4 space-y-3 min-h-0 bg-slate-950/25">
         {messages.map((msg) => (
           <div
             key={msg.id}
             className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
           >
             <div
-              className={`px-4 py-3 rounded-2xl text-sm max-w-[85%] sm:max-w-xs shadow ${
+              className={`px-4 py-3 rounded-2xl text-sm max-w-[85%] sm:max-w-[280px] leading-relaxed ${
                 msg.sender === 'user'
-                  ? 'bg-sky-600 text-white rounded-br-none'
-                  : 'bg-white border border-slate-200 text-gray-900 rounded-bl-none'
+                  ? 'bg-cyan-500/25 text-cyan-50 border border-cyan-400/35 rounded-br-md shadow-[0_8px_24px_rgba(6,182,212,0.12)]'
+                  : 'isit-glass text-cyan-50/95 rounded-bl-md border-cyan-400/25'
               }`}
             >
               {msg.text}
@@ -248,17 +263,17 @@ export default function LessonPlayerPage() {
           </div>
         ))}
       </div>
-      <div className="p-4 border-t border-gray-200 bg-white flex-shrink-0">
+      <div className="p-4 border-t border-cyan-400/15 bg-slate-950/50 backdrop-blur-md flex-shrink-0">
         <form onSubmit={handleSendMessage} className="flex gap-2">
           <input
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
-            placeholder="Ask me anything..."
-            className="flex-1 px-4 py-2.5 border border-slate-300 rounded-xl text-sm text-gray-900 focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+            placeholder="Ask about this lesson…"
+            className="flex-1 min-w-0 px-4 py-2.5 rounded-xl text-sm bg-slate-950/70 border border-cyan-400/25 text-cyan-50 placeholder:text-cyan-200/45 focus:outline-none focus:ring-2 focus:ring-cyan-400/40"
           />
           <button
             type="submit"
-            className="bg-sky-600 hover:bg-sky-700 text-white px-4 py-2.5 rounded-xl text-sm font-medium flex-shrink-0"
+            className="isit-btn-primary px-4 py-2.5 text-sm font-semibold flex-shrink-0 min-h-[44px]"
           >
             Send
           </button>
@@ -269,9 +284,14 @@ export default function LessonPlayerPage() {
 
   const aiTutorPanel = (
     <>
-      <div className="p-4 border-b border-gray-200 bg-white flex-shrink-0">
-        <p className="text-sm font-semibold text-gray-900">AI Tutor</p>
-        <p className="text-xs text-emerald-600 font-medium">● Online</p>
+      <div className="p-4 border-b border-cyan-400/15 bg-slate-950/40 backdrop-blur-md flex-shrink-0 flex items-start gap-3">
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-cyan-400/15 border border-cyan-400/30 text-cyan-300 shrink-0">
+          <Sparkles className="w-5 h-5" aria-hidden />
+        </div>
+        <div className="min-w-0">
+          <p className="text-sm font-semibold text-cyan-50">Lesson tutor</p>
+          <p className="text-xs text-emerald-400/90 font-medium mt-0.5">● Context: this lesson</p>
+        </div>
       </div>
       {aiTutorContent}
     </>
@@ -279,207 +299,262 @@ export default function LessonPlayerPage() {
 
   const lessonsSidebar = (
     <>
-      <div className="p-5 border-b border-gray-300">
-        <h2 className="text-xs font-bold text-blue-700 uppercase">Course</h2>
-        <Link href={`/course/${course._id}`} className="text-sm font-semibold text-gray-900 mt-1 block hover:text-sky-600 no-underline" onClick={() => setMobileLessonsOpen(false)}>
+      <div className="p-5 border-b border-cyan-400/15">
+        <h2 className="text-[10px] font-bold text-cyan-300/90 uppercase tracking-widest">Course</h2>
+        <Link
+          href={`/course/${course._id}`}
+          className="text-sm font-semibold text-cyan-50 mt-2 block hover:text-cyan-200 no-underline leading-snug"
+          onClick={() => setMobileLessonsOpen(false)}
+        >
           {course.title}
         </Link>
         <div className="mt-4">
-          <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-            <div className="h-full bg-blue-600 transition-all" style={{ width: `${progress}%` }} />
-          </div>
-          <p className="text-xs text-gray-600 mt-1">{Math.round(progress)}% Progress</p>
-        </div>
-      </div>
-      <div className="flex-1 overflow-y-auto p-5">
-        <h4 className="text-xs font-bold text-gray-500 uppercase mb-3">Lessons</h4>
-        <div className="space-y-2">
-          {lessonsList.map((lesson, index) => (
+          <div className="h-2 bg-slate-950/60 rounded-full overflow-hidden border border-cyan-400/15">
             <div
-              key={lesson._id}
-              onClick={() => { router.push(`/lesson/${lesson._id}`); setMobileLessonsOpen(false); }}
-              className={`flex items-start gap-3 p-3 rounded-lg cursor-pointer transition ${lesson._id === currentLesson._id ? 'bg-blue-100 border border-blue-400' : 'hover:bg-gray-100'}`}
-            >
-              <div className={`w-6 h-6 text-xs rounded-full flex items-center justify-center ${completedLessons.includes(lesson._id) ? 'bg-green-500 text-white' : 'bg-blue-600 text-white'}`}>
-                {completedLessons.includes(lesson._id) ? '✓' : index + 1}
-              </div>
-              <div><p className="text-sm font-semibold text-gray-900">{lesson.title}</p></div>
-            </div>
-          ))}
+              className="h-full bg-gradient-to-r from-cyan-500 to-teal-400 transition-all duration-500"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+          <p className="text-xs text-cyan-200/65 mt-1.5">{Math.round(progress)}% complete</p>
         </div>
       </div>
-      <div className="p-5 border-t border-gray-300 flex justify-between text-center text-sm">
-        <div><p className="font-bold text-gray-900">{completedLessons.length}</p><p className="text-gray-600 text-xs">Completed</p></div>
-        <div><p className="font-bold text-gray-900">{lessonsList.length - completedLessons.length}</p><p className="text-gray-600 text-xs">Remaining</p></div>
+      <div className="flex-1 overflow-y-auto p-4 min-h-0">
+        <h4 className="text-[10px] font-bold text-cyan-300/70 uppercase tracking-widest mb-3">Lessons</h4>
+        <div className="space-y-1.5">
+          {lessonsList.map((lesson, index) => {
+            const done = completedLessons.includes(lesson._id);
+            const active = lesson._id === currentLesson._id;
+            return (
+              <button
+                key={lesson._id}
+                type="button"
+                onClick={() => {
+                  router.push(`/lesson/${lesson._id}`);
+                  setMobileLessonsOpen(false);
+                }}
+                className={`w-full flex items-start gap-3 p-3 rounded-xl text-left cursor-pointer transition motion-safe-transition border ${
+                  active
+                    ? 'border-cyan-400/45 bg-cyan-400/10 shadow-[0_0_20px_rgba(34,211,238,0.08)]'
+                    : 'border-transparent hover:bg-slate-950/45 hover:border-cyan-400/15'
+                }`}
+              >
+                <div
+                  className={`w-7 h-7 text-xs rounded-full flex items-center justify-center shrink-0 font-bold ${
+                    done ? 'bg-emerald-500/90 text-white' : active ? 'bg-cyan-400 text-slate-950' : 'bg-slate-900/80 text-cyan-200 border border-cyan-400/25'
+                  }`}
+                >
+                  {done ? '✓' : index + 1}
+                </div>
+                <p className={`text-sm font-medium leading-snug ${active ? 'text-cyan-50' : 'text-cyan-100/85'}`}>
+                  {lesson.title}
+                </p>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+      <div className="p-4 border-t border-cyan-400/15 flex justify-between text-center text-sm bg-slate-950/30">
+        <div>
+          <p className="font-bold text-cyan-50">{completedLessons.length}</p>
+          <p className="text-cyan-200/55 text-[10px] uppercase tracking-wide">Done</p>
+        </div>
+        <div>
+          <p className="font-bold text-cyan-50">{lessonsList.length - completedLessons.length}</p>
+          <p className="text-cyan-200/55 text-[10px] uppercase tracking-wide">Left</p>
+        </div>
       </div>
     </>
   );
 
   return (
-    <div className="h-screen flex flex-col md:flex-row bg-gray-100 overflow-hidden">
-      {/* Mobile lessons overlay */}
+    <div className="h-screen flex flex-col md:flex-row isit-cosmic-bg overflow-hidden relative text-cyan-50">
       {mobileLessonsOpen && (
         <div className="fixed inset-0 z-50 md:hidden">
-          <div className="absolute inset-0 bg-black/50" onClick={() => setMobileLessonsOpen(false)} aria-hidden />
-          <aside className="absolute left-0 top-0 bottom-0 w-72 max-w-[85vw] bg-white shadow-xl flex flex-col">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setMobileLessonsOpen(false)} aria-hidden />
+          <aside className="absolute left-0 top-0 bottom-0 w-[min(20rem,88vw)] isit-glass border-r border-cyan-400/25 flex flex-col shadow-2xl">
             {lessonsSidebar}
           </aside>
         </div>
       )}
-      <aside className="hidden md:flex w-72 bg-white border-r border-gray-300 flex-col flex-shrink-0">
+      <aside className="hidden md:flex w-72 lg:w-80 flex-col flex-shrink-0 isit-glass border-r border-cyan-400/20 rounded-none min-h-0">
         {lessonsSidebar}
       </aside>
 
-      <div className="flex-1 flex flex-col min-w-0 min-h-0">
-        <div className="flex-shrink-0 bg-white border-b border-gray-300 px-4 sm:px-6 py-3 sm:py-0 sm:h-16 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+      <div className="flex-1 flex flex-col min-w-0 min-h-0 relative z-[1]">
+        <header className="flex-shrink-0 border-b border-cyan-400/15 bg-slate-950/45 backdrop-blur-xl px-4 sm:px-6 py-3 sm:py-0 sm:min-h-[4rem] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex flex-wrap items-center gap-2 sm:gap-4 min-w-0">
-            <div className="flex items-center gap-2 flex-shrink-0">
-              <Link href="/dashboard" className="text-xs sm:text-sm text-sky-600 hover:text-sky-700 font-medium">
-                ← Dashboard
+            <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0 text-xs sm:text-sm">
+              <Link
+                href="/dashboard"
+                className="inline-flex items-center gap-1 text-cyan-300 hover:text-cyan-100 font-medium no-underline"
+              >
+                <ChevronLeft className="w-4 h-4 shrink-0" aria-hidden />
+                Dashboard
               </Link>
-              <span className="text-gray-300 hidden sm:inline">|</span>
-              <Link href={`/course/${course._id}`} className="text-xs sm:text-sm text-sky-600 hover:text-sky-700 font-medium">
+              <span className="text-cyan-500/40 hidden sm:inline" aria-hidden>
+                ·
+              </span>
+              <Link href={`/course/${course._id}`} className="text-cyan-300 hover:text-cyan-100 font-medium no-underline">
                 Course
               </Link>
             </div>
-            <div className="min-w-0 w-full sm:w-auto">
-              <h1 className="text-base sm:text-lg font-bold text-gray-900 truncate">
-                Lesson {currentIndex + 1}: {currentLesson.title}
-              </h1>
-              <p className="text-xs text-gray-600 truncate">{course.title}</p>
+            <div className="min-w-0 w-full sm:w-auto sm:pl-2 sm:border-l border-cyan-400/15">
+              <p className="text-[10px] font-semibold uppercase tracking-widest text-cyan-400/80">
+                Lesson {currentIndex + 1} / {lessonsList.length}
+              </p>
+              <h1 className="text-base sm:text-lg font-bold text-cyan-50 truncate">{currentLesson.title}</h1>
+              <p className="text-xs text-cyan-200/65 truncate">{course.title}</p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-shrink-0">
             <button
               type="button"
               onClick={() => setMobileLessonsOpen(true)}
-              className="md:hidden px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-gray-700 text-sm rounded-lg font-medium"
+              className="md:hidden isit-btn-secondary py-2 px-3 text-xs min-h-10"
             >
               Lessons
             </button>
             <Link
               href={`/lesson/${lessonId}/quiz`}
-              className="px-4 sm:px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg font-medium transition flex-shrink-0 inline-block"
+              className="isit-btn-primary py-2.5 px-4 sm:px-5 text-sm no-underline inline-flex items-center justify-center min-h-10"
             >
-              Take Quiz
+              Take quiz
             </Link>
           </div>
-        </div>
+        </header>
 
-        <div className="flex-1 flex flex-col md:flex-row overflow-hidden min-h-0">
-          <div className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8 bg-gray-100">
-            <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200">
-              <div className="aspect-video rounded-xl overflow-hidden bg-black">
-                <iframe
-                  src={videoUrl}
-                  allowFullScreen
-                  className="w-full h-full"
-                  title={currentLesson.title}
-                />
+        <div className="flex-1 flex flex-col lg:flex-row overflow-hidden min-h-0">
+          <div className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8 min-h-0">
+            <div className="isit-glass p-4 sm:p-6 rounded-2xl">
+              <div className="rounded-xl overflow-hidden border border-cyan-400/20 bg-slate-950/80 shadow-[inset_0_0_0_1px_rgba(34,211,238,0.06)]">
+                {hasVideo ? (
+                  <div className="aspect-video">
+                    <iframe src={videoUrl} allowFullScreen className="w-full h-full border-0" title={currentLesson.title} />
+                  </div>
+                ) : (
+                  <div className="aspect-video flex flex-col items-center justify-center gap-3 p-8 text-center">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-cyan-400/25 bg-cyan-400/10 text-cyan-300">
+                      <Video className="w-7 h-7 opacity-90" aria-hidden />
+                    </div>
+                    <div>
+                      <p className="text-cyan-50 font-medium text-sm">No video for this lesson</p>
+                      <p className="text-cyan-200/60 text-xs mt-1 max-w-xs mx-auto">
+                        Use the transcript below or open the lesson tutor for help.
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 mt-6">
                 <button
                   type="button"
                   onClick={goPrev}
                   disabled={currentIndex <= 0}
-                  className="order-2 sm:order-1 px-4 py-2.5 border border-slate-300 rounded-xl text-sm font-medium text-slate-800 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-50"
+                  className="order-2 sm:order-1 isit-btn-secondary px-4 py-2.5 text-sm min-h-11 inline-flex items-center justify-center gap-1 disabled:opacity-35 disabled:cursor-not-allowed disabled:pointer-events-none"
                 >
-                  ← Previous
+                  <ChevronLeft className="w-4 h-4" aria-hidden />
+                  Previous
                 </button>
                 <div className="order-1 sm:order-2 flex flex-col sm:flex-row items-center gap-2 sm:gap-4">
-                  <span className="text-sm text-slate-600 font-medium">
-                    Lesson {currentIndex + 1} of {lessonsList.length}
+                  <span className="text-sm text-cyan-200/80 font-medium tabular-nums">
+                    {currentIndex + 1} / {lessonsList.length}
                   </span>
                   <button
                     type="button"
                     onClick={markComplete}
-                    className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-xl"
+                    className={`px-4 py-2.5 text-sm font-semibold rounded-full min-h-11 transition ${
+                      completedLessons.includes(currentLesson._id)
+                        ? 'border border-emerald-400/40 bg-emerald-500/15 text-emerald-200'
+                        : 'bg-emerald-500/90 text-slate-950 hover:bg-emerald-400'
+                    }`}
                   >
-                    {completedLessons.includes(currentLesson._id) ? 'Completed ✓' : 'Mark as Complete'}
+                    {completedLessons.includes(currentLesson._id) ? 'Completed ✓' : 'Mark complete'}
                   </button>
                 </div>
                 <button
                   type="button"
                   onClick={goNext}
                   disabled={currentIndex >= lessonsList.length - 1}
-                  className="order-3 px-4 py-2.5 bg-sky-600 hover:bg-sky-700 text-white rounded-xl text-sm font-medium disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="order-3 isit-btn-primary px-4 py-2.5 text-sm min-h-11 inline-flex items-center justify-center gap-1 disabled:opacity-35 disabled:cursor-not-allowed disabled:pointer-events-none"
                 >
-                  Next →
+                  Next
+                  <ChevronRight className="w-4 h-4" aria-hidden />
                 </button>
               </div>
             </div>
-            {currentLesson.content && (
-              <div className="mt-6 bg-white p-5 sm:p-6 rounded-xl shadow-sm border border-slate-200">
-                <h3 className="font-semibold text-slate-900 mb-2">From the lesson</h3>
-                <p className="text-slate-700 text-sm whitespace-pre-wrap leading-relaxed">{currentLesson.content}</p>
+
+            {currentLesson.content ? (
+              <div className="mt-6 isit-glass p-5 sm:p-6 rounded-2xl">
+                <h3 className="font-semibold text-cyan-50 mb-2 flex items-center gap-2">
+                  <BookOpen className="w-4 h-4 text-cyan-400 shrink-0" aria-hidden />
+                  From the lesson
+                </h3>
+                <p className="text-cyan-100/85 text-sm whitespace-pre-wrap leading-relaxed">{currentLesson.content}</p>
               </div>
-            )}
-            <div className="mt-6 bg-white p-5 sm:p-6 rounded-xl shadow-sm border border-slate-200">
-              <h3 className="font-semibold text-slate-900 mb-2">Your notes</h3>
+            ) : null}
+
+            <div className="mt-6 isit-glass p-5 sm:p-6 rounded-2xl">
+              <h3 className="font-semibold text-cyan-50 mb-2">Your notes</h3>
               <textarea
                 value={userNotes}
                 onChange={(e) => saveUserNotes(e.target.value)}
-                placeholder="Type your notes here..."
+                placeholder="Jot down ideas while you watch…"
                 rows={6}
-                className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm text-slate-800 placeholder:text-slate-400 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 resize-y min-h-[120px]"
+                className="w-full px-4 py-3 rounded-xl text-sm bg-slate-950/70 border border-cyan-400/25 text-cyan-50 placeholder:text-cyan-200/40 focus:outline-none focus:ring-2 focus:ring-cyan-400/35 resize-y min-h-[120px]"
               />
-              <p className="text-xs text-slate-500 mt-2">Saved automatically on this device.</p>
+              <p className="text-xs text-cyan-200/55 mt-2">Saved on this device only.</p>
             </div>
-            <div className="mt-10">
-              <h2 className="text-lg font-semibold text-gray-900">Explore More Courses</h2>
-              <p className="text-sm text-gray-600 mb-5">Continue your learning journey</p>
-              <Link
-                href="/courses"
-                className="inline-block bg-sky-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-sky-600"
-              >
+
+            <div className="mt-10 isit-glass rounded-2xl p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div>
+                <h2 className="text-lg font-semibold text-cyan-50">More courses</h2>
+                <p className="text-sm text-cyan-100/70 mt-1">Keep building skills across the catalog.</p>
+              </div>
+              <Link href="/courses" className="isit-btn-secondary whitespace-nowrap no-underline inline-flex items-center justify-center min-h-11 px-6">
                 Browse courses
               </Link>
             </div>
           </div>
 
-          {/* AI Tutor — desktop: sidebar; mobile: FAB + bottom sheet */}
-          <div className="hidden lg:flex w-96 bg-white border-l border-slate-200 flex-col flex-shrink-0">
+          <div className="hidden lg:flex w-[min(100%,24rem)] flex-col flex-shrink-0 isit-glass border-l border-cyan-400/20 rounded-none min-h-0">
             {aiTutorPanel}
           </div>
         </div>
 
-        {/* Mobile: Floating AI Tutor button */}
         <button
           type="button"
           onClick={() => setMobileTutorOpen(true)}
-          className="lg:hidden fixed right-6 z-40 w-14 h-14 rounded-full bg-sky-500 text-white shadow-lg hover:bg-sky-600 flex items-center justify-center"
-          style={{ bottom: 'max(1.5rem, env(safe-area-inset-bottom, 1.5rem))' }}
-          aria-label="Open AI Tutor"
+          className="lg:hidden fixed right-5 z-40 min-h-14 min-w-14 rounded-full isit-btn-primary p-0 shadow-[0_12px_40px_rgba(6,182,212,0.35)] flex items-center justify-center border-0"
+          style={{ bottom: 'max(1.25rem, env(safe-area-inset-bottom, 1.25rem))' }}
+          aria-label="Open lesson tutor"
         >
-          <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-          </svg>
+          <Bot className="w-6 h-6" aria-hidden />
         </button>
 
-        {/* Mobile: AI Tutor bottom sheet */}
         {mobileTutorOpen && (
           <div className="fixed inset-0 z-50 lg:hidden flex flex-col">
-            <div className="absolute inset-0 bg-black/40" onClick={() => setMobileTutorOpen(false)} aria-hidden />
-            <div className="absolute bottom-0 left-0 right-0 top-[15%] sm:top-[20%] bg-white rounded-t-2xl shadow-2xl flex flex-col overflow-hidden">
-              <div className="flex items-center justify-between p-4 border-b border-slate-200 flex-shrink-0">
-                <div>
-                  <p className="text-sm font-semibold text-gray-900">AI Tutor</p>
-                  <p className="text-xs text-emerald-600 font-medium">● Online</p>
+            <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setMobileTutorOpen(false)} aria-hidden />
+            <div className="absolute bottom-0 left-0 right-0 top-[12%] sm:top-[18%] isit-glass rounded-t-3xl border border-cyan-400/25 border-b-0 flex flex-col overflow-hidden shadow-2xl">
+              <div className="flex items-center justify-between p-4 border-b border-cyan-400/15 flex-shrink-0 bg-slate-950/40">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-cyan-400/15 border border-cyan-400/30 text-cyan-300 shrink-0">
+                    <Sparkles className="w-5 h-5" aria-hidden />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold text-cyan-50">Lesson tutor</p>
+                    <p className="text-xs text-emerald-400/90 font-medium">● This lesson</p>
+                  </div>
                 </div>
                 <button
                   type="button"
                   onClick={() => setMobileTutorOpen(false)}
-                  className="p-2 rounded-lg text-slate-500 hover:bg-slate-100"
-                  aria-label="Close"
+                  className="p-2.5 rounded-xl text-cyan-200/80 hover:bg-cyan-400/10 border border-transparent hover:border-cyan-400/20"
+                  aria-label="Close tutor"
                 >
-                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
-                  </svg>
+                  <X className="w-5 h-5" aria-hidden />
                 </button>
               </div>
-              <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
-                {aiTutorContent}
-              </div>
+              <div className="flex-1 flex flex-col min-h-0 overflow-hidden">{aiTutorContent}</div>
             </div>
           </div>
         )}

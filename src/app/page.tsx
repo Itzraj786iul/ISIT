@@ -2,33 +2,25 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import Footer from '@/components/Footer';
 import PublicNav from '@/components/PublicNav';
-import { BookOpen, ChevronRight } from 'lucide-react';
+import { RevealOnView, RevealStagger } from '@/components/RevealMotion';
+import { Bot, BookOpen, Brain, ChevronRight, GraduationCap, Rocket, Sparkles, Target, Zap } from 'lucide-react';
 
 type SubjectItem = {
   _id: string;
   name: string;
-  description?: string;
-  grade?: string;
-  board?: string;
 };
 
 type LoggedInUser = { name?: string; email?: string; role?: string };
 
-const SUBJECT_COLORS = [
-  'from-sky-50 to-blue-100',
-  'from-emerald-50 to-teal-100',
-  'from-violet-50 to-purple-100',
-  'from-amber-50 to-orange-100',
-  'from-rose-50 to-pink-100',
-  'from-indigo-50 to-blue-100',
-];
-
-const SUBJECT_TEXT_COLORS = [
-  'text-sky-400', 'text-emerald-400', 'text-violet-400',
-  'text-amber-400', 'text-rose-400', 'text-indigo-400',
+const PROGRAMS = [
+  { title: 'Robotics & Tech', desc: 'Build and code through robotics, AI, and IoT projects.', icon: Bot },
+  { title: 'Digital Literacy', desc: 'Navigate, create, and stay safe in the digital world.', icon: GraduationCap },
+  { title: 'Marketing & Communication', desc: 'Speak with clarity and influence with confidence.', icon: Rocket },
+  { title: 'Entrepreneurship Basics', desc: 'Think, plan, and launch first mini ventures.', icon: Zap },
+  { title: 'Academic Support with AI', desc: 'Curriculum aligned support for school subjects.', icon: BookOpen },
+  { title: 'Creativity & Innovation Labs', desc: 'Design, experiment, and build original ideas.', icon: Sparkles },
 ];
 
 export default function HomePage() {
@@ -39,7 +31,10 @@ export default function HomePage() {
   useEffect(() => {
     fetch('/api/auth/me', { credentials: 'include' })
       .then(async (r) => {
-        if (!r.ok) { setUser(null); return; }
+        if (!r.ok) {
+          setUser(null);
+          return;
+        }
         const data = await r.json();
         if (data.user) setUser({ name: data.user.name, email: data.user.email, role: data.user.role });
       })
@@ -52,12 +47,8 @@ export default function HomePage() {
         const res = await fetch('/api/subjects');
         if (res.ok) {
           const json = await res.json();
-          if (json.success && Array.isArray(json.data)) {
-            setSubjects(json.data);
-          }
+          if (json.success && Array.isArray(json.data)) setSubjects(json.data);
         }
-      } catch (err) {
-        console.error(err);
       } finally {
         setLoading(false);
       }
@@ -67,214 +58,271 @@ export default function HomePage() {
 
   const getDashboardHref = () => {
     const role = user?.role?.toLowerCase();
+    if (role === 'admin') return '/organization';
     if (role === 'teacher') return '/teacher/dashboard';
     if (role === 'parent') return '/parent/dashboard';
     return '/dashboard';
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-gray-900">
+    <div className="isit-cosmic-bg min-h-screen text-cyan-50">
       <PublicNav active="home" />
 
-      {/* HERO */}
-      <section className="bg-gradient-to-r from-slate-50 via-sky-50 to-slate-50 py-12 sm:py-16 md:py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 grid md:grid-cols-2 gap-8 md:gap-12 items-center">
-          <div>
-            {user ? (
-              <>
-                <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight">
-                  Welcome back, <br />
-                  <span className="text-sky-500">{user.name?.split(' ')[0] || 'there'}</span>
-                </h1>
-                <p className="mt-4 sm:mt-6 text-gray-600 text-base sm:text-lg">
-                  Ready to continue your learning journey? Pick up where you left off or explore new subjects.
-                </p>
-                <div className="mt-6 sm:mt-8 flex flex-wrap gap-3 sm:gap-4">
-                  <Link href={getDashboardHref()} className="bg-black text-white px-6 py-3 rounded-full text-sm font-medium hover:bg-gray-800 transition">
-                    Go to Dashboard
-                  </Link>
-                  <Link href="/subjects" className="bg-white px-6 py-3 rounded-full border text-sm font-medium shadow-sm hover:bg-slate-50 transition">
-                    Explore Subjects
-                  </Link>
-                </div>
-              </>
-            ) : (
-              <>
-                <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight">
-                  {"Let's Fall In Love"} <br />
-                  <span className="text-sky-500">with learning</span>
-                </h1>
-                <p className="mt-4 sm:mt-6 text-gray-600 text-base sm:text-lg">
-                  Where mistakes are celebrated as steps toward mastery
-                </p>
-                <div className="mt-6 sm:mt-8 flex flex-wrap gap-3 sm:gap-4">
-                  <Link href="/signup" className="bg-black text-white px-6 py-3 rounded-full text-sm font-medium hover:bg-gray-800 transition">
-                    Try a Free Interactive Lesson
-                  </Link>
-                  <Link href="/how-it-works" className="bg-white px-6 py-3 rounded-full border text-sm font-medium shadow-sm hover:bg-slate-50 transition">
-                    See How It Works
-                  </Link>
-                </div>
-                <div className="mt-8 sm:mt-12 flex flex-wrap gap-6 sm:gap-10 text-sm text-gray-600">
-                  <span>{subjects.length > 0 ? `${subjects.length} subjects available` : 'Explore our catalog'}</span>
-                  <span>CBSE &amp; ICSE aligned</span>
-                </div>
-              </>
-            )}
+      <section className="relative py-12 sm:py-16 md:py-20">
+        <div className="mx-auto grid max-w-7xl items-center gap-10 px-4 sm:px-6 md:grid-cols-2 md:gap-12">
+          <div className="isit-hero-col">
+            <span className="isit-chip">
+              <Sparkles className="h-3.5 w-3.5 text-cyan-300" />
+              Future of learning starts here
+            </span>
+            <h1 className="mt-5 text-4xl font-black leading-[1.02] sm:text-5xl lg:text-7xl">
+              Your Child&apos;s
+              <br />
+              Personal
+              <br />
+              <span className="text-cyan-300">AI Tutor</span>
+            </h1>
+            <p className="mt-5 max-w-xl text-sm text-cyan-50/75 sm:text-base">
+              Hyper-personalized learning that adapts to pace, curiosity, and thinking style.
+              Real understanding. Future-ready skills for life.
+            </p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Link href={user ? getDashboardHref() : '/signup'} className="isit-btn-primary">
+                Try AI Tutor Now
+              </Link>
+              <Link href="/courses" className="isit-btn-secondary">
+                Explore Programs
+              </Link>
+            </div>
+            <div className="mt-6 flex flex-wrap gap-3 text-xs text-cyan-100/80">
+              <span className="isit-chip">Personalized for every student</span>
+              <span className="isit-chip">Aligned with school curriculum</span>
+              <span className="isit-chip">Concepts made simple with AI</span>
+            </div>
           </div>
 
-          <div className="relative w-full aspect-[4/3] min-h-[200px] sm:min-h-[280px] rounded-2xl sm:rounded-3xl overflow-hidden shadow-xl bg-slate-100 mt-8 md:mt-0">
-            <Image
-              src="/assets/Hero.png"
-              alt="Students learning together"
-              fill
-              className="object-cover"
-              sizes="(max-width: 768px) 100vw, 50vw"
-              priority
-            />
+          <div className="relative mt-8 min-h-[320px] overflow-hidden rounded-3xl border border-cyan-300/20 bg-slate-900/60 p-5 shadow-2xl shadow-cyan-900/20 motion-safe-transition hover:border-cyan-300/35 md:mt-0">
+            <div className="isit-hero-orbit absolute left-1/2 top-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan-400/20 blur-3xl" />
+            <div className="absolute left-1/2 top-1/2 h-48 w-48 -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-300/30 bg-slate-950/75 motion-safe-transition" />
+            <div className="isit-float-delayed absolute left-8 top-8 max-w-[210px] rounded-2xl border border-cyan-300/25 bg-slate-950/80 p-3 text-sm shadow-lg shadow-cyan-950/30">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-cyan-300">AI Tutor</p>
+              <p className="mt-1 text-cyan-50/90">Let me explain this with a real world example.</p>
+            </div>
+            <div className="isit-float-delayed-2 absolute bottom-8 left-8 rounded-2xl border border-cyan-300/25 bg-slate-950/80 p-3 shadow-lg shadow-cyan-950/30">
+              <p className="text-[11px] uppercase text-cyan-300">Focus Today</p>
+              <p className="text-xl font-bold text-cyan-100">92 mins</p>
+            </div>
+            <div className="isit-float-delayed-3 absolute right-7 top-16 rounded-2xl border border-cyan-300/25 bg-slate-950/80 p-3 shadow-lg shadow-cyan-950/30">
+              <p className="text-[11px] uppercase text-cyan-300">Concept Mastery</p>
+              <p className="text-2xl font-black text-cyan-200">85%</p>
+            </div>
+            <div className="animate-float-soft absolute bottom-8 right-7 rounded-2xl border border-cyan-300/25 bg-slate-950/80 p-3 shadow-lg shadow-cyan-950/30">
+              <p className="text-[11px] uppercase text-cyan-300">Your Strength</p>
+              <p className="text-lg font-bold text-cyan-100">Logical Thinking</p>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* HOW IT WORKS */}
-      <section className="py-16 sm:py-20 md:py-24 bg-slate-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center">
-          <h2 className="text-2xl sm:text-3xl font-bold">How Learning Works</h2>
-          <p className="text-gray-500 mt-3 sm:mt-4 text-sm sm:text-base">
-            A simple, proven process to take you from beginner to expert
-          </p>
+      <section className="border-y border-cyan-500/10 bg-slate-950/50 py-8">
+        <RevealStagger className="mx-auto grid max-w-7xl grid-cols-2 gap-6 px-4 sm:grid-cols-5 sm:px-6">
+          {[
+            ['AI Tutor', '24/7 doubts solved'],
+            ['Smart Learning', 'Adaptive pace'],
+            ['Instant Feedback', 'Understand mistakes'],
+            ['Track Progress', 'Real-time analytics'],
+            ['Build Skills', 'Future-ready outcomes'],
+          ].map(([title, desc]) => (
+            <div key={title} className="text-center sm:text-left motion-safe-transition hover:translate-y-[-2px]">
+              <p className="text-sm font-bold text-cyan-200">{title}</p>
+              <p className="text-xs text-cyan-100/60">{desc}</p>
+            </div>
+          ))}
+        </RevealStagger>
+      </section>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 mt-10 sm:mt-16">
+      <section className="py-16 sm:py-20">
+        <RevealOnView>
+        <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 md:grid-cols-2">
+          <div className="isit-glass rounded-3xl p-6">
+            <p className="text-xs uppercase tracking-[0.2em] text-cyan-300">The core differentiator</p>
+            <h2 className="mt-3 text-3xl font-black sm:text-5xl">Meet your personal AI tutor</h2>
+            <p className="mt-4 text-cyan-100/75">
+              Understands how each student learns and adjusts explanations in real-time.
+              Instant doubt solving and goal-based roadmaps.
+            </p>
+            <div className="mt-6 space-y-3">
+              <div className="rounded-2xl border border-cyan-300/20 bg-slate-900/60 p-4">
+                <p className="font-semibold text-cyan-100">Adaptive Intelligence</p>
+                <p className="text-sm text-cyan-100/65">Learns from sessions and continuously personalizes guidance.</p>
+              </div>
+              <div className="rounded-2xl border border-cyan-300/20 bg-slate-900/60 p-4">
+                <p className="font-semibold text-cyan-100">Instant Doubt Resolution</p>
+                <p className="text-sm text-cyan-100/65">Step-by-step explanations on any concept at any time.</p>
+              </div>
+            </div>
+          </div>
+          <div className="isit-glass rounded-3xl p-6">
+            <p className="text-xs uppercase tracking-[0.2em] text-cyan-300">Live conversation</p>
+            <div className="mt-4 space-y-3">
+              <div className="mr-6 rounded-2xl border border-cyan-300/20 bg-slate-900/70 p-3 text-sm">
+                Hi! I&apos;m your personal AI Tutor. What shall we learn today?
+              </div>
+              <div className="ml-10 rounded-2xl border border-cyan-300/20 bg-cyan-400/15 p-3 text-right text-sm">
+                I&apos;m struggling with quadratic equations.
+              </div>
+              <div className="mr-6 rounded-2xl border border-cyan-300/20 bg-slate-900/70 p-3 text-sm">
+                Let&apos;s break it down with a rocket trajectory example and solve it together.
+              </div>
+            </div>
+          </div>
+        </div>
+        </RevealOnView>
+      </section>
+
+      <section className="py-16 sm:py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+          <RevealOnView delayMs={40}>
+          <div className="mb-10 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
+            <div>
+              <p className="text-xs uppercase tracking-[0.2em] text-cyan-300">Explore our programs</p>
+              <h2 className="mt-2 text-3xl font-black sm:text-5xl">Beyond textbooks. Build skills and mindset.</h2>
+            </div>
+            <Link href="/courses" className="isit-btn-secondary motion-safe-transition hover:scale-[1.02] active:scale-[0.98]">
+              View All Programs
+            </Link>
+          </div>
+          </RevealOnView>
+          {loading ? (
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3">
+              {[1, 2, 3, 4, 5, 6].map((i) => <div key={i} className="h-56 animate-pulse rounded-2xl border border-cyan-300/15 bg-slate-900/50" />)}
+            </div>
+          ) : (
+            <RevealStagger className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3">
+              {PROGRAMS.map((program, i) => {
+                const Icon = program.icon;
+                const subject = subjects[i % Math.max(subjects.length, 1)];
+                return (
+                  <Link key={program.title} href={subject ? `/subject/${subject._id}` : '/subjects'} className="block no-underline group">
+                    <div className="group h-full overflow-hidden rounded-2xl border border-cyan-300/15 bg-slate-900/60 motion-safe-transition duration-300 hover:-translate-y-1.5 hover:border-cyan-300/45 hover:shadow-[0_20px_40px_rgba(6,182,212,0.12)]">
+                      <div className="flex h-40 items-center justify-center border-b border-cyan-300/10 bg-gradient-to-br from-cyan-500/20 to-indigo-500/20">
+                        <Icon className="h-12 w-12 text-cyan-200" />
+                      </div>
+                      <div className="p-5">
+                        <h3 className="font-semibold text-cyan-100 transition group-hover:text-cyan-200">{program.title}</h3>
+                        <p className="mt-2 text-sm text-cyan-100/70">{program.desc}</p>
+                        <div className="mt-4 flex items-center text-sm font-medium text-cyan-300">
+                          Explore <ChevronRight className="ml-1 h-4 w-4" />
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })}
+            </RevealStagger>
+          )}
+        </div>
+      </section>
+
+      <section className="py-14 sm:py-16">
+        <RevealOnView>
+        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+          <p className="text-xs uppercase tracking-[0.2em] text-cyan-300">Core modules, made simple</p>
+          <h2 className="mt-2 text-3xl font-black sm:text-5xl">Learn how you learn</h2>
+          <p className="mt-3 max-w-3xl text-cyan-100/70">
+            These foundational modules unlock every student&apos;s potential using neuroscience-led and experiential learning.
+          </p>
+          <div className="mt-8 grid gap-6 md:grid-cols-2">
+            <Link href="/courses" className="group block">
+              <article className="overflow-hidden rounded-2xl border border-cyan-300/20 bg-slate-900/60 transition hover:border-cyan-300/45">
+                <div className="flex h-36 items-center justify-center border-b border-cyan-300/10 bg-gradient-to-br from-cyan-500/20 to-indigo-500/20">
+                  <Brain className="h-12 w-12 text-cyan-200" />
+                </div>
+                <div className="p-5">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-cyan-300">Brain Lab</p>
+                  <h3 className="mt-2 text-2xl font-bold text-cyan-100">How the Brain Works</h3>
+                  <p className="mt-2 text-sm text-cyan-100/70">
+                    Understand memory, focus, and learning behavior to perform better.
+                  </p>
+                  <p className="mt-4 text-sm font-semibold text-cyan-300">Enroll now -&gt;</p>
+                </div>
+              </article>
+            </Link>
+            <Link href="/courses" className="group block">
+              <article className="overflow-hidden rounded-2xl border border-cyan-300/20 bg-slate-900/60 transition hover:border-cyan-300/45">
+                <div className="flex h-36 items-center justify-center border-b border-cyan-300/10 bg-gradient-to-br from-emerald-500/20 to-cyan-500/20">
+                  <BookOpen className="h-12 w-12 text-cyan-200" />
+                </div>
+                <div className="p-5">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-cyan-300">Learning Intelligence Lab</p>
+                  <h3 className="mt-2 text-2xl font-bold text-cyan-100">How Learning Happens</h3>
+                  <p className="mt-2 text-sm text-cyan-100/70">
+                    Science-backed methods including spaced repetition, retrieval practice, and flow.
+                  </p>
+                  <p className="mt-4 text-sm font-semibold text-cyan-300">Enroll now -&gt;</p>
+                </div>
+              </article>
+            </Link>
+          </div>
+        </div>
+        </RevealOnView>
+      </section>
+
+      <section className="px-4 pb-8 sm:px-6 sm:pb-14">
+        <RevealOnView delayMs={60}>
+        <RevealStagger className="mx-auto grid max-w-7xl grid-cols-2 gap-6 rounded-3xl border border-cyan-300/15 bg-slate-900/60 p-8 text-center sm:grid-cols-5">
+          <div><h3 className="text-3xl font-black text-cyan-200">10K+</h3><p className="mt-1 text-xs text-cyan-100/60">Students Learning</p></div>
+          <div><h3 className="text-3xl font-black text-cyan-200">200+</h3><p className="mt-1 text-xs text-cyan-100/60">Schools Partnered</p></div>
+          <div><h3 className="text-3xl font-black text-cyan-200">50+</h3><p className="mt-1 text-xs text-cyan-100/60">Expert Mentors</p></div>
+          <div><h3 className="text-3xl font-black text-cyan-200">1000+</h3><p className="mt-1 text-xs text-cyan-100/60">Projects Built</p></div>
+          <div><h3 className="text-3xl font-black text-cyan-200">24/7</h3><p className="mt-1 text-xs text-cyan-100/60">AI Tutor Support</p></div>
+        </RevealStagger>
+        </RevealOnView>
+      </section>
+
+      <section className="py-16 sm:py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+          <RevealOnView>
+          <p className="text-xs uppercase tracking-[0.2em] text-cyan-300">Loved by parents, students, and schools</p>
+          <h2 className="mt-2 text-4xl font-black sm:text-6xl">What our community says</h2>
+          </RevealOnView>
+          <RevealStagger className="mt-10 grid gap-5 md:grid-cols-3">
             {[
-              { title: 'Choose a subject', desc: 'Pick subjects aligned with your goals and curriculum.' },
-              { title: 'Learn through topics', desc: 'Watch videos, read notes, and interact with AI-powered tutoring.' },
-              { title: 'Practice with quizzes', desc: 'Test your understanding with real questions and get instant feedback.' },
-              { title: 'Track progress', desc: 'Monitor your mastery and see your growth over time.' },
-            ].map((step, i) => (
-              <div key={i} className="bg-white border border-slate-200 p-6 sm:p-8 rounded-2xl shadow-sm text-left">
-                <div className="text-sky-600 font-bold text-2xl mb-4">{i + 1}</div>
-                <h3 className="font-semibold text-slate-900">{step.title}</h3>
-                <p className="text-slate-600 text-sm mt-2">{step.desc}</p>
+              'The AI tutor explains everything so well. I finally understand the topics I used to fear.',
+              'ISIC programs are helping my child think independently and build real skills.',
+              'The AI-first approach aligned with curriculum is a game changer for schools.',
+            ].map((quote, index) => (
+              <div key={quote} className="rounded-2xl border border-cyan-300/15 bg-slate-900/60 p-5 motion-safe-transition hover:border-cyan-300/35">
+                <p className="text-sm text-cyan-100/90">&quot;{quote}&quot;</p>
+                <p className="mt-4 text-xs font-semibold text-cyan-300">Community Voice {index + 1}</p>
               </div>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* SUBJECTS */}
-      <section className="py-16 sm:py-20 md:py-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center">
-          <h2 className="text-2xl sm:text-3xl font-bold">Explore Subjects</h2>
-          <p className="text-gray-500 mt-3 sm:mt-4 text-sm sm:text-base">
-            {user
-              ? 'Continue your journey or discover new subjects'
-              : 'Choose from subjects designed around your curriculum'}
-          </p>
-
-          {loading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-10">
-              {[1, 2, 3].map((i) => <div key={i} className="bg-white border border-slate-200 rounded-2xl h-64 animate-pulse" />)}
-            </div>
-          ) : subjects.length === 0 ? (
-            <p className="mt-8 text-slate-500">No subjects available yet.</p>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8 mt-10 sm:mt-16 text-left">
-              {subjects.slice(0, 6).map((subject, i) => (
-                <Link
-                  key={subject._id}
-                  href={`/subject/${subject._id}`}
-                  className="block no-underline group"
-                >
-                  <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden hover:shadow-md hover:border-sky-200 transition">
-                    <div className={`h-36 sm:h-44 bg-gradient-to-br ${SUBJECT_COLORS[i % SUBJECT_COLORS.length]} flex items-center justify-center`}>
-                      <BookOpen className={`w-12 h-12 ${SUBJECT_TEXT_COLORS[i % SUBJECT_TEXT_COLORS.length]}`} />
-                    </div>
-                    <div className="p-4 sm:p-6">
-                      <div className="flex gap-2 mb-3">
-                        {subject.grade && (
-                          <span className="text-xs bg-sky-100 text-sky-700 px-3 py-1 rounded-full">{subject.grade}</span>
-                        )}
-                        {subject.board && (
-                          <span className="text-xs bg-purple-100 text-purple-700 px-3 py-1 rounded-full">{subject.board}</span>
-                        )}
-                      </div>
-                      <h3 className="font-semibold text-slate-900 group-hover:text-sky-600 transition">{subject.name}</h3>
-                      {subject.description && (
-                        <p className="text-sm text-slate-600 mt-2 line-clamp-2">{subject.description}</p>
-                      )}
-                      <div className="mt-4 flex items-center text-sky-600 text-sm font-medium group-hover:underline">
-                        Explore Subject <ChevronRight className="w-4 h-4 ml-1" />
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          )}
-
-          {subjects.length > 6 && (
-            <div className="mt-8">
-              <Link href="/subjects" className="text-sky-600 font-medium hover:text-sky-700">
-                View all {subjects.length} subjects {'\u2192'}
-              </Link>
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* STATS */}
-      <section className="bg-gradient-to-r from-sky-500 to-blue-600 py-10 sm:py-14 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 grid grid-cols-2 md:grid-cols-4 text-center gap-6 sm:gap-10">
-          <div>
-            <h3 className="text-2xl sm:text-3xl font-bold">{subjects.length > 0 ? `${subjects.length}+` : 'Growing'}</h3>
-            <p className="text-xs sm:text-sm mt-1 sm:mt-2 opacity-80">Subjects Available</p>
-          </div>
-          <div>
-            <h3 className="text-2xl sm:text-3xl font-bold">CBSE</h3>
-            <p className="text-xs sm:text-sm mt-1 sm:mt-2 opacity-80">Curriculum Aligned</p>
-          </div>
-          <div>
-            <h3 className="text-2xl sm:text-3xl font-bold">AI</h3>
-            <p className="text-xs sm:text-sm mt-1 sm:mt-2 opacity-80">Powered Tutoring</p>
-          </div>
-          <div>
-            <h3 className="text-2xl sm:text-3xl font-bold">24/7</h3>
-            <p className="text-xs sm:text-sm mt-1 sm:mt-2 opacity-80">Learning Access</p>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="py-14 sm:py-20 text-center bg-slate-50 px-4">
-        {user ? (
-          <>
-            <h2 className="text-2xl sm:text-3xl font-bold">{"You're on the right path"}</h2>
-            <p className="text-gray-500 mt-3 sm:mt-4 text-sm sm:text-base">
-              Head to your dashboard to track progress, study topics, and unlock achievements.
+          </RevealStagger>
+          <RevealOnView delayMs={80} className="mt-12 text-center">
+            <h3 className="text-2xl font-bold">Start your child&apos;s learning journey today</h3>
+            <p className="mt-3 text-sm text-cyan-100/70">
+              {user ? 'Continue from your dashboard and unlock the next milestone.' : 'Join now and experience personalized AI learning.'}
             </p>
-            <div className="mt-6 sm:mt-8 flex flex-wrap justify-center gap-3 sm:gap-4">
-              <Link href={getDashboardHref()} className="inline-block bg-sky-500 text-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-full hover:bg-sky-600 transition text-sm sm:text-base">
-                Go to Dashboard
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+              <Link href={user ? getDashboardHref() : '/signup'} className="isit-btn-primary">
+                {user ? 'Go to Dashboard' : 'Try AI Tutor Now'}
               </Link>
-              <Link href="/subjects" className="inline-block bg-white border border-slate-200 text-slate-700 px-6 sm:px-8 py-2.5 sm:py-3 rounded-full hover:bg-slate-50 transition text-sm sm:text-base">
+              <Link href="/subjects" className="isit-btn-secondary">
+                <Target className="mr-2 h-4 w-4" />
                 Explore Subjects
               </Link>
+              <Link href="/how-it-works" className="isit-btn-secondary">
+                <Brain className="mr-2 h-4 w-4" />
+                How It Works
+              </Link>
             </div>
-          </>
-        ) : (
-          <>
-            <h2 className="text-2xl sm:text-3xl font-bold">Start Learning with Confidence</h2>
-            <p className="text-gray-500 mt-3 sm:mt-4 text-sm sm:text-base">
-              Join students who are already transforming their knowledge.
-            </p>
-            <Link href="/signup" className="inline-block mt-6 sm:mt-8 bg-sky-500 text-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-full hover:bg-sky-600 transition text-sm sm:text-base">
-              Get Started
-            </Link>
-          </>
-        )}
+          </RevealOnView>
+        </div>
       </section>
 
-      <Footer />
+      <RevealOnView delayMs={40}>
+        <Footer />
+      </RevealOnView>
     </div>
   );
 }

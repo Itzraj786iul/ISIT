@@ -25,6 +25,8 @@ import {
   parseTeachbackJson,
   type TutorDifficulty,
 } from '@/lib/tutor-adaptive';
+import { teacherAssignedTutorAppendix } from '@/lib/tutor-assigned-context';
+import { aiRateLimitForUser } from '@/lib/rate-limit';
 
 async function logTutorEvent(
   orgId: mongoose.Types.ObjectId,
@@ -93,6 +95,9 @@ export async function POST(req: Request) {
     const auth = await getAuthFromRequest(req);
     if (!auth) return errorResponse('Unauthorized', 401);
 
+    const limited = aiRateLimitForUser(req, auth.userId);
+    if (limited) return limited;
+
     const body = await req.json().catch(() => ({}));
     const sessionId = body.sessionId ?? body.session_id;
     let message = typeof body.message === 'string' ? body.message.trim() : '';
@@ -115,8 +120,14 @@ export async function POST(req: Request) {
       tutor_consecutive_wrong?: number;
       tutor_consecutive_correct?: number;
       teachback_score?: number;
+      session_mode?: string;
+      session_source?: string;
     };
     if (String(sess.student_id) !== auth.userId) return errorResponse('Forbidden', 403);
+
+    const isAssignedTopic =
+      sess.session_mode === 'teacher_assigned' || sess.session_source === 'assigned';
+    const assignedTutorBlock = isAssignedTopic ? `\n\n${teacherAssignedTutorAppendix()}` : '';
 
     const orgId = sess.organization_id as mongoose.Types.ObjectId;
     const topicId = sess.topic_id?.toString?.() ?? String(sess.topic_id);
@@ -165,7 +176,7 @@ export async function POST(req: Request) {
     }
 
     if (phase === 'teachback_invite') {
-      const systemContent = `You are a warm ISIT tutor. Invite the student to explain "${topicName}" in their own words (2–5 sentences). Do not grade them yet—only ask clearly and encourage them. One short paragraph.`;
+      const systemContent = `You are a warm ISIC tutor (Indian School of Innovation and Curiosity). Invite the student to explain "${topicName}" in their own words (2–5 sentences). Do not grade them yet—only ask clearly and encourage them. One short paragraph.${assignedTutorBlock}`;
       const userContent = `## Context\n${contextBlock || '(No extra notes)'}\n\nAsk the student to teach back the main idea.`;
       let answer: string;
       try {
@@ -177,7 +188,13 @@ export async function POST(req: Request) {
         topic_id: topicId,
       });
       return successResponse(
-        { message: answer, answer, phase: 'teachback_invite', adaptive: { difficulty: sess.tutor_difficulty_level ?? 'medium' } },
+        {
+          message: answer,
+          answer,
+          phase: 'teachback_invite',
+          adaptive: { difficulty: sess.tutor_difficulty_level ?? 'medium' },
+          is_assigned_topic: isAssignedTopic,
+        },
         200
       );
     }
@@ -186,7 +203,8 @@ export async function POST(req: Request) {
       if (!message) return errorResponse('message is required for teachback submission', 400);
       const systemContent = `You evaluate a student's own-words explanation of "${topicName}". 
 Respond with ONLY a JSON object: {"score": <0-100 integer>, "feedback": "<2-4 sentences constructive feedback>"}.
-Score reflects conceptual accuracy and clarity, not grammar.`;
+Score reflects conceptual accuracy and clarity, not grammar.
+If this was a teacher-assigned topic, keep feedback encouraging toward completing the assignment—do not suggest moving to unrelated topics.${assignedTutorBlock}`;
       const userContent = `## Topic context\n${contextBlock}\n\n## Student explanation\n${message}`;
       let raw: string;
       try {
@@ -224,6 +242,7 @@ Score reflects conceptual accuracy and clarity, not grammar.`;
           teachback_score: score,
           phase: 'teachback_submit',
           adaptive: { difficulty: sess.tutor_difficulty_level ?? 'medium' },
+          is_assigned_topic: isAssignedTopic,
         },
         200
       );
@@ -257,12 +276,12 @@ Score reflects conceptual accuracy and clarity, not grammar.`;
           ? 'You are in TEST ME mode: challenge with Socratic questions; do not reveal the full solution immediately.'
           : 'You are in EXPLAIN mode: teach through guided questions and steps.';
 
-    const systemContent = `You are an adaptive AI tutor for ISIT (Intelligent Student Instruction Tool).
+    const systemContent = `You are an adaptive AI tutor for ISIC (Indian School of Innovation and Curiosity).
 ${tabHint}
 
 ${socratic}
 
-Stay on-topic using the context below. If the question is off-topic, steer back gently.`;
+Stay on-topic using the context below. If the question is off-topic, steer back gently.${assignedTutorBlock}`;
 
     const userContent = `## Context\n${contextBlock || '(No extra notes)'}\n\nCurrent focus concept: "${concept}"\nStudent proficiency band: ${adapted} (from mastery ~${masteryScore}% and recent practice).\n\n## Student message\n${message}`;
 
@@ -325,6 +344,7 @@ Stay on-topic using the context below. If the question is off-topic, steer back 
           wrong_streak: wrongStreak,
           correct_streak: correctStreak,
         },
+        is_assigned_topic: isAssignedTopic,
       },
       200
     );

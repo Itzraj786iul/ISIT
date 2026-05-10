@@ -18,7 +18,7 @@ export default function LiveSessionPage() {
   }, [router]);
 
   return (
-    <div className="min-h-screen bg-slate-50 flex font-sans">
+    <div className="isit-cosmic-bg min-h-screen flex font-sans text-cyan-50 relative">
       <Sidebar />
       <main className="flex-1 p-4 sm:p-6 md:p-8 min-w-0 overflow-x-hidden">
         <Link href="/schedule" className="inline-flex items-center gap-2 text-sky-600 hover:text-sky-700 text-sm font-medium mb-6">

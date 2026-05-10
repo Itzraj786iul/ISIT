@@ -41,7 +41,7 @@ export default function ContinueLearningCard({ loading, lastSession, lastTopicNa
         <p className="text-slate-500 text-xs sm:text-sm mt-1 dark:text-slate-400">Pick a subject and topic to build mastery.</p>
         <Link
           href="/subjects"
-          className="inline-flex items-center justify-center gap-2 mt-4 w-full sm:w-auto min-h-[44px] px-5 bg-sky-600 hover:bg-sky-700 text-white font-semibold rounded-xl transition no-underline active:scale-[0.98] motion-safe-transition"
+          className="btn-primary mt-4 w-full sm:w-auto min-h-11 px-6 no-underline rounded-2xl active:scale-[0.98] motion-safe-transition"
         >
           {tr('browseSubjects')}
         </Link>
@@ -76,21 +76,22 @@ export default function ContinueLearningCard({ loading, lastSession, lastTopicNa
       </div>
 
       <div className="flex flex-col sm:flex-row flex-wrap gap-3 mt-5">
-        <Link
-          href={`/topic/${lastSession.topic_id}`}
-          className="inline-flex items-center justify-center gap-2 w-full sm:w-auto min-h-[44px] px-5 bg-sky-600 hover:bg-sky-700 text-white font-semibold rounded-xl transition no-underline shadow-sm active:scale-[0.98] motion-safe-transition"
-        >
-          <Play className="w-4 h-4 shrink-0" />
-          {tr('resumeLearning')}
-        </Link>
         {lastSession.session_id ? (
           <Link
             href={`/session/${lastSession.session_id}`}
-            className="inline-flex items-center justify-center gap-2 w-full sm:w-auto min-h-[44px] px-5 bg-white border border-slate-200 text-slate-800 font-semibold rounded-xl hover:bg-slate-50 transition no-underline dark:bg-slate-800 dark:border-slate-600 dark:text-slate-100 dark:hover:bg-slate-700 active:scale-[0.98] motion-safe-transition"
+            className="inline-flex items-center justify-center gap-2 w-full sm:w-auto min-h-[44px] px-5 bg-sky-600 hover:bg-sky-700 text-white font-semibold rounded-2xl transition no-underline shadow-sm active:scale-[0.98] motion-safe-transition"
           >
-            Open session
+            <Play className="w-4 h-4 shrink-0" />
+            Resume session
           </Link>
         ) : null}
+        <Link
+          href={`/topic/${lastSession.topic_id}`}
+          className="inline-flex items-center justify-center gap-2 w-full sm:w-auto min-h-[44px] px-5 bg-white border border-slate-200 text-slate-800 font-semibold rounded-2xl hover:bg-slate-50 transition no-underline dark:bg-slate-800 dark:border-slate-600 dark:text-slate-100 dark:hover:bg-slate-700 active:scale-[0.98] motion-safe-transition"
+        >
+          <Sparkles className="w-4 h-4 shrink-0 text-amber-500" />
+          {tr('resumeLearning')}
+        </Link>
       </div>
     </div>
   );

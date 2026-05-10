@@ -11,7 +11,7 @@ import {
   ArrowLeft
 } from 'lucide-react';
 import Footer from '@/components/Footer';
-import LanguageSwitcher from '@/components/LanguageSwitcher';
+import PublicNav from '@/components/PublicNav';
 
 export default function BlogDetailPage() {
   const router = useRouter();
@@ -59,36 +59,8 @@ export default function BlogDetailPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#F5F7FA] flex flex-col">
-
-      {/* ================= NAVBAR ================= */}
-      <header className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-          <Link href="/" className="text-sky-500 font-bold text-xl">
-            ISIT
-          </Link>
-
-          <nav className="hidden md:flex gap-10 text-sm font-medium text-gray-700">
-            <Link href="/">Home</Link>
-            <Link href="/courses">Courses</Link>
-            <Link href="/how-it-works">How it Works</Link>
-            <Link href="/stories">Stories</Link>
-            <Link href="/blog" className="border-b-2 border-sky-500 pb-1">
-              Blog
-            </Link>
-          </nav>
-
-          <div className="hidden md:flex items-center gap-6">
-            <LanguageSwitcher />
-            <Link
-              href="/signup"
-              className="bg-black text-white px-5 py-2 rounded-full text-sm"
-            >
-              Sign Up
-            </Link>
-          </div>
-        </div>
-      </header>
+    <div className="isit-cosmic-bg min-h-screen flex flex-col text-cyan-50">
+      <PublicNav active="blog" />
 
       {/* ================= HERO IMAGE ================= */}
       <div className="relative h-[420px] w-full overflow-hidden">

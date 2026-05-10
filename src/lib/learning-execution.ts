@@ -9,12 +9,17 @@ import { connectToDB } from '@/lib/db';
 export type SessionMode = 'explorer' | 'revision' | 'exam';
 export type CompletionStatus = 'in_progress' | 'completed' | 'abandoned';
 
+export type SessionLearningMode = 'teacher_assigned' | 'free_learning';
+export type SessionSource = 'assigned' | 'free';
+
 export type CreateSessionInput = {
   organization_id: mongoose.Types.ObjectId;
   student_id: mongoose.Types.ObjectId;
   topic_id: mongoose.Types.ObjectId;
   subject_id: mongoose.Types.ObjectId;
   mode: SessionMode;
+  session_mode?: SessionLearningMode;
+  session_source?: SessionSource;
   ai_model_used?: string;
   start_time: Date;
   end_time?: Date;
@@ -33,6 +38,8 @@ export async function createSession(data: CreateSessionInput) {
     topic_id: data.topic_id,
     subject_id: data.subject_id,
     mode: data.mode,
+    session_mode: data.session_mode ?? 'free_learning',
+    session_source: data.session_source ?? 'free',
     ai_model_used: data.ai_model_used,
     start_time: data.start_time,
     end_time: data.end_time,

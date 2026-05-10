@@ -1,6 +1,6 @@
 /**
  * @legacy MARKETPLACE_LMS — Mock checkout; pushes student onto `Course.enrolledStudents`.
- * Future: entitlements / topic unlock (see docs/AI_FIRST_MIGRATION.md).
+ * Use Razorpay when configured (see /api/checkout/razorpay-order + razorpay-verify).
  */
 import { NextResponse } from 'next/server';
 import mongoose from 'mongoose';
@@ -44,20 +44,19 @@ export async function POST(request: Request) {
     const alreadyEnrolled = course.enrolledStudents?.some(
       (id: unknown) => id?.toString() === userId
     );
+    const lessons = await Lesson.find({ courseId }).sort({ order: 1 });
+    const firstLesson = lessons[0];
+    const firstLessonId = firstLesson?._id?.toString() ?? null;
+
     if (alreadyEnrolled) {
-      const lessons = await Lesson.find({ courseId }).sort({ order: 1 });
-      const firstLesson = lessons[0];
       return NextResponse.json({
         success: true,
         message: 'Already enrolled in this course.',
         alreadyEnrolled: true,
         orderId: null,
-        firstLessonId: firstLesson?._id?.toString() ?? null,
+        firstLessonId,
       }, { status: 200 });
     }
-
-    const lessons = await Lesson.find({ courseId }).sort({ order: 1 });
-    const firstLesson = lessons[0];
 
     // Mock payment processing
     await new Promise((resolve) => setTimeout(resolve, 1500));
@@ -69,8 +68,9 @@ export async function POST(request: Request) {
     return NextResponse.json({
       success: true,
       message: 'Order placed successfully!',
+      alreadyEnrolled: false,
       orderId: `ORD-${Date.now()}`,
-      firstLessonId: firstLesson?._id?.toString() ?? null,
+      firstLessonId,
     });
   } catch (error) {
     console.error('Checkout error:', error);

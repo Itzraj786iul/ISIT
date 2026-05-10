@@ -1,5 +1,6 @@
 import { getTopicsForSubject } from '@/lib/curriculum-api';
 import { successResponse, errorResponse } from '@/lib/api-response';
+import { enforceSubjectReadForScope } from '@/lib/teacher-scope';
 
 const CACHE_MAX_AGE = 120;
 
@@ -10,6 +11,9 @@ export async function GET(req: Request) {
     const organizationId = searchParams.get('organizationId') ?? undefined;
 
     if (!subjectId) return errorResponse('subjectId is required', 400);
+
+    const subGate = await enforceSubjectReadForScope(req, subjectId);
+    if (!subGate.ok) return subGate.response;
 
     const topics = await getTopicsForSubject(subjectId, {
       organizationId: organizationId || undefined,

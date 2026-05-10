@@ -137,7 +137,7 @@ export default function AnalyticsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex font-sans">
+    <div className="isit-cosmic-bg min-h-screen flex font-sans text-cyan-50 relative">
       <Sidebar />
       <main className="flex-1 p-4 sm:p-6 md:p-8 min-w-0 overflow-x-hidden">
         <div className="mb-6">
@@ -147,30 +147,26 @@ export default function AnalyticsPage() {
 
         {/* Summary cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-          <Link href="/progress" className="block no-underline">
-            <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm hover:border-sky-200 hover:shadow transition cursor-pointer flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-sky-100 flex items-center justify-center flex-shrink-0">
-                <BookOpen className="w-6 h-6 text-sky-600" />
-              </div>
-              <div>
-                <div className="text-2xl font-extrabold text-slate-800">{loading ? '...' : topicsStudied}</div>
-                <div className="text-sm text-slate-500 font-medium">Topics Studied</div>
-              </div>
+          <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-sky-100 flex items-center justify-center flex-shrink-0">
+              <BookOpen className="w-6 h-6 text-sky-600" />
             </div>
-          </Link>
-          <Link href="/progress" className="block no-underline">
-            <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm hover:border-emerald-200 hover:shadow transition cursor-pointer flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center flex-shrink-0">
-                <Target className="w-6 h-6 text-emerald-600" />
-              </div>
-              <div>
-                <div className="text-2xl font-extrabold text-slate-800">{loading ? '...' : topicsMastered}</div>
-                <div className="text-sm text-slate-500 font-medium">Topics Mastered</div>
-              </div>
+            <div>
+              <div className="text-2xl font-extrabold text-slate-800">{loading ? '...' : topicsStudied}</div>
+              <div className="text-sm text-slate-500 font-medium">Topics Studied</div>
             </div>
-          </Link>
+          </div>
+          <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center flex-shrink-0">
+              <Target className="w-6 h-6 text-emerald-600" />
+            </div>
+            <div>
+              <div className="text-2xl font-extrabold text-slate-800">{loading ? '...' : topicsMastered}</div>
+              <div className="text-sm text-slate-500 font-medium">Topics Mastered</div>
+            </div>
+          </div>
           <Link href="/subjects" className="block no-underline">
-            <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm hover:border-violet-200 hover:shadow transition cursor-pointer flex items-center gap-4">
+            <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm hover:border-violet-200 hover:shadow transition cursor-pointer flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-violet-100 flex items-center justify-center flex-shrink-0">
                 <Layers className="w-6 h-6 text-violet-600" />
               </div>
@@ -180,7 +176,7 @@ export default function AnalyticsPage() {
               </div>
             </div>
           </Link>
-          <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm flex items-center gap-4">
+          <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex items-center gap-4">
             <div className="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0">
               <Clock className="w-6 h-6 text-amber-600" />
             </div>

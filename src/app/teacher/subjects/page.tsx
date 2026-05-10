@@ -30,7 +30,10 @@ export default function TeacherSubjectsPage() {
 
         if (!userData.organization_id) { setError('No organization found.'); setLoading(false); return; }
 
-        const res = await fetch(`/api/subjects?organizationId=${encodeURIComponent(userData.organization_id)}`, { credentials: 'include' });
+        const res = await fetch(
+          `/api/subjects?organizationId=${encodeURIComponent(userData.organization_id)}`,
+          { credentials: 'include' }
+        );
         const json = await res.json();
         if (!res.ok || !json.success) { setError(json.error ?? 'Failed to load subjects.'); setLoading(false); return; }
 
@@ -39,7 +42,9 @@ export default function TeacherSubjectsPage() {
 
         const counts = await Promise.all(
           subjectList.map(async (s) => {
-            const r = await fetch(`/api/topics?subjectId=${encodeURIComponent(s._id)}`);
+            const r = await fetch(`/api/topics?subjectId=${encodeURIComponent(s._id)}`, {
+              credentials: 'include',
+            });
             const j = await r.json();
             return { id: s._id, count: j.success && Array.isArray(j.data) ? j.data.length : 0 };
           })

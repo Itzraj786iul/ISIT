@@ -95,7 +95,7 @@ export default function SchedulePage() {
   const goNext = () => setViewDate(new Date(year, month + 1, 1));
 
   return (
-    <div className="min-h-screen bg-slate-50 flex font-sans">
+    <div className="isit-cosmic-bg min-h-screen flex font-sans text-cyan-50 relative">
       <Sidebar />
       <main className="flex-1 p-4 sm:p-6 md:p-8 min-w-0 overflow-x-hidden">
         <div className="mb-6">

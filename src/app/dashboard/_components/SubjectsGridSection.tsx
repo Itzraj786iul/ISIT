@@ -79,14 +79,10 @@ export default function SubjectsGridSection({ loading, subjects }: Props) {
         </div>
       ) : (
         <EmptyState
-          icon={<BookOpen className="w-10 h-10" />}
+          icon={BookOpen}
           title="No subjects yet"
-          description="When your organization adds subjects, they will show up here. Open the full catalog to start your first session."
-          action={
-            <Link href="/subjects" className="btn-primary no-underline px-5 py-3 min-h-[44px] inline-flex items-center justify-center rounded-xl active:scale-[0.98]">
-              Browse all subjects
-            </Link>
-          }
+          description="When your organization adds subjects, they will show up here. Open the full catalog to explore topics and start a session."
+          primaryAction={{ label: 'Explore subjects', href: '/subjects' }}
         />
       )}
     </section>

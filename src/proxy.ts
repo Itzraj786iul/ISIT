@@ -57,6 +57,13 @@ async function proxy(req: NextRequest) {
     return NextResponse.next();
   }
 
+  // --- Organization page: any logged-in user may load the route; the page shows access guidance for non–teacher/admin ---
+  if (pathname === '/organization' || pathname.startsWith('/organization/')) {
+    const payload = await getPayload(req);
+    if (!payload) return redirectToLogin(req);
+    return NextResponse.next();
+  }
+
   // --- Parent pages: must be authenticated + parent role ---
   if (pathname.startsWith('/parent')) {
     const payload = await getPayload(req);
@@ -82,6 +89,21 @@ async function proxy(req: NextRequest) {
     }
   }
 
+  // --- Teacher-only: classes API ---
+  if (pathname === '/api/classes' || pathname.startsWith('/api/classes/')) {
+    const payload = await getPayload(req);
+    if (!payload) return unauthorized();
+    if (payload.role !== 'teacher' && payload.role !== 'admin') return forbidden();
+    return NextResponse.next();
+  }
+
+  if (pathname === '/api/teachers' || pathname.startsWith('/api/teachers/')) {
+    const payload = await getPayload(req);
+    if (!payload) return unauthorized();
+    if (payload.role !== 'teacher' && payload.role !== 'admin') return forbidden();
+    return NextResponse.next();
+  }
+
   // --- Teacher-only API routes (/api/teacher/*) ---
   if (pathname.startsWith('/api/teacher/')) {
     const payload = await getPayload(req);
@@ -99,6 +121,12 @@ async function proxy(req: NextRequest) {
     const payload = await getPayload(req);
     if (!payload) return unauthorized();
     if (payload.role !== 'teacher') return forbidden();
+    return NextResponse.next();
+  }
+
+  if (pathname === '/api/auth/resend-verification' && method === 'POST') {
+    const payload = await getPayload(req);
+    if (!payload) return unauthorized();
     return NextResponse.next();
   }
 
@@ -126,7 +154,14 @@ export default proxy;
 
 export const config = {
   matcher: [
+    '/api/auth/resend-verification',
     '/teacher/:path*',
+    '/organization',
+    '/organization/:path*',
+    '/api/classes',
+    '/api/classes/:path*',
+    '/api/teachers',
+    '/api/teachers/:path*',
     '/parent/:path*',
     '/dashboard',
     '/analytics',

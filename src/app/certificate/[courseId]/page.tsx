@@ -44,7 +44,7 @@ export default function CertificatePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex font-sans">
+      <div className="isit-cosmic-bg min-h-screen flex font-sans text-cyan-50 relative">
         <Sidebar />
         <main className="flex-1 flex items-center justify-center">
           <Loader2 className="w-6 h-6 text-slate-400 animate-spin" />
@@ -54,7 +54,7 @@ export default function CertificatePage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex font-sans">
+    <div className="isit-cosmic-bg min-h-screen flex font-sans text-cyan-50 relative">
       <Sidebar />
       <main className="flex-1 p-4 sm:p-6 md:p-8 min-w-0 overflow-x-hidden">
         <Link href="/my-courses" className="inline-flex items-center gap-2 text-sky-600 hover:text-sky-700 text-sm font-medium mb-6">
@@ -69,7 +69,7 @@ export default function CertificatePage() {
             <p className="text-xl font-semibold text-slate-700 mb-6">{userName}</p>
             <p className="text-slate-600 mb-1">has successfully completed the course</p>
             <p className="text-lg font-bold text-slate-800 mb-8">{courseTitle}</p>
-            <p className="text-sm text-slate-500">ISIT &middot; Indian School of Innovation and Thinking</p>
+            <p className="text-sm text-slate-500">ISIC &middot; Indian School of Innovation and Curiosity</p>
             <p className="text-xs text-slate-400 mt-2">Date: {new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
             <button
               type="button"

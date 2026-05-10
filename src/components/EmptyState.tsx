@@ -1,23 +1,47 @@
-import type { ReactNode } from 'react';
+'use client';
+
+import type { LucideIcon } from 'lucide-react';
+import Link from 'next/link';
 
 type Props = {
-  icon?: ReactNode;
+  icon: LucideIcon;
   title: string;
   description?: string;
-  action?: ReactNode;
+  primaryAction?: { label: string; href: string };
+  secondaryAction?: { label: string; href: string };
   className?: string;
 };
 
-/** Shared empty / zero-data pattern for dashboards and lists. */
-export default function EmptyState({ icon, title, description, action, className = '' }: Props) {
+export default function EmptyState({
+  icon: Icon,
+  title,
+  description,
+  primaryAction,
+  secondaryAction,
+  className = '',
+}: Props) {
   return (
     <div
-      className={`rounded-2xl border border-dashed border-slate-200 bg-slate-50/60 px-4 py-8 sm:px-6 sm:py-10 text-center overflow-x-hidden ${className}`}
+      className={`flex flex-col items-center justify-center py-14 px-4 text-center bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm ${className}`}
+      role="status"
     >
-      {icon && <div className="flex justify-center mb-3 text-slate-400">{icon}</div>}
-      <p className="font-semibold text-slate-800">{title}</p>
-      {description && <p className="text-sm text-slate-600 mt-2 max-w-md mx-auto leading-relaxed">{description}</p>}
-      {action && <div className="mt-5 flex justify-center">{action}</div>}
+      <Icon className="w-12 h-12 text-slate-300 dark:text-slate-600 mb-4" aria-hidden />
+      <p className="text-slate-800 dark:text-slate-100 font-semibold text-base">{title}</p>
+      {description ? (
+        <p className="text-slate-500 dark:text-slate-400 text-sm mt-2 max-w-md leading-relaxed">{description}</p>
+      ) : null}
+      <div className="flex flex-col sm:flex-row gap-3 mt-6 w-full sm:w-auto sm:justify-center">
+        {primaryAction ? (
+          <Link href={primaryAction.href} className="btn-primary min-h-11 px-6 no-underline">
+            {primaryAction.label}
+          </Link>
+        ) : null}
+        {secondaryAction ? (
+          <Link href={secondaryAction.href} className="btn-secondary min-h-11 px-6 no-underline">
+            {secondaryAction.label}
+          </Link>
+        ) : null}
+      </div>
     </div>
   );
 }

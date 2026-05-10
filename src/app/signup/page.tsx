@@ -6,13 +6,16 @@ import Link from 'next/link';
 import { persistAuthFromLogin } from '@/lib/client-auth';
 import { useAuth } from '@/lib/auth-context';
 
-type Role = 'Student' | 'Parent' | 'Teacher';
+/** Roles allowed on the public signup form (API also rejects any other role except student/parent). */
+type SignupRole = 'Student' | 'Parent';
+type SchoolMode = 'individual' | 'join';
 
 export default function SignupPage() {
   const router = useRouter();
   const { refresh } = useAuth();
 
-  const [role, setRole] = useState<Role>('Student');
+  const [role, setRole] = useState<SignupRole>('Student');
+  const [schoolMode, setSchoolMode] = useState<SchoolMode>('individual');
   const [profileImage, setProfileImage] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
@@ -20,10 +23,8 @@ export default function SignupPage() {
     email: '',
     password: '',
     confirmPassword: '',
-    subject: '',
-    experience: '',
+    invite_code: '',
     academicLevel: '',
-    institutionCode: '',
     childName: '',
     relationship: '',
   });
@@ -32,20 +33,15 @@ export default function SignupPage() {
   const [loading, setLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Handle Image Upload (Preview only for MVP)
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // Create a temporary URL to preview the image
       const imageUrl = URL.createObjectURL(file);
       setProfileImage(imageUrl);
-      console.log("File selected (Preview only):", file.name);
     }
   };
 
@@ -57,22 +53,28 @@ export default function SignupPage() {
       return setError('Passwords do not match');
     }
 
+    if (schoolMode === 'join' && !formData.invite_code.trim()) {
+      return setError('Enter your school invite code');
+    }
+
     setLoading(true);
 
     try {
-      // Sending data. Note: Image URL is NOT sent to backend in this MVP
       const response: Response = await fetch('/api/auth/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify({
-            name: formData.name,
-            email: formData.email,
-            password: formData.password,
-            role: role,
-            grade: formData.academicLevel,
-            extra: formData,
-            rememberMe,
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+          role: role.toLowerCase(),
+          grade: formData.academicLevel,
+          extra: formData,
+          rememberMe,
+          ...(schoolMode === 'join' && formData.invite_code.trim()
+            ? { invite_code: formData.invite_code.trim() }
+            : {}),
         }),
       });
 
@@ -89,124 +91,148 @@ export default function SignupPage() {
       await refresh({ force: true });
 
       const userObj = data.user || { role };
-      const roleKey = (userObj.role ?? 'Student').toString().toLowerCase();
-      if (roleKey === 'teacher') {
-        router.push('/teacher/dashboard');
-      } else if (roleKey === 'parent') {
+      const roleKey = (userObj.role ?? role).toString().toLowerCase();
+      if (roleKey === 'parent') {
         router.push('/parent/dashboard');
       } else {
         router.push('/dashboard');
       }
-
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Signup failed');
     } finally {
       setLoading(false);
     }
   };
 
-  // Unified Input Style
-  const inputClass = "w-full bg-white border border-gray-200 rounded-xl px-4 py-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent text-sm transition-all text-gray-700 placeholder:text-gray-400";
+  const inputClass =
+    'w-full rounded-xl border border-cyan-400/25 bg-slate-950/70 px-4 py-3 text-sm text-cyan-50 placeholder:text-cyan-200/45 focus:outline-none focus:ring-2 focus:ring-cyan-400/50 transition-all';
+
+  const toggleBtn = (active: boolean) =>
+    `py-2.5 px-3 rounded-xl border text-sm font-semibold transition-all ${
+      active
+        ? 'border-cyan-400/50 bg-cyan-400/20 text-cyan-50 shadow-[0_0_20px_rgba(34,211,238,0.15)]'
+        : 'border-cyan-400/20 bg-slate-950/50 text-cyan-100/70 hover:border-cyan-400/35'
+    }`;
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] flex flex-col">
-
-       {/* ================= SIMPLE HEADER ================= */}
-       <div className="bg-white border-b border-gray-200 py-4 px-6">
-        <div className="max-w-7xl mx-auto flex items-center">
-           <Link href="/" className="text-sky-500 font-bold text-xl flex items-center gap-2 hover:text-sky-600">
-             ISIT <span className="text-xs text-gray-400 font-normal ml-2">← Back to Home</span>
-           </Link>
+    <div className="isit-cosmic-bg min-h-screen flex flex-col text-cyan-50">
+      <header className="relative z-[1] border-b border-cyan-400/15 bg-slate-950/40 backdrop-blur-xl">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between gap-4">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-cyan-200 font-semibold hover:text-cyan-100 transition-colors no-underline"
+          >
+            <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-cyan-400/30 bg-slate-950/60 text-cyan-300 text-sm font-bold">
+              I
+            </span>
+            <span>ISIC</span>
+          </Link>
+          <Link href="/" className="text-sm text-cyan-200/80 hover:text-cyan-100 no-underline">
+            ← Back to home
+          </Link>
         </div>
-      </div>
+      </header>
 
-      <div className="flex-1 flex flex-col md:flex-row">
-        
-        {/* LEFT SIDE */}
-        <div className="hidden lg:block w-1/2 bg-gradient-to-br from-sky-500 to-blue-600 relative overflow-hidden">
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="text-center text-white px-8">
-              <div className="w-20 h-20 rounded-2xl bg-white/20 flex items-center justify-center mx-auto mb-6">
-                <span className="text-4xl font-bold">I</span>
-              </div>
-              <h2 className="text-3xl font-bold mb-3">Join ISIT</h2>
-              <p className="text-sky-100 text-sm max-w-sm">Start your learning journey with AI-powered tutoring, structured curriculum, and progress tracking.</p>
-            </div>
+      <div className="flex-1 flex flex-col lg:flex-row relative z-[1]">
+        <div className="hidden lg:flex lg:w-[42%] flex-col justify-center p-10 xl:p-16 border-r border-cyan-400/10 bg-gradient-to-br from-cyan-950/45 via-slate-950/30 to-transparent">
+          <div className="max-w-md">
+            <p className="text-xs font-semibold uppercase tracking-widest text-cyan-300/90 mb-3">Create account</p>
+            <h2 className="text-3xl xl:text-4xl font-bold text-cyan-50 mb-4 leading-tight">Join ISIC</h2>
+            <p className="text-cyan-100/80 leading-relaxed text-sm xl:text-base">
+              AI-powered tutoring, school invite codes, and progress your teachers and parents can trust.
+            </p>
           </div>
         </div>
 
-        {/* RIGHT SIDE: Form */}
-        <div className="w-full lg:w-1/2 flex items-center justify-center px-8 py-12 lg:px-20 bg-white">
-          <div className="w-full max-w-md">
-
-            {/* HEADER SECTION */}
+        <div className="flex-1 flex items-center justify-center px-6 py-12 lg:px-16">
+          <div className="w-full max-w-md isit-glass rounded-3xl p-8 sm:p-10">
             <div className="text-center mb-6">
-              
-              {/* BREADCRUMB */}
-              <span className="text-xs font-bold text-sky-500 uppercase tracking-widest block mb-1">
-                Group - {role.toLowerCase()}
+              <span className="text-xs font-semibold text-cyan-300/90 uppercase tracking-widest block mb-1">
+                {role.toLowerCase()}
               </span>
-              
-              {/* TITLE */}
-              <h1 className="text-3xl font-bold text-gray-900">
-                Join Us
-              </h1>
-              
-              {/* SUBTITLE */}
-              <p className="text-sm text-gray-500 mt-1">
-                Start your learning journey today
-              </p>
+              <h1 className="text-2xl sm:text-3xl font-bold text-cyan-50">Join us</h1>
+              <p className="text-sm text-cyan-100/70 mt-1">Start your learning journey today</p>
 
-              {/* UPLOAD PROFILE PICTURE (Working Preview) */}
               <div className="mt-6 flex justify-center relative group cursor-pointer">
-                <input 
-                  type="file" 
+                <input
+                  type="file"
                   className="absolute inset-0 w-20 h-20 opacity-0 cursor-pointer z-10"
                   accept="image/*"
-                  onChange={handleFileChange} 
+                  onChange={handleFileChange}
                 />
-                <div className={`w-20 h-20 rounded-full border-2 border-dashed flex flex-col items-center justify-center overflow-hidden transition-colors ${profileImage ? 'border-solid border-sky-500' : 'border-gray-300 group-hover:border-sky-500 bg-gray-50'}`}>
+                <div
+                  className={`w-20 h-20 rounded-full border-2 border-dashed flex flex-col items-center justify-center overflow-hidden transition-colors ${
+                    profileImage
+                      ? 'border-solid border-cyan-400/60'
+                      : 'border-cyan-400/30 group-hover:border-cyan-400/50 bg-slate-950/50'
+                  }`}
+                >
                   {profileImage ? (
-                    <img src={profileImage} alt="Profile Preview" className="w-full h-full object-cover" />
+                    <img src={profileImage} alt="Profile preview" className="w-full h-full object-cover" />
                   ) : (
-                    <span className="text-xs text-gray-500 group-hover:text-sky-500 font-medium">Upload</span>
+                    <span className="text-xs text-cyan-200/70 group-hover:text-cyan-100 font-medium">Upload</span>
                   )}
                 </div>
               </div>
             </div>
 
             <form onSubmit={handleSignup} className="space-y-3">
-
               {error && (
-                <div className="p-3 text-sm text-red-600 bg-red-50 rounded-lg border border-red-200">
+                <div role="alert" className="p-3 text-sm text-red-200 bg-red-950/50 rounded-xl border border-red-400/30">
                   {error}
                 </div>
               )}
 
-              {/* ROLE SELECTOR */}
               <div>
-                <label className="block text-xs font-bold text-gray-600 mb-2 uppercase tracking-wide">I am a...</label>
-                <div className="grid grid-cols-3 gap-2">
-                  {['Student', 'Parent', 'Teacher'].map((item) => (
+                <label className="block text-xs font-bold text-cyan-200/80 mb-2 uppercase tracking-wide">I am a…</label>
+                <div className="grid grid-cols-2 gap-2">
+                  {(['Student', 'Parent'] as const).map((item) => (
                     <button
                       key={item}
                       type="button"
-                      onClick={() => setRole(item as Role)}
-                      className={`py-2 px-3 rounded-lg border text-sm font-semibold transition-all
-                        ${
-                          role === item
-                            ? 'border-sky-600 bg-sky-600 text-white shadow-md'
-                            : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50'
-                        }
-                      `}
+                      onClick={() => setRole(item)}
+                      className={toggleBtn(role === item)}
                     >
                       {item}
                     </button>
                   ))}
                 </div>
+                <p className="text-xs text-cyan-100/60 mt-2 leading-relaxed">
+                  Teachers are onboarded by their institution. If you teach at a school using ISIC, ask your administrator
+                  for an account.
+                </p>
               </div>
 
-              {/* INPUTS WITH TEXT INSIDE BOX */}
+              <div>
+                <label className="block text-xs font-bold text-cyan-200/80 mb-2 uppercase tracking-wide">Account type</label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSchoolMode('individual');
+                      setFormData((f) => ({ ...f, invite_code: '' }));
+                    }}
+                    className={toggleBtn(schoolMode === 'individual')}
+                  >
+                    Learn individually
+                  </button>
+                  <button type="button" onClick={() => setSchoolMode('join')} className={toggleBtn(schoolMode === 'join')}>
+                    Join a school
+                  </button>
+                </div>
+                {schoolMode === 'join' && (
+                  <input
+                    type="text"
+                    name="invite_code"
+                    autoComplete="off"
+                    placeholder="School invite code"
+                    value={formData.invite_code}
+                    onChange={handleChange}
+                    className={`${inputClass} mt-3`}
+                  />
+                )}
+              </div>
+
               <input
                 type="text"
                 name="name"
@@ -247,32 +273,6 @@ export default function SignupPage() {
                 className={inputClass}
               />
 
-              {/* ROLE SPECIFIC FIELDS */}
-              
-              {role === 'Teacher' && (
-                <div className="space-y-3 pt-2">
-                  <input
-                    type="text"
-                    name="subject"
-                    placeholder="Subject Expertise"
-                    value={formData.subject}
-                    onChange={handleChange}
-                    className={inputClass}
-                  />
-                  <select
-                    name="experience"
-                    value={formData.experience}
-                    onChange={handleChange}
-                    className={inputClass}
-                  >
-                    <option value="" disabled>Years of Experience</option>
-                    <option>1-2 years</option>
-                    <option>3-5 years</option>
-                    <option>5+ years</option>
-                  </select>
-                </div>
-              )}
-
               {role === 'Student' && (
                 <div className="space-y-3 pt-2">
                   <select
@@ -281,18 +281,12 @@ export default function SignupPage() {
                     onChange={handleChange}
                     className={inputClass}
                   >
-                    <option value="" disabled>Academic Level</option>
+                    <option value="" disabled>
+                      Academic Level
+                    </option>
                     <option value="School">School</option>
                     <option value="College">College</option>
                   </select>
-                  <input
-                    type="text"
-                    name="institutionCode"
-                    placeholder="Institution Code (Optional)"
-                    value={formData.institutionCode}
-                    onChange={handleChange}
-                    className={inputClass}
-                  />
                 </div>
               )}
 
@@ -312,7 +306,9 @@ export default function SignupPage() {
                     onChange={handleChange}
                     className={inputClass}
                   >
-                    <option value="" disabled>Relationship</option>
+                    <option value="" disabled>
+                      Relationship
+                    </option>
                     <option value="Mother">Mother</option>
                     <option value="Father">Father</option>
                     <option value="Guardian">Guardian</option>
@@ -325,32 +321,25 @@ export default function SignupPage() {
                   type="checkbox"
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
-                  className="rounded border-gray-300 text-sky-600 focus:ring-sky-500"
+                  className="rounded border-cyan-400/40 bg-slate-950/80 text-cyan-400 focus:ring-cyan-400"
                 />
-                <span className="text-sm text-gray-600">Remember me on this device</span>
+                <span className="text-sm text-cyan-100/80">Remember me on this device</span>
               </label>
 
-              {/* SUBMIT BUTTON */}
-              <button
-                type="submit"
-                disabled={loading}
-                className="btn-primary w-full py-3.5 font-bold mt-2 shadow-lg shadow-sky-500/25"
-              >
-                {loading ? 'Creating Account...' : 'Create Account'}
+              <button type="submit" disabled={loading} className="isit-btn-primary w-full min-h-11 mt-2 disabled:opacity-50">
+                {loading ? 'Creating account…' : 'Create account'}
               </button>
 
-              {/* FOOTER LINK */}
-              <p className="text-center text-xs text-gray-500 mt-4">
+              <p className="text-center text-xs text-cyan-100/65 mt-4">
                 Already have an account?{' '}
-                <Link href="/login" className="text-sky-600 font-semibold hover:text-sky-800">
+                <Link href="/login" className="text-cyan-300 font-semibold hover:text-cyan-200 underline-offset-2 hover:underline">
                   Sign in
                 </Link>
               </p>
-
             </form>
           </div>
+        </div>
       </div>
-    </div>
     </div>
   );
 }

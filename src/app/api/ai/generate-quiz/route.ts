@@ -7,6 +7,7 @@ import { NextResponse } from 'next/server';
 import mongoose from 'mongoose';
 import { getAuthFromRequest } from '@/lib/auth';
 import { connectToDB } from '@/lib/db';
+import { aiRateLimitForUser } from '@/lib/rate-limit';
 
 type GeneratedQuestion = {
   question: string;
@@ -48,6 +49,9 @@ export async function POST(req: Request) {
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
     const userId = auth.userId;
+
+    const limited = aiRateLimitForUser(req, auth.userId);
+    if (limited) return limited;
 
     const body = await req.json().catch(() => ({}));
     const lessonId = body?.lessonId;

@@ -8,6 +8,8 @@ import { connectToDB } from '@/lib/db';
 export type GetSubjectsOptions = {
   grade?: string;
   board?: string;
+  /** Filter to subjects in this class (same org). */
+  classId?: string | mongoose.Types.ObjectId;
 };
 
 /**
@@ -22,6 +24,7 @@ export async function getSubjectsForOrganization(
   const query: Record<string, unknown> = { organization_id: organizationId };
   if (options.grade != null && options.grade !== '') query.grade = options.grade;
   if (options.board != null && options.board !== '') query.board = options.board;
+  if (options.classId != null && options.classId !== '') query.class_id = options.classId;
   return Subject.find(query).sort({ name: 1 }).lean().exec();
 }
 

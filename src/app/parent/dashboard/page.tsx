@@ -5,6 +5,7 @@ import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { Users, BookOpen, Plus, ChevronRight, Sparkles, Heart, Lightbulb, CheckCircle2 } from 'lucide-react';
 import { fetchChildren, fetchChildInsights, type ParentChild, type ParentChildInsights } from '@/lib/parent-children';
+import ParentAssignedLearningSection from '@/app/parent/_components/ParentAssignedLearningSection';
 import { engagementLabel } from '@/lib/parent-child-insights';
 
 function getGreeting(): string {
@@ -156,6 +157,12 @@ export default function ParentDashboardPage() {
                   </div>
                 </div>
               </div>
+
+              <ParentAssignedLearningSection
+                topics={insights.assigned_topics}
+                variant="compact"
+                linkedAccount={insights.linked_account}
+              />
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6">

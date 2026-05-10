@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Search, Calendar, Clock, ArrowRight } from 'lucide-react';
 import PublicNav from '@/components/PublicNav';
 import Footer from '@/components/Footer';
+import { RevealOnView, RevealStagger } from '@/components/RevealMotion';
 
 export default function BlogPage() {
   const router = useRouter();
@@ -62,11 +63,12 @@ export default function BlogPage() {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col bg-white">
+    <div className="isit-cosmic-bg min-h-screen flex flex-col text-cyan-50">
       <PublicNav active="blog" />
 
       {/* ================= HERO ================= */}
-      <section className="bg-[#DCEEF7] py-12 sm:py-20 text-center px-4 sm:px-6">
+      <section className="py-12 sm:py-20 text-center px-4 sm:px-6">
+        <RevealOnView>
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900">
           Our <span className="text-sky-600">Blog</span>
         </h1>
@@ -86,10 +88,11 @@ export default function BlogPage() {
             className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600"
           />
         </div>
+        </RevealOnView>
       </section>
 
       {/* Categories */}
-      <div className="bg-white py-6 border-b border-gray-200">
+      <div className="py-6 border-b border-cyan-300/20">
         <div className="max-w-7xl mx-auto px-6 flex flex-wrap gap-3 justify-center">
           {['All', 'Study Tips', 'Career Advice', 'Course Updates', 'Industry Trends', 'Student Life']
             .map((cat, index) => (
@@ -111,13 +114,14 @@ export default function BlogPage() {
       <main className="flex-1 max-w-7xl mx-auto px-6 py-16 w-full">
 
         {/* FEATURED */}
+        <RevealOnView delayMs={40}>
         <h2 className="text-2xl font-bold mb-8 text-gray-900">
           Featured Article
         </h2>
 
         <div
           onClick={() => router.push('/blog/featured')}
-          className="bg-white rounded-2xl shadow border border-gray-300 overflow-hidden grid md:grid-cols-2 cursor-pointer hover:shadow-lg transition"
+          className="bg-slate-950/65 rounded-2xl shadow border border-cyan-300/20 overflow-hidden grid md:grid-cols-2 cursor-pointer motion-safe-transition duration-300 hover:shadow-lg hover:-translate-y-0.5 hover:border-cyan-300/35"
         >
           <img
             src={featuredArticle.image}
@@ -153,18 +157,21 @@ export default function BlogPage() {
             </span>
           </div>
         </div>
+        </RevealOnView>
 
         {/* LATEST */}
+        <RevealOnView>
         <h2 className="text-2xl font-bold mt-20 mb-8 text-gray-900">
           Latest Articles
         </h2>
+        </RevealOnView>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <RevealStagger className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {articles.map(article => (
             <div
               key={article.id}
               onClick={() => router.push(`/blog/${article.id}`)}
-              className="bg-white rounded-xl shadow border border-gray-300 overflow-hidden cursor-pointer hover:shadow-lg transition"
+              className="bg-slate-950/65 rounded-xl shadow border border-cyan-300/20 overflow-hidden cursor-pointer motion-safe-transition duration-300 hover:shadow-lg hover:-translate-y-1"
             >
               <img
                 src={article.image}
@@ -194,12 +201,12 @@ export default function BlogPage() {
               </div>
             </div>
           ))}
-        </div>
+        </RevealStagger>
       </main>
 
       {/* ================= NEWSLETTER ================= */}
       <section className="bg-gradient-to-r from-[#4CC9F0] via-[#3A86FF] to-[#4361EE] py-20 text-white text-center">
-
+        <RevealOnView>
         <h2 className="text-3xl font-bold">
           Stay Updated with Our Newsletter
         </h2>
@@ -217,7 +224,7 @@ export default function BlogPage() {
     Subscribe
   </button>
 </div>
-
+        </RevealOnView>
       </section>
 
       <Footer />

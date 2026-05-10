@@ -8,6 +8,9 @@ import Script from "next/script";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { AppProviders } from "@/components/AppProviders";
+import { AnimatedCursor } from "@/components/AnimatedCursor";
+import { SkipLink } from "@/components/SkipLink";
+import { getPublicSiteUrl } from "@/lib/public-site-url";
 
 const themeAndLangBootstrap = `(function(){try{var t=localStorage.getItem('isit-theme');var dark=t==='dark'||(t!=='light'&&window.matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.classList.toggle('dark',dark);var l=localStorage.getItem('isit-language')||localStorage.getItem('isit-locale');document.documentElement.lang=l==='hi'?'hi':'en';}catch(e){}})();`;
 
@@ -22,14 +25,46 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ISIT - Indian School of Innovation and Thinking",
-  description: "Learn and grow with industry-focused courses.",
+  metadataBase: getPublicSiteUrl(),
+  title: {
+    default:
+      "Indian School of Innovation and Curiosity (ISIC) — Adaptive learning & AI tutor",
+    template: "%s · Indian School of Innovation and Curiosity",
+  },
+  description:
+    "Personalized learning with an AI tutor, curriculum mastery tracking, and tools for schools, teachers, and families.",
+  openGraph: {
+    type: "website",
+    locale: "en_IN",
+    siteName: "Indian School of Innovation and Curiosity",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title:
+      "Indian School of Innovation and Curiosity (ISIC) — Adaptive learning & AI tutor",
+    description:
+      "Personalized learning with an AI tutor, mastery tracking, and tools for schools and families.",
+  },
+  keywords: [
+    "AI tutor",
+    "adaptive learning",
+    "India education",
+    "online learning",
+    "school curriculum",
+    "ISIC",
+    "Indian School of Innovation and Curiosity",
+  ],
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export const viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
+  themeColor: "#030712",
 };
 
 export default function RootLayout({
@@ -40,14 +75,20 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[var(--background)] text-[var(--foreground)]`}
+        className={`isit-theme ${geistSans.variable} ${geistMono.variable} antialiased bg-[var(--background)] text-[var(--foreground)]`}
       >
         <Script
           id="isit-theme-lang-bootstrap"
           strategy="beforeInteractive"
           dangerouslySetInnerHTML={{ __html: themeAndLangBootstrap }}
         />
-        <AppProviders>{children}</AppProviders>
+        <SkipLink />
+        <AnimatedCursor />
+        <AppProviders>
+          <div id="main-content" className="site-motion-layer outline-none" tabIndex={-1}>
+            {children}
+          </div>
+        </AppProviders>
       </body>
     </html>
   );

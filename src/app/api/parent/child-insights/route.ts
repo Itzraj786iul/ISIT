@@ -10,6 +10,7 @@ import {
   improvementTrendFromSessions,
   parentEngagementScore,
 } from '@/lib/parent-child-insights';
+import { fetchStudentAssignedTopicItems, sortAssignedTopicsCopy } from '@/lib/student-assigned-topics-data';
 
 function isParent(role: string | undefined): boolean {
   return (role || '').toLowerCase() === 'parent';
@@ -181,6 +182,47 @@ export async function GET(req: Request) {
     const strongForAi = strong_topics;
     const weakForAi = weak_topics;
 
+    let assigned_topics: {
+      topic_id: string;
+      topic_name: string;
+      subject_name: string;
+      status: string;
+      mastery_score: number | null;
+      started_at: string | null;
+      completed_at: string | null;
+    }[] = [];
+
+    if (linkedAccount && studentId) {
+      const studentDoc = await User.findById(studentId)
+        .select('class_id')
+        .lean() as { class_id?: mongoose.Types.ObjectId | null } | null;
+      const childClassId = studentDoc?.class_id?.toString() ?? null;
+      const items = sortAssignedTopicsCopy(
+        await fetchStudentAssignedTopicItems(
+          studentId.toString(),
+          orgId.toString(),
+          childClassId
+        )
+      );
+      assigned_topics = items.map((row) => ({
+        topic_id: row.topic_id,
+        topic_name: row.topic_name,
+        subject_name: row.subject_name,
+        status: row.status,
+        mastery_score: row.mastery_score,
+        started_at: row.started_at ?? null,
+        completed_at: row.completed_at ?? null,
+      }));
+    }
+
+    const assignedTotal = assigned_topics.length;
+    const assignedIncomplete = assigned_topics.filter((t) => t.status !== 'completed').length;
+    const assignedCompleted = assigned_topics.filter((t) => t.status === 'completed').length;
+    const assignedForSuggestions = assigned_topics.map((t) => ({
+      status: t.status,
+      topic_name: t.topic_name,
+    }));
+
     let ai_summary =
       (await generateParentInsightParagraph({
         childName,
@@ -190,6 +232,14 @@ export async function GET(req: Request) {
         recentActivity: recent_activity,
         trend: improvement_trend,
         linkedAccount,
+        teacherAssigned:
+          linkedAccount && assignedTotal > 0
+            ? {
+                totalTopics: assignedTotal,
+                notStartedOrInProgress: assignedIncomplete,
+                completed: assignedCompleted,
+              }
+            : undefined,
       })) ??
       buildFallbackAiSummary({
         childName,
@@ -199,6 +249,9 @@ export async function GET(req: Request) {
         recentActivity: recent_activity,
         trend: improvement_trend,
         linkedAccount,
+        assignedTotal: linkedAccount ? assignedTotal : 0,
+        assignedIncomplete: linkedAccount ? assignedIncomplete : 0,
+        assignedCompleted: linkedAccount ? assignedCompleted : 0,
       });
 
     const action_suggestions = buildActionSuggestions({
@@ -207,6 +260,7 @@ export async function GET(req: Request) {
       recentActivity: recent_activity,
       trend: improvement_trend,
       linkedAccount,
+      assignedTopics: linkedAccount ? assignedForSuggestions : undefined,
     });
 
     return NextResponse.json({
@@ -222,6 +276,7 @@ export async function GET(req: Request) {
         ai_summary,
         action_suggestions,
         linked_account: linkedAccount,
+        assigned_topics,
       },
     });
   } catch (e) {

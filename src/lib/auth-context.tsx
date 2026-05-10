@@ -3,12 +3,19 @@
 import { createContext, useContext, useEffect, useState, useCallback, type ReactNode } from 'react';
 import { clearClientAuth } from '@/lib/client-auth';
 
+import type { LearningMode } from '@/lib/learning-mode';
+
+export type { LearningMode };
+
 type AuthUser = {
   _id?: string;
   name: string;
   email: string;
   role: string;
   organization_id?: string;
+  class_id?: string;
+  learning_mode?: LearningMode;
+  email_verified?: boolean;
 };
 
 type AuthContextType = {

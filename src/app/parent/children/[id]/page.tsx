@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, BookOpen, Loader2, Heart, Lightbulb, CheckCircle2 } from 'lucide-react';
 import { fetchChildren, fetchChildInsights, type ParentChild, type ParentChildInsights } from '@/lib/parent-children';
+import ParentAssignedLearningSection from '@/app/parent/_components/ParentAssignedLearningSection';
 import { engagementLabel } from '@/lib/parent-child-insights';
 
 function trendPhrase(t: ParentChildInsights['improvement_trend']): string {
@@ -100,6 +101,12 @@ export default function ParentChildProgressPage() {
                 </span>
               </p>
             </div>
+
+            <ParentAssignedLearningSection
+              topics={insights.assigned_topics}
+              variant="detailed"
+              linkedAccount={insights.linked_account}
+            />
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="bg-white rounded-xl border border-slate-200 p-4">

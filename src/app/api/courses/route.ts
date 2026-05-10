@@ -24,9 +24,46 @@ export async function GET(req: Request) {
       }
     }
 
-    const filter = teacherId ? { teacherId } : {};
-    const courses = await Course.find(filter).populate('teacherId', 'name');
-    return NextResponse.json(courses, { status: 200 });
+    const filter: Record<string, unknown> = teacherId ? { teacherId } : {};
+
+    if (!teacherId) {
+      const categories = searchParams.get('categories');
+      if (categories) {
+        const arr = categories
+          .split(',')
+          .map((s) => s.trim())
+          .filter(Boolean);
+        if (arr.length) filter.category = { $in: arr };
+      }
+      const maxPrice = searchParams.get('maxPrice');
+      if (maxPrice != null && maxPrice !== '') {
+        const n = Number(maxPrice);
+        if (!Number.isNaN(n) && n >= 0) filter.price = { $lte: n };
+      }
+      const level = searchParams.get('level');
+      if (level && ['Beginner', 'Intermediate', 'Advanced'].includes(level)) {
+        filter.level = level;
+      }
+    }
+
+    const Lesson = (await import('@/models/Lesson')).default;
+    const courses = await Course.find(filter).populate('teacherId', 'name').lean();
+    const courseIds = courses.map((c) => c._id);
+    const lessonAgg =
+      courseIds.length === 0
+        ? []
+        : await Lesson.aggregate<{ _id: unknown; n: number }>([
+            { $match: { courseId: { $in: courseIds } } },
+            { $group: { _id: '$courseId', n: { $sum: 1 } } },
+          ]);
+    const countMap = new Map(lessonAgg.map((row) => [String(row._id), row.n]));
+
+    const payload = courses.map((c) => ({
+      ...c,
+      lessonCount: countMap.get(String(c._id)) ?? 0,
+    }));
+
+    return NextResponse.json(payload, { status: 200 });
   } catch (error) {
     console.error('Error fetching courses:', error);
     return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });

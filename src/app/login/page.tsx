@@ -5,12 +5,14 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { persistAuthFromLogin } from '@/lib/client-auth';
 import { useAuth } from '@/lib/auth-context';
+import { Sparkles } from 'lucide-react';
 
 function LoginForm() {
   const router = useRouter();
   const { refresh } = useAuth();
   const searchParams = useSearchParams();
   const returnUrl = searchParams.get('returnUrl');
+  const passwordResetOk = searchParams.get('reset') === '1';
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -23,7 +25,7 @@ function LoginForm() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-   const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setLoading(true);
@@ -37,7 +39,7 @@ function LoginForm() {
       });
 
       const data = await response.json();
-      
+
       if (!response.ok) {
         throw new Error(data.message || 'Login failed');
       }
@@ -51,7 +53,10 @@ function LoginForm() {
 
         const userRole = (data.user.role ?? 'student').toString().toLowerCase();
 
-        // Redirect to personalized homepage by role (ignore returnUrl for teacher/parent)
+        if (userRole === 'admin') {
+          router.push('/organization');
+          return;
+        }
         if (userRole === 'teacher') {
           router.push('/teacher/dashboard');
           return;
@@ -60,138 +65,143 @@ function LoginForm() {
           router.push('/parent/dashboard');
           return;
         }
-        // Student: use returnUrl if present, else dashboard
         if (returnUrl && returnUrl.startsWith('/') && !returnUrl.startsWith('//')) {
           router.push(returnUrl);
         } else {
           router.push('/dashboard');
         }
-
       } else {
-        console.error("No user data found in response!");
-        router.push('/login');
+        setError('Something went wrong. Please try signing in again.');
       }
-
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Login failed');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] flex flex-col">
-      
-      {/* ================= SIMPLE HEADER ================= */}
-      <div className="bg-white border-b border-gray-200 py-4 px-6">
-        <div className="max-w-7xl mx-auto flex items-center">
-           <Link href="/" className="text-sky-500 font-bold text-xl flex items-center gap-2 hover:text-sky-600">
-             ISIT <span className="text-xs text-gray-400 font-normal ml-2">← Back to Home</span>
-           </Link>
+    <div className="isit-cosmic-bg min-h-screen flex flex-col text-cyan-50">
+      <header className="relative z-[1] border-b border-cyan-400/15 bg-slate-950/40 backdrop-blur-xl">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between gap-4">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-cyan-200 font-semibold hover:text-cyan-100 transition-colors no-underline"
+          >
+            <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-cyan-400/30 bg-slate-950/60 text-cyan-300 text-sm font-bold animate-pulse-cyan">
+              I
+            </span>
+            <span>ISIC</span>
+          </Link>
+          <Link href="/" className="text-sm text-cyan-200/80 hover:text-cyan-100 no-underline">
+            ← Back to home
+          </Link>
         </div>
-      </div>
+      </header>
 
-      <div className="flex-1 flex flex-col md:flex-row bg-white">
-        
-        {/* RIGHT SIDE: Form */}
-        <div className="w-full md:w-1/2 flex flex-col justify-center px-8 py-12 lg:px-16 order-2 md:order-1">
-          
-          {/* Logo (Mobile Only) */}
-          <div className="mb-6 md:hidden">
-             <h1 className="text-2xl font-bold text-sky-500">ISIT</h1>
-          </div>
+      <div className="flex-1 flex flex-col lg:flex-row relative z-[1]">
+        <div className="flex-1 flex flex-col justify-center px-6 py-12 lg:px-16 order-2 lg:order-1">
+          <div className="max-w-md w-full mx-auto isit-glass rounded-3xl p-8 sm:p-10 shadow-2xl">
+            <p className="text-xs font-semibold uppercase tracking-widest text-cyan-300/90 mb-2">Welcome back</p>
+            <h1 className="text-2xl sm:text-3xl font-bold text-cyan-50 mb-2">Sign in</h1>
+            <p className="text-sm text-cyan-100/75 mb-8">Continue your sessions, assignments, and AI tutor.</p>
 
-          <div className="max-w-md w-full mx-auto">
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">Welcome back</h2>
-            <p className="mt-2 text-sm text-gray-600">
-              Sign in to continue your learning journey
-            </p>
-
-            <form className="mt-8 space-y-4" onSubmit={handleLogin}>
+            <form className="space-y-4" onSubmit={handleLogin}>
+              {passwordResetOk && (
+                <div
+                  role="status"
+                  className="p-3 text-sm text-emerald-200 bg-emerald-950/40 rounded-xl border border-emerald-400/30"
+                >
+                  Password updated. Sign in with your new password.
+                </div>
+              )}
               {error && (
-                <div className="p-3 text-sm text-red-600 bg-red-50 rounded-lg border border-red-200">
+                <div
+                  role="alert"
+                  className="p-3 text-sm text-red-200 bg-red-950/50 rounded-xl border border-red-400/30"
+                >
                   {error}
                 </div>
               )}
-              
-              <div className="space-y-4">
-                 <div>
-                    <label htmlFor="email-address" className="sr-only">Email address</label>
-                    <input
-                      id="email-address"
-                      name="email"
-                      type="email"
-                      autoComplete="email"
-                      required
-                      className="w-full rounded-xl border border-gray-200 px-4 py-3 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent"
-                      placeholder="Email address"
-                      value={formData.email}
-                      onChange={handleChange}
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="password" className="sr-only">Password</label>
-                    <input
-                      id="password"
-                      name="password"
-                      type="password"
-                      autoComplete="current-password"
-                      required
-                      className="w-full rounded-xl border border-gray-200 px-4 py-3 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent"
-                      placeholder="Password"
-                      value={formData.password}
-                      onChange={handleChange}
-                    />
-                  </div>
-                  <label className="flex items-center gap-2 cursor-pointer select-none">
-                    <input
-                      type="checkbox"
-                      checked={rememberMe}
-                      onChange={(e) => setRememberMe(e.target.checked)}
-                      className="rounded border-gray-300 text-sky-600 focus:ring-sky-500"
-                    />
-                    <span className="text-sm text-gray-600">Remember me on this device</span>
+
+              <div className="space-y-3">
+                <div>
+                  <label htmlFor="email-address" className="sr-only">
+                    Email address
                   </label>
+                  <input
+                    id="email-address"
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    required
+                    className="w-full rounded-xl border border-cyan-400/25 bg-slate-950/70 px-4 py-3 text-cyan-50 placeholder:text-cyan-200/45 focus:outline-none focus:ring-2 focus:ring-cyan-400/50"
+                    placeholder="Email address"
+                    value={formData.email}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="password" className="sr-only">
+                    Password
+                  </label>
+                  <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    autoComplete="current-password"
+                    required
+                    className="w-full rounded-xl border border-cyan-400/25 bg-slate-950/70 px-4 py-3 text-cyan-50 placeholder:text-cyan-200/45 focus:outline-none focus:ring-2 focus:ring-cyan-400/50"
+                    placeholder="Password"
+                    value={formData.password}
+                    onChange={handleChange}
+                  />
+                </div>
+                <label className="flex items-center gap-2 cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={rememberMe}
+                    onChange={(e) => setRememberMe(e.target.checked)}
+                    className="rounded border-cyan-400/40 bg-slate-950/80 text-cyan-400 focus:ring-cyan-400"
+                  />
+                  <span className="text-sm text-cyan-100/80">Remember me on this device</span>
+                </label>
+                <div className="text-right">
+                  <Link href="/forgot-password" className="text-sm font-medium text-cyan-300 hover:text-cyan-200 underline-offset-2 hover:underline">
+                    Forgot password?
+                  </Link>
+                </div>
               </div>
 
-              <div>
-                <div className="flex items-center justify-between">
-                   <span className="text-sm text-slate-400 cursor-default">Forgot Password?</span>
-                </div>
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="btn-primary w-full py-3"
-                >
-                  {loading ? 'Signing in...' : 'Sign in'}
-                </button>
-              </div>
+              <button type="submit" disabled={loading} className="isit-btn-primary w-full min-h-11 disabled:opacity-50">
+                {loading ? 'Signing in…' : 'Sign in'}
+              </button>
             </form>
 
-            <div className="mt-6 text-center">
-              <p className="text-sm text-gray-600">
-                Don't have an account?{' '}
-                <Link href="/signup" className="font-bold text-sky-600 hover:text-sky-800">
-                  Sign up
-                </Link>
-              </p>
-            </div>
+            <p className="mt-6 text-center text-sm text-cyan-100/75">
+              Don&apos;t have an account?{' '}
+              <Link href="/signup" className="font-semibold text-cyan-300 hover:text-cyan-200 underline-offset-2 hover:underline">
+                Sign up
+              </Link>
+            </p>
           </div>
         </div>
 
-        {/* LEFT SIDE */}
-        <div className="hidden md:block w-1/2 bg-gradient-to-br from-sky-500 to-blue-600 relative overflow-hidden order-1 md:order-2">
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="text-center text-white px-8">
-              <div className="w-20 h-20 rounded-2xl bg-white/20 flex items-center justify-center mx-auto mb-6">
-                <span className="text-4xl font-bold">I</span>
-              </div>
-              <h2 className="text-3xl font-bold mb-3">Welcome to ISIT</h2>
-              <p className="text-sky-100 text-sm max-w-sm">Indian School of Innovation and Thinking. Learn at your own pace with AI-powered tutoring.</p>
+        <div className="hidden lg:flex flex-1 order-1 lg:order-2 items-stretch justify-center p-10 xl:p-16 border-l border-cyan-400/10 bg-gradient-to-br from-cyan-950/40 via-slate-950/20 to-transparent">
+          <div className="max-w-md flex flex-col justify-center text-left">
+            <div className="inline-flex items-center gap-2 isit-chip mb-6 w-fit">
+              <Sparkles className="w-4 h-4 text-cyan-300" aria-hidden />
+              AI-first learning
             </div>
+            <h2 className="text-3xl xl:text-4xl font-bold text-cyan-50 mb-4 leading-tight">
+              Learn with a tutor that adapts to you
+            </h2>
+            <p className="text-cyan-100/80 leading-relaxed">
+              Indian School of Innovation and Curiosity — structured curriculum, mastery tracking, and classroom tools
+              for schools and families.
+            </p>
           </div>
         </div>
-
       </div>
     </div>
   );
@@ -199,11 +209,13 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center">
-        <p className="text-gray-500">Loading...</p>
-      </div>
-    }>
+    <Suspense
+      fallback={
+        <div className="isit-cosmic-bg min-h-screen flex items-center justify-center text-cyan-200">
+          <p className="text-sm">Loading…</p>
+        </div>
+      }
+    >
       <LoginForm />
     </Suspense>
   );

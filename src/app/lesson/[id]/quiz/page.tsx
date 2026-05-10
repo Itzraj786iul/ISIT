@@ -5,20 +5,66 @@
  * Target: /topic/[id]/quiz or session-scoped quiz only (docs/AI_FIRST_MIGRATION.md).
  */
 import { useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, CheckCircle, XCircle, Loader2 } from 'lucide-react';
 
+/** Normalized for UI — API (`TopicQuestionBank`) uses `options: string[]` + `correct_answer`. */
 type Question = {
   _id: string;
   question_text: string;
-  options: { text: string; is_correct: boolean }[];
+  options: string[];
+  correctAnswer: string;
   explanation?: string;
 };
 
+type QuestionApiRow = {
+  _id?: string;
+  question_text?: string;
+  options?: unknown;
+  correct_answer?: string;
+  explanation?: string;
+};
+
+function normalizeQuestion(raw: QuestionApiRow): Question | null {
+  const _id = String(raw._id ?? '');
+  const question_text = String(raw.question_text ?? '').trim();
+  const rawOpts = raw.options;
+  const labels: string[] = [];
+  if (Array.isArray(rawOpts)) {
+    for (const o of rawOpts) {
+      if (typeof o === 'string') labels.push(o);
+      else if (o && typeof o === 'object' && 'text' in o) labels.push(String((o as { text: unknown }).text ?? ''));
+    }
+  }
+  if (!_id || !question_text || labels.length === 0) return null;
+
+  let correctAnswer = String(raw.correct_answer ?? '').trim();
+  if (!correctAnswer && Array.isArray(rawOpts)) {
+    const idx = rawOpts.findIndex(
+      (o) => o && typeof o === 'object' && Boolean((o as { is_correct?: boolean }).is_correct)
+    );
+    if (idx >= 0 && labels[idx]) correctAnswer = labels[idx].trim();
+  }
+
+  return {
+    _id,
+    question_text,
+    options: labels,
+    correctAnswer,
+    explanation: raw.explanation ? String(raw.explanation) : undefined,
+  };
+}
+
+function answerIsCorrect(q: Question, selectedIndex: number): boolean {
+  const picked = q.options[selectedIndex]?.trim() ?? '';
+  const want = q.correctAnswer.trim();
+  if (!picked || !want) return false;
+  return picked === want || picked.toLowerCase() === want.toLowerCase();
+}
+
 export default function LessonQuizPage() {
   const params = useParams();
-  const router = useRouter();
   const lessonId = params.id as string;
   const [lessonTitle, setLessonTitle] = useState<string>('Lesson Quiz');
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -59,8 +105,14 @@ export default function LessonQuizPage() {
             const qRes = await fetch(`/api/questions?topicId=${encodeURIComponent(topic._id)}`);
             const qJson = await qRes.json();
             if (qJson.success && Array.isArray(qJson.data) && qJson.data.length > 0) {
-              setQuestions(qJson.data.slice(0, 5));
-              return;
+              const normalized = (qJson.data as QuestionApiRow[])
+                .slice(0, 5)
+                .map(normalizeQuestion)
+                .filter((q): q is Question => q !== null);
+              if (normalized.length > 0) {
+                setQuestions(normalized);
+                return;
+              }
             }
           }
         }
@@ -77,7 +129,7 @@ export default function LessonQuizPage() {
     let correct = 0;
     questions.forEach((q) => {
       const selected = answers[q._id];
-      if (selected !== undefined && q.options[selected]?.is_correct) correct++;
+      if (selected !== undefined && answerIsCorrect(q, selected)) correct++;
     });
     setScore(correct);
     setSubmitted(true);
@@ -88,10 +140,10 @@ export default function LessonQuizPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <div className="flex items-center gap-3 text-slate-600">
-          <Loader2 className="w-5 h-5 animate-spin" />
-          <span>Loading quiz...</span>
+      <div className="isit-cosmic-bg min-h-screen text-cyan-50 flex items-center justify-center relative z-[1]">
+        <div className="flex items-center gap-3 text-cyan-200/90">
+          <Loader2 className="w-5 h-5 animate-spin text-cyan-400" aria-hidden />
+          <span className="text-sm">Loading quiz…</span>
         </div>
       </div>
     );
@@ -99,14 +151,18 @@ export default function LessonQuizPage() {
 
   if (questions.length === 0) {
     return (
-      <div className="min-h-screen bg-slate-50 p-4 sm:p-6 md:p-8">
-        <div className="max-w-2xl mx-auto">
-          <Link href={`/lesson/${lessonId}`} className="inline-flex items-center gap-2 text-sky-600 hover:text-sky-700 text-sm font-medium mb-6">
-            <ArrowLeft className="w-4 h-4" /> Back to lesson
+      <div className="isit-cosmic-bg min-h-screen text-cyan-50 p-4 sm:p-6 md:p-8 relative">
+        <div className="max-w-2xl mx-auto relative z-[1]">
+          <Link
+            href={`/lesson/${lessonId}`}
+            className="inline-flex items-center gap-2 text-cyan-300 hover:text-cyan-100 text-sm font-medium mb-6 no-underline"
+          >
+            <ArrowLeft className="w-4 h-4" aria-hidden /> Back to lesson
           </Link>
-          <div className="bg-white rounded-xl border border-slate-200 p-8 text-center">
-            <p className="text-slate-600 font-medium">No quiz questions available for this lesson yet.</p>
-            <Link href={`/lesson/${lessonId}`} className="mt-4 inline-block text-sky-600 hover:underline text-sm font-medium">
+          <div className="isit-glass rounded-2xl p-8 text-center">
+            <p className="text-cyan-100/90 font-medium">No quiz questions are linked to this lesson yet.</p>
+            <p className="text-sm text-cyan-200/60 mt-2">Your school can attach topic questions later.</p>
+            <Link href={`/lesson/${lessonId}`} className="isit-btn-primary inline-flex mt-6 min-h-11 px-6 items-center justify-center no-underline text-sm">
               Return to lesson
             </Link>
           </div>
@@ -116,43 +172,57 @@ export default function LessonQuizPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 p-4 sm:p-6 md:p-8">
-      <div className="max-w-2xl mx-auto">
-        <Link href={`/lesson/${lessonId}`} className="inline-flex items-center gap-2 text-sky-600 hover:text-sky-700 text-sm font-medium mb-6">
-          <ArrowLeft className="w-4 h-4" /> Back to lesson
+    <div className="isit-cosmic-bg min-h-screen text-cyan-50 p-4 sm:p-6 md:p-8 relative">
+      <div className="max-w-2xl mx-auto relative z-[1]">
+        <Link
+          href={`/lesson/${lessonId}`}
+          className="inline-flex items-center gap-2 text-cyan-300 hover:text-cyan-100 text-sm font-medium mb-6 no-underline"
+        >
+          <ArrowLeft className="w-4 h-4" aria-hidden /> Back to lesson
         </Link>
 
-        <h1 className="text-2xl font-bold text-slate-800 mb-1">Quiz: {lessonTitle}</h1>
-        <p className="text-slate-500 text-sm mb-8">Answer the questions below. You need 60% to pass.</p>
+        <div className="mb-8">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-cyan-400/80 mb-2">Lesson quiz</p>
+          <h1 className="text-2xl font-bold text-cyan-50 mb-1">{lessonTitle}</h1>
+          <p className="text-cyan-100/70 text-sm">Answer all questions. You need at least 60% to pass.</p>
+        </div>
 
         {!submitted ? (
           <>
-            <div className="space-y-8">
+            <div className="space-y-6">
               {questions.map((q, qIndex) => (
-                <div key={q._id} className="bg-white rounded-xl border border-slate-200 p-5 sm:p-6 shadow-sm">
-                  <p className="font-semibold text-slate-800 mb-4">
-                    {qIndex + 1}. {q.question_text}
+                <div key={q._id} className="isit-glass rounded-2xl p-5 sm:p-6">
+                  <p className="font-semibold text-cyan-50 mb-4 leading-snug">
+                    <span className="text-cyan-400/90 tabular-nums">{qIndex + 1}.</span> {q.question_text}
                   </p>
-                  <div className="space-y-2">
-                    {q.options.map((opt, optIndex) => (
-                      <label
-                        key={optIndex}
-                        className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition ${
-                          answers[q._id] === optIndex
-                            ? 'border-sky-500 bg-sky-50'
-                            : 'border-slate-200 hover:border-slate-300'
-                        }`}
-                      >
-                        <input
-                          type="radio"
-                          name={q._id}
-                          checked={answers[q._id] === optIndex}
-                          onChange={() => setAnswers((prev) => ({ ...prev, [q._id]: optIndex }))}
-                          className="text-sky-600 focus:ring-sky-500"
-                        />
-                        <span className="text-slate-700">{opt.text}</span>
-                      </label>
-                    ))}
+                  <div className="space-y-3">
+                    {q.options.map((optionLabel, optIndex) => {
+                      const selected = answers[q._id] === optIndex;
+                      return (
+                        <label
+                          key={optIndex}
+                          className={`flex w-full items-start gap-3 p-4 rounded-xl cursor-pointer transition motion-safe-transition border-2 ${
+                            selected
+                              ? 'border-cyan-400 bg-cyan-500/20 shadow-[inset_0_0_0_1px_rgba(34,211,238,0.25)]'
+                              : 'border-cyan-400/25 bg-[rgb(15,23,42)]/95 hover:border-cyan-300/50 hover:bg-[rgb(15,23,42)]'
+                          }`}
+                        >
+                          <input
+                            type="radio"
+                            name={q._id}
+                            checked={selected}
+                            onChange={() => setAnswers((prev) => ({ ...prev, [q._id]: optIndex }))}
+                            className="mt-1 h-4 w-4 shrink-0 cursor-pointer rounded-full border-2 border-cyan-300/80 bg-slate-950 accent-cyan-400 text-cyan-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(15,23,42)]"
+                          />
+                          <span
+                            className="flex-1 min-w-0 text-sm font-medium leading-relaxed text-pretty"
+                            style={{ color: '#ecfeff' }}
+                          >
+                            {optionLabel}
+                          </span>
+                        </label>
+                      );
+                    })}
                   </div>
                 </div>
               ))}
@@ -162,48 +232,63 @@ export default function LessonQuizPage() {
                 type="button"
                 onClick={handleSubmit}
                 disabled={!allAnswered}
-                className="px-6 py-3 bg-sky-500 text-white font-medium rounded-xl hover:bg-sky-600 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                className="isit-btn-primary px-6 min-h-11 text-sm font-semibold disabled:opacity-45 disabled:cursor-not-allowed border-0"
               >
                 Submit quiz
               </button>
-              <Link href={`/lesson/${lessonId}`} className="px-6 py-3 border border-slate-200 text-slate-700 font-medium rounded-xl hover:bg-slate-50 transition">
+              <Link
+                href={`/lesson/${lessonId}`}
+                className="isit-btn-secondary px-6 min-h-11 inline-flex items-center justify-center no-underline text-sm"
+              >
                 Cancel
               </Link>
             </div>
           </>
         ) : (
-          <div className="bg-white rounded-xl border border-slate-200 p-6 sm:p-8 shadow-sm text-center">
+          <div className="isit-glass rounded-2xl p-6 sm:p-8 text-center">
             {passed ? (
-              <CheckCircle className="w-16 h-16 text-emerald-500 mx-auto mb-4" />
+              <CheckCircle className="w-16 h-16 text-emerald-400 mx-auto mb-4" aria-hidden />
             ) : (
-              <XCircle className="w-16 h-16 text-amber-500 mx-auto mb-4" />
+              <XCircle className="w-16 h-16 text-amber-400 mx-auto mb-4" aria-hidden />
             )}
-            <h2 className="text-xl font-bold text-slate-800 mb-2">
-              {passed ? 'Quiz passed!' : 'Keep learning'}
-            </h2>
-            <p className="text-slate-600 mb-2">
-              You got <strong>{score}</strong> out of {questions.length} correct ({score != null ? Math.round((score / questions.length) * 100) : 0}%).
+            <h2 className="text-xl font-bold text-cyan-50 mb-2">{passed ? 'Quiz passed' : 'Keep going'}</h2>
+            <p className="text-cyan-100/85 mb-2 text-sm">
+              You got <strong className="text-cyan-50">{score}</strong> out of {questions.length} correct (
+              {score != null ? Math.round((score / questions.length) * 100) : 0}%).
             </p>
-            <p className="text-slate-500 text-sm mb-6">
-              {passed ? 'Great job! You can continue to the next lesson.' : 'Review the lesson and try again when ready.'}
+            <p className="text-cyan-200/65 text-sm mb-6">
+              {passed ? 'Nice work — continue to the next lesson when you’re ready.' : 'Review the lesson material and try again.'}
             </p>
 
             {submitted && (
-              <div className="text-left space-y-4 mb-6">
+              <div className="text-left space-y-3 mb-6">
                 {questions.map((q, idx) => {
                   const selected = answers[q._id];
-                  const isCorrect = selected !== undefined && q.options[selected]?.is_correct;
-                  const correctIdx = q.options.findIndex((o) => o.is_correct);
+                  const isCorrect = selected !== undefined && answerIsCorrect(q, selected);
+                  const yourLabel = selected !== undefined ? q.options[selected] : '';
                   return (
-                    <div key={q._id} className={`p-4 rounded-lg border ${isCorrect ? 'border-emerald-200 bg-emerald-50' : 'border-red-200 bg-red-50'}`}>
-                      <p className="font-medium text-slate-800 text-sm">{idx + 1}. {q.question_text}</p>
-                      <p className="text-xs mt-1">
-                        Your answer: <strong className={isCorrect ? 'text-emerald-700' : 'text-red-700'}>{q.options[selected]?.text}</strong>
-                        {!isCorrect && correctIdx >= 0 && (
-                          <span className="text-emerald-700"> | Correct: <strong>{q.options[correctIdx].text}</strong></span>
-                        )}
+                    <div
+                      key={q._id}
+                      className={`p-4 rounded-xl border text-sm ${
+                        isCorrect
+                          ? 'border-emerald-400/30 bg-emerald-500/10'
+                          : 'border-red-400/25 bg-red-500/10'
+                      }`}
+                    >
+                      <p className="font-medium text-cyan-50">
+                        {idx + 1}. {q.question_text}
                       </p>
-                      {q.explanation && <p className="text-xs text-slate-600 mt-1">{q.explanation}</p>}
+                      <p className="text-xs mt-2 text-cyan-100/80">
+                        Your answer:{' '}
+                        <strong className={isCorrect ? 'text-emerald-300' : 'text-red-300'}>{yourLabel}</strong>
+                        {!isCorrect && q.correctAnswer ? (
+                          <span className="text-emerald-300">
+                            {' '}
+                            · Correct: <strong>{q.correctAnswer}</strong>
+                          </span>
+                        ) : null}
+                      </p>
+                      {q.explanation ? <p className="text-xs text-cyan-200/70 mt-2">{q.explanation}</p> : null}
                     </div>
                   );
                 })}
@@ -211,14 +296,18 @@ export default function LessonQuizPage() {
             )}
 
             <div className="flex flex-wrap justify-center gap-3">
-              <Link href={`/lesson/${lessonId}`} className="px-5 py-2.5 bg-sky-500 text-white font-medium rounded-xl hover:bg-sky-600 transition">
+              <Link href={`/lesson/${lessonId}`} className="isit-btn-primary min-h-11 px-5 inline-flex items-center justify-center no-underline text-sm">
                 Back to lesson
               </Link>
               {!passed && (
                 <button
                   type="button"
-                  onClick={() => { setSubmitted(false); setScore(null); setAnswers({}); }}
-                  className="px-5 py-2.5 border border-slate-200 text-slate-700 font-medium rounded-xl hover:bg-slate-50 transition"
+                  onClick={() => {
+                    setSubmitted(false);
+                    setScore(null);
+                    setAnswers({});
+                  }}
+                  className="isit-btn-secondary min-h-11 px-5 text-sm border-0 cursor-pointer"
                 >
                   Retry quiz
                 </button>

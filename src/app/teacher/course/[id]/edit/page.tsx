@@ -194,14 +194,14 @@ export default function TeacherEditCoursePage() {
 
   if (loading || !course) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-100">
+      <div className="isit-cosmic-bg min-h-screen flex items-center justify-center text-cyan-200 relative">
         <p className="text-slate-600">Loading...</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-100 font-sans">
+    <div className="isit-cosmic-bg min-h-screen font-sans text-cyan-50 relative">
       <header className="bg-white border-b border-slate-200 sticky top-0 z-10 px-4 sm:px-6 py-4 flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-4">
           <Link href="/teacher/dashboard" className="flex items-center gap-2 text-slate-600 hover:text-slate-800 font-medium text-sm">

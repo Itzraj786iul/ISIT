@@ -11,6 +11,18 @@ const SessionSchema = new mongoose.Schema(
     topic_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Topic', required: true },
     subject_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Subject', required: true },
     mode: { type: String, enum: ['explorer', 'revision', 'exam'], required: true },
+    /** Learning path: teacher assignment vs student exploration. */
+    session_mode: {
+      type: String,
+      enum: ['teacher_assigned', 'free_learning'],
+      default: 'free_learning',
+    },
+    /** Redundant coarse flag for analytics / APIs (maps 1:1 with session_mode). */
+    session_source: {
+      type: String,
+      enum: ['assigned', 'free'],
+      default: 'free',
+    },
     ai_model_used: { type: String },
     start_time: { type: Date, required: true },
     end_time: { type: Date },

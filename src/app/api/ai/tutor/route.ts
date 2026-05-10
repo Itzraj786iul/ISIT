@@ -7,6 +7,8 @@ import { NextResponse } from 'next/server';
 import mongoose from 'mongoose';
 import { getAuthFromRequest } from '@/lib/auth';
 import { connectToDB } from '@/lib/db';
+import { log } from '@/lib/logger';
+import { aiRateLimitForUser } from '@/lib/rate-limit';
 
 type TutorUsageLog = {
   userId: string;
@@ -16,12 +18,8 @@ type TutorUsageLog = {
   timestamp: string;
 };
 
-function logTutorUsage(log: TutorUsageLog): void {
-  const payload = {
-    ...log,
-    type: 'ai_tutor_usage',
-  };
-  console.info('[AI Tutor Usage]', JSON.stringify(payload));
+function logTutorUsage(entry: TutorUsageLog): void {
+  log.info('ai_tutor_usage', { ...entry });
 }
 
 export async function POST(req: Request) {
@@ -31,6 +29,9 @@ export async function POST(req: Request) {
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
     const userId = auth.userId;
+
+    const limited = aiRateLimitForUser(req, auth.userId);
+    if (limited) return limited;
 
     const body = await req.json().catch(() => ({}));
     const lessonId = body?.lessonId;

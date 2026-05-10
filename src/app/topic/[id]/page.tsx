@@ -22,8 +22,18 @@ import {
 } from 'lucide-react';
 import { sendEvent } from '@/lib/send-session-event';
 import { fetchWithAuth } from '@/lib/api-client';
+import { getLearningMode } from '@/lib/learning-mode';
+import { useT } from '@/lib/t';
+import type { LearningMode } from '@/lib/learning-mode';
+import { assignmentStatusLabelForStudent } from '@/lib/assignment-status-ui';
 
-type User = { _id: string; name?: string; email?: string; role?: string };
+type User = {
+  _id: string;
+  name?: string;
+  email?: string;
+  role?: string;
+  learning_mode?: LearningMode;
+};
 
 type Topic = {
   _id: string;
@@ -108,6 +118,7 @@ function sessionTopicId(s: SessionRow): string {
 export default function TopicLearningPage() {
   const params = useParams();
   const router = useRouter();
+  const tr = useT();
   const id = params.id as string;
 
   const [topic, setTopic] = useState<Topic | null>(null);
@@ -129,6 +140,8 @@ export default function TopicLearningPage() {
   const [quickAnswers, setQuickAnswers] = useState<Record<string, string>>({});
   const [quickStarting, setQuickStarting] = useState(false);
   const [quickEnding, setQuickEnding] = useState(false);
+  const [isTeacherAssigned, setIsTeacherAssigned] = useState(false);
+  const [teacherAssignmentStatus, setTeacherAssignmentStatus] = useState<string | null>(null);
   const videoSectionRef = useRef<HTMLDivElement | null>(null);
   const pageLoadTimeRef = useRef<number>(Date.now());
   const performanceSentRef = useRef(false);
@@ -136,17 +149,36 @@ export default function TopicLearningPage() {
   const quickEndedRef = useRef(false);
   const quickQuestionShownAtRef = useRef<number>(Date.now());
 
-  const ensureSessionForTopic = useCallback(async (): Promise<string | null> => {
+  /** Reuse an in-progress session for this topic when present (server + client) to avoid duplicates. */
+  const resolveOrCreateSessionForTopic = useCallback(async (): Promise<string | null> => {
     if (!user?._id) return null;
     if (inProgressSessionId) return inProgressSessionId;
+
+    const checkRes = await fetchWithAuth(
+      `/api/sessions?status=in_progress&topic_id=${encodeURIComponent(id)}`,
+      { redirectOn401: false }
+    );
+    if (checkRes.ok) {
+      const sJson = (await checkRes.json()) as { success?: boolean; data?: SessionRow[] };
+      if (sJson.success && Array.isArray(sJson.data) && sJson.data.length > 0) {
+        const match = sJson.data.find((s) => sessionTopicId(s) === id);
+        const row = match ?? sJson.data[0];
+        const sid = row._id != null ? String(row._id) : null;
+        if (sid) {
+          setInProgressSessionId(sid);
+          return sid;
+        }
+      }
+    }
+
     const sessionRes = await fetchWithAuth('/api/sessions', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ topic_id: id }),
+      redirectOn401: false,
     });
     const sessionJson = (await sessionRes.json()) as { success?: boolean; data?: { _id?: string }; error?: string };
     if (!sessionRes.ok || !sessionJson.success || !sessionJson.data?._id) {
-      console.error('Session create failed', sessionJson.error);
       return null;
     }
     const newId = String(sessionJson.data._id);
@@ -171,8 +203,8 @@ export default function TopicLearningPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ sessionId: sid }),
       });
-    } catch (e) {
-      console.error(e);
+    } catch {
+      /* ignore */
     } finally {
       quickSessionIdRef.current = null;
       setQuickSessionId(null);
@@ -191,12 +223,12 @@ export default function TopicLearningPage() {
     }
     setPracticeRedirecting(true);
     try {
-      const sid = await ensureSessionForTopic();
+      const sid = await resolveOrCreateSessionForTopic();
       if (sid) router.push(`/session/${sid}`);
     } finally {
       setPracticeRedirecting(false);
     }
-  }, [user?._id, ensureSessionForTopic, router, id]);
+  }, [user?._id, resolveOrCreateSessionForTopic, router, id]);
 
   const startQuickPractice = useCallback(async () => {
     if (!user?._id) {
@@ -207,7 +239,7 @@ export default function TopicLearningPage() {
     setQuickStarting(true);
     quickEndedRef.current = false;
     try {
-      const sid = await ensureSessionForTopic();
+      const sid = await resolveOrCreateSessionForTopic();
       if (!sid) return;
       quickSessionIdRef.current = sid;
       setQuickSessionId(sid);
@@ -217,7 +249,7 @@ export default function TopicLearningPage() {
     } finally {
       setQuickStarting(false);
     }
-  }, [user?._id, questions.length, ensureSessionForTopic, router, id]);
+  }, [user?._id, questions.length, resolveOrCreateSessionForTopic, router, id]);
 
   useEffect(() => {
     if (!quickActive || !quickSessionId) return;
@@ -262,8 +294,8 @@ export default function TopicLearningPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ topicId, timeSpent: timeSpentMinutes }),
       });
-    } catch (err) {
-      console.error('Failed to update performance', err);
+    } catch {
+      /* ignore */
     }
   }, [user?._id]);
 
@@ -311,6 +343,28 @@ export default function TopicLearningPage() {
         if (assignmentsRes.ok) setAssignments((await parseList(assignmentsRes)) as Assignment[]);
         else setAssignments([]);
 
+        if (userData?._id && (userData.role || '').toLowerCase() === 'student') {
+          try {
+            const aRes = await fetchWithAuth(
+              `/api/student/assigned-topics?topicId=${encodeURIComponent(id)}`,
+              noRedirect
+            );
+            const aJson = (await aRes.json()) as {
+              success?: boolean;
+              data?: { status?: string }[];
+            };
+            const rows = aRes.ok && aJson.success && Array.isArray(aJson.data) ? aJson.data : [];
+            setIsTeacherAssigned(rows.length > 0);
+            setTeacherAssignmentStatus(rows[0]?.status != null ? String(rows[0].status) : null);
+          } catch {
+            setIsTeacherAssigned(false);
+            setTeacherAssignmentStatus(null);
+          }
+        } else {
+          setIsTeacherAssigned(false);
+          setTeacherAssignmentStatus(null);
+        }
+
         if (userData?._id) {
           setSessionsLoading(true);
           try {
@@ -336,8 +390,7 @@ export default function TopicLearningPage() {
           setInProgressSessionId(null);
           setSessionsLoading(false);
         }
-      } catch (err) {
-        console.error(err);
+      } catch {
         setNotFound(true);
       } finally {
         setLoading(false);
@@ -382,18 +435,8 @@ export default function TopicLearningPage() {
     }
     setStarting(true);
     try {
-      const sessionRes = await fetchWithAuth('/api/sessions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ topic_id: id }),
-      });
-      const sessionJson = (await sessionRes.json()) as { success?: boolean; data?: { _id?: string }; error?: string };
-      if (!sessionRes.ok || !sessionJson.success || !sessionJson.data?._id) {
-        console.error('Start learning failed', sessionJson.error);
-        setStarting(false);
-        return;
-      }
-      const newSessionId = String(sessionJson.data._id);
+      const newSessionId = await resolveOrCreateSessionForTopic();
+      if (!newSessionId) return;
 
       void fetchWithAuth('/api/events', {
         method: 'POST',
@@ -407,8 +450,9 @@ export default function TopicLearningPage() {
       }).catch(() => {});
 
       router.push(`/session/${newSessionId}`);
-    } catch (e) {
-      console.error(e);
+    } catch {
+      /* ignore */
+    } finally {
       setStarting(false);
     }
   };
@@ -419,10 +463,11 @@ export default function TopicLearningPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-        <div className="flex flex-col items-center gap-3">
-          <Loader2 className="w-10 h-10 text-sky-500 animate-spin" />
-          <p className="text-slate-600 font-medium">Loading topic…</p>
+      <div className="isit-cosmic-bg min-h-screen text-cyan-50 overflow-x-hidden relative">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 space-y-6">
+          <div className="h-4 w-48 bg-slate-200 dark:bg-slate-800 rounded animate-pulse" />
+          <div className="rounded-2xl bg-gradient-to-br from-slate-200 to-slate-300 dark:from-slate-800 dark:to-slate-900 h-56 sm:h-64 animate-pulse shadow-inner" />
+          <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 h-48 animate-pulse shadow-sm" />
         </div>
       </div>
     );
@@ -430,7 +475,7 @@ export default function TopicLearningPage() {
 
   if (notFound || !topic) {
     return (
-      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center gap-4 p-4">
+      <div className="isit-cosmic-bg min-h-screen text-cyan-50 flex flex-col items-center justify-center gap-4 p-4 relative">
         <AlertCircle className="w-12 h-12 text-slate-400" />
         <h1 className="text-xl font-semibold text-slate-900">Topic not found</h1>
         <p className="text-slate-600 text-center">The topic you’re looking for doesn’t exist or was removed.</p>
@@ -445,7 +490,7 @@ export default function TopicLearningPage() {
   const loginHref = `/login?returnUrl=${encodeURIComponent(`/topic/${id}`)}`;
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="isit-cosmic-bg min-h-screen text-cyan-50 overflow-x-hidden relative">
       <header className="bg-white border-b border-slate-200 sticky top-0 z-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-3">
           <div className="flex items-center gap-2 text-sm">
@@ -476,6 +521,18 @@ export default function TopicLearningPage() {
             <p className="mt-3 text-sky-100 text-sm sm:text-base leading-relaxed max-w-2xl">{topic.topic_description}</p>
           )}
           <div className="mt-4 flex flex-wrap items-center gap-3">
+            {user && (user.role || '').toLowerCase() === 'student' && isTeacherAssigned ? (
+              <div className="flex flex-col gap-1">
+                <span className="inline-flex items-center w-fit px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-400/90 text-slate-900 ring-1 ring-amber-200/60">
+                  Assigned by your teacher
+                </span>
+                {teacherAssignmentStatus ? (
+                  <span className="text-xs text-sky-100/95 font-medium">
+                    Status: {assignmentStatusLabelForStudent(teacherAssignmentStatus)}
+                  </span>
+                ) : null}
+              </div>
+            ) : null}
             {topic.difficulty_level ? (
               <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-white/20 text-white ring-1 ring-white/30">
                 {topic.difficulty_level}
@@ -489,9 +546,18 @@ export default function TopicLearningPage() {
             )}
           </div>
 
-          <p className="mt-6 text-xs font-semibold uppercase tracking-wider text-sky-200/90">Recommended learning mode</p>
+          <p className="mt-6 text-xs font-semibold uppercase tracking-wider text-sky-200/90">Learning mode</p>
+          <p className="mt-1 text-lg font-bold text-white tracking-tight">
+            {user && (user.role || '').toLowerCase() === 'student'
+              ? getLearningMode(user) === 'teacher_learning'
+                ? tr('teacherLearningMode')
+                : tr('freeLearningMode')
+              : tr('freeLearningMode')}
+          </p>
           <p className="mt-1 text-sm text-sky-100/95 max-w-xl">
-            AI will personalize your learning in this session — practice, hints, and progress in one focused player.
+            {getLearningMode(user) === 'teacher_learning' && (user?.role || '').toLowerCase() === 'student'
+              ? 'Your teacher assigned this path — stay on track with sessions, practice, and progress in one place.'
+              : 'AI will personalize your learning in this session — practice, hints, and progress in one focused player.'}
           </p>
 
           <div className="mt-5 flex flex-col sm:flex-row flex-wrap gap-3">
@@ -501,35 +567,40 @@ export default function TopicLearningPage() {
                   <button
                     type="button"
                     onClick={resumeSession}
-                    className="inline-flex items-center justify-center gap-2 bg-white text-indigo-700 font-semibold px-6 py-3 rounded-xl hover:bg-sky-50 transition shadow-md"
+                    className="inline-flex items-center justify-center gap-2 min-h-[44px] bg-white text-indigo-700 font-bold px-6 py-3 rounded-2xl hover:bg-sky-50 transition shadow-md ring-2 ring-white/40"
                   >
-                    <Play className="w-5 h-5" />
+                    <Play className="w-5 h-5 shrink-0" />
                     Resume session
                   </button>
                 ) : null}
-                <button
-                  type="button"
-                  disabled={starting}
-                  onClick={startLearning}
-                  className="inline-flex items-center justify-center gap-2 bg-amber-400 text-slate-900 font-bold px-6 py-3 rounded-xl hover:bg-amber-300 transition shadow-md disabled:opacity-60 disabled:cursor-not-allowed"
-                >
-                  {starting ? <Loader2 className="w-5 h-5 animate-spin" /> : <Sparkles className="w-5 h-5" />}
-                  Start learning
-                </button>
+                {!sessionsLoading && !inProgressSessionId ? (
+                  <button
+                    type="button"
+                    disabled={starting || sessionsLoading}
+                    onClick={startLearning}
+                    className="inline-flex items-center justify-center gap-2 min-h-[44px] bg-amber-400 text-slate-900 font-bold px-6 py-3 rounded-2xl hover:bg-amber-300 transition shadow-md disabled:opacity-60 disabled:cursor-not-allowed"
+                  >
+                    {starting ? <Loader2 className="w-5 h-5 animate-spin" /> : <Sparkles className="w-5 h-5 shrink-0" />}
+                    Start learning
+                  </button>
+                ) : null}
+                {sessionsLoading ? (
+                  <span className="inline-flex items-center gap-2 min-h-[44px] text-sm text-sky-100/90">
+                    <Loader2 className="w-5 h-5 animate-spin shrink-0" />
+                    Checking sessions…
+                  </span>
+                ) : null}
               </>
             ) : (
               <Link
                 href={loginHref}
-                className="inline-flex items-center justify-center gap-2 bg-amber-400 text-slate-900 font-bold px-6 py-3 rounded-xl hover:bg-amber-300 transition shadow-md no-underline"
+                className="inline-flex items-center justify-center gap-2 min-h-[44px] bg-amber-400 text-slate-900 font-bold px-6 py-3 rounded-2xl hover:bg-amber-300 transition shadow-md no-underline"
               >
                 <Sparkles className="w-5 h-5" />
                 Sign in to start learning
               </Link>
             )}
           </div>
-          {sessionsLoading && user?._id ? (
-            <p className="mt-3 text-xs text-sky-200">Checking for an in-progress session…</p>
-          ) : null}
         </section>
 
         {/* Supplementary materials */}
@@ -542,7 +613,7 @@ export default function TopicLearningPage() {
             <span className="text-xs font-medium text-slate-400 uppercase tracking-wide shrink-0">Optional</span>
           </div>
 
-          <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden dark:bg-slate-900 dark:border-slate-700">
             <div className="flex flex-wrap gap-1 p-2 border-b border-slate-100 bg-slate-50/80">
               {TABS.map((t) => {
                 const Icon = t.icon;

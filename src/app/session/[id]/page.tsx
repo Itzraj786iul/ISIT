@@ -8,7 +8,7 @@ import dynamic from 'next/dynamic';
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Loader2, ChevronDown, ChevronUp, Bot } from 'lucide-react';
+import { ChevronDown, ChevronUp, Bot } from 'lucide-react';
 import SessionHeader from './_components/SessionHeader';
 import LearningPanel, { type PlayerQuestion } from './_components/LearningPanel';
 import type { TutorTab } from './_components/AITutorPanel';
@@ -28,6 +28,8 @@ type SessionPayload = {
   topic_id?: string | { toString(): string };
   completion_status?: string;
   topic_name?: string;
+  session_mode?: string;
+  session_source?: string;
 };
 
 const MOCK_QUESTIONS: PlayerQuestion[] = [
@@ -294,10 +296,10 @@ export default function SessionPlayerPage() {
       });
       const end = await postSessionEnd(sessionId);
       if (!end.ok) {
-        console.error('End session API failed', end.error, end.status);
+        /* session still ends locally; API sync can be retried from history */
       }
-    } catch (e) {
-      console.error(e);
+    } catch {
+      /* ignore */
     } finally {
       writeSessionCompleteStats({
         timeSpentSeconds: elapsedSec,
@@ -312,31 +314,41 @@ export default function SessionPlayerPage() {
 
   if (loadingSession) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-100">
-        <Loader2 className="w-10 h-10 text-sky-500 animate-spin" />
+      <div className="min-h-[100dvh] flex flex-col isit-cosmic-bg overflow-x-hidden relative">
+        <div className="h-14 sm:h-16 border-b border-cyan-400/15 bg-slate-950/50 animate-pulse shrink-0" />
+        <div className="flex-1 flex flex-col lg:flex-row min-h-0 gap-0 p-3 sm:p-4">
+          <div className="flex-1 min-h-[240px] rounded-2xl border border-cyan-400/15 bg-slate-950/40 animate-pulse" />
+          <div className="hidden lg:block w-[min(100%,320px)] rounded-2xl bg-cyan-950/30 animate-pulse shrink-0" />
+        </div>
+        <div className="h-20 border-t border-cyan-400/15 bg-slate-950/50 animate-pulse shrink-0" />
       </div>
     );
   }
 
   if (accessDenied) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-slate-100 px-4">
-        <p className="text-slate-800 font-semibold text-center">Access denied</p>
-        <p className="text-slate-600 text-sm text-center mt-2 max-w-md">
+      <div className="isit-cosmic-bg min-h-screen text-cyan-50 flex flex-col items-center justify-center px-4 py-10 relative">
+        <p className="text-cyan-50 font-semibold text-center">Access denied</p>
+        <p className="text-cyan-100/75 text-sm text-center mt-2 max-w-md leading-relaxed">
           You do not have permission to open this session.
         </p>
-        <Link href="/dashboard" className="mt-4 text-sky-600 text-sm font-medium hover:underline">
-          Back to dashboard
-        </Link>
+        <div className="flex flex-col sm:flex-row gap-3 mt-8">
+          <Link href="/dashboard" className="btn-primary min-h-11 px-6 no-underline text-sm">
+            Back to dashboard
+          </Link>
+          <Link href="/subjects" className="btn-secondary min-h-11 px-6 no-underline text-sm">
+            Explore subjects
+          </Link>
+        </div>
       </div>
     );
   }
 
   if (loadError || !session) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-slate-100 px-4">
-        <p className="text-slate-700 font-medium text-center">{loadError || 'Session unavailable'}</p>
-        <Link href="/subjects" className="mt-4 text-sky-600 text-sm font-medium hover:underline">
+      <div className="isit-cosmic-bg min-h-screen text-cyan-50 flex flex-col items-center justify-center px-4 relative">
+        <p className="text-cyan-100 font-medium text-center">{loadError || 'Session unavailable'}</p>
+        <Link href="/subjects" className="mt-4 text-cyan-300 text-sm font-medium hover:underline">
           Browse subjects
         </Link>
       </div>
@@ -344,13 +356,15 @@ export default function SessionPlayerPage() {
   }
 
   const topicTitle = session.topic_name || 'Learning session';
+  const teacherAssignedSession =
+    session.session_mode === 'teacher_assigned' || session.session_source === 'assigned';
   const alreadyEnded = session.completion_status === 'completed';
 
   if (alreadyEnded) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-slate-100 px-4">
-        <p className="text-slate-800 font-semibold">This session has already ended.</p>
-        <Link href="/dashboard" className="mt-4 text-sky-600 font-medium hover:underline">
+      <div className="isit-cosmic-bg min-h-screen text-cyan-50 flex flex-col items-center justify-center px-4 relative">
+        <p className="text-cyan-50 font-semibold">This session has already ended.</p>
+        <Link href="/dashboard" className="mt-4 text-cyan-300 font-medium hover:underline">
           Back to dashboard
         </Link>
       </div>
@@ -361,7 +375,7 @@ export default function SessionPlayerPage() {
   const canGoNext = revealed;
 
   return (
-    <div className="h-[100dvh] min-h-0 flex flex-col bg-slate-100 text-slate-900 overflow-hidden">
+    <div className="h-[100dvh] min-h-0 flex flex-col isit-cosmic-bg overflow-hidden overflow-x-hidden relative">
       <SessionHeader
         topicName={topicTitle}
         timerLabel={formatTimer(elapsedSec)}
@@ -371,6 +385,7 @@ export default function SessionPlayerPage() {
           !practiceComplete && totalQuestions > 0 ? { current: currentStep + 1, total: totalQuestions } : null
         }
         difficultyLabel={tutorDifficultyLabel}
+        teacherAssigned={teacherAssignedSession}
       />
 
       <div className="flex-1 flex flex-col lg:flex-row min-h-0 overflow-hidden">
@@ -404,7 +419,7 @@ export default function SessionPlayerPage() {
         <aside className="flex flex-col lg:flex-[3] min-h-0 min-w-0 lg:min-w-[280px] xl:min-w-[320px] bg-slate-100 border-t lg:border-t-0 lg:border-l border-slate-200/90 shadow-[0_-8px_30px_-12px_rgba(15,23,42,0.12)] lg:shadow-none">
           <button
             type="button"
-            className="lg:hidden flex items-center justify-between gap-3 w-full px-4 py-3 bg-white border-b border-slate-200 text-left shrink-0"
+            className="lg:hidden flex items-center justify-between gap-3 w-full min-h-[44px] px-4 py-3 bg-white border-b border-slate-200 text-left shrink-0 transition-colors motion-safe-transition"
             onClick={() => setMobileTutorOpen((o) => !o)}
             aria-expanded={mobileTutorOpen}
             aria-controls="session-ai-tutor-panel"
@@ -423,7 +438,9 @@ export default function SessionPlayerPage() {
           </button>
           <div
             id="session-ai-tutor-panel"
-            className={`flex-1 min-h-0 flex flex-col p-3 sm:p-4 ${mobileTutorOpen ? 'flex max-h-[min(56vh,520px)]' : 'hidden'} lg:flex lg:max-h-none`}
+            className={`flex-1 min-h-0 flex flex-col p-3 sm:p-4 overflow-y-auto transition-[max-height,opacity] duration-300 ease-out motion-reduce:transition-none ${
+              mobileTutorOpen ? 'flex max-h-[min(56vh,520px)] opacity-100' : 'max-h-0 opacity-0 overflow-hidden lg:opacity-100'
+            } lg:flex lg:max-h-none lg:overflow-visible`}
           >
             <AITutorPanel
               sessionId={sessionId}

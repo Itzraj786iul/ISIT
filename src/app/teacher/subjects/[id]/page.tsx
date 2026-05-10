@@ -40,11 +40,13 @@ export default function TeacherSubjectDetailPage() {
   const [contentCounts, setContentCounts] = useState<Record<string, ContentCounts>>({});
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  const [forbidden, setForbidden] = useState(false);
 
   useEffect(() => {
     if (!id) return;
     const run = async () => {
       setLoading(true);
+      setForbidden(false);
       try {
         const meRes = await fetch('/api/auth/me', { credentials: 'include' });
         if (!meRes.ok) { router.push('/login'); return; }
@@ -54,9 +56,15 @@ export default function TeacherSubjectDetailPage() {
         setUser(userData);
 
         const [subjectRes, topicsRes] = await Promise.all([
-          fetch(`/api/subjects/${id}`),
-          fetch(`/api/topics?subjectId=${encodeURIComponent(id)}`),
+          fetch(`/api/subjects/${id}`, { credentials: 'include' }),
+          fetch(`/api/topics?subjectId=${encodeURIComponent(id)}`, { credentials: 'include' }),
         ]);
+
+        if (subjectRes.status === 403) {
+          setForbidden(true);
+          setLoading(false);
+          return;
+        }
 
         const subjectJson = await subjectRes.json();
         if (!subjectRes.ok || !subjectJson.success || !subjectJson.data) {
@@ -73,9 +81,9 @@ export default function TeacherSubjectDetailPage() {
         const counts = await Promise.all(
           topicList.map(async (t) => {
             const [notesR, questionsR, videosR] = await Promise.all([
-              fetch(`/api/topic-notes?topicId=${encodeURIComponent(t._id)}`),
-              fetch(`/api/questions?topicId=${encodeURIComponent(t._id)}`),
-              fetch(`/api/videos?topicId=${encodeURIComponent(t._id)}`),
+              fetch(`/api/topic-notes?topicId=${encodeURIComponent(t._id)}`, { credentials: 'include' }),
+              fetch(`/api/questions?topicId=${encodeURIComponent(t._id)}`, { credentials: 'include' }),
+              fetch(`/api/videos?topicId=${encodeURIComponent(t._id)}`, { credentials: 'include' }),
             ]);
             const parse = async (r: Response) => {
               const j = await r.json();
@@ -110,6 +118,21 @@ export default function TeacherSubjectDetailPage() {
           <div className="space-y-3">
             {[1, 2, 3, 4, 5].map((i) => <div key={i} className="h-20 bg-white rounded-xl border border-slate-200" />)}
           </div>
+        </div>
+      </TeacherShell>
+    );
+  }
+
+  if (forbidden) {
+    return (
+      <TeacherShell user={user}>
+        <div className="flex flex-col items-center justify-center py-20 px-4">
+          <AlertCircle className="w-12 h-12 text-amber-500 mb-4" />
+          <h1 className="text-xl font-semibold text-slate-900">Access denied</h1>
+          <p className="text-slate-600 text-sm mt-2 text-center max-w-md">
+            This subject is outside your assigned classes or subjects.
+          </p>
+          <Link href="/teacher/subjects" className="mt-4 text-sky-600 font-medium hover:underline">Back to Subjects</Link>
         </div>
       </TeacherShell>
     );

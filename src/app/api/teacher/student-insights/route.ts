@@ -9,6 +9,7 @@ import {
   isStrugglingForOverview,
   needsAttention,
 } from '@/lib/teacher-student-insights';
+import { requireTeacherScope, subjectAllowedForTeacherScope } from '@/lib/teacher-scope';
 
 const WEAK_MASTERY_THRESHOLD = 50;
 const STRUGGLE_ALERT_MIN_STUDENTS = 2;
@@ -47,6 +48,7 @@ export async function GET(req: Request) {
     }
 
     const orgId = teacher.organization_id as mongoose.Types.ObjectId;
+    const scope = await requireTeacherScope(req);
     const url = new URL(req.url);
     const gradeParam = url.searchParams.get('grade')?.trim() || '';
     const subjectIdParam = url.searchParams.get('subjectId')?.trim() || '';
@@ -62,13 +64,35 @@ export async function GET(req: Request) {
         organization_id: orgId,
       })
         .lean()
-        .exec()) as LeanDoc | null;
+        .exec()) as (LeanDoc & { class_id?: mongoose.Types.ObjectId }) | null;
       if (!sub) {
         return NextResponse.json({ success: false, error: 'Subject not found' }, { status: 404 });
       }
+      if (
+        scope.kind === 'teacher' &&
+        !subjectAllowedForTeacherScope(scope, sub as { _id: mongoose.Types.ObjectId; class_id?: mongoose.Types.ObjectId | null })
+      ) {
+        return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 });
+      }
       subjectObjectIds = [sub._id];
     } else if (gradeParam) {
-      const subs = (await Subject.find({ organization_id: orgId, grade: gradeParam }).lean().exec()) as LeanDoc[];
+      let subs = (await Subject.find({ organization_id: orgId, grade: gradeParam }).lean().exec()) as (LeanDoc & {
+        class_id?: mongoose.Types.ObjectId;
+      })[];
+      if (scope.kind === 'teacher') {
+        subs = subs.filter((s) =>
+          subjectAllowedForTeacherScope(scope, s as { _id: mongoose.Types.ObjectId; class_id?: mongoose.Types.ObjectId | null })
+        );
+      }
+      subjectObjectIds = subs.map((s) => s._id);
+    } else if (scope.kind === 'teacher') {
+      const subs = (await Subject.find({
+        organization_id: orgId,
+        _id: { $in: scope.assignedSubjectIds.map((id) => new mongoose.Types.ObjectId(id)) },
+        class_id: { $in: scope.assignedClassIds.map((id) => new mongoose.Types.ObjectId(id)) },
+      })
+        .lean()
+        .exec()) as LeanDoc[];
       subjectObjectIds = subs.map((s) => s._id);
     }
 

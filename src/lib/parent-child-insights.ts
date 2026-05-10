@@ -36,6 +36,8 @@ export function buildActionSuggestions(input: {
   recentActivity: number;
   trend: 'up' | 'down' | 'steady';
   linkedAccount: boolean;
+  /** Teacher-assigned topics (status per child). */
+  assignedTopics?: { status: string; topic_name?: string }[];
 }): string[] {
   const out: string[] = [];
   if (!input.linkedAccount) {
@@ -43,6 +45,24 @@ export function buildActionSuggestions(input: {
     out.push('Remind them to use the same account you added.');
     return out;
   }
+
+  const assigned = input.assignedTopics ?? [];
+  const incomplete = assigned.filter((t) => t.status !== 'completed').length;
+  const completedN = assigned.filter((t) => t.status === 'completed').length;
+
+  if (assigned.length > 0) {
+    if (incomplete >= 2) {
+      out.push(
+        'Their teacher assigned topics still in progress—gentle encouragement to keep going can help a lot.'
+      );
+    } else if (incomplete === 1) {
+      out.push('One teacher assignment is still open—check in so they do not lose momentum.');
+    }
+    if (completedN > 0) {
+      out.push('Celebrate topics they finished for class—recognition builds confidence.');
+    }
+  }
+
   if (input.recentActivity === 0) {
     out.push('Encourage a short learning session a few times this week.');
   } else if (input.trend === 'down') {
@@ -56,7 +76,7 @@ export function buildActionSuggestions(input: {
   if (input.strongLabels.length > 0) {
     out.push(`Celebrate what is going well—confidence carries over.`);
   }
-  return [...new Set(out)].slice(0, 4);
+  return [...new Set(out)].slice(0, 5);
 }
 
 export function buildFallbackAiSummary(input: {
@@ -67,12 +87,42 @@ export function buildFallbackAiSummary(input: {
   recentActivity: number;
   trend: 'up' | 'down' | 'steady';
   linkedAccount: boolean;
+  assignedTotal?: number;
+  assignedIncomplete?: number;
+  assignedCompleted?: number;
 }): string {
-  const { childName, avgMastery, strongLabels, weakLabels, recentActivity, trend, linkedAccount } = input;
+  const {
+    childName,
+    avgMastery,
+    strongLabels,
+    weakLabels,
+    recentActivity,
+    trend,
+    linkedAccount,
+    assignedTotal = 0,
+    assignedIncomplete = 0,
+    assignedCompleted = 0,
+  } = input;
   if (!linkedAccount) {
     return `${childName} has not started learning on this platform with the linked email yet. When they sign in and begin, you will see how they are doing and where you can cheer them on.`;
   }
   const parts: string[] = [];
+  if (assignedTotal > 0) {
+    if (assignedIncomplete >= 2) {
+      parts.push(
+        `Their teacher has assigned several topics—your encouragement to stay on track can make a real difference.`
+      );
+    } else if (assignedIncomplete === 1) {
+      parts.push(`They still have a teacher-assigned topic to finish—a light nudge may help.`);
+    }
+    if (assignedCompleted > 0) {
+      parts.push(
+        assignedCompleted === 1
+          ? `They have completed a teacher-assigned topic—worth celebrating together.`
+          : `They have completed multiple teacher-assigned topics—that is meaningful progress.`
+      );
+    }
+  }
   if (avgMastery >= 65) {
     parts.push(`${childName} is making solid progress overall.`);
   } else if (avgMastery >= 40) {
@@ -112,6 +162,11 @@ export async function generateParentInsightParagraph(input: {
   recentActivity: number;
   trend: 'up' | 'down' | 'steady';
   linkedAccount: boolean;
+  teacherAssigned?: {
+    totalTopics: number;
+    notStartedOrInProgress: number;
+    completed: number;
+  };
 }): Promise<string | null> {
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) return null;
@@ -125,13 +180,14 @@ export async function generateParentInsightParagraph(input: {
     learningSessionsThisWeek: input.recentActivity,
     momentumVsPriorWeek: input.trend,
     linkedAccount: input.linkedAccount,
+    teacherAssignedTopics: input.teacherAssigned ?? null,
   };
 
   const messages = [
     {
       role: 'system' as const,
       content:
-        'You write brief, warm updates for parents about a child\'s learning. Use simple, everyday language. Never mention confusion logs, raw analytics, or technical systems. Do not quote exact percentage scores in the text. Sound reassuring and hopeful. Exactly one short paragraph, 2–4 sentences. Address the parent as "you". No markdown.',
+        'You write brief, warm updates for parents about a child\'s learning. Use simple, everyday language. Never mention confusion logs, raw analytics, or technical systems. Do not quote exact percentage scores in the text. If teacherAssignedTopics is present, you may briefly acknowledge assigned work (encourage if several are unfinished; praise if some are completed). Sound reassuring and hopeful. Exactly one short paragraph, 2–4 sentences. Address the parent as "you". No markdown.',
     },
     {
       role: 'user' as const,
