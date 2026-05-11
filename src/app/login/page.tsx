@@ -5,14 +5,18 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { persistAuthFromLogin } from '@/lib/client-auth';
 import { useAuth } from '@/lib/auth-context';
+import { useT } from '@/lib/t';
 import { Sparkles } from 'lucide-react';
 
 function LoginForm() {
   const router = useRouter();
   const { refresh } = useAuth();
+  const tr = useT();
   const searchParams = useSearchParams();
   const returnUrl = searchParams.get('returnUrl');
   const passwordResetOk = searchParams.get('reset') === '1';
+  const safeReturn =
+    returnUrl && returnUrl.startsWith('/') && !returnUrl.startsWith('//') ? returnUrl : null;
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -86,15 +90,15 @@ function LoginForm() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between gap-4">
           <Link
             href="/"
-            className="inline-flex items-center gap-2 text-cyan-200 font-semibold hover:text-cyan-100 transition-colors no-underline"
+            className="inline-flex items-center gap-2 text-cyan-200 font-semibold transition-colors no-underline hover:text-cyan-100"
           >
-            <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-cyan-400/30 bg-slate-950/60 text-cyan-300 text-sm font-bold animate-pulse-cyan">
-              I
+            <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-cyan-400/20 text-cyan-200 animate-pulse-cyan">
+              <Sparkles className="h-4 w-4" />
             </span>
             <span>ISIC</span>
           </Link>
           <Link href="/" className="text-sm text-cyan-200/80 hover:text-cyan-100 no-underline">
-            ← Back to home
+            {tr('funnelBackHome')}
           </Link>
         </div>
       </header>
@@ -103,8 +107,18 @@ function LoginForm() {
         <div className="flex-1 flex flex-col justify-center px-6 py-12 lg:px-16 order-2 lg:order-1">
           <div className="max-w-md w-full mx-auto isit-glass rounded-3xl p-8 sm:p-10 shadow-2xl">
             <p className="text-xs font-semibold uppercase tracking-widest text-cyan-300/90 mb-2">Welcome back</p>
-            <h1 className="text-2xl sm:text-3xl font-bold text-cyan-50 mb-2">Sign in</h1>
-            <p className="text-sm text-cyan-100/75 mb-8">Continue your sessions, assignments, and AI tutor.</p>
+            <h1 className="text-2xl sm:text-3xl font-bold text-cyan-50 mb-2">{tr('logIn')}</h1>
+            <p className="text-sm text-cyan-100/75 mb-6">{tr('loginLead')}</p>
+
+            {safeReturn && (
+              <div
+                role="status"
+                className="mb-6 rounded-xl border border-cyan-400/25 bg-slate-950/70 px-4 py-3 text-xs leading-relaxed text-cyan-100/85"
+              >
+                {tr('loginContinueTo')}{' '}
+                <span className="font-semibold text-cyan-50">{safeReturn}</span>
+              </div>
+            )}
 
             <form className="space-y-4" onSubmit={handleLogin}>
               {passwordResetOk && (
@@ -126,8 +140,8 @@ function LoginForm() {
 
               <div className="space-y-3">
                 <div>
-                  <label htmlFor="email-address" className="sr-only">
-                    Email address
+                  <label htmlFor="email-address" className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-cyan-200/85">
+                    {tr('labelEmail')}
                   </label>
                   <input
                     id="email-address"
@@ -136,14 +150,14 @@ function LoginForm() {
                     autoComplete="email"
                     required
                     className="w-full rounded-xl border border-cyan-400/25 bg-slate-950/70 px-4 py-3 text-cyan-50 placeholder:text-cyan-200/45 focus:outline-none focus:ring-2 focus:ring-cyan-400/50"
-                    placeholder="Email address"
+                    placeholder="you@example.com"
                     value={formData.email}
                     onChange={handleChange}
                   />
                 </div>
                 <div>
-                  <label htmlFor="password" className="sr-only">
-                    Password
+                  <label htmlFor="password" className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-cyan-200/85">
+                    {tr('labelPassword')}
                   </label>
                   <input
                     id="password"
@@ -152,7 +166,7 @@ function LoginForm() {
                     autoComplete="current-password"
                     required
                     className="w-full rounded-xl border border-cyan-400/25 bg-slate-950/70 px-4 py-3 text-cyan-50 placeholder:text-cyan-200/45 focus:outline-none focus:ring-2 focus:ring-cyan-400/50"
-                    placeholder="Password"
+                    placeholder="••••••••"
                     value={formData.password}
                     onChange={handleChange}
                   />
@@ -174,14 +188,20 @@ function LoginForm() {
               </div>
 
               <button type="submit" disabled={loading} className="isit-btn-primary w-full min-h-11 disabled:opacity-50">
-                {loading ? 'Signing in…' : 'Sign in'}
+                {loading ? 'Signing in…' : tr('logIn')}
               </button>
             </form>
 
             <p className="mt-6 text-center text-sm text-cyan-100/75">
               Don&apos;t have an account?{' '}
               <Link href="/signup" className="font-semibold text-cyan-300 hover:text-cyan-200 underline-offset-2 hover:underline">
-                Sign up
+                {tr('signUp')}
+              </Link>
+            </p>
+            <p className="mt-4 text-center text-sm text-cyan-100/60">
+              New to ISIC?{' '}
+              <Link href="/how-it-works" className="font-medium text-cyan-300 underline-offset-2 hover:underline">
+                {tr('footerHowItWorksLink')}
               </Link>
             </p>
           </div>

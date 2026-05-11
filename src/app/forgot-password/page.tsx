@@ -4,8 +4,10 @@ import { useState } from 'react';
 import Link from 'next/link';
 import PublicNav from '@/components/PublicNav';
 import Footer from '@/components/Footer';
+import { useT } from '@/lib/t';
 
 export default function ForgotPasswordPage() {
+  const tr = useT();
   const [email, setEmail] = useState('');
   const [msg, setMsg] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
@@ -33,17 +35,15 @@ export default function ForgotPasswordPage() {
 
   return (
     <div className="isit-cosmic-bg min-h-screen text-cyan-50 flex flex-col">
-      <PublicNav />
+      <PublicNav active="home" />
       <main className="flex-1 max-w-md mx-auto px-4 py-12 w-full">
         <div className="isit-glass rounded-3xl p-8">
-          <h1 className="text-2xl font-bold text-cyan-100">Forgot password</h1>
-          <p className="text-cyan-100/70 text-sm mt-2">
-            Enter your email and we&apos;ll send a reset link if an account exists.
-          </p>
+          <h1 className="text-2xl font-bold text-cyan-100">{tr('forgotPasswordTitle')}</h1>
+          <p className="text-cyan-100/70 text-sm mt-2">{tr('forgotPasswordLead')}</p>
           <form onSubmit={onSubmit} className="mt-6 space-y-4">
             <div>
               <label htmlFor="fp-email" className="block text-sm font-medium text-cyan-100/90 mb-1">
-                Email
+                {tr('labelEmail')}
               </label>
               <input
                 id="fp-email"

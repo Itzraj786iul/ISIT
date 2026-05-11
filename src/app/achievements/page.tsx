@@ -2,16 +2,28 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import Sidebar from '@/components/Sidebar';
-import { Award, BookOpen, Layers, Target, Loader2 } from 'lucide-react';
+import { Award, BookOpen, Layers, Target, Loader2, ChevronRight } from 'lucide-react';
+import { useT, type I18nKey } from '@/lib/t';
 
 type Achievement = {
   id: string;
-  title: string;
-  description: string;
   unlocked: boolean;
   icon: 'award' | 'book' | 'layers' | 'target';
   color: string;
+};
+
+const ACHIEVEMENT_I18N: Record<string, { title: I18nKey; desc: I18nKey }> = {
+  'first-topic': { title: 'achievementFirstTopicTitle', desc: 'achievementFirstTopicDesc' },
+  'topic-master': { title: 'achievementTopicMasterTitle', desc: 'achievementTopicMasterDesc' },
+  'triple-master': { title: 'achievementTripleMasterTitle', desc: 'achievementTripleMasterDesc' },
+  'five-topics': { title: 'achievementKnowledgeBuilderTitle', desc: 'achievementKnowledgeBuilderDesc' },
+  'ten-mastered': { title: 'achievementScholarTitle', desc: 'achievementScholarDesc' },
+  'explore-subjects': { title: 'achievementExplorerTitle', desc: 'achievementExplorerDesc' },
+  'first-session': { title: 'achievementStudySessionTitle', desc: 'achievementStudySessionDesc' },
+  'sessions-10': { title: 'achievementDedicatedLearnerTitle', desc: 'achievementDedicatedLearnerDesc' },
+  'sessions-50': { title: 'achievementMarathonRunnerTitle', desc: 'achievementMarathonRunnerDesc' },
 };
 
 type MasteryRecord = {
@@ -22,6 +34,7 @@ type MasteryRecord = {
 };
 
 export default function AchievementsPage() {
+  const tr = useT();
   const router = useRouter();
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [loading, setLoading] = useState(true);
@@ -52,40 +65,30 @@ export default function AchievementsPage() {
 
         achList.push({
           id: 'first-topic',
-          title: 'First Topic Studied',
-          description: 'Study your first topic',
           unlocked: studiedTopics.length > 0,
           icon: 'book',
           color: '#3b82f6',
         });
         achList.push({
           id: 'topic-master',
-          title: 'Topic Master',
-          description: 'Master a topic (80%+ score)',
           unlocked: masteredTopics.length >= 1,
           icon: 'award',
           color: '#f59e0b',
         });
         achList.push({
           id: 'triple-master',
-          title: 'Triple Master',
-          description: 'Master 3 topics',
           unlocked: masteredTopics.length >= 3,
           icon: 'award',
           color: '#ec4899',
         });
         achList.push({
           id: 'five-topics',
-          title: 'Knowledge Builder',
-          description: 'Study 5 different topics',
           unlocked: studiedTopics.length >= 5,
           icon: 'book',
           color: '#ef4444',
         });
         achList.push({
           id: 'ten-mastered',
-          title: 'Scholar',
-          description: 'Master 10 topics',
           unlocked: masteredTopics.length >= 10,
           icon: 'award',
           color: '#a855f7',
@@ -98,8 +101,6 @@ export default function AchievementsPage() {
 
           achList.push({
             id: 'explore-subjects',
-            title: 'Explorer',
-            description: 'Have subjects available to study',
             unlocked: subjectCount > 0,
             icon: 'layers',
             color: '#6366f1',
@@ -116,24 +117,18 @@ export default function AchievementsPage() {
 
         achList.push({
           id: 'first-session',
-          title: 'Study Session',
-          description: 'Complete your first learning session',
           unlocked: sessionCount >= 1,
           icon: 'target',
           color: '#22c55e',
         });
         achList.push({
           id: 'sessions-10',
-          title: 'Dedicated Learner',
-          description: 'Complete 10 learning sessions',
           unlocked: sessionCount >= 10,
           icon: 'target',
           color: '#0ea5e9',
         });
         achList.push({
           id: 'sessions-50',
-          title: 'Marathon Runner',
-          description: 'Complete 50 learning sessions',
           unlocked: sessionCount >= 50,
           icon: 'award',
           color: '#a855f7',
@@ -159,12 +154,25 @@ export default function AchievementsPage() {
   };
 
   return (
-    <div className="isit-cosmic-bg min-h-screen flex font-sans text-cyan-50 relative">
+    <div className="isit-cosmic-bg relative flex min-h-screen font-sans text-cyan-50">
       <Sidebar />
-      <main className="flex-1 p-4 sm:p-6 md:p-8 min-w-0 overflow-x-hidden">
+      <div className="flex min-w-0 flex-1 flex-col">
+        <header className="shrink-0 border-b border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-950/95">
+          <div className="px-4 py-3 sm:px-6 md:px-8">
+            <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-2 text-sm">
+              <Link href="/dashboard" className="font-medium text-sky-600 hover:underline dark:text-sky-400">
+                {tr('dashboard')}
+              </Link>
+              <ChevronRight className="h-3.5 w-3.5 shrink-0 text-slate-400" aria-hidden />
+              <span className="font-medium text-slate-700 dark:text-slate-200">{tr('achievements')}</span>
+            </nav>
+          </div>
+        </header>
+
+        <main className="min-w-0 flex-1 overflow-x-hidden p-4 sm:p-6 md:p-8">
         <div className="mb-6">
-          <h1 className="text-2xl font-extrabold text-slate-800 tracking-tight">Achievements</h1>
-          <p className="text-slate-500 text-sm mt-1">Unlock badges as you progress</p>
+          <h1 className="text-2xl font-extrabold tracking-tight text-slate-800 dark:text-slate-100">{tr('achievements')}</h1>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{tr('achievementsPageLead')}</p>
         </div>
 
         {loading ? (
@@ -176,52 +184,58 @@ export default function AchievementsPage() {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
               <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
                 <div className="text-3xl font-extrabold text-slate-800">{unlocked}</div>
-                <div className="text-sm text-slate-500 font-medium mt-1">Unlocked</div>
+                <div className="mt-1 text-sm font-medium text-slate-500 dark:text-slate-400">{tr('achievementsSummaryUnlocked')}</div>
               </div>
               <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
                 <div className="text-3xl font-extrabold text-slate-800">{achievements.length}</div>
-                <div className="text-sm text-slate-500 font-medium mt-1">Total Achievements</div>
+                <div className="mt-1 text-sm font-medium text-slate-500 dark:text-slate-400">{tr('achievementsSummaryTotal')}</div>
               </div>
               <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
                 <div className="text-3xl font-extrabold text-slate-800">
                   {achievements.length > 0 ? Math.round((unlocked / achievements.length) * 100) : 0}%
                 </div>
-                <div className="text-sm text-slate-500 font-medium mt-1">Completion</div>
+                <div className="mt-1 text-sm font-medium text-slate-500 dark:text-slate-400">{tr('achievementsSummaryCompletion')}</div>
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {achievements.map((a) => (
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {achievements.map((a) => {
+                const keys = ACHIEVEMENT_I18N[a.id];
+                return (
                 <div
                   key={a.id}
-                  className={`bg-white rounded-xl border p-5 shadow-sm relative ${
+                  className={`relative rounded-xl border bg-white p-5 shadow-sm ${
                     a.unlocked ? 'border-emerald-200' : 'border-slate-200 opacity-60'
                   }`}
                 >
                   {a.unlocked && (
-                    <div className="absolute top-3 right-3 w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center">
-                      <svg className="w-3.5 h-3.5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                    <div className="absolute right-3 top-3 flex h-6 w-6 items-center justify-center rounded-full bg-emerald-500">
+                      <svg className="h-3.5 w-3.5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
                         <polyline points="20 6 9 17 4 12" />
                       </svg>
                     </div>
                   )}
                   <div
-                    className="w-14 h-14 rounded-xl flex items-center justify-center mb-3"
+                    className="mb-3 flex h-14 w-14 items-center justify-center rounded-xl"
                     style={{ backgroundColor: a.color + '20' }}
                   >
                     {renderIcon(a.icon, a.color)}
                   </div>
-                  <h3 className="font-bold text-slate-800">{a.title}</h3>
-                  <p className="text-sm text-slate-500 mt-0.5">{a.description}</p>
-                  <p className={`text-xs mt-2 font-medium ${a.unlocked ? 'text-emerald-600' : 'text-slate-400'}`}>
-                    {a.unlocked ? 'Unlocked' : 'Locked'}
+                  <h3 className="font-bold text-slate-800 dark:text-slate-100">
+                    {keys ? tr(keys.title) : a.id}
+                  </h3>
+                  <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">{keys ? tr(keys.desc) : ''}</p>
+                  <p className={`mt-2 text-xs font-medium ${a.unlocked ? 'text-emerald-600' : 'text-slate-400'}`}>
+                    {a.unlocked ? tr('achievementsBadgeUnlocked') : tr('achievementsBadgeLocked')}
                   </p>
                 </div>
-              ))}
+                );
+              })}
             </div>
           </>
         )}
       </main>
+      </div>
     </div>
   );
 }

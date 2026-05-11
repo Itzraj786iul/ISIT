@@ -5,14 +5,19 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Sidebar from '@/components/Sidebar';
 import { ChevronRight, BookOpen, Video, Mail } from 'lucide-react';
+import { useT } from '@/lib/t';
 
 export default function HelpPage() {
+  const tr = useT();
   const router = useRouter();
 
   useEffect(() => {
     fetch('/api/auth/me', { credentials: 'include' })
       .then(async (r) => {
-        if (!r.ok) { router.push('/login'); return; }
+        if (!r.ok) {
+          router.push('/login');
+          return;
+        }
         const data = await r.json();
         if (data.user?.role?.toLowerCase() === 'teacher') router.push('/teacher/dashboard');
       })
@@ -20,53 +25,64 @@ export default function HelpPage() {
   }, [router]);
 
   return (
-    <div className="isit-cosmic-bg min-h-screen flex font-sans text-cyan-50 relative">
+    <div className="isit-cosmic-bg relative flex min-h-screen font-sans text-cyan-50">
       <Sidebar />
-      <main className="flex-1 p-4 sm:p-6 md:p-8 min-w-0 overflow-x-hidden relative z-[1]">
-        <div className="mb-6">
-          <h1 className="text-2xl font-extrabold text-cyan-50 tracking-tight">Help &amp; support</h1>
-          <p className="text-cyan-100/70 text-sm mt-1">FAQs and how to get in touch</p>
-        </div>
-
-        <div className="max-w-2xl space-y-4">
-          <Link
-            href="/schedule"
-            className="flex items-center justify-between p-4 isit-glass rounded-xl no-underline text-cyan-50 hover:border-cyan-300/40 motion-safe-transition"
-          >
-            <div className="flex items-center gap-3">
-              <Video className="w-5 h-5 text-cyan-400" />
-              <span className="font-medium">How do I join a live class?</span>
-            </div>
-            <ChevronRight className="w-5 h-5 text-cyan-300/50" />
-          </Link>
-          <Link
-            href="/my-courses"
-            className="flex items-center justify-between p-4 isit-glass rounded-xl no-underline text-cyan-50 hover:border-cyan-300/40 motion-safe-transition"
-          >
-            <div className="flex items-center gap-3">
-              <BookOpen className="w-5 h-5 text-cyan-400" />
-              <span className="font-medium">Where are my courses and lessons?</span>
-            </div>
-            <ChevronRight className="w-5 h-5 text-cyan-300/50" />
-          </Link>
-          <div className="p-4 isit-glass rounded-xl">
-            <div className="flex items-center gap-3 mb-2">
-              <Mail className="w-5 h-5 text-cyan-400" />
-              <span className="font-medium text-cyan-50">Contact support</span>
-            </div>
-            <p className="text-sm text-cyan-100/75">
-              Email us at{' '}
-              <a href="mailto:support@isit.in" className="text-cyan-300 hover:underline font-medium">
-                support@isit.in
-              </a>{' '}
-              for help with your account, live classes, or technical issues.
-            </p>
+      <div className="flex min-w-0 flex-1 flex-col">
+        <header className="relative z-[1] shrink-0 border-b border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-950/95">
+          <div className="px-4 py-3 sm:px-6 md:px-8">
+            <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-2 text-sm">
+              <Link href="/dashboard" className="font-medium text-sky-600 hover:underline dark:text-sky-400">
+                {tr('dashboard')}
+              </Link>
+              <ChevronRight className="h-3.5 w-3.5 shrink-0 text-slate-400" aria-hidden />
+              <span className="font-medium text-slate-700 dark:text-slate-200">{tr('help')}</span>
+            </nav>
           </div>
-          <Link href="/dashboard" className="inline-flex items-center gap-2 text-cyan-300 text-sm font-medium hover:underline">
-            <ChevronRight className="w-4 h-4 rotate-180" /> Back to dashboard
-          </Link>
-        </div>
-      </main>
+        </header>
+
+        <main className="relative z-[1] min-w-0 flex-1 overflow-x-hidden p-4 sm:p-6 md:p-8">
+          <div className="mb-6">
+            <h1 className="text-2xl font-extrabold tracking-tight text-cyan-50">{tr('settingsHelpLinkLabel')}</h1>
+            <p className="mt-1 text-sm text-cyan-100/70">{tr('helpPageLead')}</p>
+          </div>
+
+          <div className="max-w-2xl space-y-4">
+            <Link
+              href="/schedule"
+              className="isit-glass motion-safe-transition flex items-center justify-between rounded-xl p-4 text-cyan-50 no-underline hover:border-cyan-300/40"
+            >
+              <div className="flex items-center gap-3">
+                <Video className="h-5 w-5 text-cyan-400" />
+                <span className="font-medium">{tr('helpLiveClass')}</span>
+              </div>
+              <ChevronRight className="h-5 w-5 text-cyan-300/50" />
+            </Link>
+            <Link
+              href="/my-courses"
+              className="isit-glass motion-safe-transition flex items-center justify-between rounded-xl p-4 text-cyan-50 no-underline hover:border-cyan-300/40"
+            >
+              <div className="flex items-center gap-3">
+                <BookOpen className="h-5 w-5 text-cyan-400" />
+                <span className="font-medium">{tr('helpCoursesLessons')}</span>
+              </div>
+              <ChevronRight className="h-5 w-5 text-cyan-300/50" />
+            </Link>
+            <div className="isit-glass rounded-xl p-4">
+              <div className="mb-2 flex items-center gap-3">
+                <Mail className="h-5 w-5 text-cyan-400" />
+                <span className="font-medium text-cyan-50">{tr('helpContactTitle')}</span>
+              </div>
+              <p className="text-sm text-cyan-100/75">{tr('helpContactBody')}</p>
+            </div>
+            <Link
+              href="/dashboard"
+              className="inline-flex items-center gap-2 text-sm font-medium text-cyan-300 hover:underline"
+            >
+              <ChevronRight className="h-4 w-4 rotate-180" /> {tr('helpBackDashboard')}
+            </Link>
+          </div>
+        </main>
+      </div>
     </div>
   );
 }

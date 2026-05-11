@@ -7,10 +7,12 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { X, Info } from 'lucide-react';
+import { useT } from '@/lib/t';
 
 const DISMISS_KEY = 'isit_legacy_marketplace_banner_dismissed';
 
 export default function LegacyMarketplaceBanner() {
+  const tr = useT();
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -26,23 +28,24 @@ export default function LegacyMarketplaceBanner() {
   return (
     <div
       role="note"
-      className="mb-4 flex gap-3 rounded-xl border border-amber-200 bg-amber-50/95 px-4 py-3 text-sm text-amber-950 motion-safe-transition"
+      className="mb-4 flex gap-3 rounded-xl border border-amber-200 bg-amber-50/95 px-4 py-3 text-sm text-amber-950 motion-safe-transition dark:border-amber-500/30 dark:bg-amber-950/40 dark:text-amber-100"
     >
-      <Info className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" aria-hidden />
-      <div className="flex-1 min-w-0">
-        <p className="font-semibold text-amber-900">Course marketplace (legacy)</p>
-        <p className="text-amber-900/90 mt-0.5 leading-snug">
-          Paid courses here are the older catalog. For AI-guided learning by subject and topic, use{' '}
-          <Link href="/subjects" className="font-medium text-amber-800 underline hover:text-amber-950">
-            Subjects
+      <Info className="mt-0.5 h-5 w-5 shrink-0 text-amber-600 dark:text-amber-400" aria-hidden />
+      <div className="min-w-0 flex-1">
+        <p className="font-semibold text-amber-900 dark:text-amber-100">{tr('legacyMarketplaceBannerTitle')}</p>
+        <p className="mt-0.5 leading-snug text-amber-900/90 dark:text-amber-100/90">
+          {tr('legacyMarketplaceBannerLine1')}{' '}
+          {tr('legacyMarketplaceBannerLine2Before')}{' '}
+          <Link href="/subjects" className="font-medium text-amber-800 underline hover:text-amber-950 dark:text-amber-200 dark:hover:text-amber-50">
+            {tr('subjects')}
           </Link>
-          .
+          {tr('legacyMarketplaceBannerLine2After')}
         </p>
       </div>
       <button
         type="button"
-        aria-label="Dismiss"
-        className="p-1 rounded-lg text-amber-700 hover:bg-amber-100/80 shrink-0"
+        aria-label={tr('legacyMarketplaceDismissAria')}
+        className="shrink-0 rounded-lg p-1 text-amber-700 hover:bg-amber-100/80 dark:text-amber-300 dark:hover:bg-amber-900/50"
         onClick={() => {
           try {
             sessionStorage.setItem(DISMISS_KEY, '1');
@@ -52,7 +55,7 @@ export default function LegacyMarketplaceBanner() {
           setVisible(false);
         }}
       >
-        <X className="w-4 h-4" />
+        <X className="h-4 w-4" />
       </button>
     </div>
   );

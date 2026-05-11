@@ -6,13 +6,13 @@ import Footer from '@/components/Footer';
 import PublicNav from '@/components/PublicNav';
 import { RevealOnView, RevealStagger } from '@/components/RevealMotion';
 import { Bot, BookOpen, Brain, ChevronRight, GraduationCap, Rocket, Sparkles, Target, Zap } from 'lucide-react';
+import { useAuth } from '@/lib/auth-context';
+import { useT } from '@/lib/t';
 
 type SubjectItem = {
   _id: string;
   name: string;
 };
-
-type LoggedInUser = { name?: string; email?: string; role?: string };
 
 const PROGRAMS = [
   { title: 'Robotics & Tech', desc: 'Build and code through robotics, AI, and IoT projects.', icon: Bot },
@@ -24,22 +24,10 @@ const PROGRAMS = [
 ];
 
 export default function HomePage() {
+  const { user, loading: authLoading } = useAuth();
+  const tr = useT();
   const [subjects, setSubjects] = useState<SubjectItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState<LoggedInUser | null>(null);
-
-  useEffect(() => {
-    fetch('/api/auth/me', { credentials: 'include' })
-      .then(async (r) => {
-        if (!r.ok) {
-          setUser(null);
-          return;
-        }
-        const data = await r.json();
-        if (data.user) setUser({ name: data.user.name, email: data.user.email, role: data.user.role });
-      })
-      .catch(() => setUser(null));
-  }, []);
 
   useEffect(() => {
     const fetchSubjects = async () => {
@@ -64,6 +52,10 @@ export default function HomePage() {
     return '/dashboard';
   };
 
+  const isAuthed = !authLoading && !!user;
+  const primaryCtaHref = isAuthed ? getDashboardHref() : '/signup';
+  const primaryCtaLabel = isAuthed ? tr('continueLearning') : tr('footerCta');
+
   return (
     <div className="isit-cosmic-bg min-h-screen text-cyan-50">
       <PublicNav active="home" />
@@ -86,14 +78,30 @@ export default function HomePage() {
               Hyper-personalized learning that adapts to pace, curiosity, and thinking style.
               Real understanding. Future-ready skills for life.
             </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link href={user ? getDashboardHref() : '/signup'} className="isit-btn-primary">
-                Try AI Tutor Now
-              </Link>
-              <Link href="/courses" className="isit-btn-secondary">
-                Explore Programs
-              </Link>
-            </div>
+            {authLoading ? (
+              <div className="mt-8 flex flex-wrap gap-3">
+                <div className="h-12 w-48 animate-pulse rounded-full bg-cyan-400/25" aria-hidden />
+                <div className="h-12 w-40 animate-pulse rounded-full bg-slate-700/50" aria-hidden />
+              </div>
+            ) : (
+              <div className="mt-8 flex flex-wrap items-center gap-3">
+                <Link href={primaryCtaHref} className="isit-btn-primary">
+                  {primaryCtaLabel}
+                </Link>
+                <Link href="/how-it-works" className="isit-btn-secondary">
+                  {tr('footerHowItWorksLink')}
+                </Link>
+                <Link href="/subjects" className="isit-btn-secondary border border-cyan-400/25 bg-slate-950/40">
+                  {tr('browseSubjects')}
+                </Link>
+                <Link
+                  href="/courses"
+                  className="text-sm font-medium text-cyan-200/75 underline-offset-4 hover:text-cyan-100 hover:underline"
+                >
+                  {tr('footerCourseCatalogLink')}
+                </Link>
+              </div>
+            )}
             <div className="mt-6 flex flex-wrap gap-3 text-xs text-cyan-100/80">
               <span className="isit-chip">Personalized for every student</span>
               <span className="isit-chip">Aligned with school curriculum</span>
@@ -185,12 +193,21 @@ export default function HomePage() {
           <RevealOnView delayMs={40}>
           <div className="mb-10 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
             <div>
-              <p className="text-xs uppercase tracking-[0.2em] text-cyan-300">Explore our programs</p>
-              <h2 className="mt-2 text-3xl font-black sm:text-5xl">Beyond textbooks. Build skills and mindset.</h2>
+              <p className="text-xs uppercase tracking-[0.2em] text-cyan-300">{tr('homeProgramsEyebrow')}</p>
+              <h2 className="mt-2 text-3xl font-black sm:text-5xl">{tr('homeProgramsTitle')}</h2>
+              <p className="mt-3 max-w-2xl text-sm text-cyan-100/70">{tr('homeProgramsLead')}</p>
             </div>
-            <Link href="/courses" className="isit-btn-secondary motion-safe-transition hover:scale-[1.02] active:scale-[0.98]">
-              View All Programs
-            </Link>
+            <div className="flex flex-col items-start gap-2 sm:items-end">
+              <Link href="/subjects" className="isit-btn-secondary motion-safe-transition hover:scale-[1.02] active:scale-[0.98]">
+                {tr('browseSubjects')}
+              </Link>
+              <Link
+                href="/courses"
+                className="text-sm font-medium text-cyan-200/80 underline-offset-4 hover:text-cyan-100 hover:underline"
+              >
+                {tr('footerCourseCatalogLink')}
+              </Link>
+            </div>
           </div>
           </RevealOnView>
           {loading ? (
@@ -227,11 +244,9 @@ export default function HomePage() {
       <section className="py-14 sm:py-16">
         <RevealOnView>
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
-          <p className="text-xs uppercase tracking-[0.2em] text-cyan-300">Core modules, made simple</p>
-          <h2 className="mt-2 text-3xl font-black sm:text-5xl">Learn how you learn</h2>
-          <p className="mt-3 max-w-3xl text-cyan-100/70">
-            These foundational modules unlock every student&apos;s potential using neuroscience-led and experiential learning.
-          </p>
+          <p className="text-xs uppercase tracking-[0.2em] text-cyan-300">{tr('homeCoreModulesEyebrow')}</p>
+          <h2 className="mt-2 text-3xl font-black sm:text-5xl">{tr('homeCoreModulesTitle')}</h2>
+          <p className="mt-3 max-w-3xl text-cyan-100/70">{tr('homeCoreModulesLead')}</p>
           <div className="mt-8 grid gap-6 md:grid-cols-2">
             <Link href="/courses" className="group block">
               <article className="overflow-hidden rounded-2xl border border-cyan-300/20 bg-slate-900/60 transition hover:border-cyan-300/45">
@@ -244,7 +259,7 @@ export default function HomePage() {
                   <p className="mt-2 text-sm text-cyan-100/70">
                     Understand memory, focus, and learning behavior to perform better.
                   </p>
-                  <p className="mt-4 text-sm font-semibold text-cyan-300">Enroll now -&gt;</p>
+                  <p className="mt-4 text-sm font-semibold text-cyan-300">{tr('footerCourseCatalogLink')} →</p>
                 </div>
               </article>
             </Link>
@@ -259,7 +274,7 @@ export default function HomePage() {
                   <p className="mt-2 text-sm text-cyan-100/70">
                     Science-backed methods including spaced repetition, retrieval practice, and flow.
                   </p>
-                  <p className="mt-4 text-sm font-semibold text-cyan-300">Enroll now -&gt;</p>
+                  <p className="mt-4 text-sm font-semibold text-cyan-300">{tr('footerCourseCatalogLink')} →</p>
                 </div>
               </article>
             </Link>
@@ -299,23 +314,32 @@ export default function HomePage() {
             ))}
           </RevealStagger>
           <RevealOnView delayMs={80} className="mt-12 text-center">
-            <h3 className="text-2xl font-bold">Start your child&apos;s learning journey today</h3>
-            <p className="mt-3 text-sm text-cyan-100/70">
-              {user ? 'Continue from your dashboard and unlock the next milestone.' : 'Join now and experience personalized AI learning.'}
-            </p>
-            <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-              <Link href={user ? getDashboardHref() : '/signup'} className="isit-btn-primary">
-                {user ? 'Go to Dashboard' : 'Try AI Tutor Now'}
-              </Link>
-              <Link href="/subjects" className="isit-btn-secondary">
-                <Target className="mr-2 h-4 w-4" />
-                Explore Subjects
-              </Link>
-              <Link href="/how-it-works" className="isit-btn-secondary">
-                <Brain className="mr-2 h-4 w-4" />
-                How It Works
-              </Link>
-            </div>
+            <h3 className="text-2xl font-bold">{tr('homeFinalCtaTitle')}</h3>
+            {!authLoading && (
+              <p className="mt-3 text-sm text-cyan-100/70">
+                {isAuthed ? tr('homeFinalCtaLeadLoggedIn') : tr('homeFinalCtaLeadLoggedOut')}
+              </p>
+            )}
+            {authLoading ? (
+              <div className="mx-auto mt-6 flex max-w-md flex-wrap justify-center gap-3">
+                <div className="h-12 w-52 animate-pulse rounded-full bg-cyan-400/25" aria-hidden />
+                <div className="h-12 w-44 animate-pulse rounded-full bg-slate-700/45" aria-hidden />
+              </div>
+            ) : (
+              <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+                <Link href={primaryCtaHref} className="isit-btn-primary">
+                  {isAuthed ? tr('goToDashboard') : tr('createFreeAccount')}
+                </Link>
+                <Link href="/subjects" className="isit-btn-secondary">
+                  <Target className="mr-2 h-4 w-4" />
+                  {tr('browseSubjects')}
+                </Link>
+                <Link href="/how-it-works" className="isit-btn-secondary">
+                  <Brain className="mr-2 h-4 w-4" />
+                  {tr('footerHowItWorksLink')}
+                </Link>
+              </div>
+            )}
           </RevealOnView>
         </div>
       </section>

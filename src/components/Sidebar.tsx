@@ -14,11 +14,15 @@ import { useT } from '@/lib/t';
 import { getLearningMode } from '@/lib/learning-mode';
 import type { I18nKey } from '@/lib/t';
 
-const navItems: { iconId: string; href: string; labelKey: I18nKey }[] = [
+/** AI-first order: core path first; marketplace & extras grouped below (Part 4). */
+const primaryNavItems: { iconId: string; href: string; labelKey: I18nKey }[] = [
   { iconId: 'Dashboard', href: '/dashboard', labelKey: 'dashboard' },
-  { iconId: 'AI Tutor', href: '/ai-tutor', labelKey: 'aiTutor' },
-  { iconId: 'My Courses', href: '/my-courses', labelKey: 'myCourses' },
   { iconId: 'Subjects', href: '/subjects', labelKey: 'subjects' },
+  { iconId: 'AI Tutor', href: '/ai-tutor', labelKey: 'aiTutor' },
+];
+
+const moreNavItems: { iconId: string; href: string; labelKey: I18nKey }[] = [
+  { iconId: 'My Courses', href: '/my-courses', labelKey: 'myCourses' },
   { iconId: 'Browse All', href: '/courses', labelKey: 'browseAll' },
   { iconId: 'Analytics', href: '/analytics', labelKey: 'analytics' },
   { iconId: 'Learning Path', href: '/learning-path', labelKey: 'learningPath' },
@@ -135,8 +139,11 @@ export default function Sidebar() {
           </Link>
         )}
 
-        <nav className="flex-1 p-2 flex flex-col gap-0.5 overflow-y-auto w-[min(85vw,260px)] md:w-[220px] min-h-0">
-          {navItems.map((item) => {
+        <nav className="flex min-h-0 flex-1 flex-col gap-0.5 overflow-y-auto p-2 w-[min(85vw,260px)] md:w-[220px]" aria-label="Student navigation">
+          <p className="px-3 pb-1 pt-1 text-[10px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+            {tr('sidebarGroupStart')}
+          </p>
+          {primaryNavItems.map((item) => {
             const active = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
             const color = active ? '#2563eb' : '#64748b';
             return (
@@ -144,7 +151,25 @@ export default function Sidebar() {
                 key={item.href}
                 href={item.href}
                 onClick={() => window.innerWidth < 768 && setOpen(false)}
-                className={`flex items-center gap-3 px-3 py-3 min-h-[44px] rounded-xl text-[13px] font-medium no-underline transition-colors active:scale-[0.99] ${active ? 'bg-sky-50 text-sky-600 dark:bg-sky-950/60 dark:text-sky-400' : 'text-slate-600 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800'}`}
+                className={`flex min-h-[44px] items-center gap-3 rounded-xl px-3 py-3 text-[13px] font-medium no-underline transition-colors active:scale-[0.99] ${active ? 'bg-sky-50 text-sky-600 dark:bg-sky-950/60 dark:text-sky-400' : 'text-slate-600 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800'}`}
+              >
+                <SidebarIcon name={item.iconId} color={color} />
+                <span className="whitespace-nowrap">{tr(item.labelKey)}</span>
+              </Link>
+            );
+          })}
+          <p className="px-3 pb-1 pt-3 text-[10px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+            {tr('sidebarGroupMore')}
+          </p>
+          {moreNavItems.map((item) => {
+            const active = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
+            const color = active ? '#2563eb' : '#64748b';
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => window.innerWidth < 768 && setOpen(false)}
+                className={`flex min-h-[44px] items-center gap-3 rounded-xl px-3 py-3 text-[13px] font-medium no-underline transition-colors active:scale-[0.99] ${active ? 'bg-sky-50 text-sky-600 dark:bg-sky-950/60 dark:text-sky-400' : 'text-slate-600 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800'}`}
               >
                 <SidebarIcon name={item.iconId} color={color} />
                 <span className="whitespace-nowrap">{tr(item.labelKey)}</span>

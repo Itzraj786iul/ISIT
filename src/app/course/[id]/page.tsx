@@ -7,9 +7,12 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { BookOpen, ArrowRight } from 'lucide-react';
+import { BookOpen, ArrowRight, ChevronRight } from 'lucide-react';
 import Footer from '@/components/Footer';
 import PublicNav from '@/components/PublicNav';
+import Sidebar from '@/components/Sidebar';
+import LegacyMarketplaceBanner from '@/components/LegacyMarketplaceBanner';
+import { useT } from '@/lib/t';
 
 type Course = {
   _id: string;
@@ -31,6 +34,7 @@ type EnrolledItem = {
 };
 
 export default function CourseDetailsPage() {
+  const tr = useT();
   const params = useParams();
   const router = useRouter();
   const courseId = params.id as string;
@@ -41,6 +45,8 @@ export default function CourseDetailsPage() {
   const [enrollmentCheckDone, setEnrollmentCheckDone] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [enrolling, setEnrolling] = useState(false);
+  const [viewerResolved, setViewerResolved] = useState(false);
+  const [useStudentChrome, setUseStudentChrome] = useState(false);
 
   useEffect(() => {
     if (!courseId) return;
@@ -66,46 +72,99 @@ export default function CourseDetailsPage() {
     if (!courseId) return;
     setEnrollmentCheckDone(false);
     setEnrollment(null);
+    setViewerResolved(false);
 
     const checkEnrollment = async () => {
       try {
         const meRes = await fetch('/api/auth/me', { credentials: 'include', cache: 'no-store' });
         setIsLoggedIn(meRes.ok);
-        if (!meRes.ok) { setEnrollment(null); setEnrollmentCheckDone(true); return; }
+        if (meRes.ok) {
+          const meData = (await meRes.json()) as { user?: { role?: string } };
+          const role = String(meData.user?.role || '').toLowerCase();
+          setUseStudentChrome(role === 'student');
+        } else {
+          setUseStudentChrome(false);
+        }
+        if (!meRes.ok) {
+          setEnrollment(null);
+          setEnrollmentCheckDone(true);
+          setViewerResolved(true);
+          return;
+        }
         const res = await fetch('/api/student/enrolled-courses', { credentials: 'include', cache: 'no-store' });
-        if (!res.ok) { setEnrollment(null); setEnrollmentCheckDone(true); return; }
+        if (!res.ok) {
+          setEnrollment(null);
+          setEnrollmentCheckDone(true);
+          setViewerResolved(true);
+          return;
+        }
         const enrolled: EnrolledItem[] = await res.json();
         const found = enrolled.find((e) => e.course._id === courseId);
         setEnrollment(found ?? null);
       } catch {
         setEnrollment(null);
         setIsLoggedIn(false);
+        setUseStudentChrome(false);
       } finally {
         setEnrollmentCheckDone(true);
+        setViewerResolved(true);
       }
     };
-    checkEnrollment();
+    void checkEnrollment();
   }, [courseId]);
 
-  if (loading) {
+  if (loading || !viewerResolved) {
     return (
-      <div className="isit-cosmic-bg min-h-screen flex items-center justify-center text-cyan-50">
-        <p className="text-lg font-semibold text-gray-700">Loading...</p>
+      <div className="isit-cosmic-bg flex min-h-screen items-center justify-center text-cyan-50">
+        <p className="text-lg font-semibold text-cyan-200">{tr('courseLoading')}</p>
       </div>
     );
   }
 
   if (!course) {
+    const notFoundBody = (
+      <div className="flex flex-col items-center justify-center gap-4 px-4 py-16 text-center">
+        <p className="text-lg font-semibold text-red-400">{tr('courseNotFound')}</p>
+        <Link href="/courses" className="font-medium text-sky-400 hover:underline">
+          {tr('catalogPageShortTitle')}
+        </Link>
+      </div>
+    );
+    if (useStudentChrome) {
+      return (
+        <div className="isit-cosmic-bg relative flex min-h-screen text-cyan-50">
+          <Sidebar />
+          <div className="flex min-w-0 flex-1 flex-col">
+            <header className="shrink-0 border-b border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-950/95">
+              <div className="px-4 py-3 sm:px-6">
+                <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-2 text-sm">
+                  <Link href="/dashboard" className="font-medium text-sky-600 hover:underline dark:text-sky-400">
+                    {tr('dashboard')}
+                  </Link>
+                  <ChevronRight className="h-3.5 w-3.5 shrink-0 text-slate-400" aria-hidden />
+                  <Link href="/courses" className="font-medium text-sky-600 hover:underline dark:text-sky-400">
+                    {tr('catalogPageShortTitle')}
+                  </Link>
+                </nav>
+              </div>
+            </header>
+            {notFoundBody}
+          </div>
+        </div>
+      );
+    }
     return (
-      <div className="isit-cosmic-bg min-h-screen flex items-center justify-center text-cyan-50">
-        <p className="text-lg font-semibold text-red-500">Course not found</p>
+      <div className="isit-cosmic-bg flex min-h-screen flex-col text-cyan-50">
+        <PublicNav active="courses" />
+        {notFoundBody}
+        <Footer />
       </div>
     );
   }
 
   const handleEnroll = async () => {
     if (!course.lessons || course.lessons.length === 0) {
-      alert('No lessons available yet.');
+      alert(tr('catalogNoLessonsAlert'));
       return;
     }
     if (enrolling) return;
@@ -136,122 +195,168 @@ export default function CourseDetailsPage() {
 
   const lessonCount = course.lessons?.length ?? 0;
 
-  return (
-    <div className="isit-cosmic-bg min-h-screen text-cyan-50">
-      <PublicNav active="courses" />
+  const breadcrumbNav = useStudentChrome ? (
+    <header className="shrink-0 border-b border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-950/95">
+      <div className="mx-auto max-w-7xl px-4 py-3 sm:px-6">
+        <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-2 text-sm">
+          <Link href="/dashboard" className="font-medium text-sky-600 hover:underline dark:text-sky-400">
+            {tr('dashboard')}
+          </Link>
+          <ChevronRight className="h-3.5 w-3.5 shrink-0 text-slate-400" aria-hidden />
+          <Link href="/courses" className="font-medium text-sky-600 hover:underline dark:text-sky-400">
+            {tr('catalogPageShortTitle')}
+          </Link>
+          <ChevronRight className="h-3.5 w-3.5 shrink-0 text-slate-400" aria-hidden />
+          <span className="max-w-[min(100%,12rem)] truncate font-medium text-slate-700 dark:text-slate-200 sm:max-w-md">
+            {course.title}
+          </span>
+        </nav>
+      </div>
+    </header>
+  ) : null;
 
-      <section className="bg-white py-12">
-        <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-3 gap-12">
-          <div className="lg:col-span-2">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-              {course.title}
-            </h1>
+  const mainSection = (
+    <section className="bg-white py-12 dark:bg-slate-950">
+      <div className="mx-auto grid max-w-7xl gap-12 px-6 lg:grid-cols-3">
+        <div className="lg:col-span-2">
+          {useStudentChrome ? (
+            <div className="mb-8">
+              <LegacyMarketplaceBanner />
+            </div>
+          ) : null}
 
-            <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 mb-8">
-              {course.level && (
-                <span className="text-xs text-sky-600 font-bold uppercase">{course.level}</span>
-              )}
-              {course.category && (
-                <span className="bg-slate-100 text-slate-600 px-2.5 py-0.5 rounded-md text-xs font-medium">{course.category}</span>
-              )}
-              <span className="flex items-center gap-1">
-                <BookOpen size={16} />
-                {lessonCount} lesson{lessonCount !== 1 ? 's' : ''}
+          <h1 className="mb-6 text-4xl font-bold text-gray-900 dark:text-slate-100 md:text-5xl">{course.title}</h1>
+
+          <div className="mb-8 flex flex-wrap items-center gap-4 text-sm text-gray-600 dark:text-slate-400">
+            {course.level && (
+              <span className="text-xs font-bold uppercase text-sky-600 dark:text-sky-400">{course.level}</span>
+            )}
+            {course.category && (
+              <span className="rounded-md bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-600 dark:bg-slate-800 dark:text-slate-300">
+                {course.category}
               </span>
-            </div>
-
-            {course.image && (
-              <div className="rounded-2xl overflow-hidden shadow-lg mb-10 bg-slate-200 aspect-video">
-                <img src={course.image} alt={course.title} className="w-full h-full object-cover" />
-              </div>
             )}
-
-            <div className="text-gray-700 space-y-6 leading-relaxed">
-              <p>{course.description}</p>
-            </div>
-
-            {course.lessons && course.lessons.length > 0 && (
-              <div className="mt-10">
-                <h3 className="text-lg font-bold mb-4">Course Content ({lessonCount} lessons)</h3>
-                <div className="bg-slate-50 rounded-xl border border-slate-200 divide-y divide-slate-200">
-                  {course.lessons.map((lesson, idx) => (
-                    <div key={lesson._id} className="px-5 py-3 text-sm text-slate-700 flex items-center gap-3">
-                      <span className="text-slate-400 font-medium w-6 text-right">{idx + 1}.</span>
-                      <span>{lesson.title || `Lesson ${idx + 1}`}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+            <span className="flex items-center gap-1">
+              <BookOpen size={16} />
+              {tr('catalogLessonsCount').replace(/\{count\}/g, String(lessonCount))}
+            </span>
           </div>
 
-          {/* RIGHT PRICING CARD */}
-          <div>
-            <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 sticky top-24">
-              {enrollmentCheckDone && isLoggedIn && enrollment ? (
-                <>
-                  <h2 className="text-xs font-bold text-emerald-600 uppercase mb-2">
-                    {"You're enrolled"}
-                  </h2>
-                  <p className="text-sm text-gray-500 mb-4">
-                    {enrollment.progressPercent > 0
-                      ? `${enrollment.progressPercent}% complete`
-                      : 'Start watching lessons'}
-                  </p>
-                  {continueHref ? (
-                    <Link
-                      href={continueHref}
-                      className="block w-full py-4 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl transition shadow-lg text-center"
-                    >
-                      {enrollment.nextLessonId ? 'Continue learning' : 'Go to course'}
-                    </Link>
-                  ) : (
-                    <Link
-                      href="/my-courses"
-                      className="block w-full py-4 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl transition shadow-lg text-center"
-                    >
-                      View in My Courses
-                    </Link>
-                  )}
-                </>
-              ) : (
-                <>
-                  <h2 className="text-xs font-bold text-sky-500 uppercase mb-2">Enroll Now</h2>
-                  <p className="text-sm text-gray-500 mb-4">Start your learning journey today</p>
-                  <div className="text-4xl font-bold text-gray-900 mb-6">
-                    {course.price === 0 ? 'Free' : `\u20B9${course.price}`}
-                  </div>
-                  <button
-                    type="button"
-                    onClick={handleEnroll}
-                    disabled={enrolling}
-                    className="w-full py-4 bg-sky-600 hover:bg-sky-700 disabled:opacity-70 disabled:cursor-not-allowed text-white font-bold rounded-xl transition shadow-lg"
-                  >
-                    {enrolling ? 'Checking...' : 'Start Learning'}
-                  </button>
-                </>
-              )}
+          {course.image && (
+            <div className="mb-10 aspect-video overflow-hidden rounded-2xl bg-slate-200 shadow-lg">
+              <img src={course.image} alt={course.title} className="h-full w-full object-cover" />
+            </div>
+          )}
 
-              <div className="mt-6 space-y-2 text-sm text-gray-700">
-                <div className="flex items-center gap-2">
-                  <BookOpen size={16} className="text-sky-600" />
-                  {lessonCount} on-demand lessons
+          <div className="space-y-6 leading-relaxed text-gray-700 dark:text-slate-300">
+            <p>{course.description}</p>
+          </div>
+
+          {course.lessons && course.lessons.length > 0 && (
+            <div className="mt-10">
+              <h3 className="mb-4 text-lg font-bold text-gray-900 dark:text-slate-100">
+                {tr('courseContentHeading').replace(/\{count\}/g, String(lessonCount))}
+              </h3>
+              <div className="divide-y divide-slate-200 rounded-xl border border-slate-200 bg-slate-50 dark:divide-slate-700 dark:border-slate-700 dark:bg-slate-900/50">
+                {course.lessons.map((lesson, idx) => (
+                  <div key={lesson._id} className="flex items-center gap-3 px-5 py-3 text-sm text-slate-700 dark:text-slate-300">
+                    <span className="w-6 text-right font-medium text-slate-400">{idx + 1}.</span>
+                    <span>
+                      {lesson.title || tr('courseLessonDefault').replace(/\{n\}/g, String(idx + 1))}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div>
+          <div className="sticky top-24 rounded-2xl border border-gray-100 bg-white p-6 shadow-lg dark:border-slate-700 dark:bg-slate-900 lg:top-28">
+            {enrollmentCheckDone && isLoggedIn && enrollment ? (
+              <>
+                <h2 className="mb-2 text-xs font-bold uppercase text-emerald-600 dark:text-emerald-400">
+                  {tr('courseYoureEnrolled')}
+                </h2>
+                <p className="mb-4 text-sm text-gray-500 dark:text-slate-400">
+                  {enrollment.progressPercent > 0
+                    ? tr('myCoursesPercentComplete').replace(/\{percent\}/g, String(enrollment.progressPercent))
+                    : tr('courseStartWatchingLessons')}
+                </p>
+                {continueHref ? (
+                  <Link
+                    href={continueHref}
+                    className="block w-full rounded-xl bg-emerald-500 py-4 text-center font-bold text-white shadow-lg transition hover:bg-emerald-600"
+                  >
+                    {enrollment.nextLessonId ? tr('continueLearning') : tr('courseGoToCourse')}
+                  </Link>
+                ) : (
+                  <Link
+                    href="/my-courses"
+                    className="block w-full rounded-xl bg-emerald-500 py-4 text-center font-bold text-white shadow-lg transition hover:bg-emerald-600"
+                  >
+                    {tr('courseViewInMyCourses')}
+                  </Link>
+                )}
+              </>
+            ) : (
+              <>
+                <h2 className="mb-2 text-xs font-bold uppercase text-sky-500 dark:text-sky-400">
+                  {tr('courseEnrollNowEyebrow')}
+                </h2>
+                <p className="mb-4 text-sm text-gray-500 dark:text-slate-400">{tr('courseEnrollLead')}</p>
+                <div className="mb-6 text-4xl font-bold text-gray-900 dark:text-slate-100">
+                  {course.price === 0 ? tr('catalogFreePrice') : `\u20B9${course.price}`}
                 </div>
-                <div className="flex items-center gap-2">
-                  <ArrowRight size={16} className="text-sky-600" />
-                  Full lifetime access
-                </div>
-                <div className="flex items-center gap-2">
-                  <ArrowRight size={16} className="text-sky-600" />
-                  Certificate of completion
-                </div>
+                <button
+                  type="button"
+                  onClick={() => void handleEnroll()}
+                  disabled={enrolling}
+                  className="w-full rounded-xl bg-sky-600 py-4 font-bold text-white shadow-lg transition hover:bg-sky-700 disabled:cursor-not-allowed disabled:opacity-70"
+                >
+                  {enrolling ? tr('courseChecking') : tr('startLearning')}
+                </button>
+              </>
+            )}
+
+            <div className="mt-6 space-y-2 text-sm text-gray-700 dark:text-slate-300">
+              <div className="flex items-center gap-2">
+                <BookOpen size={16} className="text-sky-600 dark:text-sky-400" />
+                {tr('courseOnDemandLessons')}
+              </div>
+              <div className="flex items-center gap-2">
+                <ArrowRight size={16} className="text-sky-600 dark:text-sky-400" />
+                {tr('courseLifetimeAccess')}
+              </div>
+              <div className="flex items-center gap-2">
+                <ArrowRight size={16} className="text-sky-600 dark:text-sky-400" />
+                {tr('courseCertificateBlurb')}
               </div>
             </div>
           </div>
         </div>
-      </section>
+      </div>
+    </section>
+  );
 
-      <Footer />
+  return (
+    <div className="isit-cosmic-bg min-h-screen text-cyan-50">
+      {useStudentChrome ? (
+        <div className="relative flex min-h-screen">
+          <Sidebar />
+          <div className="flex min-w-0 flex-1 flex-col">
+            {breadcrumbNav}
+            {mainSection}
+            <Footer />
+          </div>
+        </div>
+      ) : (
+        <>
+          <PublicNav active="courses" />
+          {mainSection}
+          <Footer />
+        </>
+      )}
     </div>
   );
 }

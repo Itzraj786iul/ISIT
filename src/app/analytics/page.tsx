@@ -4,7 +4,18 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Sidebar from '@/components/Sidebar';
-import { BookOpen, Target, TrendingUp, Layers, Clock, Loader2 } from 'lucide-react';
+import { BookOpen, Target, TrendingUp, Layers, Clock, Loader2, ChevronRight } from 'lucide-react';
+import { useT } from '@/lib/t';
+import { useLanguage } from '@/lib/language-context';
+
+const ORDERED_DAY_CODES = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] as const;
+type DayCode = (typeof ORDERED_DAY_CODES)[number];
+
+function formatWeekdayShort(code: DayCode, locale: string): string {
+  const offset = { Mon: 0, Tue: 1, Wed: 2, Thu: 3, Fri: 4, Sat: 5, Sun: 6 }[code];
+  const d = new Date(2024, 0, 1 + offset);
+  return d.toLocaleDateString(locale, { weekday: 'short' });
+}
 
 type MasteryRecord = {
   topic_id: string;
@@ -27,6 +38,9 @@ type SessionItem = {
 };
 
 export default function AnalyticsPage() {
+  const tr = useT();
+  const { language } = useLanguage();
+  const locale = language === 'hi' ? 'hi-IN' : 'en-IN';
   const router = useRouter();
   const [user, setUser] = useState<{ _id?: string; organization_id?: string } | null>(null);
   const [topicsStudied, setTopicsStudied] = useState(0);
@@ -137,12 +151,25 @@ export default function AnalyticsPage() {
   }
 
   return (
-    <div className="isit-cosmic-bg min-h-screen flex font-sans text-cyan-50 relative">
+    <div className="isit-cosmic-bg relative flex min-h-screen font-sans text-cyan-50">
       <Sidebar />
-      <main className="flex-1 p-4 sm:p-6 md:p-8 min-w-0 overflow-x-hidden">
+      <div className="flex min-w-0 flex-1 flex-col">
+        <header className="shrink-0 border-b border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-950/95">
+          <div className="px-4 py-3 sm:px-6 md:px-8">
+            <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-2 text-sm">
+              <Link href="/dashboard" className="font-medium text-sky-600 hover:underline dark:text-sky-400">
+                {tr('dashboard')}
+              </Link>
+              <ChevronRight className="h-3.5 w-3.5 shrink-0 text-slate-400" aria-hidden />
+              <span className="font-medium text-slate-700 dark:text-slate-200">{tr('analytics')}</span>
+            </nav>
+          </div>
+        </header>
+
+        <main className="min-w-0 flex-1 overflow-x-hidden p-4 sm:p-6 md:p-8">
         <div className="mb-6">
-          <h1 className="text-2xl font-extrabold text-slate-800 tracking-tight">Analytics</h1>
-          <p className="text-slate-500 text-sm mt-1">Track your learning performance</p>
+          <h1 className="text-2xl font-extrabold tracking-tight text-slate-800 dark:text-slate-100">{tr('analytics')}</h1>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{tr('analyticsPageLead')}</p>
         </div>
 
         {/* Summary cards */}
@@ -153,7 +180,7 @@ export default function AnalyticsPage() {
             </div>
             <div>
               <div className="text-2xl font-extrabold text-slate-800">{loading ? '...' : topicsStudied}</div>
-              <div className="text-sm text-slate-500 font-medium">Topics Studied</div>
+              <div className="text-sm font-medium text-slate-500 dark:text-slate-400">{tr('analyticsTopicsStudiedLabel')}</div>
             </div>
           </div>
           <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex items-center gap-4">
@@ -162,7 +189,7 @@ export default function AnalyticsPage() {
             </div>
             <div>
               <div className="text-2xl font-extrabold text-slate-800">{loading ? '...' : topicsMastered}</div>
-              <div className="text-sm text-slate-500 font-medium">Topics Mastered</div>
+              <div className="text-sm font-medium text-slate-500 dark:text-slate-400">{tr('analyticsTopicsMasteredLabel')}</div>
             </div>
           </div>
           <Link href="/subjects" className="block no-underline">
@@ -172,7 +199,7 @@ export default function AnalyticsPage() {
               </div>
               <div>
                 <div className="text-2xl font-extrabold text-slate-800">{loading ? '...' : subjectCount}</div>
-                <div className="text-sm text-slate-500 font-medium">Subjects</div>
+                <div className="text-sm font-medium text-slate-500 dark:text-slate-400">{tr('subjects')}</div>
               </div>
             </div>
           </Link>
@@ -182,7 +209,7 @@ export default function AnalyticsPage() {
             </div>
             <div>
               <div className="text-2xl font-extrabold text-slate-800">{loading ? '...' : formatTime(totalLearningMinutes)}</div>
-              <div className="text-sm text-slate-500 font-medium">Learning Time</div>
+              <div className="text-sm font-medium text-slate-500 dark:text-slate-400">{tr('analyticsLearningTimeLabel')}</div>
             </div>
           </div>
         </div>
@@ -191,12 +218,15 @@ export default function AnalyticsPage() {
         <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden mb-6">
           <div className="p-5 border-b border-slate-100 flex items-center justify-between">
             <div>
-              <h3 className="text-base font-bold text-slate-800">Weekly Learning Activity</h3>
-              <p className="text-sm text-slate-500 mt-0.5">Hours studied per day this week</p>
+              <h3 className="text-base font-bold text-slate-800 dark:text-slate-100">{tr('analyticsWeeklyTitle')}</h3>
+              <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">{tr('analyticsWeeklySubtitle')}</p>
             </div>
             <div className="text-right">
-              <div className="text-lg font-bold text-slate-800">{Math.round(totalHoursThisWeek * 10) / 10}h</div>
-              <div className="text-xs text-slate-500">This week</div>
+              <div className="text-lg font-bold text-slate-800 dark:text-slate-100">
+                {Math.round(totalHoursThisWeek * 10) / 10}
+                {tr('analyticsHoursUnit')}
+              </div>
+              <div className="text-xs text-slate-500 dark:text-slate-400">{tr('analyticsThisWeek')}</div>
             </div>
           </div>
           <div className="p-5 space-y-4">
@@ -206,26 +236,31 @@ export default function AnalyticsPage() {
               </div>
             ) : weeklyData.length > 0 ? (
               weeklyData.map((d) => (
-                <div key={d.day} className="w-full flex items-center gap-4">
-                  <span className="w-10 text-sm font-medium text-slate-600">{d.day}</span>
-                  <div className="flex-1 h-8 bg-slate-100 rounded-lg overflow-hidden relative">
+                <div key={d.day} className="flex w-full items-center gap-4">
+                  <span className="w-12 shrink-0 text-sm font-medium text-slate-600 dark:text-slate-300">
+                    {formatWeekdayShort(d.day as DayCode, locale)}
+                  </span>
+                  <div className="relative h-8 flex-1 overflow-hidden rounded-lg bg-slate-100 dark:bg-slate-800">
                     {d.hours > 0 && (
                       <div
-                        className="absolute inset-y-0 left-0 bg-sky-500 rounded-lg transition-all"
+                        className="absolute inset-y-0 left-0 rounded-lg bg-sky-500 transition-all"
                         style={{ width: `${(d.hours / maxHours) * 100}%` }}
                       />
                     )}
                     {d.hours > 0 && (
                       <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-white drop-shadow">
-                        {d.hours}h
+                        {d.hours}
+                        {tr('analyticsHoursUnit')}
                       </span>
                     )}
                   </div>
-                  <span className="w-14 text-right text-sm font-medium text-slate-600">{d.hours} hrs</span>
+                  <span className="w-16 shrink-0 text-right text-sm font-medium text-slate-600 dark:text-slate-300">
+                    {d.hours} {tr('analyticsHrsUnit')}
+                  </span>
                 </div>
               ))
             ) : (
-              <p className="text-slate-500 text-sm text-center py-4">No session data yet. Start learning to see your activity!</p>
+              <p className="py-4 text-center text-sm text-slate-500 dark:text-slate-400">{tr('analyticsNoSessionData')}</p>
             )}
           </div>
         </div>
@@ -233,42 +268,43 @@ export default function AnalyticsPage() {
         {/* Bottom stats */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
-            <h3 className="text-base font-bold text-slate-800 mb-4">Learning Summary</h3>
+            <h3 className="mb-4 text-base font-bold text-slate-800 dark:text-slate-100">{tr('analyticsLearningSummaryTitle')}</h3>
             <div className="flex items-center gap-4">
               <div className="w-20 h-20 rounded-full bg-sky-100 flex items-center justify-center flex-shrink-0">
                 <TrendingUp className="w-10 h-10 text-sky-600" />
               </div>
               <div>
                 <div className="text-2xl font-extrabold text-slate-800">{loading ? '...' : sessionCount}</div>
-                <div className="text-sm text-slate-500 font-medium">Total Sessions</div>
-                <div className="text-xs text-slate-400 mt-1">Across all subjects and topics</div>
+                <div className="text-sm font-medium text-slate-500 dark:text-slate-400">{tr('analyticsTotalSessionsLabel')}</div>
+                <div className="mt-1 text-xs text-slate-400">{tr('analyticsAcrossSubjectsNote')}</div>
               </div>
             </div>
           </div>
 
           <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
-            <h3 className="text-base font-bold text-slate-800 mb-4">Progress Overview</h3>
+            <h3 className="mb-4 text-base font-bold text-slate-800 dark:text-slate-100">{tr('analyticsProgressOverviewTitle')}</h3>
             <ul className="space-y-2 text-sm">
               <li className="flex justify-between">
-                <span className="text-slate-600">Topics Studied</span>
-                <span className="font-semibold text-slate-800">{loading ? '...' : topicsStudied}</span>
+                <span className="text-slate-600 dark:text-slate-400">{tr('analyticsRowTopicsStudied')}</span>
+                <span className="font-semibold text-slate-800 dark:text-slate-100">{loading ? '...' : topicsStudied}</span>
               </li>
               <li className="flex justify-between">
-                <span className="text-slate-600">Topics Mastered</span>
-                <span className="font-semibold text-slate-800">{loading ? '...' : topicsMastered}</span>
+                <span className="text-slate-600 dark:text-slate-400">{tr('analyticsRowTopicsMastered')}</span>
+                <span className="font-semibold text-slate-800 dark:text-slate-100">{loading ? '...' : topicsMastered}</span>
               </li>
               <li className="flex justify-between">
-                <span className="text-slate-600">Learning Time</span>
-                <span className="font-semibold text-slate-800">{loading ? '...' : formatTime(totalLearningMinutes)}</span>
+                <span className="text-slate-600 dark:text-slate-400">{tr('analyticsRowLearningTime')}</span>
+                <span className="font-semibold text-slate-800 dark:text-slate-100">{loading ? '...' : formatTime(totalLearningMinutes)}</span>
               </li>
               <li className="flex justify-between">
-                <span className="text-slate-600">Subjects Available</span>
-                <span className="font-semibold text-slate-800">{loading ? '...' : subjectCount}</span>
+                <span className="text-slate-600 dark:text-slate-400">{tr('analyticsRowSubjectsAvailable')}</span>
+                <span className="font-semibold text-slate-800 dark:text-slate-100">{loading ? '...' : subjectCount}</span>
               </li>
             </ul>
           </div>
         </div>
       </main>
+      </div>
     </div>
   );
 }

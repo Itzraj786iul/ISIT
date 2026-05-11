@@ -20,6 +20,7 @@ import {
   Loader2,
   Zap,
 } from 'lucide-react';
+import Sidebar from '@/components/Sidebar';
 import { sendEvent } from '@/lib/send-session-event';
 import { fetchWithAuth } from '@/lib/api-client';
 import { getLearningMode } from '@/lib/learning-mode';
@@ -122,6 +123,7 @@ export default function TopicLearningPage() {
   const id = params.id as string;
 
   const [topic, setTopic] = useState<Topic | null>(null);
+  const [subjectLabel, setSubjectLabel] = useState<string | null>(null);
   const [videos, setVideos] = useState<VideoItem[]>([]);
   const [notes, setNotes] = useState<TopicNote[]>([]);
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -401,6 +403,27 @@ export default function TopicLearningPage() {
   }, [id]);
 
   useEffect(() => {
+    if (!topic?.subject_id) {
+      setSubjectLabel(null);
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      try {
+        const r = await fetchWithAuth(`/api/subjects/${topic.subject_id}`, { redirectOn401: false });
+        const j = (await r.json()) as { success?: boolean; data?: { name?: string } };
+        if (!cancelled && r.ok && j.success && j.data?.name) setSubjectLabel(String(j.data.name));
+        else if (!cancelled) setSubjectLabel(null);
+      } catch {
+        if (!cancelled) setSubjectLabel(null);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [topic?.subject_id]);
+
+  useEffect(() => {
     if (topic && !loading) pageLoadTimeRef.current = Date.now();
   }, [topic, loading]);
 
@@ -463,11 +486,14 @@ export default function TopicLearningPage() {
 
   if (loading) {
     return (
-      <div className="isit-cosmic-bg min-h-screen text-cyan-50 overflow-x-hidden relative">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 space-y-6">
-          <div className="h-4 w-48 bg-slate-200 dark:bg-slate-800 rounded animate-pulse" />
-          <div className="rounded-2xl bg-gradient-to-br from-slate-200 to-slate-300 dark:from-slate-800 dark:to-slate-900 h-56 sm:h-64 animate-pulse shadow-inner" />
-          <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 h-48 animate-pulse shadow-sm" />
+      <div className="isit-cosmic-bg relative flex min-h-screen overflow-x-hidden font-sans text-cyan-50">
+        <Sidebar />
+        <div className="min-w-0 flex-1">
+          <div className="mx-auto max-w-4xl space-y-6 px-4 py-8 sm:px-6">
+            <div className="h-4 w-48 animate-pulse rounded bg-slate-200 dark:bg-slate-800" />
+            <div className="h-56 animate-pulse rounded-2xl bg-gradient-to-br from-slate-200 to-slate-300 shadow-inner dark:from-slate-800 dark:to-slate-900 sm:h-64" />
+            <div className="h-48 animate-pulse rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-900" />
+          </div>
         </div>
       </div>
     );
@@ -475,13 +501,16 @@ export default function TopicLearningPage() {
 
   if (notFound || !topic) {
     return (
-      <div className="isit-cosmic-bg min-h-screen text-cyan-50 flex flex-col items-center justify-center gap-4 p-4 relative">
-        <AlertCircle className="w-12 h-12 text-slate-400" />
-        <h1 className="text-xl font-semibold text-slate-900">Topic not found</h1>
-        <p className="text-slate-600 text-center">The topic you’re looking for doesn’t exist or was removed.</p>
-        <Link href="/dashboard" className="text-sky-600 font-medium hover:underline">
-          Back to Dashboard
-        </Link>
+      <div className="isit-cosmic-bg relative flex min-h-screen overflow-x-hidden font-sans text-cyan-50">
+        <Sidebar />
+        <main className="flex min-h-[50vh] flex-1 flex-col items-center justify-center gap-4 p-4">
+          <AlertCircle className="h-12 w-12 text-cyan-300/60" />
+          <h1 className="text-xl font-semibold text-cyan-50">{tr('topicNotFoundTitle')}</h1>
+          <p className="text-center text-sm text-cyan-100/75">{tr('topicNotFoundLead')}</p>
+          <Link href="/dashboard" className="font-medium text-sky-400 hover:underline">
+            ← {tr('dashboard')}
+          </Link>
+        </main>
       </div>
     );
   }
@@ -490,30 +519,39 @@ export default function TopicLearningPage() {
   const loginHref = `/login?returnUrl=${encodeURIComponent(`/topic/${id}`)}`;
 
   return (
-    <div className="isit-cosmic-bg min-h-screen text-cyan-50 overflow-x-hidden relative">
-      <header className="bg-white border-b border-slate-200 sticky top-0 z-20">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-3">
-          <div className="flex items-center gap-2 text-sm">
-            <Link href="/dashboard" className="text-sky-600 font-medium hover:underline">
-              Dashboard
-            </Link>
-            <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
-            <Link href="/subjects" className="text-sky-600 font-medium hover:underline">
-              Subjects
-            </Link>
-            {topic.subject_id && (
-              <>
-                <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
-                <Link href={`/subject/${topic.subject_id}`} className="text-sky-600 font-medium hover:underline">
-                  Topics
-                </Link>
-              </>
-            )}
+    <div className="isit-cosmic-bg relative flex min-h-screen overflow-x-hidden font-sans text-cyan-50">
+      <Sidebar />
+      <div className="flex min-w-0 flex-1 flex-col">
+        <header className="sticky top-0 z-20 border-b border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-950/95">
+          <div className="mx-auto max-w-4xl px-4 py-3 sm:px-6">
+            <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-2 text-sm">
+              <Link href="/dashboard" className="font-medium text-sky-600 hover:underline dark:text-sky-400">
+                {tr('dashboard')}
+              </Link>
+              <ChevronRight className="h-3.5 w-3.5 shrink-0 text-slate-400" aria-hidden />
+              <Link href="/subjects" className="font-medium text-sky-600 hover:underline dark:text-sky-400">
+                {tr('subjects')}
+              </Link>
+              {topic.subject_id ? (
+                <>
+                  <ChevronRight className="h-3.5 w-3.5 shrink-0 text-slate-400" aria-hidden />
+                  <Link
+                    href={`/subject/${topic.subject_id}`}
+                    className="max-w-[10rem] truncate font-medium text-sky-600 hover:underline dark:text-sky-400 sm:max-w-xs"
+                  >
+                    {subjectLabel || tr('learningFlowSubjectCrumbFallback')}
+                  </Link>
+                </>
+              ) : null}
+              <ChevronRight className="h-3.5 w-3.5 shrink-0 text-slate-400" aria-hidden />
+              <span className="max-w-[min(100%,12rem)] truncate font-medium text-slate-700 dark:text-slate-200 sm:max-w-md">
+                {topic.topic_name}
+              </span>
+            </nav>
           </div>
-        </div>
-      </header>
+        </header>
 
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 py-8 space-y-10">
+        <main className="mx-auto max-w-4xl space-y-10 px-4 py-8 sm:px-6">
         {/* Hero — session-first */}
         <section className="bg-gradient-to-br from-sky-600 via-blue-600 to-indigo-700 rounded-2xl p-6 sm:p-8 text-white shadow-lg">
           <h1 className="text-2xl sm:text-3xl font-bold leading-tight">{topic.topic_name}</h1>
@@ -524,7 +562,7 @@ export default function TopicLearningPage() {
             {user && (user.role || '').toLowerCase() === 'student' && isTeacherAssigned ? (
               <div className="flex flex-col gap-1">
                 <span className="inline-flex items-center w-fit px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-400/90 text-slate-900 ring-1 ring-amber-200/60">
-                  Assigned by your teacher
+                  {tr('assignedByTeacher')}
                 </span>
                 {teacherAssignmentStatus ? (
                   <span className="text-xs text-sky-100/95 font-medium">
@@ -570,7 +608,7 @@ export default function TopicLearningPage() {
                     className="inline-flex items-center justify-center gap-2 min-h-[44px] bg-white text-indigo-700 font-bold px-6 py-3 rounded-2xl hover:bg-sky-50 transition shadow-md ring-2 ring-white/40"
                   >
                     <Play className="w-5 h-5 shrink-0" />
-                    Resume session
+                    {tr('resumeLearning')}
                   </button>
                 ) : null}
                 {!sessionsLoading && !inProgressSessionId ? (
@@ -581,13 +619,13 @@ export default function TopicLearningPage() {
                     className="inline-flex items-center justify-center gap-2 min-h-[44px] bg-amber-400 text-slate-900 font-bold px-6 py-3 rounded-2xl hover:bg-amber-300 transition shadow-md disabled:opacity-60 disabled:cursor-not-allowed"
                   >
                     {starting ? <Loader2 className="w-5 h-5 animate-spin" /> : <Sparkles className="w-5 h-5 shrink-0" />}
-                    Start learning
+                    {tr('startLearning')}
                   </button>
                 ) : null}
                 {sessionsLoading ? (
                   <span className="inline-flex items-center gap-2 min-h-[44px] text-sm text-sky-100/90">
                     <Loader2 className="w-5 h-5 animate-spin shrink-0" />
-                    Checking sessions…
+                    {tr('learningFlowTopicCheckingSessions')}
                   </span>
                 ) : null}
               </>
@@ -597,7 +635,7 @@ export default function TopicLearningPage() {
                 className="inline-flex items-center justify-center gap-2 min-h-[44px] bg-amber-400 text-slate-900 font-bold px-6 py-3 rounded-2xl hover:bg-amber-300 transition shadow-md no-underline"
               >
                 <Sparkles className="w-5 h-5" />
-                Sign in to start learning
+                {tr('topicHeroSignIn')}
               </Link>
             )}
           </div>
@@ -607,10 +645,10 @@ export default function TopicLearningPage() {
         <section>
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2 mb-4">
             <div>
-              <h2 className="text-lg font-bold text-slate-900">Supplementary materials</h2>
-              <p className="text-sm text-slate-500 mt-0.5">Videos, notes, practice, and assignments — optional alongside your AI session.</p>
+              <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">{tr('learningFlowTopicMaterialsTitle')}</h2>
+              <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">{tr('learningFlowTopicMaterialsLead')}</p>
             </div>
-            <span className="text-xs font-medium text-slate-400 uppercase tracking-wide shrink-0">Optional</span>
+            <span className="shrink-0 text-xs font-medium uppercase tracking-wide text-slate-400">{tr('learningFlowTopicMaterialsBadge')}</span>
           </div>
 
           <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden dark:bg-slate-900 dark:border-slate-700">
@@ -913,6 +951,7 @@ export default function TopicLearningPage() {
           </div>
         </section>
       </main>
+      </div>
     </div>
   );
 }

@@ -5,6 +5,7 @@ import { Heart, Lightbulb, Shield, Users } from 'lucide-react';
 import PublicNav from '@/components/PublicNav';
 import Footer from '@/components/Footer';
 import { RevealOnView, RevealStagger } from '@/components/RevealMotion';
+import { useT } from '@/lib/t';
 
 const VALUES = [
   {
@@ -30,6 +31,8 @@ const VALUES = [
 ];
 
 export default function AboutUsPage() {
+  const tr = useT();
+
   return (
     <div className="isit-cosmic-bg min-h-screen text-cyan-50">
       <PublicNav active="about-us" />
@@ -39,10 +42,9 @@ export default function AboutUsPage() {
           <div className="isit-glass rounded-3xl p-7 sm:p-10">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-300">About ISIC</p>
             <h1 className="mt-3 text-4xl font-black sm:text-5xl">Indian School of Innovation and Curiosity</h1>
-            <p className="mt-5 text-base leading-relaxed text-cyan-100/80">
-              We build AI-powered learning experiences that help students understand deeply, think independently, and create
-              confidently. Our platform combines adaptive tutoring, structured curriculum, and classroom tooling so schools can
-              scale personalization without burning out educators.
+            <p className="mt-5 text-base leading-relaxed text-cyan-100/80">{tr('aboutMissionLead')}</p>
+            <p className="mt-6 border-l-2 border-cyan-400/35 pl-5 text-sm leading-relaxed text-cyan-100/85">
+              {tr('aboutLoopBridge')}
             </p>
             <div className="mt-8 grid gap-4 sm:grid-cols-3">
               {[
@@ -81,15 +83,16 @@ export default function AboutUsPage() {
         <RevealOnView delayMs={80} className="mt-12 isit-glass rounded-3xl p-8 text-center sm:p-10">
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-cyan-300">Next step</p>
           <h2 className="mt-3 text-2xl font-bold text-cyan-50 sm:text-3xl">See ISIC in action</h2>
-          <p className="mx-auto mt-3 max-w-xl text-sm text-cyan-100/75">
-            Explore programs, read how families use the AI tutor, or talk to us about a school rollout.
-          </p>
+          <p className="mx-auto mt-3 max-w-xl text-sm text-cyan-100/75">{tr('aboutNextStepLead')}</p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <Link href="/how-it-works" className="isit-btn-primary no-underline inline-flex min-h-11 items-center px-6">
-              How it works
+              {tr('footerHowItWorksLink')}
+            </Link>
+            <Link href="/stories" className="isit-btn-secondary no-underline inline-flex min-h-11 items-center px-6">
+              {tr('stories')}
             </Link>
             <Link href="/contact" className="isit-btn-secondary no-underline inline-flex min-h-11 items-center px-6">
-              Contact sales
+              {tr('footerContact')}
             </Link>
           </div>
         </RevealOnView>

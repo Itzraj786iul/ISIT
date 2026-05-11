@@ -10,7 +10,7 @@ import Link from 'next/link';
 import type { LastSessionCompleteStats } from '@/lib/session-complete-storage';
 import { readSessionCompleteStats } from '@/lib/session-complete-storage';
 import Sidebar from '@/components/Sidebar';
-import { BookOpen, ChevronRight, Flame, TrendingUp, Target } from 'lucide-react';
+import { BookOpen, Bot, ChevronRight, Library, TrendingUp, Target } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 import { useT } from '@/lib/t';
 import type { LastSessionPayload, MasteryRecord, PerformanceMetricRow, SubjectItem } from './_components/dashboard-types';
@@ -222,34 +222,42 @@ export default function Dashboard() {
             <EmailVerificationBanner email={authUser.email} onResolved={() => refreshAuth({ force: true })} />
           )}
 
-          <section>
-            <div className="bg-gradient-to-br from-sky-500 via-blue-600 to-indigo-700 rounded-2xl p-4 sm:p-6 lg:p-8 text-white shadow-lg">
-              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold leading-tight">
+          <section aria-labelledby="dashboard-welcome">
+            <div className="rounded-2xl bg-gradient-to-br from-sky-500 via-blue-600 to-indigo-700 p-4 text-white shadow-lg sm:p-6 lg:p-8">
+              <p id="dashboard-welcome" className="text-[11px] font-semibold uppercase tracking-[0.18em] text-sky-100/90">
+                {tr('dashboardHeroSnapshot')}
+              </p>
+              <h1 className="mt-2 text-xl font-bold leading-tight sm:text-2xl lg:text-3xl">
                 {getGreeting()}
                 {user?.name ? `, ${user.name.split(' ')[0]}` : ''}
               </h1>
-              <p className="text-sky-100 mt-2 text-sm sm:text-base max-w-xl leading-relaxed">
-                Your dashboard is tuned to topics, sessions, and mastery — continue where you left off or strengthen weak areas.
-              </p>
-              <div className="flex flex-col sm:flex-row flex-wrap gap-3 mt-5 sm:mt-6">
+              <p className="mt-3 max-w-2xl text-sm leading-relaxed text-sky-100 sm:text-base">{tr('dashboardHeroSubtitle')}</p>
+              <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                 <Link
                   href="/subjects"
-                  className="w-full sm:w-auto min-h-[44px] inline-flex items-center justify-center gap-2 rounded-xl bg-white/20 backdrop-blur px-4 py-3 font-bold text-white no-underline hover:bg-white/30 active:scale-[0.98] transition-transform motion-safe-transition"
+                  className="inline-flex min-h-[48px] flex-1 items-center justify-center gap-2 rounded-xl bg-white px-5 py-3 text-base font-bold text-sky-700 no-underline shadow-sm hover:bg-sky-50 active:scale-[0.98] motion-safe-transition sm:flex-none sm:min-w-[200px]"
                 >
-                  <BookOpen className="w-5 h-5 shrink-0" />
-                  <span>{subjects.length} subjects</span>
+                  <BookOpen className="h-5 w-5 shrink-0" />
+                  {tr('dashboardOpenSubjects')}
                 </Link>
                 <Link
-                  href="/analytics"
-                  className="w-full sm:w-auto min-h-[44px] inline-flex items-center justify-center gap-2 rounded-xl bg-white/20 backdrop-blur px-4 py-3 font-bold text-white no-underline hover:bg-white/30 active:scale-[0.98] transition-transform motion-safe-transition"
+                  href="/ai-tutor"
+                  className="inline-flex min-h-[48px] flex-1 items-center justify-center gap-2 rounded-xl border border-white/35 bg-white/15 px-5 py-3 text-base font-semibold text-white no-underline backdrop-blur hover:bg-white/25 active:scale-[0.98] motion-safe-transition sm:flex-none"
                 >
-                  <TrendingUp className="w-5 h-5 shrink-0" />
-                  <span>{topicsInProgress} in progress</span>
+                  <Bot className="h-5 w-5 shrink-0" />
+                  {tr('aiTutor')}
                 </Link>
-                <div className="w-full sm:w-auto min-h-[44px] inline-flex items-center justify-center gap-2 rounded-xl bg-white/15 backdrop-blur px-4 py-3 text-white/95">
-                  <Target className="w-5 h-5 shrink-0" />
-                  <span className="font-bold">{topicsMastered} mastered</span>
-                </div>
+              </div>
+              <div className="mt-5 flex flex-wrap gap-2 text-xs font-medium text-sky-50 sm:text-sm">
+                <span className="rounded-lg bg-black/15 px-3 py-1.5 backdrop-blur">
+                  {subjects.length} {tr('subjects')}
+                </span>
+                <span className="rounded-lg bg-black/15 px-3 py-1.5 backdrop-blur">
+                  {topicsInProgress} {tr('dashboardInProgress')}
+                </span>
+                <span className="rounded-lg bg-black/15 px-3 py-1.5 backdrop-blur">
+                  {topicsMastered} {tr('dashboardMasteredLabel')}
+                </span>
               </div>
             </div>
           </section>
@@ -281,8 +289,6 @@ export default function Dashboard() {
             masteryPercent={masteryPercent}
           />
 
-          <FuturePlaceholders />
-
           <SubjectsGridSection loading={loading} subjects={subjects} />
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
@@ -292,7 +298,7 @@ export default function Dashboard() {
                   href="/analytics"
                   className="text-lg sm:text-xl font-bold text-slate-800 hover:text-sky-600 no-underline truncate dark:text-slate-100"
                 >
-                  Recent topic activity
+                  {tr('dashboardRecentActivity')}
                 </Link>
                 <Link
                   href="/analytics"
@@ -380,44 +386,51 @@ export default function Dashboard() {
 
             <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden dark:bg-slate-900 dark:border-slate-700">
               <div className="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-700">
-                <h2 className="text-lg sm:text-xl font-bold text-slate-800 dark:text-slate-100">Quick actions</h2>
+                <h2 className="text-lg sm:text-xl font-bold text-slate-800 dark:text-slate-100">{tr('dashboardQuickActionsTitle')}</h2>
               </div>
-              <div className="p-4 sm:p-5 space-y-2">
+              <div className="space-y-2 p-4 sm:p-5">
                 <Link
                   href="/subjects"
-                  className="flex items-center gap-3 min-h-[44px] px-4 py-3 rounded-xl bg-sky-50 text-sky-800 hover:bg-sky-100 transition no-underline group active:scale-[0.99] dark:bg-sky-950/40 dark:text-sky-200"
+                  className="group flex min-h-[44px] items-center gap-3 rounded-xl bg-sky-50 px-4 py-3 text-sky-800 transition no-underline hover:bg-sky-100 active:scale-[0.99] dark:bg-sky-950/40 dark:text-sky-200"
                 >
-                  <BookOpen className="w-5 h-5 text-sky-600 shrink-0" />
-                  <span className="font-medium flex-1 min-w-0 text-sm sm:text-base">Explore subjects & topics</span>
-                  <ChevronRight className="w-4 h-4 text-sky-400 group-hover:translate-x-0.5 transition shrink-0" />
+                  <BookOpen className="h-5 w-5 shrink-0 text-sky-600" />
+                  <span className="min-w-0 flex-1 text-sm font-medium sm:text-base">{tr('browseSubjects')}</span>
+                  <ChevronRight className="h-4 w-4 shrink-0 text-sky-400 transition group-hover:translate-x-0.5" />
+                </Link>
+                <Link
+                  href="/ai-tutor"
+                  className="group flex min-h-[44px] items-center gap-3 rounded-xl bg-indigo-50 px-4 py-3 text-indigo-900 transition no-underline hover:bg-indigo-100 active:scale-[0.99] dark:bg-indigo-950/35 dark:text-indigo-100"
+                >
+                  <Bot className="h-5 w-5 shrink-0 text-indigo-600 dark:text-indigo-400" />
+                  <span className="min-w-0 flex-1 text-sm font-medium sm:text-base">{tr('aiTutor')}</span>
+                  <ChevronRight className="h-4 w-4 shrink-0 text-indigo-400 transition group-hover:translate-x-0.5" />
                 </Link>
                 <Link
                   href="/analytics"
-                  className="flex items-center gap-3 min-h-[44px] px-4 py-3 rounded-xl bg-emerald-50 text-emerald-800 hover:bg-emerald-100 transition no-underline group active:scale-[0.99] dark:bg-emerald-950/30 dark:text-emerald-200"
+                  className="group flex min-h-[44px] items-center gap-3 rounded-xl bg-emerald-50 px-4 py-3 text-emerald-900 transition no-underline hover:bg-emerald-100 active:scale-[0.99] dark:bg-emerald-950/30 dark:text-emerald-100"
                 >
-                  <Target className="w-5 h-5 text-emerald-600 shrink-0" />
-                  <span className="font-medium flex-1 min-w-0 text-sm sm:text-base">Analytics & progress</span>
-                  <ChevronRight className="w-4 h-4 text-emerald-400 group-hover:translate-x-0.5 transition shrink-0" />
+                  <TrendingUp className="h-5 w-5 shrink-0 text-emerald-600" />
+                  <span className="min-w-0 flex-1 text-sm font-medium sm:text-base">{tr('analytics')}</span>
+                  <ChevronRight className="h-4 w-4 shrink-0 text-emerald-400 transition group-hover:translate-x-0.5" />
                 </Link>
                 <Link
-                  href="/learning-path"
-                  className="flex items-center gap-3 min-h-[44px] px-4 py-3 rounded-xl bg-violet-50 text-violet-800 hover:bg-violet-100 transition no-underline group active:scale-[0.99] dark:bg-violet-950/30 dark:text-violet-200"
+                  href="/my-courses"
+                  className="group flex min-h-[44px] items-center gap-3 rounded-xl bg-amber-50 px-4 py-3 text-amber-900 transition no-underline hover:bg-amber-100 active:scale-[0.99] dark:bg-amber-950/25 dark:text-amber-100"
                 >
-                  <Flame className="w-5 h-5 text-violet-600 shrink-0" />
-                  <span className="font-medium flex-1 min-w-0 text-sm sm:text-base">Learning path</span>
-                  <ChevronRight className="w-4 h-4 text-violet-400 group-hover:translate-x-0.5 transition shrink-0" />
-                </Link>
-                <Link
-                  href="/analytics"
-                  className="flex items-center gap-3 min-h-[44px] px-4 py-3 rounded-xl bg-amber-50 text-amber-800 hover:bg-amber-100 transition no-underline group active:scale-[0.99] dark:bg-amber-950/30 dark:text-amber-200"
-                >
-                  <TrendingUp className="w-5 h-5 text-amber-600 shrink-0" />
-                  <span className="font-medium flex-1 min-w-0 text-sm sm:text-base">Analytics</span>
-                  <ChevronRight className="w-4 h-4 text-amber-400 group-hover:translate-x-0.5 transition shrink-0" />
+                  <Library className="h-5 w-5 shrink-0 text-amber-700" />
+                  <span className="min-w-0 flex-1 text-sm font-medium sm:text-base">{tr('dashboardQuickMyCourses')}</span>
+                  <ChevronRight className="h-4 w-4 shrink-0 text-amber-400 transition group-hover:translate-x-0.5" />
                 </Link>
               </div>
             </div>
           </div>
+
+          <section className="space-y-3 pt-2 sm:pt-4" aria-labelledby="dashboard-coming-later">
+            <h2 id="dashboard-coming-later" className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+              {tr('sectionComingLater')}
+            </h2>
+            <FuturePlaceholders />
+          </section>
         </div>
       </main>
     </div>

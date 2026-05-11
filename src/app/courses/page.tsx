@@ -6,11 +6,12 @@
  */
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { Search, SlidersHorizontal, BookOpen } from 'lucide-react';
+import { Search, SlidersHorizontal, BookOpen, ChevronRight } from 'lucide-react';
 import PublicNav from '@/components/PublicNav';
 import Footer from '@/components/Footer';
 import LegacyMarketplaceBanner from '@/components/LegacyMarketplaceBanner';
 import { RevealOnView, RevealStagger } from '@/components/RevealMotion';
+import { useT } from '@/lib/t';
 
 type Course = {
   _id: string;
@@ -25,9 +26,10 @@ type Course = {
 };
 
 export default function CoursesPage() {
+  const tr = useT();
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
-  const [loadError, setLoadError] = useState<string | null>(null);
+  const [loadErrorKind, setLoadErrorKind] = useState<'http' | 'network' | null>(null);
 
   const [searchQuery, setSearchQuery] = useState('');
   const [maxPrice, setMaxPrice] = useState(50000);
@@ -37,17 +39,17 @@ export default function CoursesPage() {
 
   useEffect(() => {
     const fetchCourses = async () => {
-      setLoadError(null);
+      setLoadErrorKind(null);
       try {
         const res = await fetch('/api/courses');
         if (res.ok) {
           const data = await res.json();
           setCourses(Array.isArray(data) ? data : []);
         } else {
-          setLoadError('We could not load courses. Please try again.');
+          setLoadErrorKind('http');
         }
       } catch {
-        setLoadError('Network error. Check your connection and try again.');
+        setLoadErrorKind('network');
       } finally {
         setLoading(false);
       }
@@ -109,26 +111,39 @@ export default function CoursesPage() {
     setSortBy('popular');
   };
 
+  const loadErrorMessage =
+    loadErrorKind === 'network' ? tr('catalogNetworkError') : loadErrorKind === 'http' ? tr('catalogLoadError') : null;
+
   return (
-    <div className="isit-cosmic-bg min-h-screen text-cyan-50 flex flex-col">
+    <div className="isit-cosmic-bg flex min-h-screen flex-col text-cyan-50">
       <PublicNav active="courses" />
+
+      <div className="border-b border-cyan-300/15 bg-slate-950/40">
+        <nav aria-label="Breadcrumb" className="mx-auto flex max-w-7xl flex-wrap items-center gap-2 px-4 py-3 text-sm sm:px-6">
+          <Link href="/" className="font-medium text-sky-400 hover:underline">
+            {tr('home')}
+          </Link>
+          <ChevronRight className="h-3.5 w-3.5 shrink-0 text-slate-500" aria-hidden />
+          <span className="font-medium text-cyan-100">{tr('catalogPageShortTitle')}</span>
+        </nav>
+      </div>
 
       {/* ================= HERO SECTION ================= */}
       <section className="pb-10 sm:pb-12 pt-8 sm:pt-10">
         <RevealOnView>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4 sm:mb-6">
-            Unlock Your Potential
+          <h1 className="mb-4 sm:mb-6 text-3xl font-bold text-gray-900 sm:text-4xl md:text-5xl dark:text-slate-100">
+            {tr('catalogHeroTitle')}
           </h1>
-          <p className="text-gray-500 text-base sm:text-lg max-w-2xl mx-auto mb-6 sm:mb-8">
-            Discover thousands of courses taught by expert instructors. Start your journey today.
+          <p className="mx-auto mb-6 max-w-2xl text-base text-gray-500 sm:mb-8 sm:text-lg dark:text-slate-400">
+            {tr('catalogHeroLead')}
           </p>
 
           {/* Search Bar */}
           <div className="max-w-2xl mx-auto relative">
             <input
               type="text"
-              placeholder="Search for courses..."
+              placeholder={tr('catalogSearchPlaceholder')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-12 pr-4 py-4 rounded-xl border border-cyan-300/25 bg-slate-950/70 focus:bg-slate-950/85 shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-400 transition text-cyan-50"
@@ -149,22 +164,24 @@ export default function CoursesPage() {
           <LegacyMarketplaceBanner />
         </div>
 
-        {loadError && (
+        {loadErrorMessage && (
           <div className="lg:col-span-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
-            {loadError}
+            {loadErrorMessage}
           </div>
         )}
 
         {/* ================= FILTER SIDEBAR ================= */}
         <aside className="isit-glass p-4 sm:p-6 rounded-2xl h-fit lg:order-2">
           <div className="flex items-center gap-2 mb-6">
-            <SlidersHorizontal size={18} className="text-slate-600" />
-            <h3 className="font-bold text-lg text-cyan-100">Filters</h3>
+            <SlidersHorizontal size={18} className="text-slate-600 dark:text-slate-400" />
+            <h3 className="text-lg font-bold text-cyan-100">{tr('catalogFiltersTitle')}</h3>
           </div>
 
           {/* Categories */}
           <div className="mb-8">
-            <h4 className="font-semibold mb-4 text-sm text-slate-700 uppercase tracking-wide">Categories</h4>
+            <h4 className="mb-4 text-sm font-semibold uppercase tracking-wide text-slate-700 dark:text-slate-300">
+              {tr('catalogCategoriesHeading')}
+            </h4>
             <div className="space-y-3 text-sm text-slate-600">
               {categoryOptions.map((cat) => (
                 <label key={cat} className="flex items-center gap-3 cursor-pointer hover:text-sky-500 transition">
@@ -182,7 +199,9 @@ export default function CoursesPage() {
 
           {/* Price */}
           <div className="mb-8">
-            <h4 className="font-semibold mb-4 text-sm text-slate-700 uppercase tracking-wide">Price Range</h4>
+            <h4 className="mb-4 text-sm font-semibold uppercase tracking-wide text-slate-700 dark:text-slate-300">
+              {tr('catalogPriceRangeHeading')}
+            </h4>
             <input
               type="range"
               min={0}
@@ -200,20 +219,28 @@ export default function CoursesPage() {
 
           {/* Difficulty */}
           <div className="mb-8">
-            <h4 className="font-semibold mb-4 text-sm text-slate-700 uppercase tracking-wide">Difficulty Level</h4>
+            <h4 className="mb-4 text-sm font-semibold uppercase tracking-wide text-slate-700 dark:text-slate-300">
+              {tr('catalogDifficultyHeading')}
+            </h4>
             <div className="flex flex-wrap gap-2">
-              {(['Beginner', 'Intermediate', 'Advanced'] as const).map((level) => (
+              {(
+                [
+                  { value: 'Beginner' as const, labelKey: 'difficultyBeginner' as const },
+                  { value: 'Intermediate' as const, labelKey: 'difficultyIntermediate' as const },
+                  { value: 'Advanced' as const, labelKey: 'difficultyAdvanced' as const },
+                ] as const
+              ).map(({ value, labelKey }) => (
                 <button
-                  key={level}
+                  key={value}
                   type="button"
-                  onClick={() => setDifficulty((d) => (d === level ? null : level))}
-                  className={`px-4 py-2 text-xs border rounded-full bg-slate-950/70 transition ${
-                    difficulty === level
+                  onClick={() => setDifficulty((d) => (d === value ? null : value))}
+                  className={`rounded-full border bg-slate-950/70 px-4 py-2 text-xs transition ${
+                    difficulty === value
                       ? 'border-cyan-400 text-cyan-100 ring-1 ring-cyan-400/50'
                       : 'border-cyan-300/30 hover:border-cyan-300 hover:text-cyan-200'
                   }`}
                 >
-                  {level}
+                  {tr(labelKey)}
                 </button>
               ))}
             </div>
@@ -222,9 +249,9 @@ export default function CoursesPage() {
           <button
             type="button"
             onClick={clearFilters}
-            className="w-full text-sm border border-gray-200 py-2.5 rounded-xl hover:bg-gray-50 text-gray-600 transition"
+            className="w-full rounded-xl border border-gray-200 py-2.5 text-sm text-gray-600 transition hover:bg-gray-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800/80"
           >
-            Clear All Filters
+            {tr('catalogClearFilters')}
           </button>
         </aside>
 
@@ -234,22 +261,20 @@ export default function CoursesPage() {
           {/* Top Bar */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 sm:mb-8 gap-4">
             <div>
-              <h3 className="text-2xl font-bold text-gray-900">
-                {loading ? 'Loading...' : `${filteredCourses.length} Courses Found`}
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-slate-100">
+                {loading ? tr('catalogResultsLoading') : tr('catalogResultsCount').replace(/\{count\}/g, String(filteredCourses.length))}
               </h3>
-              <p className="text-sm text-gray-500 mt-1">
-                Explore our comprehensive course catalog
-              </p>
+              <p className="mt-1 text-sm text-gray-500 dark:text-slate-400">{tr('catalogResultsLead')}</p>
             </div>
 
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as 'popular' | 'newest' | 'price')}
-              className="border border-cyan-300/30 rounded-xl px-4 py-2 text-sm bg-slate-950/75 shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-400 text-cyan-100 w-full sm:w-auto"
+              className="w-full rounded-xl border border-cyan-300/30 bg-slate-950/75 px-4 py-2 text-sm text-cyan-100 shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-400 sm:w-auto"
             >
-              <option value="popular">Most Popular</option>
-              <option value="newest">Newest</option>
-              <option value="price">Price: Low to High</option>
+              <option value="popular">{tr('catalogSortPopular')}</option>
+              <option value="newest">{tr('catalogSortNewest')}</option>
+              <option value="price">{tr('catalogSortPrice')}</option>
             </select>
           </div>
 
@@ -261,18 +286,18 @@ export default function CoursesPage() {
                ))}
              </div>
           ) : filteredCourses.length === 0 ? (
-             <div className="text-center py-12 bg-slate-950/65 rounded-2xl border border-dashed border-cyan-300/30 px-6">
-                <p className="text-slate-800 font-medium">
-                  {courses.length === 0 ? 'No courses in the catalog yet' : 'No courses match your filters'}
+             <div className="rounded-2xl border border-dashed border-cyan-300/30 bg-slate-950/65 px-6 py-12 text-center">
+                <p className="font-medium text-cyan-100">
+                  {courses.length === 0 ? tr('catalogEmptyNoCourses') : tr('catalogEmptyFiltered')}
                 </p>
-                <p className="text-slate-500 text-sm mt-2 max-w-md mx-auto">
-                  Try AI-first learning by subject instead — pick a topic and start your first session.
+                <p className="mx-auto mt-2 max-w-md text-sm text-slate-300">
+                  {courses.length === 0 ? tr('catalogEmptyNoCoursesLead') : tr('catalogEmptyFilteredLead')}
                 </p>
                 <Link
                   href="/subjects"
-                  className="inline-flex mt-5 btn-primary px-6 py-2.5 no-underline"
+                  className="btn-primary mt-5 inline-flex px-6 py-2.5 no-underline"
                 >
-                  Browse subjects
+                  {tr('browseSubjects')}
                 </Link>
              </div>
           ) : (
@@ -288,16 +313,16 @@ export default function CoursesPage() {
                       {course.title.charAt(0)}
                     </span>
                     {course.createdAt && (Date.now() - new Date(course.createdAt).getTime()) < 30 * 24 * 60 * 60 * 1000 && (
-                      <div className="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-sky-600 shadow-sm">
-                        New
+                      <div className="absolute left-4 top-4 rounded-full bg-white/90 px-3 py-1 text-xs font-bold text-sky-600 shadow-sm backdrop-blur">
+                        {tr('catalogCardNew')}
                       </div>
                     )}
                   </div>
 
                   {/* Content */}
                   <div className="p-6">
-                    <span className="text-xs font-bold text-sky-600 uppercase tracking-wider">
-                      {course.level || 'All Levels'}
+                    <span className="text-xs font-bold uppercase tracking-wider text-sky-600">
+                      {course.level || tr('catalogAllLevels')}
                     </span>
 
                     <h4 className="font-bold text-lg sm:text-xl text-slate-900 mt-2 mb-2 leading-snug">
@@ -316,7 +341,11 @@ export default function CoursesPage() {
                         </span>
                       )}
                       <span className="flex items-center gap-1">
-                        <BookOpen size={14} /> {course.lessonCount ?? course.lessons?.length ?? 0} lessons
+                        <BookOpen size={14} />{' '}
+                        {tr('catalogLessonsCount').replace(
+                          /\{count\}/g,
+                          String(course.lessonCount ?? course.lessons?.length ?? 0)
+                        )}
                       </span>
                     </div>
 
@@ -328,9 +357,9 @@ export default function CoursesPage() {
 
                       <Link
                         href={`/course/${course._id}`}
-                        className="bg-sky-500 text-white px-6 py-2.5 rounded-full text-sm font-medium hover:bg-sky-600 transition shadow-lg shadow-sky-500/20"
+                        className="rounded-full bg-sky-500 px-6 py-2.5 text-sm font-medium text-white shadow-lg shadow-sky-500/20 transition hover:bg-sky-600"
                       >
-                        Enroll Now
+                        {tr('catalogEnrollNow')}
                       </Link>
                     </div>
                   </div>
@@ -343,17 +372,18 @@ export default function CoursesPage() {
       </section>
 
       {/* ================= CTA SECTION (Common Part) ================= */}
-      <section className="py-24 text-center px-6 mt-10">
-        <h2 className="text-3xl font-bold">Start Learning with Confidence</h2>
-        <p className="text-gray-500 mt-4 max-w-2xl mx-auto">
-          Join thousands of students who are already transforming their careers.
-        </p>
-        <div className="mt-10 flex flex-col sm:flex-row justify-center gap-4">
-          <Link href="/signup" className="bg-sky-500 text-white px-8 py-3 rounded-full font-medium hover:bg-sky-600 transition shadow-lg shadow-sky-500/30">
-            Get Started
+      <section className="mt-10 px-6 py-24 text-center">
+        <h2 className="text-3xl font-bold text-slate-100">{tr('catalogCtaTitle')}</h2>
+        <p className="mx-auto mt-4 max-w-2xl text-slate-400">{tr('catalogCtaLead')}</p>
+        <div className="mt-10 flex flex-col justify-center gap-4 sm:flex-row">
+          <Link
+            href="/signup"
+            className="rounded-full bg-sky-500 px-8 py-3 font-medium text-white shadow-lg shadow-sky-500/30 transition hover:bg-sky-600"
+          >
+            {tr('catalogCtaSignup')}
           </Link>
           <Link href="/how-it-works" className="isit-btn-secondary">
-            How it Works
+            {tr('howItWorks')}
           </Link>
         </div>
       </section>

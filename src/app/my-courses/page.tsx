@@ -12,6 +12,7 @@ import Image from 'next/image';
 import Sidebar from '@/components/Sidebar';
 import { BookOpen, ChevronRight, Search } from 'lucide-react';
 import LegacyMarketplaceBanner from '@/components/LegacyMarketplaceBanner';
+import { useT } from '@/lib/t';
 
 type EnrolledItem = {
   course: { _id: string; title: string; description?: string; teacherId?: { name?: string }; image?: string };
@@ -25,6 +26,7 @@ type EnrolledItem = {
 type Filter = 'all' | 'in_progress' | 'completed';
 
 export default function MyCoursesPage() {
+  const tr = useT();
   const router = useRouter();
   const [enrolled, setEnrolled] = useState<EnrolledItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -74,29 +76,43 @@ export default function MyCoursesPage() {
 
   const estimateTimeLeft = (item: EnrolledItem) => {
     const remaining = item.lessonCount - item.completedCount;
-    if (remaining <= 0) return 'Complete';
-    return `${remaining} lesson${remaining !== 1 ? 's' : ''} left`;
+    if (remaining <= 0) return tr('myCoursesCompleteLabel');
+    if (remaining === 1) return tr('myCoursesOneLessonLeft');
+    return tr('myCoursesLessonsLeft').replace(/\{count\}/g, String(remaining));
   };
 
   return (
-    <div className="isit-cosmic-bg min-h-screen flex font-sans text-cyan-50 relative">
+    <div className="isit-cosmic-bg relative flex min-h-screen font-sans text-cyan-50">
       <Sidebar />
-      <main className="flex-1 p-4 sm:p-6 md:p-8 min-w-0 overflow-x-hidden">
+      <div className="flex min-w-0 flex-1 flex-col">
+        <header className="shrink-0 border-b border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-950/95">
+          <div className="px-4 py-3 sm:px-6 md:px-8">
+            <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-2 text-sm">
+              <Link href="/dashboard" className="font-medium text-sky-600 hover:underline dark:text-sky-400">
+                {tr('dashboard')}
+              </Link>
+              <ChevronRight className="h-3.5 w-3.5 shrink-0 text-slate-400" aria-hidden />
+              <span className="font-medium text-slate-700 dark:text-slate-200">{tr('myCourses')}</span>
+            </nav>
+          </div>
+        </header>
+
+        <main className="min-w-0 flex-1 overflow-x-hidden p-4 sm:p-6 md:p-8">
         {/* Search */}
-        <div className="relative max-w-md mb-4">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+        <div className="relative mb-4 max-w-md">
+          <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
           <input
             type="text"
-            placeholder="Search for courses..."
+            placeholder={tr('catalogSearchPlaceholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+            className="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-10 pr-4 text-slate-800 placeholder-slate-400 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
           />
         </div>
 
         <div className="mb-6">
-          <h1 className="text-2xl font-extrabold text-slate-800 tracking-tight">My Courses</h1>
-          <p className="text-slate-500 text-sm mt-1">Track your learning progress</p>
+          <h1 className="text-2xl font-extrabold tracking-tight text-slate-800 dark:text-slate-100">{tr('myCourses')}</h1>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{tr('myCoursesTrackProgress')}</p>
         </div>
 
         <LegacyMarketplaceBanner />
@@ -114,39 +130,37 @@ export default function MyCoursesPage() {
                   : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
               }`}
             >
-              {f === 'all' ? 'All' : f === 'in_progress' ? 'In Progress' : 'Completed'}
+              {f === 'all' ? tr('myCoursesFilterAll') : f === 'in_progress' ? tr('myCoursesFilterInProgress') : tr('myCoursesFilterCompleted')}
             </button>
           ))}
         </div>
 
         {loading ? (
-          <div className="bg-white rounded-xl border border-slate-200 p-12 text-center text-slate-500">
-            Loading...
+          <div className="rounded-xl border border-slate-200 bg-white p-12 text-center text-slate-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400">
+            {tr('myCoursesLoading')}
           </div>
         ) : filtered.length === 0 ? (
-          <div className="bg-white rounded-xl border border-slate-200 p-12 text-center">
-            <BookOpen className="w-12 h-12 text-slate-300 mx-auto mb-4" />
-            <h2 className="text-lg font-semibold text-slate-800 mb-2">
-              {enrolled.length === 0 ? 'No enrolled courses' : 'No courses match your filters'}
+          <div className="rounded-xl border border-slate-200 bg-white p-12 text-center dark:border-slate-700 dark:bg-slate-900">
+            <BookOpen className="mx-auto mb-4 h-12 w-12 text-slate-300" />
+            <h2 className="mb-2 text-lg font-semibold text-slate-800 dark:text-slate-100">
+              {enrolled.length === 0 ? tr('myCoursesEmptyEnrolled') : tr('myCoursesEmptyFiltered')}
             </h2>
-            <p className="text-slate-500 text-sm mb-6 max-w-sm mx-auto">
-              {enrolled.length === 0
-                ? 'No activity here yet. Start your first session from Subjects, or enroll in a legacy course below.'
-                : 'Try a different search or filter.'}
+            <p className="mx-auto mb-6 max-w-sm text-sm text-slate-500 dark:text-slate-400">
+              {enrolled.length === 0 ? tr('myCoursesEmptyEnrolledLead') : tr('myCoursesEmptyFilteredLead')}
             </p>
             {enrolled.length === 0 && (
-              <div className="flex flex-wrap gap-3 justify-center">
+              <div className="flex flex-wrap justify-center gap-3">
                 <Link
                   href="/subjects"
-                  className="inline-flex items-center gap-2 btn-primary px-5 py-2.5 no-underline"
+                  className="btn-primary inline-flex items-center gap-2 px-5 py-2.5 no-underline"
                 >
-                  Start your first session <ChevronRight className="w-4 h-4" />
+                  {tr('myCoursesStartFirstSession')} <ChevronRight className="h-4 w-4" />
                 </Link>
                 <Link
                   href="/courses"
-                  className="inline-flex items-center gap-2 btn-secondary px-5 py-2.5 no-underline"
+                  className="btn-secondary inline-flex items-center gap-2 px-5 py-2.5 no-underline"
                 >
-                  Browse courses
+                  {tr('browseAll')}
                 </Link>
               </div>
             )}
@@ -157,7 +171,7 @@ export default function MyCoursesPage() {
               const instructor =
                 typeof item.course.teacherId === 'object' && item.course.teacherId?.name
                   ? item.course.teacherId.name.toUpperCase()
-                  : 'INSTRUCTOR';
+                  : tr('instructorFallback').toUpperCase();
               return (
                 <div
                   key={item.course._id}
@@ -184,11 +198,13 @@ export default function MyCoursesPage() {
                     <Link href={`/course/${item.course._id}`} className="no-underline">
                       <h3 className="font-bold text-slate-800 mt-0.5 hover:text-sky-600">{item.course.title}</h3>
                     </Link>
-                    <p className="text-sm text-slate-500 mt-0.5 line-clamp-1">
-                      {item.course.description || 'Continue learning'}
+                    <p className="mt-0.5 line-clamp-1 text-sm text-slate-500 dark:text-slate-400">
+                      {item.course.description || tr('continueLearning')}
                     </p>
                     <div className="mt-3 flex items-center justify-between gap-2">
-                      <span className="text-sm font-medium text-slate-600">{item.progressPercent}% complete</span>
+                      <span className="text-sm font-medium text-slate-600 dark:text-slate-300">
+                        {tr('myCoursesPercentComplete').replace(/\{percent\}/g, String(item.progressPercent))}
+                      </span>
                       <span className="text-sm text-slate-500">{estimateTimeLeft(item)}</span>
                     </div>
                     <div className="h-2 bg-slate-100 rounded-full overflow-hidden mt-2">
@@ -201,15 +217,15 @@ export default function MyCoursesPage() {
                       <div className="mt-4 flex flex-col gap-2">
                         <Link
                           href={`/certificate/${item.course._id}`}
-                          className="flex items-center justify-center gap-2 w-full bg-amber-500 text-white py-2.5 rounded-lg text-sm font-semibold hover:bg-amber-600 transition"
+                          className="flex w-full items-center justify-center gap-2 rounded-lg bg-amber-500 py-2.5 text-sm font-semibold text-white transition hover:bg-amber-600"
                         >
-                          View certificate
+                          {tr('myCoursesViewCertificate')}
                         </Link>
                         <Link
                           href={`/course/${item.course._id}`}
-                          className="flex items-center justify-center gap-2 w-full border border-slate-200 text-slate-700 py-2 rounded-lg text-sm font-medium hover:bg-slate-50 transition"
+                          className="flex w-full items-center justify-center gap-2 rounded-lg border border-slate-200 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-800"
                         >
-                          Review course
+                          {tr('myCoursesReviewCourse')}
                         </Link>
                       </div>
                     ) : (
@@ -217,7 +233,7 @@ export default function MyCoursesPage() {
                         href={item.nextLessonId ? `/lesson/${item.nextLessonId}` : `/course/${item.course._id}`}
                         className="mt-4 flex items-center justify-center gap-2 w-full bg-sky-500 text-white py-2.5 rounded-lg text-sm font-semibold hover:bg-sky-600 transition"
                       >
-                        Continue Course <ChevronRight className="w-4 h-4" />
+                        {tr('myCoursesContinueCourse')} <ChevronRight className="h-4 w-4" />
                       </Link>
                     )}
                   </div>
@@ -228,11 +244,12 @@ export default function MyCoursesPage() {
         )}
 
         <div className="mt-8">
-          <Link href="/courses" className="text-sky-600 text-sm font-medium hover:underline">
-            ← Browse all courses
+          <Link href="/courses" className="text-sm font-medium text-sky-600 hover:underline dark:text-sky-400">
+            {tr('myCoursesBrowseAllLink')}
           </Link>
         </div>
       </main>
+      </div>
     </div>
   );
 }

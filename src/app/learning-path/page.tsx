@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Sidebar from '@/components/Sidebar';
-import { Check, Target, Clock, ChevronRight, Layers, Loader2 } from 'lucide-react';
+import { Target, ChevronRight, Layers, Loader2 } from 'lucide-react';
+import { useT } from '@/lib/t';
 
 type SubjectPath = {
   _id: string;
@@ -15,6 +16,7 @@ type SubjectPath = {
 };
 
 export default function LearningPathPage() {
+  const tr = useT();
   const router = useRouter();
   const [paths, setPaths] = useState<SubjectPath[]>([]);
   const [loading, setLoading] = useState(true);
@@ -59,12 +61,25 @@ export default function LearningPathPage() {
   }, [router]);
 
   return (
-    <div className="isit-cosmic-bg min-h-screen flex font-sans text-cyan-50 relative">
+    <div className="isit-cosmic-bg relative flex min-h-screen font-sans text-cyan-50">
       <Sidebar />
-      <main className="flex-1 p-4 sm:p-6 md:p-8 min-w-0 overflow-x-hidden">
+      <div className="flex min-w-0 flex-1 flex-col">
+        <header className="shrink-0 border-b border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-950/95">
+          <div className="px-4 py-3 sm:px-6 md:px-8">
+            <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-2 text-sm">
+              <Link href="/dashboard" className="font-medium text-sky-600 hover:underline dark:text-sky-400">
+                {tr('dashboard')}
+              </Link>
+              <ChevronRight className="h-3.5 w-3.5 shrink-0 text-slate-400" aria-hidden />
+              <span className="font-medium text-slate-700 dark:text-slate-200">{tr('learningPath')}</span>
+            </nav>
+          </div>
+        </header>
+
+        <main className="min-w-0 flex-1 overflow-x-hidden p-4 sm:p-6 md:p-8">
         <div className="mb-6">
-          <h1 className="text-2xl font-extrabold text-slate-800 tracking-tight">Learning Paths</h1>
-          <p className="text-slate-500 text-sm mt-1">Follow structured paths to achieve your goals</p>
+          <h1 className="text-2xl font-extrabold tracking-tight text-slate-800 dark:text-slate-100">{tr('learningPath')}</h1>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{tr('learningPathPageLead')}</p>
         </div>
 
         {loading ? (
@@ -74,8 +89,8 @@ export default function LearningPathPage() {
         ) : paths.length === 0 ? (
           <div className="bg-white rounded-xl border border-slate-200 p-8 text-center">
             <Layers className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-            <p className="text-slate-600 font-medium">No learning paths available yet.</p>
-            <p className="text-slate-500 text-sm mt-1">Paths will appear when subjects are added to your organization.</p>
+            <p className="font-medium text-slate-600 dark:text-slate-300">{tr('learningPathEmptyTitle')}</p>
+            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{tr('learningPathEmptyLead')}</p>
           </div>
         ) : (
           <div className="space-y-6 max-w-4xl">
@@ -92,7 +107,7 @@ export default function LearningPathPage() {
                         <div className="flex flex-wrap gap-4 mt-3">
                           <span className="inline-flex items-center gap-1.5 text-sm text-slate-600">
                             <Target className="w-4 h-4 text-slate-400" />
-                            {totalTopics} topics
+                            {tr('learningPathTopicCount').replace(/\{count\}/g, String(totalTopics))}
                           </span>
                           <span className="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-md font-medium">{path.grade}</span>
                         </div>
@@ -101,7 +116,9 @@ export default function LearningPathPage() {
 
                     {totalTopics > 0 && (
                       <>
-                        <h3 className="text-base font-bold text-slate-800 mt-6 mb-3">Topics</h3>
+                        <h3 className="mt-6 mb-3 text-base font-bold text-slate-800 dark:text-slate-100">
+                          {tr('learningPathTopicsListHeading')}
+                        </h3>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                           {path.topics.map((topic) => (
                             <Link
@@ -122,7 +139,7 @@ export default function LearningPathPage() {
                       href={`/subject/${path._id}`}
                       className="mt-6 flex items-center justify-center gap-2 w-full bg-sky-500 hover:bg-sky-600 text-white font-semibold py-3 rounded-xl transition no-underline"
                     >
-                      View Subject <ChevronRight className="w-5 h-5" />
+                      {tr('learningPathViewSubject')} <ChevronRight className="h-5 w-5" />
                     </Link>
                   </div>
                 </div>
@@ -131,6 +148,7 @@ export default function LearningPathPage() {
           </div>
         )}
       </main>
+      </div>
     </div>
   );
 }

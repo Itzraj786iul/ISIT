@@ -5,30 +5,34 @@ import { Mail, MapPin, Phone, MessageCircle } from 'lucide-react';
 import PublicNav from '@/components/PublicNav';
 import Footer from '@/components/Footer';
 import { RevealOnView, RevealStagger } from '@/components/RevealMotion';
+import { useT } from '@/lib/t';
+
+const supportEmail = process.env.NEXT_PUBLIC_SUPPORT_EMAIL?.trim() || 'hello@isic.in';
 
 export default function ContactPage() {
+  const tr = useT();
+
   return (
-    <div className="isit-cosmic-bg min-h-screen text-cyan-50 flex flex-col">
+    <div className="isit-cosmic-bg flex min-h-screen flex-col text-cyan-50">
       <PublicNav />
 
       <section className="relative flex-1 px-4 py-14 sm:px-6 sm:py-20">
         <div className="mx-auto max-w-5xl">
           <RevealOnView>
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-300">Contact</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-300">{tr('footerContact')}</p>
             <h1 className="mt-3 text-4xl font-black sm:text-5xl">We&apos;re here to help</h1>
-            <p className="mt-4 max-w-2xl text-base text-cyan-100/75">
-              Admissions, partnerships, product questions, or technical support — reach out and our team will respond as soon as possible.
-            </p>
+            <p className="mt-4 max-w-2xl text-base text-cyan-100/75">{tr('contactPageLead')}</p>
+            <p className="mt-3 max-w-2xl text-sm text-cyan-200/65">{tr('contactExpectReply')}</p>
           </RevealOnView>
 
           <RevealStagger className="mt-12 grid gap-6 md:grid-cols-3">
             <a
-              href="mailto:hello@isic.in"
+              href={`mailto:${supportEmail}`}
               className="isit-glass block rounded-2xl p-6 no-underline motion-safe-transition hover:border-cyan-300/40"
             >
               <Mail className="h-8 w-8 text-cyan-400" aria-hidden />
-              <h2 className="mt-4 text-lg font-bold text-cyan-50">Email</h2>
-              <p className="mt-1 text-sm text-cyan-100/70">hello@isic.in</p>
+              <h2 className="mt-4 text-lg font-bold text-cyan-50">{tr('labelEmail')}</h2>
+              <p className="mt-1 text-sm text-cyan-100/70">{supportEmail}</p>
               <p className="mt-3 text-xs text-cyan-300">Best for detailed requests</p>
             </a>
             <a href="tel:+911234567890" className="isit-glass block rounded-2xl p-6 no-underline motion-safe-transition hover:border-cyan-300/40">
@@ -45,23 +49,29 @@ export default function ContactPage() {
             </div>
           </RevealStagger>
 
-          <RevealOnView delayMs={60} className="mt-10 isit-glass rounded-3xl p-8 sm:p-10">
+          <RevealOnView delayMs={60} className="mt-10 rounded-3xl isit-glass p-8 sm:p-10">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
               <MessageCircle className="h-10 w-10 shrink-0 text-cyan-400" aria-hidden />
-              <div>
-                <h2 className="text-xl font-bold text-cyan-50">Students &amp; parents</h2>
-                <p className="mt-2 text-sm text-cyan-100/75 leading-relaxed">
-                  Signed-in learners can use <strong className="text-cyan-100">Help &amp; support</strong> in the app for account and classroom questions.
-                  For sales and school partnerships, use email with “Partnership” in the subject line.
-                </p>
+              <div className="flex-1">
+                <h2 className="text-xl font-bold text-cyan-50">{tr('contactParentsTitle')}</h2>
+                <p className="mt-2 text-sm leading-relaxed text-cyan-100/75">{tr('contactParentsBody')}</p>
+                <p className="mt-4 text-xs leading-relaxed text-cyan-200/70">{tr('contactPartnersHint')}</p>
                 <div className="mt-6 flex flex-wrap gap-3">
                   <Link href="/signup" className="isit-btn-primary no-underline inline-flex min-h-11 items-center px-6">
-                    Create account
+                    {tr('createFreeAccount')}
                   </Link>
                   <Link href="/login" className="isit-btn-secondary no-underline inline-flex min-h-11 items-center px-6">
-                    Sign in
+                    {tr('logIn')}
+                  </Link>
+                  <Link href="/how-it-works" className="isit-btn-secondary no-underline inline-flex min-h-11 items-center border border-cyan-400/25 bg-slate-950/45 px-6">
+                    {tr('footerHowItWorksLink')}
                   </Link>
                 </div>
+                <p className="mt-6 text-sm text-cyan-200/75">
+                  <Link href="/how-it-works" className="font-medium text-cyan-300 underline-offset-2 hover:underline">
+                    {tr('contactSeeHow')}
+                  </Link>
+                </p>
               </div>
             </div>
           </RevealOnView>

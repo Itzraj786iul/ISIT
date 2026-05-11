@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { CreditCard, Wallet, Landmark, CheckCircle } from 'lucide-react';
+import { useT } from '@/lib/t';
 
 function loadRazorpayScript(): Promise<void> {
   if (typeof window === 'undefined') return Promise.resolve();
@@ -33,6 +34,7 @@ type CourseType = {
 };
 
 function CheckoutForm() {
+  const tr = useT();
   const searchParams = useSearchParams();
   const router = useRouter();
   const courseId = searchParams.get('id');
@@ -73,7 +75,7 @@ function CheckoutForm() {
           fetch('/api/student/enrolled-courses', { credentials: 'include' }),
         ]);
         if (!courseRes.ok) {
-          setError('Course not found');
+          setError(tr('courseNotFound'));
           setLoading(false);
           return;
         }
@@ -92,13 +94,13 @@ function CheckoutForm() {
           }
         }
       } catch {
-        setError('Failed to load course');
+        setError(tr('catalogLoadError'));
       } finally {
         setLoading(false);
       }
     };
     run();
-  }, [courseId, router]);
+  }, [courseId, router, tr]);
 
   const handleBillingChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setBilling((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -110,7 +112,7 @@ function CheckoutForm() {
     setError('');
 
     if (!billing.fullName.trim() || !billing.email.trim()) {
-      setError('Please enter your full name and email.');
+      setError(tr('checkoutErrorNameEmail'));
       return;
     }
 
@@ -229,18 +231,18 @@ function CheckoutForm() {
 
   if (loading) {
     return (
-      <div className="isit-cosmic-bg min-h-screen flex items-center justify-center text-cyan-200">
-        <p className="text-sm">Loading…</p>
+      <div className="isit-cosmic-bg flex min-h-screen items-center justify-center text-cyan-200">
+        <p className="text-sm">{tr('checkoutLoading')}</p>
       </div>
     );
   }
 
   if (error && !course) {
     return (
-      <div className="isit-cosmic-bg min-h-screen text-cyan-50 flex flex-col items-center justify-center gap-4 px-4 relative">
-        <p className="text-red-300 text-center text-sm">{error}</p>
-        <Link href="/courses" className="text-cyan-300 font-medium hover:underline">
-          Browse courses
+      <div className="isit-cosmic-bg relative flex min-h-screen flex-col items-center justify-center gap-4 px-4 text-cyan-50">
+        <p className="text-center text-sm text-red-300">{error}</p>
+        <Link href="/courses" className="font-medium text-cyan-300 hover:underline">
+          {tr('checkoutBackToCatalog')}
         </Link>
       </div>
     );
@@ -251,7 +253,7 @@ function CheckoutForm() {
   const instructorName =
     typeof course.teacherId === 'object' && course.teacherId && 'name' in course.teacherId
       ? (course.teacherId as { name?: string }).name
-      : 'Instructor';
+      : tr('instructorFallback');
   const courseImage = course.image || '';
 
   return (
@@ -261,8 +263,8 @@ function CheckoutForm() {
           <Link href="/" className="text-cyan-200 font-bold text-xl no-underline hover:text-cyan-100">
             ISIC
           </Link>
-          <Link href="/courses" className="text-sm text-cyan-200/80 hover:text-cyan-100 no-underline">
-            Back to courses
+          <Link href="/courses" className="text-sm text-cyan-200/80 no-underline hover:text-cyan-100">
+            {tr('checkoutBackToCatalog')}
           </Link>
         </div>
       </header>
@@ -271,8 +273,8 @@ function CheckoutForm() {
         <div className="grid lg:grid-cols-3 gap-10">
           <div className="lg:col-span-2 space-y-8">
             <div>
-              <h2 className="text-3xl font-bold text-gray-900">Checkout</h2>
-              <p className="text-gray-500 mt-2">Complete your purchase securely</p>
+              <h2 className="text-3xl font-bold text-gray-900">{tr('checkoutTitle')}</h2>
+              <p className="mt-2 text-gray-500">{tr('checkoutLead')}</p>
             </div>
 
             <form onSubmit={handleCompletePayment} className="space-y-8">
@@ -282,102 +284,98 @@ function CheckoutForm() {
                 </div>
               )}
 
-              <div className="bg-white rounded-2xl border border-gray-200 p-8 shadow-sm">
-                <h3 className="text-lg font-semibold text-gray-900 mb-6">
-                  Billing Information
-                </h3>
-                <div className="grid md:grid-cols-2 gap-6">
+              <div className="rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
+                <h3 className="mb-6 text-lg font-semibold text-gray-900">{tr('checkoutBillingTitle')}</h3>
+                <div className="grid gap-6 md:grid-cols-2">
                   <div>
-                    <label className="text-sm text-gray-700 block mb-2">Full Name *</label>
+                    <label className="mb-2 block text-sm text-gray-700">{tr('checkoutLabelFullName')}</label>
                     <input
                       name="fullName"
                       required
                       value={billing.fullName}
                       onChange={handleBillingChange}
-                      className="w-full rounded-xl border border-gray-200 px-4 py-3 focus:ring-2 focus:ring-sky-500 focus:outline-none"
-                      placeholder="Your full name"
+                      className="w-full rounded-xl border border-gray-200 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-sky-500"
+                      placeholder={tr('checkoutPlaceholderFullName')}
                     />
                   </div>
                   <div>
-                    <label className="text-sm text-gray-700 block mb-2">Email Address *</label>
+                    <label className="mb-2 block text-sm text-gray-700">{tr('checkoutLabelEmail')}</label>
                     <input
                       name="email"
                       type="email"
                       required
                       value={billing.email}
                       onChange={handleBillingChange}
-                      className="w-full rounded-xl border border-gray-200 px-4 py-3 focus:ring-2 focus:ring-sky-500 focus:outline-none"
-                      placeholder="you@example.com"
+                      className="w-full rounded-xl border border-gray-200 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-sky-500"
+                      placeholder={tr('checkoutPlaceholderEmail')}
                     />
                   </div>
                   <div>
-                    <label className="text-sm text-gray-700 block mb-2">Country</label>
+                    <label className="mb-2 block text-sm text-gray-700">{tr('checkoutLabelCountry')}</label>
                     <select
                       name="country"
                       value={billing.country}
                       onChange={handleBillingChange}
-                      className="w-full rounded-xl border border-gray-200 px-4 py-3 focus:ring-2 focus:ring-sky-500 focus:outline-none"
+                      className="w-full rounded-xl border border-gray-200 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-sky-500"
                     >
-                      <option>India</option>
+                      <option value="India">{tr('checkoutCountryIndia')}</option>
                     </select>
                   </div>
                   <div>
-                    <label className="text-sm text-gray-700 block mb-2">State/Province</label>
+                    <label className="mb-2 block text-sm text-gray-700">{tr('checkoutLabelState')}</label>
                     <input
                       name="state"
                       value={billing.state}
                       onChange={handleBillingChange}
-                      className="w-full rounded-xl border border-gray-200 px-4 py-3 focus:ring-2 focus:ring-sky-500 focus:outline-none"
-                      placeholder="e.g. Noida"
+                      className="w-full rounded-xl border border-gray-200 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-sky-500"
+                      placeholder={tr('checkoutPlaceholderState')}
                     />
                   </div>
                   <div className="md:col-span-2">
-                    <label className="text-sm text-gray-700 block mb-2">ZIP / Postal Code</label>
+                    <label className="mb-2 block text-sm text-gray-700">{tr('checkoutLabelZip')}</label>
                     <input
                       name="zip"
                       value={billing.zip}
                       onChange={handleBillingChange}
-                      className="w-full rounded-xl border border-gray-200 px-4 py-3 focus:ring-2 focus:ring-sky-500 focus:outline-none"
-                      placeholder="e.g. 201304"
+                      className="w-full rounded-xl border border-gray-200 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-sky-500"
+                      placeholder={tr('checkoutPlaceholderZip')}
                     />
                   </div>
                 </div>
               </div>
 
-              <div className="bg-white rounded-2xl border border-gray-200 p-8 shadow-sm">
-                <h3 className="text-lg font-semibold text-gray-900 mb-6">
-                  Payment Method
-                </h3>
+              <div className="rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
+                <h3 className="mb-6 text-lg font-semibold text-gray-900">{tr('checkoutPaymentTitle')}</h3>
                 <div className="space-y-4">
                   <Option
                     selected={paymentMethod === 'card'}
                     onClick={() => setPaymentMethod('card')}
                     icon={<CreditCard size={18} />}
-                    label="Credit / Debit Card"
+                    label={tr('checkoutPayCard')}
                   />
                   <Option
                     selected={paymentMethod === 'upi'}
                     onClick={() => setPaymentMethod('upi')}
                     icon={<span className="text-lg font-bold">₹</span>}
-                    label="UPI"
+                    label={tr('checkoutPayUpi')}
                   />
                   {paymentMethod === 'upi' && (
                     <input
-                      placeholder="UPI ID (e.g. yourname@upi)"
-                      className="w-full rounded-xl border border-gray-200 px-4 py-3 focus:ring-2 focus:ring-sky-500 focus:outline-none"
+                      placeholder={tr('checkoutPlaceholderUpi')}
+                      className="w-full rounded-xl border border-gray-200 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-sky-500"
                     />
                   )}
                   <Option
                     selected={paymentMethod === 'wallet'}
                     onClick={() => setPaymentMethod('wallet')}
                     icon={<Wallet size={18} />}
-                    label="Digital Wallet"
+                    label={tr('checkoutPayWallet')}
                   />
                   <Option
                     selected={paymentMethod === 'bank'}
                     onClick={() => setPaymentMethod('bank')}
                     icon={<Landmark size={18} />}
-                    label="Net Banking"
+                    label={tr('checkoutPayBank')}
                   />
                 </div>
               </div>
@@ -385,9 +383,9 @@ function CheckoutForm() {
               <button
                 type="submit"
                 disabled={paying}
-                className="w-full h-14 rounded-2xl text-white font-semibold text-lg bg-gradient-to-r from-sky-500 to-sky-600 hover:from-sky-600 hover:to-sky-700 shadow-lg shadow-sky-500/30 transition disabled:opacity-60 disabled:cursor-not-allowed"
+                className="h-14 w-full rounded-2xl bg-gradient-to-r from-sky-500 to-sky-600 text-lg font-semibold text-white shadow-lg shadow-sky-500/30 transition hover:from-sky-600 hover:to-sky-700 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                {paying ? 'Processing...' : 'Complete Payment'}
+                {paying ? tr('checkoutProcessing') : tr('checkoutCompletePayment')}
               </button>
             </form>
           </div>
@@ -405,25 +403,25 @@ function CheckoutForm() {
               <div className="p-6">
                 <h3 className="font-semibold text-gray-900 text-lg">{course.title}</h3>
                 <p className="text-sm text-gray-500 mt-2 line-clamp-2">{course.description}</p>
-                <p className="text-xs text-gray-400 mt-1">by {instructorName}</p>
+                <p className="mt-1 text-xs text-gray-400">{tr('checkoutByInstructor').replace(/\{name\}/g, instructorName ?? '')}</p>
                 <div className="mt-6 space-y-3 border-t border-gray-200 pt-4 text-sm">
                   <div className="flex justify-between text-xl font-bold">
-                    <span>Total</span>
+                    <span>{tr('checkoutTotal')}</span>
                     <span className="text-sky-600">₹{course.price}</span>
                   </div>
                 </div>
-                <div className="mt-6 text-xs text-gray-500 space-y-2">
+                <div className="mt-6 space-y-2 text-xs text-gray-500">
                   <div className="flex items-center gap-2">
                     <CheckCircle size={14} className="text-sky-500" />
-                    Secured by 256-bit SSL Encryption
+                    {tr('checkoutTrustSsl')}
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle size={14} className="text-sky-500" />
-                    30-day money-back guarantee
+                    {tr('checkoutTrustRefund')}
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle size={14} className="text-sky-500" />
-                    Lifetime access to course materials
+                    {tr('checkoutTrustLifetime')}
                   </div>
                 </div>
               </div>
@@ -435,13 +433,18 @@ function CheckoutForm() {
   );
 }
 
+function CheckoutSuspenseFallback() {
+  const tr = useT();
+  return (
+    <div className="isit-cosmic-bg flex min-h-screen items-center justify-center text-cyan-200">
+      <p className="text-sm">{tr('checkoutLoading')}</p>
+    </div>
+  );
+}
+
 export default function CheckoutPage() {
   return (
-    <Suspense fallback={
-      <div className="isit-cosmic-bg min-h-screen flex items-center justify-center text-cyan-200">
-        <p className="text-sm">Loading…</p>
-      </div>
-    }>
+    <Suspense fallback={<CheckoutSuspenseFallback />}>
       <CheckoutForm />
     </Suspense>
   );

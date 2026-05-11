@@ -8,7 +8,7 @@ import dynamic from 'next/dynamic';
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ChevronDown, ChevronUp, Bot } from 'lucide-react';
+import { ChevronDown, ChevronUp, Bot, ChevronLeft } from 'lucide-react';
 import SessionHeader from './_components/SessionHeader';
 import LearningPanel, { type PlayerQuestion } from './_components/LearningPanel';
 import type { TutorTab } from './_components/AITutorPanel';
@@ -22,6 +22,7 @@ import { sendEvent } from '@/lib/send-session-event';
 import { fetchWithAuth } from '@/lib/api-client';
 import { writeSessionCompleteStats } from '@/lib/session-complete-storage';
 import { fetchSessionById, postSessionEnd } from '@/lib/session-api';
+import { useT } from '@/lib/t';
 
 type SessionPayload = {
   _id?: string;
@@ -80,6 +81,7 @@ export default function SessionPlayerPage() {
   const params = useParams();
   const router = useRouter();
   const sessionId = params.id as string;
+  const tr = useT();
 
   const [session, setSession] = useState<SessionPayload | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -376,6 +378,17 @@ export default function SessionPlayerPage() {
 
   return (
     <div className="h-[100dvh] min-h-0 flex flex-col isit-cosmic-bg overflow-hidden overflow-x-hidden relative">
+      {topicIdStr ? (
+        <div className="shrink-0 border-b border-cyan-400/20 bg-slate-950/90 px-3 py-2 sm:px-4">
+          <Link
+            href={`/topic/${topicIdStr}`}
+            className="inline-flex max-w-full items-center gap-1.5 text-sm font-medium text-cyan-200 transition hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400 no-underline"
+          >
+            <ChevronLeft className="h-4 w-4 shrink-0" aria-hidden />
+            <span className="truncate">{tr('sessionBackToTopic')}</span>
+          </Link>
+        </div>
+      ) : null}
       <SessionHeader
         topicName={topicTitle}
         timerLabel={formatTimer(elapsedSec)}

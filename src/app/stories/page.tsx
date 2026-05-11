@@ -1,173 +1,156 @@
 'use client';
 
 import Link from 'next/link';
-import { Users, Award, TrendingUp, Star, MapPin, Briefcase, Quote } from 'lucide-react';
+import { Users, Award, MapPin, Quote, Clock, Layers } from 'lucide-react';
 import PublicNav from '@/components/PublicNav';
 import Footer from '@/components/Footer';
 import { RevealOnView, RevealStagger } from '@/components/RevealMotion';
+import { useT } from '@/lib/t';
+
+type Story = {
+  id: number;
+  name: string;
+  role: string;
+  focus: string;
+  tag: string;
+  quote: string;
+};
+
+const STORIES: Story[] = [
+  {
+    id: 1,
+    name: 'Neha K.',
+    role: 'Parent · Pune',
+    focus: 'Class 9 · Mathematics confidence',
+    tag: 'Curriculum practice',
+    quote:
+      'Evenings used to be fights over homework. Now she opens the topic she saw in class and the tutor explains it in smaller steps — without replacing her teacher.',
+  },
+  {
+    id: 2,
+    name: 'Arjun M.',
+    role: 'Student · Bengaluru',
+    focus: 'Science · Exam season',
+    tag: 'Pace & clarity',
+    quote:
+      'I still make mistakes, but I see why now. Sessions feel like practice with someone patient — not another long video to finish.',
+  },
+  {
+    id: 3,
+    name: 'Meera & Vikram S.',
+    role: 'Parents · New Delhi',
+    focus: 'Two learners · One household',
+    tag: 'Family visibility',
+    quote:
+      'We wanted both kids on one rhythm without micromanaging. The dashboard shows where time goes — we celebrate streaks instead of nagging.',
+  },
+];
 
 export default function StoriesPage() {
-  
-  const stories = [
-    {
-      id: 1,
-      name: "Arjun Mehta",
-      location: "Mumbai, India",
-      course: "Full Stack Web Development",
-      outcome: "Software Engineer at a leading tech firm",
-      salaryGrowth: "60% Salary Hike",
-      image: "AM",
-      quote: "The project-based learning approach helped me build real-world skills. The mentors were incredibly supportive throughout my journey."
-    },
-    {
-      id: 2,
-      name: "Priya Sharma",
-      location: "New Delhi, India",
-      course: "Data Science & Analytics",
-      outcome: "Data Analyst at a Fortune 500 company",
-      salaryGrowth: "50% Salary Hike",
-      image: "PS",
-      quote: "I went from knowing nothing about Python to building complex ML models in just 6 months. The structured curriculum made all the difference."
-    },
-    {
-      id: 3,
-      name: "Rohan Verma",
-      location: "Bangalore, India",
-      course: "Cloud Computing",
-      outcome: "DevOps Engineer at a top cloud provider",
-      salaryGrowth: "70% Salary Hike",
-      image: "RV",
-      quote: "The hands-on labs gave me the confidence to handle production environments from day one."
-    }
+  const tr = useT();
+
+  const stats = [
+    { Icon: Clock, value: tr('storiesStatValueAlwaysOn'), label: tr('storiesStatLabelAlwaysOn') },
+    { Icon: Layers, value: tr('storiesStatValueLoop'), label: tr('storiesStatLabelLoop') },
+    { Icon: Award, value: tr('storiesStatValueCoverage'), label: tr('storiesStatLabelCoverage') },
+    { Icon: Users, value: tr('storiesStatValueTogether'), label: tr('storiesStatLabelTogether') },
   ];
 
   return (
-    <div className="isit-cosmic-bg min-h-screen text-cyan-50 flex flex-col">
+    <div className="isit-cosmic-bg flex min-h-screen flex-col text-cyan-50">
       <PublicNav active="stories" />
 
-      {/* ================= HERO / STATS SECTION ================= */}
-      <section className="pt-10 sm:pt-16 pb-8 sm:pb-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+      <section className="pb-8 pt-10 sm:pb-12 sm:pt-16">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <RevealOnView>
-            <div className="text-center mb-8 sm:mb-12">
-              <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Success Stories</h1>
-              <p className="text-lg text-cyan-100/75 max-w-2xl mx-auto">
-                Real career transformations. Real results. See how our students are changing their lives with ISIC.
-              </p>
+            <div className="mb-8 text-center sm:mb-12">
+              <h1 className="mb-4 text-4xl font-bold text-cyan-50 md:text-5xl">{tr('storiesHeroTitle')}</h1>
+              <p className="mx-auto max-w-2xl text-lg text-cyan-100/75">{tr('storiesHeroLead')}</p>
             </div>
           </RevealOnView>
 
-          {/* Stats Grid */}
-          <RevealStagger className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-8 border-t border-cyan-300/20 pt-8 sm:pt-12">
-            {[
-              { value: "Growing", label: "Active Learners", icon: Users },
-              { value: "High", label: "Success Rate", icon: Award },
-              { value: "Significant", label: "Avg Career Growth", icon: TrendingUp },
-              { value: "Top Rated", label: "Student Satisfaction", icon: Star },
-            ].map((stat, i) => (
-              <div key={i} className="text-center group">
-                <div className="flex justify-center mb-4">
-                  <div className="w-12 h-12 bg-cyan-400/15 text-cyan-300 rounded-full border border-cyan-300/25 flex items-center justify-center group-hover:bg-cyan-400/30 transition">
-                    <stat.icon size={24} />
+          <RevealStagger className="grid grid-cols-2 gap-4 border-t border-cyan-300/20 pt-8 sm:grid-cols-4 sm:gap-8 sm:pt-12">
+            {stats.map(({ Icon, value, label }) => (
+              <div key={label} className="group text-center">
+                <div className="mb-4 flex justify-center">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full border border-cyan-300/25 bg-cyan-400/15 text-cyan-300 transition group-hover:bg-cyan-400/30">
+                    <Icon size={24} aria-hidden />
                   </div>
                 </div>
-                <h3 className="text-3xl md:text-4xl font-bold text-cyan-100 mb-2">{stat.value}</h3>
-                <p className="text-sm text-cyan-100/75">{stat.label}</p>
+                <h3 className="mb-2 text-2xl font-bold text-cyan-100 md:text-3xl">{value}</h3>
+                <p className="text-sm text-cyan-100/75">{label}</p>
               </div>
             ))}
           </RevealStagger>
         </div>
       </section>
 
-      {/* ================= STORIES GRID ================= */}
       <section className="py-12 sm:py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <RevealOnView>
-          <div className="text-center mb-10 sm:mb-16">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3 sm:mb-4">Hear From Our Successful Students</h2>
-            <p className="text-cyan-100/75 max-w-2xl mx-auto text-sm sm:text-base">
-              Join thousands of students who have transformed their careers through our practical, industry-focused courses.
-            </p>
-          </div>
+            <div className="mb-10 text-center sm:mb-16">
+              <h2 className="mb-3 text-2xl font-bold text-cyan-50 sm:mb-4 sm:text-3xl">{tr('storiesSectionTitle')}</h2>
+              <p className="mx-auto max-w-2xl text-sm text-cyan-100/75 sm:text-base">{tr('storiesSectionLead')}</p>
+            </div>
           </RevealOnView>
 
-          <RevealStagger className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-            {stories.map((story) => (
-              <div key={story.id} className="isit-glass rounded-xl sm:rounded-2xl p-5 sm:p-8 flex flex-col h-full motion-safe-transition duration-300 hover:shadow-xl hover:-translate-y-1 hover:border-cyan-300/35">
-                
-                {/* Header: Avatar & Name */}
-                <div className="flex items-start justify-between mb-6">
-                  <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 bg-cyan-400/20 text-cyan-200 rounded-full border border-cyan-300/25 flex items-center justify-center font-bold text-xl">
-                      {story.image}
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-bold text-cyan-100">{story.name}</h3>
-                      <div className="flex items-center gap-1 text-xs text-cyan-100/70">
-                        <MapPin size={12} /> {story.location}
-                      </div>
+          <RevealStagger className="grid grid-cols-1 gap-6 sm:gap-8 md:grid-cols-2 lg:grid-cols-3">
+            {STORIES.map((story) => (
+              <article
+                key={story.id}
+                className="isit-glass flex h-full flex-col rounded-xl p-5 motion-safe-transition duration-300 hover:-translate-y-1 hover:border-cyan-300/35 hover:shadow-xl sm:rounded-2xl sm:p-8"
+              >
+                <div className="mb-6 flex items-start justify-between gap-3">
+                  <div>
+                    <h3 className="text-lg font-bold text-cyan-100">{story.name}</h3>
+                    <div className="mt-1 flex items-center gap-1 text-xs text-cyan-100/70">
+                      <MapPin size={12} aria-hidden />
+                      {story.role}
                     </div>
                   </div>
-                  <Quote className="text-cyan-300/35" size={40} />
+                  <Quote className="h-9 w-9 shrink-0 text-cyan-300/40" aria-hidden />
                 </div>
 
-                {/* Course Info */}
-                <div className="bg-slate-900/70 rounded-xl border border-cyan-300/20 p-4 mb-6">
-                  <p className="text-xs font-bold text-cyan-300 uppercase tracking-wider mb-1">Course</p>
-                  <p className="font-semibold text-cyan-100">{story.course}</p>
+                <div className="mb-5 rounded-xl border border-cyan-300/20 bg-slate-900/70 p-4">
+                  <p className="mb-1 text-[11px] font-bold uppercase tracking-wider text-cyan-300">Focus</p>
+                  <p className="font-semibold text-cyan-100">{story.focus}</p>
+                  <span className="mt-3 inline-block rounded-full border border-cyan-400/25 bg-slate-950/60 px-3 py-1 text-[11px] font-semibold text-cyan-200/90">
+                    {story.tag}
+                  </span>
                 </div>
 
-                {/* Outcome */}
-                <div className="mb-6">
-                   <p className="text-xs font-bold text-sky-500 uppercase tracking-wider mb-1">Now at</p>
-                   <div className="flex items-center gap-2 mb-2">
-                      <Briefcase size={18} className="text-cyan-200/80" />
-                      <h4 className="font-bold text-lg text-cyan-100">{story.outcome}</h4>
-                   </div>
-                   <div className="flex items-center gap-2 text-sm font-medium text-green-600">
-                      <TrendingUp size={16} />
-                      {story.salaryGrowth}
-                   </div>
-                </div>
-
-                {/* Testimonial Quote */}
-                <p className="text-cyan-100/75 italic text-sm mt-auto pt-4 border-t border-cyan-300/20">
-                  "{story.quote}"
-                </p>
-              </div>
+                <blockquote className="mt-auto border-t border-cyan-300/20 pt-4 text-sm italic leading-relaxed text-cyan-100/80">
+                  &ldquo;{story.quote}&rdquo;
+                </blockquote>
+              </article>
             ))}
           </RevealStagger>
         </div>
       </section>
 
-      {/* ================= FEATURED STORY (Large CTA Area) ================= */}
-      <section className="py-20 px-6">
-        <div className="max-w-7xl mx-auto">
-           <RevealOnView delayMs={50}>
-           <div className="bg-gradient-to-r from-cyan-600/35 to-blue-600/35 border border-cyan-300/25 rounded-3xl p-10 md:p-16 text-center text-white relative overflow-hidden motion-safe-transition hover:border-cyan-300/40">
-              {/* Decorative Circles */}
-              <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-300 opacity-10 rounded-full -mr-20 -mt-20"></div>
-              <div className="absolute bottom-0 left-0 w-48 h-48 bg-cyan-300 opacity-10 rounded-full -ml-10 -mb-10"></div>
+      <section className="px-6 py-20">
+        <div className="mx-auto max-w-7xl">
+          <RevealOnView delayMs={50}>
+            <div className="relative overflow-hidden rounded-3xl border border-cyan-300/25 bg-gradient-to-r from-cyan-600/35 to-blue-600/35 p-10 text-center text-white motion-safe-transition hover:border-cyan-300/40 md:p-16">
+              <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-cyan-300 opacity-10" aria-hidden />
+              <div className="absolute -bottom-10 -left-10 h-48 w-48 rounded-full bg-cyan-300 opacity-10" aria-hidden />
 
-              <h2 className="text-3xl md:text-4xl font-bold mb-6 relative z-10">
-                 Ready to Write Your Success Story?
-              </h2>
-              <p className="text-lg text-cyan-100/90 mb-10 max-w-2xl mx-auto relative z-10">
-                 Join thousands of successful students and transform your career today.
-              </p>
-              <Link 
-                href="/signup" 
-                className="inline-block isit-btn-secondary font-bold px-8 py-4 relative z-10"
-              >
-                 Get Started Now
-              </Link>
-           </div>
-           </RevealOnView>
+              <h2 className="relative z-10 mb-6 text-3xl font-bold md:text-4xl">{tr('storiesCtaTitle')}</h2>
+              <p className="relative z-10 mx-auto mb-10 max-w-2xl text-lg text-cyan-100/90">{tr('storiesCtaLead')}</p>
+              <div className="relative z-10 flex flex-col flex-wrap items-center justify-center gap-3 sm:flex-row">
+                <Link href="/signup" className="isit-btn-primary inline-flex min-h-11 items-center px-8 font-bold no-underline">
+                  {tr('footerCta')}
+                </Link>
+                <Link href="/how-it-works" className="isit-btn-secondary inline-flex min-h-11 items-center px-8 font-semibold no-underline">
+                  {tr('footerHowItWorksLink')}
+                </Link>
+              </div>
+            </div>
+          </RevealOnView>
         </div>
       </section>
 
       <Footer />
-
     </div>
   );
 }

@@ -2,8 +2,11 @@
 
 import { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import Sidebar from '@/components/Sidebar';
-import { Clock, Layers, Loader2 } from 'lucide-react';
+import { Clock, Layers, Loader2, ChevronRight } from 'lucide-react';
+import { useT } from '@/lib/t';
+import { useLanguage } from '@/lib/language-context';
 
 type SessionItem = {
   _id: string;
@@ -16,10 +19,10 @@ type SessionItem = {
   subject_id?: string;
 };
 
-const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-const DAYS_SHORT = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-
 export default function SchedulePage() {
+  const tr = useT();
+  const { language } = useLanguage();
+  const locale = language === 'hi' ? 'hi-IN' : 'en-IN';
   const router = useRouter();
   const [viewDate, setViewDate] = useState(() => {
     const now = new Date();
@@ -56,7 +59,29 @@ export default function SchedulePage() {
 
   const year = viewDate.getFullYear();
   const month = viewDate.getMonth();
-  const monthName = MONTHS[month];
+
+  const calendarWeekdayLabels = useMemo(() => {
+    const labels: string[] = [];
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(2023, 0, 1 + i);
+      labels.push(d.toLocaleDateString(locale, { weekday: 'short' }));
+    }
+    return labels;
+  }, [locale]);
+
+  const monthTitle = useMemo(
+    () => new Date(year, month, 1).toLocaleDateString(locale, { month: 'long', year: 'numeric' }),
+    [year, month, locale]
+  );
+
+  const selectedDayTitle = useMemo(
+    () =>
+      `${new Date(year, month, selectedDate).toLocaleDateString(locale, {
+        month: 'long',
+        day: 'numeric',
+      })} — ${tr('scheduleSessionsWord')}`,
+    [year, month, selectedDate, locale, tr]
+  );
 
   const calendarDays = useMemo(() => {
     const first = new Date(year, month, 1);
@@ -88,19 +113,36 @@ export default function SchedulePage() {
 
   const upcomingLabel = (s: SessionItem) => {
     const dt = new Date(s.started_at);
-    return dt.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }) + ' ' + dt.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+    return (
+      dt.toLocaleDateString(locale, { day: 'numeric', month: 'short' }) +
+      ' ' +
+      dt.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })
+    );
   };
 
   const goPrev = () => setViewDate(new Date(year, month - 1, 1));
   const goNext = () => setViewDate(new Date(year, month + 1, 1));
 
   return (
-    <div className="isit-cosmic-bg min-h-screen flex font-sans text-cyan-50 relative">
+    <div className="isit-cosmic-bg relative flex min-h-screen font-sans text-cyan-50">
       <Sidebar />
-      <main className="flex-1 p-4 sm:p-6 md:p-8 min-w-0 overflow-x-hidden">
+      <div className="flex min-w-0 flex-1 flex-col">
+        <header className="shrink-0 border-b border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-950/95">
+          <div className="px-4 py-3 sm:px-6 md:px-8">
+            <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-2 text-sm">
+              <Link href="/dashboard" className="font-medium text-sky-600 hover:underline dark:text-sky-400">
+                {tr('dashboard')}
+              </Link>
+              <ChevronRight className="h-3.5 w-3.5 shrink-0 text-slate-400" aria-hidden />
+              <span className="font-medium text-slate-700 dark:text-slate-200">{tr('schedule')}</span>
+            </nav>
+          </div>
+        </header>
+
+        <main className="min-w-0 flex-1 overflow-x-hidden p-4 sm:p-6 md:p-8">
         <div className="mb-6">
-          <h1 className="text-2xl font-extrabold text-slate-800 tracking-tight">Schedule</h1>
-          <p className="text-slate-500 text-sm mt-1">View your learning sessions</p>
+          <h1 className="text-2xl font-extrabold tracking-tight text-slate-800 dark:text-slate-100">{tr('schedule')}</h1>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{tr('schedulePageLead')}</p>
         </div>
 
         {loading ? (
@@ -112,20 +154,32 @@ export default function SchedulePage() {
             {/* Calendar */}
             <div className="lg:col-span-2 bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
               <div className="p-4 border-b border-slate-100 flex items-center justify-between">
-                <h2 className="font-bold text-slate-800">{monthName} {year}</h2>
+                <h2 className="font-bold text-slate-800 dark:text-slate-100">{monthTitle}</h2>
                 <div className="flex gap-1">
-                  <button type="button" onClick={goPrev} className="p-2 rounded-lg text-slate-500 hover:bg-slate-100" aria-label="Previous month">
+                  <button
+                    type="button"
+                    onClick={goPrev}
+                    className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
+                    aria-label={tr('schedulePrevMonthAria')}
+                  >
                     <span className="text-lg font-bold">&lt;</span>
                   </button>
-                  <button type="button" onClick={goNext} className="p-2 rounded-lg text-slate-500 hover:bg-slate-100" aria-label="Next month">
+                  <button
+                    type="button"
+                    onClick={goNext}
+                    className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
+                    aria-label={tr('scheduleNextMonthAria')}
+                  >
                     <span className="text-lg font-bold">&gt;</span>
                   </button>
                 </div>
               </div>
               <div className="p-4">
-                <div className="grid grid-cols-7 gap-1 mb-2">
-                  {DAYS_SHORT.map((d) => (
-                    <div key={d} className="text-center text-xs font-semibold text-slate-500 py-1">{d}</div>
+                <div className="mb-2 grid grid-cols-7 gap-1">
+                  {calendarWeekdayLabels.map((d, i) => (
+                    <div key={i} className="py-1 text-center text-xs font-semibold text-slate-500 dark:text-slate-400">
+                      {d}
+                    </div>
                   ))}
                 </div>
                 <div className="grid grid-cols-7 gap-1">
@@ -158,13 +212,11 @@ export default function SchedulePage() {
             {/* Selected day sessions */}
             <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
               <div className="p-4 border-b border-slate-100">
-                <h2 className="font-bold text-slate-800">
-                  {monthName} {selectedDate} Sessions
-                </h2>
+                <h2 className="font-bold text-slate-800 dark:text-slate-100">{selectedDayTitle}</h2>
               </div>
               <div className="p-4">
                 {selectedDaySessions.length === 0 ? (
-                  <p className="text-slate-500 text-sm text-center py-4">No sessions on this day.</p>
+                  <p className="py-4 text-center text-sm text-slate-500 dark:text-slate-400">{tr('scheduleNoSessionsThisDay')}</p>
                 ) : (
                   <div className="space-y-3">
                     {selectedDaySessions.map((s) => (
@@ -173,11 +225,20 @@ export default function SchedulePage() {
                           <Layers className="w-5 h-5 text-sky-600" />
                         </div>
                         <div className="min-w-0 flex-1">
-                          <div className="font-semibold text-slate-800 text-sm">{s.session_type || 'Learning Session'}</div>
-                          <div className="text-xs text-slate-500 mt-0.5">
-                            {new Date(s.started_at).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}
+                          <div className="text-sm font-semibold text-slate-800 dark:text-slate-100">
+                            {s.session_type || tr('scheduleSessionDefaultName')}
+                          </div>
+                          <div className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
+                            {new Date(s.started_at).toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })}
                             {(s.duration_minutes || s.total_time_minutes) && (
-                              <span className="text-slate-400"> &middot; {s.duration_minutes ?? s.total_time_minutes} min</span>
+                              <span className="text-slate-400">
+                                {' '}
+                                &middot;{' '}
+                                {tr('scheduleMinutesShort').replace(
+                                  /\{n\}/g,
+                                  String(s.duration_minutes ?? s.total_time_minutes ?? 0)
+                                )}
+                              </span>
                             )}
                           </div>
                         </div>
@@ -194,7 +255,7 @@ export default function SchedulePage() {
         {!loading && sessions.length > 0 && (
           <div className="mt-6 bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
             <div className="p-4 border-b border-slate-100">
-              <h2 className="font-bold text-slate-800">Recent Sessions</h2>
+              <h2 className="font-bold text-slate-800 dark:text-slate-100">{tr('scheduleRecentSessionsTitle')}</h2>
             </div>
             <div className="p-4">
               <div className="space-y-3">
@@ -204,11 +265,13 @@ export default function SchedulePage() {
                       <Clock className="w-5 h-5 text-sky-600" />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <div className="font-semibold text-slate-800 text-sm">{s.session_type || 'Learning Session'}</div>
+                      <div className="text-sm font-semibold text-slate-800 dark:text-slate-100">
+                        {s.session_type || tr('scheduleSessionDefaultName')}
+                      </div>
                       <div className="text-xs text-slate-500">{upcomingLabel(s)}</div>
                     </div>
-                    <div className="text-xs text-slate-400 flex-shrink-0">
-                      {s.duration_minutes ?? s.total_time_minutes ?? 0} min
+                    <div className="shrink-0 text-xs text-slate-400">
+                      {tr('scheduleMinutesShort').replace(/\{n\}/g, String(s.duration_minutes ?? s.total_time_minutes ?? 0))}
                     </div>
                   </div>
                 ))}
@@ -217,6 +280,7 @@ export default function SchedulePage() {
           </div>
         )}
       </main>
+      </div>
     </div>
   );
 }

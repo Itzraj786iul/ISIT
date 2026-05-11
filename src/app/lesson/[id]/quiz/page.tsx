@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, CheckCircle, XCircle, Loader2 } from 'lucide-react';
+import { useT } from '@/lib/t';
 
 /** Normalized for UI — API (`TopicQuestionBank`) uses `options: string[]` + `correct_answer`. */
 type Question = {
@@ -64,9 +65,10 @@ function answerIsCorrect(q: Question, selectedIndex: number): boolean {
 }
 
 export default function LessonQuizPage() {
+  const tr = useT();
   const params = useParams();
   const lessonId = params.id as string;
-  const [lessonTitle, setLessonTitle] = useState<string>('Lesson Quiz');
+  const [lessonTitle, setLessonTitle] = useState<string>('');
   const [questions, setQuestions] = useState<Question[]>([]);
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [submitted, setSubmitted] = useState(false);
@@ -76,6 +78,7 @@ export default function LessonQuizPage() {
   useEffect(() => {
     const run = async () => {
       setLoading(true);
+      setLessonTitle(tr('lessonQuizDefaultTitle'));
       try {
         const [lessonRes, meRes] = await Promise.all([
           fetch(`/api/lesson/${lessonId}`),
@@ -84,7 +87,7 @@ export default function LessonQuizPage() {
 
         if (lessonRes.ok) {
           const data = await lessonRes.json();
-          setLessonTitle(data.title || 'Lesson Quiz');
+          if (typeof data.title === 'string' && data.title.trim()) setLessonTitle(data.title);
         }
 
         if (!meRes.ok) return;
@@ -123,7 +126,7 @@ export default function LessonQuizPage() {
       }
     };
     run();
-  }, [lessonId]);
+  }, [lessonId, tr]);
 
   const handleSubmit = () => {
     let correct = 0;
@@ -143,7 +146,7 @@ export default function LessonQuizPage() {
       <div className="isit-cosmic-bg min-h-screen text-cyan-50 flex items-center justify-center relative z-[1]">
         <div className="flex items-center gap-3 text-cyan-200/90">
           <Loader2 className="w-5 h-5 animate-spin text-cyan-400" aria-hidden />
-          <span className="text-sm">Loading quiz…</span>
+          <span className="text-sm">{tr('lessonQuizLoading')}</span>
         </div>
       </div>
     );
@@ -157,13 +160,16 @@ export default function LessonQuizPage() {
             href={`/lesson/${lessonId}`}
             className="inline-flex items-center gap-2 text-cyan-300 hover:text-cyan-100 text-sm font-medium mb-6 no-underline"
           >
-            <ArrowLeft className="w-4 h-4" aria-hidden /> Back to lesson
+            <ArrowLeft className="h-4 w-4" aria-hidden /> {tr('lessonQuizBack')}
           </Link>
           <div className="isit-glass rounded-2xl p-8 text-center">
-            <p className="text-cyan-100/90 font-medium">No quiz questions are linked to this lesson yet.</p>
-            <p className="text-sm text-cyan-200/60 mt-2">Your school can attach topic questions later.</p>
-            <Link href={`/lesson/${lessonId}`} className="isit-btn-primary inline-flex mt-6 min-h-11 px-6 items-center justify-center no-underline text-sm">
-              Return to lesson
+            <p className="font-medium text-cyan-100/90">{tr('lessonQuizEmptyTitle')}</p>
+            <p className="mt-2 text-sm text-cyan-200/60">{tr('lessonQuizEmptyLead')}</p>
+            <Link
+              href={`/lesson/${lessonId}`}
+              className="isit-btn-primary mt-6 inline-flex min-h-11 items-center justify-center px-6 text-sm no-underline"
+            >
+              {tr('lessonQuizReturn')}
             </Link>
           </div>
         </div>
@@ -178,13 +184,13 @@ export default function LessonQuizPage() {
           href={`/lesson/${lessonId}`}
           className="inline-flex items-center gap-2 text-cyan-300 hover:text-cyan-100 text-sm font-medium mb-6 no-underline"
         >
-          <ArrowLeft className="w-4 h-4" aria-hidden /> Back to lesson
+          <ArrowLeft className="h-4 w-4" aria-hidden /> {tr('lessonQuizBack')}
         </Link>
 
         <div className="mb-8">
-          <p className="text-[10px] font-bold uppercase tracking-widest text-cyan-400/80 mb-2">Lesson quiz</p>
-          <h1 className="text-2xl font-bold text-cyan-50 mb-1">{lessonTitle}</h1>
-          <p className="text-cyan-100/70 text-sm">Answer all questions. You need at least 60% to pass.</p>
+          <p className="mb-2 text-[10px] font-bold uppercase tracking-widest text-cyan-400/80">{tr('lessonQuizEyebrow')}</p>
+          <h1 className="mb-1 text-2xl font-bold text-cyan-50">{lessonTitle}</h1>
+          <p className="text-sm text-cyan-100/70">{tr('lessonQuizInstructions')}</p>
         </div>
 
         {!submitted ? (
@@ -234,13 +240,13 @@ export default function LessonQuizPage() {
                 disabled={!allAnswered}
                 className="isit-btn-primary px-6 min-h-11 text-sm font-semibold disabled:opacity-45 disabled:cursor-not-allowed border-0"
               >
-                Submit quiz
+                {tr('lessonQuizSubmit')}
               </button>
               <Link
                 href={`/lesson/${lessonId}`}
-                className="isit-btn-secondary px-6 min-h-11 inline-flex items-center justify-center no-underline text-sm"
+                className="isit-btn-secondary inline-flex min-h-11 items-center justify-center px-6 text-sm no-underline"
               >
-                Cancel
+                {tr('lessonQuizCancel')}
               </Link>
             </div>
           </>
@@ -251,14 +257,17 @@ export default function LessonQuizPage() {
             ) : (
               <XCircle className="w-16 h-16 text-amber-400 mx-auto mb-4" aria-hidden />
             )}
-            <h2 className="text-xl font-bold text-cyan-50 mb-2">{passed ? 'Quiz passed' : 'Keep going'}</h2>
-            <p className="text-cyan-100/85 mb-2 text-sm">
-              You got <strong className="text-cyan-50">{score}</strong> out of {questions.length} correct (
-              {score != null ? Math.round((score / questions.length) * 100) : 0}%).
+            <h2 className="mb-2 text-xl font-bold text-cyan-50">{passed ? tr('lessonQuizPassedTitle') : tr('lessonQuizRetryTitle')}</h2>
+            <p className="mb-2 text-sm text-cyan-100/85">
+              {tr('lessonQuizScoreSummary')
+                .replace(/\{score\}/g, String(score ?? 0))
+                .replace(/\{total\}/g, String(questions.length))
+                .replace(
+                  /\{percent\}/g,
+                  String(score != null && questions.length > 0 ? Math.round((score / questions.length) * 100) : 0)
+                )}
             </p>
-            <p className="text-cyan-200/65 text-sm mb-6">
-              {passed ? 'Nice work — continue to the next lesson when you’re ready.' : 'Review the lesson material and try again.'}
-            </p>
+            <p className="mb-6 text-sm text-cyan-200/65">{passed ? tr('lessonQuizPassedLead') : tr('lessonQuizFailedLead')}</p>
 
             {submitted && (
               <div className="text-left space-y-3 mb-6">
@@ -279,12 +288,12 @@ export default function LessonQuizPage() {
                         {idx + 1}. {q.question_text}
                       </p>
                       <p className="text-xs mt-2 text-cyan-100/80">
-                        Your answer:{' '}
+                        {tr('lessonQuizYourAnswer')}{' '}
                         <strong className={isCorrect ? 'text-emerald-300' : 'text-red-300'}>{yourLabel}</strong>
                         {!isCorrect && q.correctAnswer ? (
                           <span className="text-emerald-300">
                             {' '}
-                            · Correct: <strong>{q.correctAnswer}</strong>
+                            · {tr('lessonQuizCorrectLabel')} <strong>{q.correctAnswer}</strong>
                           </span>
                         ) : null}
                       </p>
@@ -296,8 +305,11 @@ export default function LessonQuizPage() {
             )}
 
             <div className="flex flex-wrap justify-center gap-3">
-              <Link href={`/lesson/${lessonId}`} className="isit-btn-primary min-h-11 px-5 inline-flex items-center justify-center no-underline text-sm">
-                Back to lesson
+              <Link
+                href={`/lesson/${lessonId}`}
+                className="isit-btn-primary inline-flex min-h-11 items-center justify-center px-5 text-sm no-underline"
+              >
+                {tr('lessonQuizBack')}
               </Link>
               {!passed && (
                 <button
@@ -307,9 +319,9 @@ export default function LessonQuizPage() {
                     setScore(null);
                     setAnswers({});
                   }}
-                  className="isit-btn-secondary min-h-11 px-5 text-sm border-0 cursor-pointer"
+                  className="isit-btn-secondary min-h-11 cursor-pointer border-0 px-5 text-sm"
                 >
-                  Retry quiz
+                  {tr('lessonQuizRetryButton')}
                 </button>
               )}
             </div>

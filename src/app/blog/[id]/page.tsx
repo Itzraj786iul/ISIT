@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
   Calendar,
@@ -12,8 +11,10 @@ import {
 } from 'lucide-react';
 import Footer from '@/components/Footer';
 import PublicNav from '@/components/PublicNav';
+import { useT } from '@/lib/t';
 
 export default function BlogDetailPage() {
+  const tr = useT();
   const router = useRouter();
 
   const article = {
@@ -77,11 +78,12 @@ export default function BlogDetailPage() {
 
           {/* Back */}
           <button
+            type="button"
             onClick={() => router.push('/blog')}
             className="flex items-center gap-2 text-sm text-sky-600 font-medium hover:underline"
           >
-            <ArrowLeft size={16} />
-            Back to Blog
+            <ArrowLeft size={16} aria-hidden />
+            {tr('blogDetailBack')}
           </button>
 
           {/* Title */}
@@ -102,7 +104,7 @@ export default function BlogDetailPage() {
 
           {/* Share */}
           <div className="flex items-center gap-4 mt-6 text-gray-500">
-            <span className="text-sm">Share:</span>
+            <span className="text-sm">{tr('blogDetailShare')}:</span>
             <Facebook className="cursor-pointer hover:text-blue-600" size={18}/>
             <Twitter className="cursor-pointer hover:text-blue-400" size={18}/>
             <Linkedin className="cursor-pointer hover:text-blue-700" size={18}/>
@@ -121,7 +123,7 @@ export default function BlogDetailPage() {
           {/* About Author */}
           <div className="mt-10 bg-gray-50 p-6 rounded-xl border border-gray-200">
             <h3 className="font-semibold text-gray-900 mb-4">
-              About the Author
+              {tr('blogDetailAboutAuthor')}
             </h3>
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 bg-sky-500 text-white rounded-full flex items-center justify-center font-bold">
@@ -132,7 +134,7 @@ export default function BlogDetailPage() {
                   {article.author}
                 </p>
                 <p className="text-sm text-gray-600">
-                  Educator and industry expert with 10+ years experience.
+                  {tr('blogDetailAuthorBio')}
                 </p>
               </div>
             </div>
@@ -143,7 +145,7 @@ export default function BlogDetailPage() {
         {/* ================= RELATED ARTICLES ================= */}
         <section className="mt-20">
           <h2 className="text-xl font-semibold text-gray-900 mb-8">
-            Related Articles
+            {tr('blogDetailRelatedHeading')}
           </h2>
 
           <div className="grid md:grid-cols-3 gap-8">
@@ -160,7 +162,7 @@ export default function BlogDetailPage() {
                 />
                 <div className="p-5">
                   <span className="text-xs text-sky-600 bg-sky-100 px-3 py-1 rounded-full">
-                    Career Advice
+                    {tr('blogRelatedCategoryLabel')}
                   </span>
                   <h4 className="mt-4 text-sm font-semibold text-gray-900 leading-snug">
                     {article.title}

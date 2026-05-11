@@ -5,8 +5,10 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import PublicNav from '@/components/PublicNav';
 import Footer from '@/components/Footer';
+import { useT } from '@/lib/t';
 
 function ResetPasswordForm() {
+  const tr = useT();
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get('token')?.trim() ?? '';
@@ -61,6 +63,7 @@ function ResetPasswordForm() {
   return (
     <div className="isit-glass rounded-3xl p-8">
       <h1 className="text-2xl font-bold text-cyan-100">Set a new password</h1>
+      <p className="mt-2 text-sm text-cyan-100/70">{tr('resetPasswordLead')}</p>
       <form onSubmit={onSubmit} className="mt-6 space-y-4">
         <div>
           <label htmlFor="np" className="block text-sm font-medium text-cyan-100/90 mb-1">
@@ -102,7 +105,7 @@ function ResetPasswordForm() {
 export default function ResetPasswordPage() {
   return (
     <div className="isit-cosmic-bg min-h-screen text-cyan-50 flex flex-col">
-      <PublicNav />
+      <PublicNav active="home" />
       <main className="flex-1 max-w-md mx-auto px-4 py-12 w-full">
         <Suspense fallback={<div className="text-cyan-200 text-sm">Loading…</div>}>
           <ResetPasswordForm />

@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { persistAuthFromLogin } from '@/lib/client-auth';
 import { useAuth } from '@/lib/auth-context';
+import { useT } from '@/lib/t';
+import { Sparkles } from 'lucide-react';
 
 /** Roles allowed on the public signup form (API also rejects any other role except student/parent). */
 type SignupRole = 'Student' | 'Parent';
@@ -13,6 +15,7 @@ type SchoolMode = 'individual' | 'join';
 export default function SignupPage() {
   const router = useRouter();
   const { refresh } = useAuth();
+  const tr = useT();
 
   const [role, setRole] = useState<SignupRole>('Student');
   const [schoolMode, setSchoolMode] = useState<SchoolMode>('individual');
@@ -120,15 +123,15 @@ export default function SignupPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between gap-4">
           <Link
             href="/"
-            className="inline-flex items-center gap-2 text-cyan-200 font-semibold hover:text-cyan-100 transition-colors no-underline"
+            className="inline-flex items-center gap-2 text-cyan-200 font-semibold transition-colors no-underline hover:text-cyan-100"
           >
-            <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-cyan-400/30 bg-slate-950/60 text-cyan-300 text-sm font-bold">
-              I
+            <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-cyan-400/20 text-cyan-200">
+              <Sparkles className="h-4 w-4" />
             </span>
             <span>ISIC</span>
           </Link>
           <Link href="/" className="text-sm text-cyan-200/80 hover:text-cyan-100 no-underline">
-            ← Back to home
+            {tr('funnelBackHome')}
           </Link>
         </div>
       </header>
@@ -136,10 +139,14 @@ export default function SignupPage() {
       <div className="flex-1 flex flex-col lg:flex-row relative z-[1]">
         <div className="hidden lg:flex lg:w-[42%] flex-col justify-center p-10 xl:p-16 border-r border-cyan-400/10 bg-gradient-to-br from-cyan-950/45 via-slate-950/30 to-transparent">
           <div className="max-w-md">
-            <p className="text-xs font-semibold uppercase tracking-widest text-cyan-300/90 mb-3">Create account</p>
-            <h2 className="text-3xl xl:text-4xl font-bold text-cyan-50 mb-4 leading-tight">Join ISIC</h2>
-            <p className="text-cyan-100/80 leading-relaxed text-sm xl:text-base">
-              AI-powered tutoring, school invite codes, and progress your teachers and parents can trust.
+            <p className="text-xs font-semibold uppercase tracking-widest text-cyan-300/90 mb-3">{tr('signupAsideEyebrow')}</p>
+            <h2 className="text-3xl xl:text-4xl font-bold text-cyan-50 mb-4 leading-tight">{tr('signupAsideTitle')}</h2>
+            <p className="text-sm leading-relaxed text-cyan-100/80 xl:text-base">{tr('signupAsideBody')}</p>
+            <p className="mt-6 text-sm text-cyan-100/65">
+              <Link href="/how-it-works" className="font-medium text-cyan-300 underline-offset-2 hover:underline">
+                {tr('footerHowItWorksLink')}
+              </Link>
+              <span className="text-cyan-100/55">{tr('signupAsidePreview')}</span>
             </p>
           </div>
         </div>
@@ -170,7 +177,9 @@ export default function SignupPage() {
                   {profileImage ? (
                     <img src={profileImage} alt="Profile preview" className="w-full h-full object-cover" />
                   ) : (
-                    <span className="text-xs text-cyan-200/70 group-hover:text-cyan-100 font-medium">Upload</span>
+                    <span className="text-center text-[10px] text-cyan-200/70 group-hover:text-cyan-100 font-medium leading-tight px-1">
+                      {tr('signupPhotoHint')}
+                    </span>
                   )}
                 </div>
               </div>
@@ -233,45 +242,73 @@ export default function SignupPage() {
                 )}
               </div>
 
-              <input
-                type="text"
-                name="name"
-                placeholder="Enter your full name"
-                required
-                value={formData.name}
-                onChange={handleChange}
-                className={inputClass}
-              />
+              <div>
+                <label htmlFor="signup-name" className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-cyan-200/85">
+                  {tr('labelFullName')}
+                </label>
+                <input
+                  id="signup-name"
+                  type="text"
+                  name="name"
+                  placeholder="Priya Sharma"
+                  autoComplete="name"
+                  required
+                  value={formData.name}
+                  onChange={handleChange}
+                  className={inputClass}
+                />
+              </div>
 
-              <input
-                type="email"
-                name="email"
-                placeholder="Enter your email"
-                required
-                value={formData.email}
-                onChange={handleChange}
-                className={inputClass}
-              />
+              <div>
+                <label htmlFor="signup-email" className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-cyan-200/85">
+                  {tr('labelEmail')}
+                </label>
+                <input
+                  id="signup-email"
+                  type="email"
+                  name="email"
+                  placeholder="you@example.com"
+                  autoComplete="email"
+                  required
+                  value={formData.email}
+                  onChange={handleChange}
+                  className={inputClass}
+                />
+              </div>
 
-              <input
-                type="password"
-                name="password"
-                placeholder="Enter your password"
-                required
-                value={formData.password}
-                onChange={handleChange}
-                className={inputClass}
-              />
+              <div>
+                <label htmlFor="signup-password" className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-cyan-200/85">
+                  {tr('labelPassword')}
+                </label>
+                <input
+                  id="signup-password"
+                  type="password"
+                  name="password"
+                  placeholder="••••••••"
+                  autoComplete="new-password"
+                  required
+                  value={formData.password}
+                  onChange={handleChange}
+                  className={inputClass}
+                />
+              </div>
 
-              <input
-                type="password"
-                name="confirmPassword"
-                placeholder="Confirm your password"
-                required
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                className={inputClass}
-              />
+              <div>
+                <label htmlFor="signup-confirm" className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-cyan-200/85">
+                  {tr('labelConfirmPassword')}
+                </label>
+                <input
+                  id="signup-confirm"
+                  type="password"
+                  name="confirmPassword"
+                  placeholder="••••••••"
+                  autoComplete="new-password"
+                  required
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  className={inputClass}
+                />
+              </div>
 
               {role === 'Student' && (
                 <div className="space-y-3 pt-2">
@@ -326,14 +363,26 @@ export default function SignupPage() {
                 <span className="text-sm text-cyan-100/80">Remember me on this device</span>
               </label>
 
-              <button type="submit" disabled={loading} className="isit-btn-primary w-full min-h-11 mt-2 disabled:opacity-50">
+              <p className="text-center text-xs leading-relaxed text-cyan-100/65">
+                {tr('authSignupAgreementPrefix')}{' '}
+                <Link href="/terms" className="font-semibold text-cyan-300 underline-offset-2 hover:text-cyan-200 hover:underline">
+                  {tr('termsLink')}
+                </Link>{' '}
+                {tr('authAgreementAnd')}{' '}
+                <Link href="/privacy" className="font-semibold text-cyan-300 underline-offset-2 hover:text-cyan-200 hover:underline">
+                  {tr('privacyLink')}
+                </Link>
+                .
+              </p>
+
+              <button type="submit" disabled={loading} className="isit-btn-primary w-full min-h-11 mt-1 disabled:opacity-50">
                 {loading ? 'Creating account…' : 'Create account'}
               </button>
 
               <p className="text-center text-xs text-cyan-100/65 mt-4">
                 Already have an account?{' '}
                 <Link href="/login" className="text-cyan-300 font-semibold hover:text-cyan-200 underline-offset-2 hover:underline">
-                  Sign in
+                  {tr('logIn')}
                 </Link>
               </p>
             </form>

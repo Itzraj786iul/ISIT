@@ -6,6 +6,7 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import Sidebar from '@/components/Sidebar';
 import { BookOpen, ChevronRight, AlertCircle, ListTodo, Clock, Check } from 'lucide-react';
+import { useT } from '@/lib/t';
 
 function difficultyBadge(level?: string) {
   if (!level) return null;
@@ -48,6 +49,7 @@ type MasteryData = {
 };
 
 export default function SubjectDetailPage() {
+  const tr = useT();
   const params = useParams();
   const id = params.id as string;
 
@@ -139,14 +141,12 @@ export default function SubjectDetailPage() {
     return (
       <div className="isit-cosmic-bg min-h-screen flex font-sans text-cyan-50 relative">
         <Sidebar />
-        <main className="flex-1 p-4 sm:p-6 md:p-8 min-w-0 flex flex-col items-center justify-center">
-          <AlertCircle className="w-12 h-12 text-amber-500 mb-4" />
-          <h1 className="text-xl font-semibold text-slate-900">Access denied</h1>
-          <p className="text-slate-600 mt-1 text-center max-w-md">
-            You don’t have permission to view this subject. It may be outside your assigned classes or subjects.
-          </p>
-          <Link href="/subjects" className="mt-6 text-sky-600 font-medium hover:underline">
-            Back to Subjects
+        <main className="flex min-h-[50vh] flex-1 flex-col items-center justify-center p-4 sm:p-6 md:p-8">
+          <AlertCircle className="mb-4 h-12 w-12 text-amber-400" />
+          <h1 className="text-xl font-semibold text-cyan-50">{tr('subjectAccessDeniedTitle')}</h1>
+          <p className="mt-2 max-w-md text-center text-sm text-cyan-100/80">{tr('subjectAccessDeniedLead')}</p>
+          <Link href="/subjects" className="mt-6 font-medium text-sky-400 hover:underline">
+            ← {tr('subjects')}
           </Link>
         </main>
       </div>
@@ -157,12 +157,12 @@ export default function SubjectDetailPage() {
     return (
       <div className="isit-cosmic-bg min-h-screen flex font-sans text-cyan-50 relative">
         <Sidebar />
-        <main className="flex-1 p-4 sm:p-6 md:p-8 min-w-0 flex flex-col items-center justify-center">
-          <AlertCircle className="w-12 h-12 text-slate-400 mb-4" />
-          <h1 className="text-xl font-semibold text-slate-900">Subject not found</h1>
-          <p className="text-slate-600 mt-1">The subject you’re looking for doesn’t exist or was removed.</p>
-          <Link href="/subjects" className="mt-6 text-sky-600 font-medium hover:underline">
-            Back to Subjects
+        <main className="flex min-h-[50vh] flex-1 flex-col items-center justify-center p-4 sm:p-6 md:p-8">
+          <AlertCircle className="mb-4 h-12 w-12 text-cyan-300/60" />
+          <h1 className="text-xl font-semibold text-cyan-50">{tr('subjectNotFoundTitle')}</h1>
+          <p className="mt-2 text-center text-sm text-cyan-100/75">{tr('subjectNotFoundLead')}</p>
+          <Link href="/subjects" className="mt-6 font-medium text-sky-400 hover:underline">
+            ← {tr('subjects')}
           </Link>
         </main>
       </div>
@@ -174,13 +174,24 @@ export default function SubjectDetailPage() {
       <Sidebar />
       <main className="flex-1 p-4 sm:p-6 md:p-8 min-w-0 overflow-x-auto">
         <div className="max-w-4xl mx-auto">
-          <Link
-            href="/subjects"
-            className="inline-flex items-center gap-1 text-sky-600 text-sm font-medium hover:underline mb-4"
-          >
-            ← Subjects
-          </Link>
-          <div className="flex flex-wrap gap-2 mb-2">
+          <nav aria-label="Breadcrumb" className="mb-4 flex flex-wrap items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
+            <Link href="/dashboard" className="font-medium text-sky-600 hover:underline dark:text-sky-400">
+              {tr('dashboard')}
+            </Link>
+            <span className="text-slate-400" aria-hidden>
+              /
+            </span>
+            <Link href="/subjects" className="font-medium text-sky-600 hover:underline dark:text-sky-400">
+              {tr('subjects')}
+            </Link>
+            <span className="text-slate-400" aria-hidden>
+              /
+            </span>
+            <span className="max-w-[min(100%,14rem)] truncate font-semibold text-slate-800 dark:text-slate-100 sm:max-w-xl">
+              {subject.name}
+            </span>
+          </nav>
+          <div className="mb-2 flex flex-wrap gap-2">
             <span className="inline-flex items-center px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-700 text-sm font-medium">
               {subject.grade}
             </span>
@@ -193,10 +204,11 @@ export default function SubjectDetailPage() {
             <p className="text-slate-600 text-sm leading-relaxed mb-8">{subject.description}</p>
           )}
 
-          <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
-            <ListTodo className="w-5 h-5 text-sky-600" />
-            Topics
+          <h2 className="mb-1 flex items-center gap-2 text-lg font-semibold text-slate-900 dark:text-slate-100">
+            <ListTodo className="h-5 w-5 text-sky-600" aria-hidden />
+            {tr('learningFlowSubjectTopicsHeading')}
           </h2>
+          <p className="mb-4 text-sm text-slate-600 dark:text-slate-400">{tr('learningFlowSubjectTopicsLead')}</p>
           {topics.length === 0 ? (
             <div className="bg-white rounded-xl border border-slate-200 p-8 text-center text-slate-500">
               <BookOpen className="w-10 h-10 mx-auto mb-2 text-slate-300" />

@@ -10,6 +10,7 @@ import ApiErrorState from '@/components/ApiErrorState';
 import { fetchWithAuth } from '@/lib/api-client';
 import { isLikelyNetworkError } from '@/lib/api-error-messages';
 import { BookOpen, ChevronRight } from 'lucide-react';
+import { useT } from '@/lib/t';
 
 type Subject = {
   _id: string;
@@ -28,6 +29,7 @@ type ErrState =
   | null;
 
 export default function SubjectsPage() {
+  const tr = useT();
   const router = useRouter();
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [loading, setLoading] = useState(true);
@@ -94,15 +96,18 @@ export default function SubjectsPage() {
       <Sidebar />
       <main className="flex-1 p-4 sm:p-6 md:p-8 min-w-0 overflow-x-hidden">
         <div className="max-w-6xl mx-auto">
-          <Link
-            href="/dashboard"
-            className="inline-flex items-center gap-1 min-h-11 text-sky-600 text-sm font-medium hover:underline mb-4 rounded-lg px-1 -ml-1"
-          >
-            ← Dashboard
-          </Link>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-2">Subjects</h1>
-          <p className={`text-slate-600 dark:text-slate-400 text-sm ${teacherScoped ? 'mb-2' : 'mb-8'}`}>
-            Choose a subject to explore topics and start learning.
+          <nav aria-label="Breadcrumb" className="mb-4 flex flex-wrap items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
+            <Link href="/dashboard" className="font-medium text-sky-600 hover:underline dark:text-sky-400">
+              {tr('dashboard')}
+            </Link>
+            <span className="text-slate-400" aria-hidden>
+              /
+            </span>
+            <span className="font-semibold text-slate-800 dark:text-slate-100">{tr('subjects')}</span>
+          </nav>
+          <h1 className="mb-2 text-2xl font-bold text-slate-900 dark:text-slate-100">{tr('subjects')}</h1>
+          <p className={`text-sm text-slate-600 dark:text-slate-400 ${teacherScoped ? 'mb-2' : 'mb-8'}`}>
+            {tr('learningFlowSubjectsLead')}
           </p>
           {teacherScoped && (
             <p className="text-amber-800 dark:text-amber-200/90 text-sm mb-8 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 rounded-2xl px-3 py-2">
@@ -143,10 +148,10 @@ export default function SubjectsPage() {
             <div data-testid="subjects-empty">
               <EmptyState
                 icon={BookOpen}
-                title="No subjects yet"
-                description="Subjects will show up when your organization adds them. If you are a student, ask your teacher or admin — or go to your dashboard to continue learning."
-                primaryAction={{ label: 'Go to dashboard', href: '/dashboard' }}
-                secondaryAction={{ label: 'Explore learning path', href: '/learning-path' }}
+                title={tr('subjectsEmptyTitle')}
+                description={tr('subjectsEmptyDescription')}
+                primaryAction={{ label: tr('goToDashboard'), href: '/dashboard' }}
+                secondaryAction={{ label: tr('footerHowItWorksLink'), href: '/how-it-works' }}
               />
             </div>
           )}

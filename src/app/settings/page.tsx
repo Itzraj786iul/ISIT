@@ -5,8 +5,10 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Sidebar from '@/components/Sidebar';
 import { User, ChevronRight, Bell, HelpCircle } from 'lucide-react';
+import { useT } from '@/lib/t';
 
 export default function SettingsPage() {
+  const tr = useT();
   const router = useRouter();
   const [user, setUser] = useState<{ name?: string; email?: string; role?: string } | null>(null);
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
@@ -14,84 +16,109 @@ export default function SettingsPage() {
   useEffect(() => {
     fetch('/api/auth/me', { credentials: 'include' })
       .then(async (r) => {
-        if (!r.ok) { router.push('/login'); return; }
+        if (!r.ok) {
+          router.push('/login');
+          return;
+        }
         const data = await r.json();
         const u = data.user;
-        if (!u) { router.push('/login'); return; }
-        if (u.role?.toLowerCase() === 'teacher') { router.push('/teacher/dashboard'); return; }
+        if (!u) {
+          router.push('/login');
+          return;
+        }
+        if (u.role?.toLowerCase() === 'teacher') {
+          router.push('/teacher/dashboard');
+          return;
+        }
         setUser({ name: u.name, email: u.email, role: u.role });
       })
       .catch(() => router.push('/login'));
   }, [router]);
 
   return (
-    <div className="isit-cosmic-bg min-h-screen flex font-sans text-cyan-50 relative">
+    <div className="isit-cosmic-bg relative flex min-h-screen font-sans text-cyan-50">
       <Sidebar />
-      <main className="flex-1 p-4 sm:p-6 md:p-8 min-w-0 overflow-x-hidden relative z-[1]">
-        <div className="mb-6">
-          <h1 className="text-2xl font-extrabold text-cyan-50 tracking-tight">Settings</h1>
-          <p className="text-cyan-100/70 text-sm mt-1">Manage your account and preferences</p>
-        </div>
+      <div className="flex min-w-0 flex-1 flex-col">
+        <header className="relative z-[1] shrink-0 border-b border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-950/95">
+          <div className="px-4 py-3 sm:px-6 md:px-8">
+            <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-2 text-sm">
+              <Link href="/dashboard" className="font-medium text-sky-600 hover:underline dark:text-sky-400">
+                {tr('dashboard')}
+              </Link>
+              <ChevronRight className="h-3.5 w-3.5 shrink-0 text-slate-400" aria-hidden />
+              <span className="font-medium text-slate-700 dark:text-slate-200">{tr('settings')}</span>
+            </nav>
+          </div>
+        </header>
 
-        <div className="max-w-xl space-y-4">
-          <div className="isit-glass rounded-xl overflow-hidden">
-            <div className="p-5 border-b border-cyan-400/15">
-              <h2 className="text-base font-bold text-cyan-50">Profile</h2>
-              <p className="text-sm text-cyan-100/65 mt-0.5">Your account information</p>
-            </div>
-            <div className="p-5 flex items-center gap-4">
-              <div className="w-14 h-14 rounded-full bg-cyan-400/15 text-cyan-300 flex items-center justify-center flex-shrink-0 border border-cyan-400/25">
-                <User className="w-7 h-7" />
-              </div>
-              <div>
-                <p className="font-semibold text-cyan-50">{user?.name || 'Student'}</p>
-                <p className="text-sm text-cyan-100/70">{user?.email || ''}</p>
-              </div>
-            </div>
+        <main className="relative z-[1] min-w-0 flex-1 overflow-x-hidden p-4 sm:p-6 md:p-8">
+          <div className="mb-6">
+            <h1 className="text-2xl font-extrabold tracking-tight text-cyan-50">{tr('settings')}</h1>
+            <p className="mt-1 text-sm text-cyan-100/70">{tr('settingsPageLead')}</p>
           </div>
 
-          <div className="isit-glass rounded-xl overflow-hidden">
-            <div className="p-5 border-b border-cyan-400/15">
-              <h2 className="text-base font-bold text-cyan-50">Notifications</h2>
-              <p className="text-sm text-cyan-100/65 mt-0.5">Reminders for live classes, quizzes, and assignments</p>
-            </div>
-            <div className="p-5 flex items-center justify-between gap-4">
-              <div className="flex items-center gap-3 min-w-0">
-                <Bell className="w-5 h-5 text-cyan-300/80 shrink-0" />
-                <span className="font-medium text-cyan-50">Email &amp; in-app reminders</span>
+          <div className="max-w-xl space-y-4">
+            <div className="isit-glass overflow-hidden rounded-xl">
+              <div className="border-b border-cyan-400/15 p-5">
+                <h2 className="text-base font-bold text-cyan-50">{tr('settingsProfileTitle')}</h2>
+                <p className="mt-0.5 text-sm text-cyan-100/65">{tr('settingsProfileDesc')}</p>
               </div>
-              <button
-                type="button"
-                role="switch"
-                aria-checked={notificationsEnabled}
-                onClick={() => setNotificationsEnabled((v) => !v)}
-                className={`relative w-11 h-6 rounded-full transition shrink-0 ${notificationsEnabled ? 'bg-cyan-500' : 'bg-slate-600'}`}
-              >
-                <span className={`absolute top-1 w-4 h-4 rounded-full bg-white shadow transition left-1 ${notificationsEnabled ? 'translate-x-5' : 'translate-x-0'}`} />
-              </button>
+              <div className="flex items-center gap-4 p-5">
+                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-cyan-400/25 bg-cyan-400/15 text-cyan-300">
+                  <User className="h-7 w-7" />
+                </div>
+                <div>
+                  <p className="font-semibold text-cyan-50">{user?.name || tr('settingsStudentFallback')}</p>
+                  <p className="text-sm text-cyan-100/70">{user?.email || ''}</p>
+                </div>
+              </div>
             </div>
+
+            <div className="isit-glass overflow-hidden rounded-xl">
+              <div className="border-b border-cyan-400/15 p-5">
+                <h2 className="text-base font-bold text-cyan-50">{tr('settingsNotificationsTitle')}</h2>
+                <p className="mt-0.5 text-sm text-cyan-100/65">{tr('settingsNotificationsDesc')}</p>
+              </div>
+              <div className="flex items-center justify-between gap-4 p-5">
+                <div className="flex min-w-0 items-center gap-3">
+                  <Bell className="h-5 w-5 shrink-0 text-cyan-300/80" />
+                  <span className="font-medium text-cyan-50">{tr('settingsRemindersToggle')}</span>
+                </div>
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={notificationsEnabled}
+                  onClick={() => setNotificationsEnabled((v) => !v)}
+                  className={`relative h-6 w-11 shrink-0 rounded-full transition ${notificationsEnabled ? 'bg-cyan-500' : 'bg-slate-600'}`}
+                >
+                  <span
+                    className={`absolute left-1 top-1 h-4 w-4 rounded-full bg-white shadow transition ${notificationsEnabled ? 'translate-x-5' : 'translate-x-0'}`}
+                  />
+                </button>
+              </div>
+            </div>
+
+            <Link
+              href="/help"
+              className="isit-glass motion-safe-transition flex items-center justify-between rounded-xl p-4 text-cyan-50 no-underline hover:border-cyan-300/40"
+            >
+              <div className="flex items-center gap-3">
+                <HelpCircle className="h-5 w-5 text-cyan-400" />
+                <span className="font-medium">{tr('settingsHelpLinkLabel')}</span>
+              </div>
+              <ChevronRight className="h-5 w-5 text-cyan-300/50" />
+            </Link>
+
+            <Link
+              href="/dashboard"
+              className="isit-glass motion-safe-transition flex items-center justify-between rounded-xl p-4 text-cyan-50 no-underline hover:border-cyan-300/40"
+            >
+              <span className="font-medium">{tr('settingsBackDashboard')}</span>
+              <ChevronRight className="h-5 w-5 text-cyan-300/50" />
+            </Link>
           </div>
-
-          <Link
-            href="/help"
-            className="flex items-center justify-between p-4 isit-glass rounded-xl no-underline text-cyan-50 hover:border-cyan-300/40 motion-safe-transition"
-          >
-            <div className="flex items-center gap-3">
-              <HelpCircle className="w-5 h-5 text-cyan-400" />
-              <span className="font-medium">Help &amp; support</span>
-            </div>
-            <ChevronRight className="w-5 h-5 text-cyan-300/50" />
-          </Link>
-
-          <Link
-            href="/dashboard"
-            className="flex items-center justify-between p-4 isit-glass rounded-xl no-underline text-cyan-50 hover:border-cyan-300/40 motion-safe-transition"
-          >
-            <span className="font-medium">Back to dashboard</span>
-            <ChevronRight className="w-5 h-5 text-cyan-300/50" />
-          </Link>
-        </div>
-      </main>
+        </main>
+      </div>
     </div>
   );
 }

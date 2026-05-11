@@ -1,13 +1,24 @@
 'use client';
 
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Search, Calendar, Clock, ArrowRight } from 'lucide-react';
 import PublicNav from '@/components/PublicNav';
 import Footer from '@/components/Footer';
 import { RevealOnView, RevealStagger } from '@/components/RevealMotion';
+import { useT } from '@/lib/t';
+import type { I18nKey } from '@/lib/t';
+
+const BLOG_CATEGORY_KEYS: I18nKey[] = [
+  'blogCategoryAll',
+  'blogCategoryStudyTips',
+  'blogCategoryCareerAdvice',
+  'blogCategoryCourseUpdates',
+  'blogCategoryIndustryTrends',
+  'blogCategoryStudentLife',
+];
 
 export default function BlogPage() {
+  const tr = useT();
   const router = useRouter();
 
   const featuredArticle = {
@@ -70,17 +81,17 @@ export default function BlogPage() {
       <section className="py-12 sm:py-20 text-center px-4 sm:px-6">
         <RevealOnView>
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900">
-          Our <span className="text-sky-600">Blog</span>
+          {tr('blogHeroTitle')} <span className="text-sky-600">{tr('blogHeroAccent')}</span>
         </h1>
 
         <p className="text-gray-800 mt-3 sm:mt-4 max-w-2xl mx-auto text-sm sm:text-base">
-          Insights, tips, and resources to help you succeed in your learning journey
+          {tr('blogHeroLead')}
         </p>
 
         <div className="max-w-xl mx-auto mt-8 relative">
           <input
             type="text"
-            placeholder="Search articles..."
+            placeholder={tr('blogSearchPlaceholder')}
             className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-600"
           />
           <Search
@@ -94,17 +105,17 @@ export default function BlogPage() {
       {/* Categories */}
       <div className="py-6 border-b border-cyan-300/20">
         <div className="max-w-7xl mx-auto px-6 flex flex-wrap gap-3 justify-center">
-          {['All', 'Study Tips', 'Career Advice', 'Course Updates', 'Industry Trends', 'Student Life']
-            .map((cat, index) => (
+          {BLOG_CATEGORY_KEYS.map((catKey, index) => (
               <button
-                key={index}
+                key={catKey}
+                type="button"
                 className={`px-4 py-2 rounded-full text-sm font-medium transition ${
                   index === 0
                     ? 'bg-sky-600 text-white'
                     : 'bg-gray-200 text-gray-800 hover:bg-sky-100'
                 }`}
               >
-                {cat}
+                {tr(catKey)}
               </button>
             ))}
         </div>
@@ -116,7 +127,7 @@ export default function BlogPage() {
         {/* FEATURED */}
         <RevealOnView delayMs={40}>
         <h2 className="text-2xl font-bold mb-8 text-gray-900">
-          Featured Article
+          {tr('blogFeaturedHeading')}
         </h2>
 
         <div
@@ -153,7 +164,7 @@ export default function BlogPage() {
             </div>
 
             <span className="mt-6 text-sky-600 font-semibold flex items-center gap-2">
-              Read More <ArrowRight size={16} />
+              {tr('blogReadMore')} <ArrowRight size={16} aria-hidden />
             </span>
           </div>
         </div>
@@ -162,7 +173,7 @@ export default function BlogPage() {
         {/* LATEST */}
         <RevealOnView>
         <h2 className="text-2xl font-bold mt-20 mb-8 text-gray-900">
-          Latest Articles
+          {tr('blogLatestHeading')}
         </h2>
         </RevealOnView>
 
@@ -208,20 +219,20 @@ export default function BlogPage() {
       <section className="bg-gradient-to-r from-[#4CC9F0] via-[#3A86FF] to-[#4361EE] py-20 text-white text-center">
         <RevealOnView>
         <h2 className="text-3xl font-bold">
-          Stay Updated with Our Newsletter
+          {tr('blogNewsletterTitle')}
         </h2>
         <p className="mt-4 text-white">
-          Get the latest articles, tips, and exclusive content delivered to your inbox
+          {tr('blogNewsletterLead')}
         </p>
 
         <div className="max-w-md mx-auto mt-8 flex gap-4">
   <input
     type="email"
-    placeholder="Enter your email"
+    placeholder={tr('blogNewsletterPlaceholder')}
     className="flex-1 px-5 py-3 rounded-lg bg-white border border-white text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white shadow-md"
   />
-  <button className="bg-white text-blue-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition shadow-md">
-    Subscribe
+  <button type="button" className="bg-white text-blue-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition shadow-md">
+    {tr('blogNewsletterSubscribe')}
   </button>
 </div>
         </RevealOnView>
