@@ -1,10 +1,9 @@
 'use client';
 
+import SiteShell from '@/components/SiteShell';
 import { Suspense, useState } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import PublicNav from '@/components/PublicNav';
-import Footer from '@/components/Footer';
 import { useT } from '@/lib/t';
 
 function ResetPasswordForm() {
@@ -104,14 +103,12 @@ function ResetPasswordForm() {
 
 export default function ResetPasswordPage() {
   return (
-    <div className="isit-cosmic-bg min-h-screen text-cyan-50 flex flex-col">
-      <PublicNav active="home" />
+    <SiteShell variant="auth" showFooter={false}>
       <main className="flex-1 max-w-md mx-auto px-4 py-12 w-full">
         <Suspense fallback={<div className="text-cyan-200 text-sm">Loading…</div>}>
           <ResetPasswordForm />
         </Suspense>
       </main>
-      <Footer />
-    </div>
+    </SiteShell>
   );
 }

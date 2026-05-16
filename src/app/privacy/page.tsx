@@ -1,13 +1,11 @@
 'use client';
 
+import SiteShell from '@/components/SiteShell';
 import Link from 'next/link';
-import PublicNav from '@/components/PublicNav';
-import Footer from '@/components/Footer';
 
 export default function PrivacyPage() {
   return (
-    <div className="isit-cosmic-bg min-h-screen text-cyan-50">
-      <PublicNav />
+    <SiteShell variant="public">
       <main className="max-w-3xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
         <div className="isit-glass rounded-3xl p-6 sm:p-10">
         <h1 className="text-3xl sm:text-4xl font-bold text-cyan-100">Privacy Policy</h1>
@@ -54,7 +52,6 @@ export default function PrivacyPage() {
         </p>
         </div>
       </main>
-      <Footer />
-    </div>
+    </SiteShell>
   );
 }

@@ -1,9 +1,8 @@
 'use client';
 
+import SiteShell from '@/components/SiteShell';
 import Link from 'next/link';
 import { Heart, Lightbulb, Shield, Users } from 'lucide-react';
-import PublicNav from '@/components/PublicNav';
-import Footer from '@/components/Footer';
 import { RevealOnView, RevealStagger } from '@/components/RevealMotion';
 import { useT } from '@/lib/t';
 
@@ -34,9 +33,7 @@ export default function AboutUsPage() {
   const tr = useT();
 
   return (
-    <div className="isit-cosmic-bg min-h-screen text-cyan-50">
-      <PublicNav active="about-us" />
-
+    <SiteShell variant="public" active="about-us">
       <main className="mx-auto max-w-5xl px-4 py-14 sm:px-6 sm:py-20">
         <RevealOnView>
           <div className="isit-glass rounded-3xl p-7 sm:p-10">
@@ -97,8 +94,6 @@ export default function AboutUsPage() {
           </div>
         </RevealOnView>
       </main>
-
-      <Footer />
-    </div>
+    </SiteShell>
   );
 }

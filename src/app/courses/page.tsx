@@ -1,5 +1,6 @@
 'use client';
 
+import SiteShell from '@/components/SiteShell';
 /**
  * @legacy MARKETPLACE_LMS — Course catalog (GET /api/courses). Prefer /subjects for AI-first learning.
  * Migration: docs/AI_FIRST_MIGRATION.md
@@ -7,8 +8,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { Search, SlidersHorizontal, BookOpen, ChevronRight } from 'lucide-react';
-import PublicNav from '@/components/PublicNav';
-import Footer from '@/components/Footer';
 import LegacyMarketplaceBanner from '@/components/LegacyMarketplaceBanner';
 import { RevealOnView, RevealStagger } from '@/components/RevealMotion';
 import { useT } from '@/lib/t';
@@ -115,9 +114,7 @@ export default function CoursesPage() {
     loadErrorKind === 'network' ? tr('catalogNetworkError') : loadErrorKind === 'http' ? tr('catalogLoadError') : null;
 
   return (
-    <div className="isit-cosmic-bg flex min-h-screen flex-col text-cyan-50">
-      <PublicNav active="courses" />
-
+    <SiteShell variant="public" active="courses">
       <div className="border-b border-cyan-300/15 bg-slate-950/40">
         <nav aria-label="Breadcrumb" className="mx-auto flex max-w-7xl flex-wrap items-center gap-2 px-4 py-3 text-sm sm:px-6">
           <Link href="/" className="font-medium text-sky-400 hover:underline">
@@ -387,9 +384,6 @@ export default function CoursesPage() {
           </Link>
         </div>
       </section>
-
-      <Footer />
-
-    </div>
+    </SiteShell>
   );
 }

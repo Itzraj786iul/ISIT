@@ -75,7 +75,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`isit-theme ${geistSans.variable} ${geistMono.variable} antialiased bg-[var(--background)] text-[var(--foreground)]`}
+        className={`isit-theme ${geistSans.variable} ${geistMono.variable} antialiased bg-[#05070a] text-slate-200`}
       >
         <Script
           id="isit-theme-lang-bootstrap"

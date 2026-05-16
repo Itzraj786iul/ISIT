@@ -1,9 +1,8 @@
 'use client';
 
+import SiteShell from '@/components/SiteShell';
 import Link from 'next/link';
 import { Mail, MapPin, Phone, MessageCircle } from 'lucide-react';
-import PublicNav from '@/components/PublicNav';
-import Footer from '@/components/Footer';
 import { RevealOnView, RevealStagger } from '@/components/RevealMotion';
 import { useT } from '@/lib/t';
 
@@ -13,9 +12,7 @@ export default function ContactPage() {
   const tr = useT();
 
   return (
-    <div className="isit-cosmic-bg flex min-h-screen flex-col text-cyan-50">
-      <PublicNav />
-
+    <SiteShell variant="public">
       <section className="relative flex-1 px-4 py-14 sm:px-6 sm:py-20">
         <div className="mx-auto max-w-5xl">
           <RevealOnView>
@@ -87,8 +84,6 @@ export default function ContactPage() {
           </RevealOnView>
         </div>
       </section>
-
-      <Footer />
-    </div>
+    </SiteShell>
   );
 }

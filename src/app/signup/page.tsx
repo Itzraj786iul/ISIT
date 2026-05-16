@@ -7,6 +7,7 @@ import { persistAuthFromLogin } from '@/lib/client-auth';
 import { useAuth } from '@/lib/auth-context';
 import { useT } from '@/lib/t';
 import { Sparkles } from 'lucide-react';
+import SiteShell from '@/components/SiteShell';
 
 /** Roles allowed on the public signup form (API also rejects any other role except student/parent). */
 type SignupRole = 'Student' | 'Parent';
@@ -118,8 +119,8 @@ export default function SignupPage() {
     }`;
 
   return (
-    <div className="isit-cosmic-bg min-h-screen flex flex-col text-cyan-50">
-      <header className="relative z-[1] border-b border-cyan-400/15 bg-slate-950/40 backdrop-blur-xl">
+    <SiteShell variant="auth" className="flex flex-col">
+      <header className="relative z-[1] border-b border-white/[0.08] bg-[#050510]/90 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between gap-4">
           <Link
             href="/"
@@ -389,6 +390,6 @@ export default function SignupPage() {
           </div>
         </div>
       </div>
-    </div>
+    </SiteShell>
   );
 }

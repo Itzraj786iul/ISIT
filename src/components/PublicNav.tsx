@@ -105,7 +105,7 @@ export default function PublicNav({ active }: PublicNavProps) {
 
   return (
     <>
-      <header className="isit-nav-enter sticky top-0 z-50 border-b border-cyan-400/15 bg-slate-950/85 backdrop-blur-xl">
+      <header className="isit-nav-enter sticky top-0 z-50 border-b border-white/[0.08] bg-[#050510]/90 backdrop-blur-xl">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:h-20 sm:px-6">
           <div className="flex min-w-0 items-center gap-3">
             <button

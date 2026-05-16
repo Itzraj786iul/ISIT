@@ -1,5 +1,6 @@
 'use client';
 
+import SiteShell from '@/components/SiteShell';
 import { useRouter } from 'next/navigation';
 import {
   Calendar,
@@ -9,8 +10,6 @@ import {
   Linkedin,
   ArrowLeft
 } from 'lucide-react';
-import Footer from '@/components/Footer';
-import PublicNav from '@/components/PublicNav';
 import { useT } from '@/lib/t';
 
 export default function BlogDetailPage() {
@@ -60,9 +59,7 @@ export default function BlogDetailPage() {
   ];
 
   return (
-    <div className="isit-cosmic-bg min-h-screen flex flex-col text-cyan-50">
-      <PublicNav active="blog" />
-
+    <SiteShell variant="public" active="blog">
       {/* ================= HERO IMAGE ================= */}
       <div className="relative h-[420px] w-full overflow-hidden">
         <img
@@ -175,10 +172,6 @@ export default function BlogDetailPage() {
 
       </main>
 
-      <footer className="mt-24">
-        <Footer />
-      </footer>
-
-    </div>
+    </SiteShell>
   );
 }

@@ -1,5 +1,6 @@
 'use client';
 
+import SiteShell from '@/components/SiteShell';
 import Link from 'next/link';
 import {
   BarChart,
@@ -12,8 +13,6 @@ import {
   Layers,
   Sparkles,
 } from 'lucide-react';
-import PublicNav from '@/components/PublicNav';
-import Footer from '@/components/Footer';
 import { RevealOnView, RevealStagger } from '@/components/RevealMotion';
 import { useT } from '@/lib/t';
 
@@ -22,9 +21,7 @@ export default function HowItWorksPage() {
   const loopPills = [tr('learningLoopPill1'), tr('learningLoopPill2'), tr('learningLoopPill3'), tr('learningLoopPill4')];
 
   return (
-    <div className="isit-cosmic-bg min-h-screen text-cyan-50">
-      <PublicNav active="how-it-works" />
-
+    <SiteShell variant="public" active="how-it-works">
       <section className="px-4 py-16 text-center sm:px-6 sm:py-24">
         <RevealOnView>
           <div className="mx-auto max-w-4xl">
@@ -267,8 +264,6 @@ export default function HowItWorksPage() {
           </p>
         </RevealOnView>
       </section>
-
-      <Footer />
-    </div>
+    </SiteShell>
   );
 }

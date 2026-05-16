@@ -1,9 +1,8 @@
 'use client';
 
+import SiteShell from '@/components/SiteShell';
 import Link from 'next/link';
 import { Users, Award, MapPin, Quote, Clock, Layers } from 'lucide-react';
-import PublicNav from '@/components/PublicNav';
-import Footer from '@/components/Footer';
 import { RevealOnView, RevealStagger } from '@/components/RevealMotion';
 import { useT } from '@/lib/t';
 
@@ -57,9 +56,7 @@ export default function StoriesPage() {
   ];
 
   return (
-    <div className="isit-cosmic-bg flex min-h-screen flex-col text-cyan-50">
-      <PublicNav active="stories" />
-
+    <SiteShell variant="public" active="stories">
       <section className="pb-8 pt-10 sm:pb-12 sm:pt-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <RevealOnView>
@@ -149,8 +146,6 @@ export default function StoriesPage() {
           </RevealOnView>
         </div>
       </section>
-
-      <Footer />
-    </div>
+    </SiteShell>
   );
 }

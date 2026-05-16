@@ -1,9 +1,8 @@
 'use client';
 
+import SiteShell from '@/components/SiteShell';
 import { useState } from 'react';
 import Link from 'next/link';
-import PublicNav from '@/components/PublicNav';
-import Footer from '@/components/Footer';
 import { useT } from '@/lib/t';
 
 export default function ForgotPasswordPage() {
@@ -34,8 +33,7 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="isit-cosmic-bg min-h-screen text-cyan-50 flex flex-col">
-      <PublicNav active="home" />
+    <SiteShell variant="auth" showFooter={false}>
       <main className="flex-1 max-w-md mx-auto px-4 py-12 w-full">
         <div className="isit-glass rounded-3xl p-8">
           <h1 className="text-2xl font-bold text-cyan-100">{tr('forgotPasswordTitle')}</h1>
@@ -72,7 +70,6 @@ export default function ForgotPasswordPage() {
           </p>
         </div>
       </main>
-      <Footer />
-    </div>
+    </SiteShell>
   );
 }

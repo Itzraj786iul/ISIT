@@ -1,10 +1,9 @@
 'use client';
 
+import SiteShell from '@/components/SiteShell';
 import { Suspense, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import PublicNav from '@/components/PublicNav';
-import Footer from '@/components/Footer';
 import { useAuth } from '@/lib/auth-context';
 import { useT } from '@/lib/t';
 
@@ -74,14 +73,12 @@ function VerifyEmailInner() {
 
 export default function VerifyEmailPage() {
   return (
-    <div className="isit-cosmic-bg min-h-screen text-cyan-50 flex flex-col">
-      <PublicNav active="home" />
+    <SiteShell variant="auth" showFooter={false}>
       <main className="flex-1 max-w-md mx-auto px-4 py-12 w-full">
         <Suspense fallback={<div className="text-cyan-200 text-sm text-center">Loading…</div>}>
           <VerifyEmailInner />
         </Suspense>
       </main>
-      <Footer />
-    </div>
+    </SiteShell>
   );
 }

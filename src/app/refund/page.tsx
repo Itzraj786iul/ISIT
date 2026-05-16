@@ -1,7 +1,6 @@
+import SiteShell from '@/components/SiteShell';
 import Link from 'next/link';
 import type { Metadata } from 'next';
-import PublicNav from '@/components/PublicNav';
-import Footer from '@/components/Footer';
 
 export const metadata: Metadata = {
   title: 'Refund policy',
@@ -10,9 +9,7 @@ export const metadata: Metadata = {
 
 export default function RefundPolicyPage() {
   return (
-    <div className="isit-cosmic-bg min-h-screen text-cyan-50 flex flex-col">
-      <PublicNav />
-
+    <SiteShell variant="public">
       <main className="mx-auto max-w-3xl flex-1 px-4 py-14 sm:px-6 sm:py-20">
         <div className="isit-glass rounded-3xl p-7 sm:p-10">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-300">Policies</p>
@@ -57,8 +54,6 @@ export default function RefundPolicyPage() {
           </p>
         </div>
       </main>
-
-      <Footer />
-    </div>
+    </SiteShell>
   );
 }

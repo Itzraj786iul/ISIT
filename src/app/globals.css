@@ -286,13 +286,65 @@ body {
 }
 
 .isit-cosmic-bg {
-  background:
-    radial-gradient(1100px 700px at 20% 0%, rgba(8, 47, 73, 0.55), transparent 60%),
-    radial-gradient(900px 580px at 80% 8%, rgba(14, 116, 144, 0.35), transparent 58%),
-    radial-gradient(700px 420px at 50% 70%, rgba(15, 23, 42, 0.8), transparent 72%),
-    #030712;
+  background-color: #05070a;
+  background-image:
+    linear-gradient(rgba(148, 163, 184, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 163, 184, 0.06) 1px, transparent 1px),
+    radial-gradient(1100px 700px at 20% 0%, rgba(8, 47, 73, 0.45), transparent 60%),
+    radial-gradient(900px 580px at 80% 8%, rgba(99, 102, 241, 0.2), transparent 58%);
+  background-size: 48px 48px, 48px 48px, auto, auto;
+  color: rgb(226 232 240);
   position: relative;
   overflow: hidden;
+}
+
+/* Homepage landing replica: reset global shimmer on headings inside this scope */
+.isit-theme .isit-landing-replica h1,
+.isit-theme .isit-landing-replica h2,
+.isit-theme .isit-landing-replica h3 {
+  background: none !important;
+  background-size: auto !important;
+  -webkit-background-clip: border-box !important;
+  background-clip: border-box !important;
+  color: inherit !important;
+  animation: none !important;
+}
+
+/* Hero main title: never hide behind isit-hero-col stagger (opacity:0) or shimmer */
+.isit-theme .isit-landing-replica h1.isit-hero-main-title {
+  opacity: 1 !important;
+  transform: none !important;
+  color: #f8fafc !important;
+}
+
+.isit-landing-grid {
+  background-color: #05070a;
+  background-image:
+    linear-gradient(rgba(148, 163, 184, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 163, 184, 0.06) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+.isit-landing-glow-orb {
+  pointer-events: none;
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.45;
+}
+
+.isit-gradient-text {
+  background: linear-gradient(90deg, #7dd3fc, #a78bfa, #c084fc);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.isit-gradient-text-strong {
+  background: linear-gradient(90deg, #38bdf8, #22d3ee, #818cf8);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 .isit-cosmic-bg::before {
@@ -300,14 +352,16 @@ body {
   position: absolute;
   inset: 0;
   background-image:
-    radial-gradient(circle at 20% 30%, rgba(56, 189, 248, 0.24) 0, rgba(56, 189, 248, 0.24) 1px, transparent 1px),
-    radial-gradient(circle at 80% 70%, rgba(125, 211, 252, 0.2) 0, rgba(125, 211, 252, 0.2) 1px, transparent 1px),
-    radial-gradient(circle at 60% 20%, rgba(255, 255, 255, 0.22) 0, rgba(255, 255, 255, 0.22) 1px, transparent 1px);
+    radial-gradient(circle at 20% 30%, rgba(56, 189, 248, 0.18) 0, rgba(56, 189, 248, 0.18) 1px, transparent 1px),
+    radial-gradient(circle at 80% 70%, rgba(125, 211, 252, 0.14) 0, rgba(125, 211, 252, 0.14) 1px, transparent 1px),
+    radial-gradient(circle at 60% 20%, rgba(255, 255, 255, 0.12) 0, rgba(255, 255, 255, 0.12) 1px, transparent 1px);
   background-size: 220px 220px, 260px 260px, 180px 180px;
   animation: star-drift 28s linear infinite;
   pointer-events: none;
-  opacity: 0.55;
+  opacity: 0.28;
+  z-index: 0;
 }
+
 
 @keyframes session-question-in {
   from {
@@ -465,6 +519,18 @@ body {
 .isit-reveal-stagger-visible > *:nth-child(12) {
   animation-delay: 0.7s;
 }
+.isit-reveal-stagger-visible > *:nth-child(13) {
+  animation-delay: 0.76s;
+}
+.isit-reveal-stagger-visible > *:nth-child(14) {
+  animation-delay: 0.82s;
+}
+.isit-reveal-stagger-visible > *:nth-child(15) {
+  animation-delay: 0.88s;
+}
+.isit-reveal-stagger-visible > *:nth-child(16) {
+  animation-delay: 0.94s;
+}
 
 @media (prefers-reduced-motion: reduce) {
   .isit-reveal-block {
@@ -571,6 +637,116 @@ body {
     animation: none !important;
     opacity: 1;
     transform: none;
+  }
+}
+
+/* —— Landing homepage motion (marquee, hero orbit, chat stagger) —— */
+@keyframes landing-marquee-x {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-33.333333%, 0, 0);
+  }
+}
+
+.landing-marquee-mask {
+  overflow: hidden;
+  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+}
+
+.landing-marquee-track {
+  display: flex;
+  width: max-content;
+  gap: 1.5rem;
+  animation: landing-marquee-x 48s linear infinite;
+  will-change: transform;
+}
+
+.landing-marquee-track:hover {
+  animation-play-state: paused;
+}
+
+@keyframes landing-orbit {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.landing-orbit-slow {
+  animation: landing-orbit 72s linear infinite;
+}
+
+.landing-orbit-reverse {
+  animation-direction: reverse;
+}
+
+@keyframes landing-fade-up-stagger {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.landing-chat-stagger > * {
+  opacity: 0;
+  animation: landing-fade-up-stagger 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.landing-chat-stagger > *:nth-child(1) {
+  animation-delay: 0.08s;
+}
+.landing-chat-stagger > *:nth-child(2) {
+  animation-delay: 0.22s;
+}
+.landing-chat-stagger > *:nth-child(3) {
+  animation-delay: 0.36s;
+}
+
+@keyframes landing-gradient-shift {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.landing-hero-glow-pulse {
+  background-size: 200% 200%;
+  animation: landing-gradient-shift 8s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-marquee-track {
+    animation: none !important;
+    transform: none !important;
+  }
+
+  .landing-marquee-track:hover {
+    animation-play-state: running;
+  }
+
+  .landing-orbit-slow {
+    animation: none !important;
+  }
+
+  .landing-chat-stagger > * {
+    opacity: 1 !important;
+    animation: none !important;
+  }
+
+  .landing-hero-glow-pulse {
+    animation: none !important;
   }
 }
 

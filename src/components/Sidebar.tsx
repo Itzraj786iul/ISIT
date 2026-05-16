@@ -85,7 +85,7 @@ export default function Sidebar() {
       )}
       <aside
         id="student-sidebar"
-        className={`flex flex-col fixed left-0 top-0 h-dvh z-30 bg-slate-950/95 border-cyan-300/20 shadow-lg md:shadow-none transition-[width] duration-200 ease-out overflow-hidden backdrop-blur-xl ${
+        className={`flex flex-col fixed left-0 top-0 h-dvh z-30 border-white/[0.08] bg-[#050510]/95 shadow-lg md:shadow-none transition-[width] duration-200 ease-out overflow-hidden backdrop-blur-xl ${
           open ? 'w-[min(85vw,260px)] md:w-[220px] border-r' : 'w-0 border-r-0'
         }`}
       >
@@ -151,7 +151,7 @@ export default function Sidebar() {
                 key={item.href}
                 href={item.href}
                 onClick={() => window.innerWidth < 768 && setOpen(false)}
-                className={`flex min-h-[44px] items-center gap-3 rounded-xl px-3 py-3 text-[13px] font-medium no-underline transition-colors active:scale-[0.99] ${active ? 'bg-sky-50 text-sky-600 dark:bg-sky-950/60 dark:text-sky-400' : 'text-slate-600 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800'}`}
+                className={`flex min-h-[44px] items-center gap-3 rounded-xl px-3 py-3 text-[13px] font-medium no-underline transition-colors active:scale-[0.99] ${active ? 'border border-white/[0.1] bg-white/[0.06] text-cyan-300' : 'text-slate-400 hover:bg-white/[0.04] hover:text-slate-200'}`}
               >
                 <SidebarIcon name={item.iconId} color={color} />
                 <span className="whitespace-nowrap">{tr(item.labelKey)}</span>
@@ -169,7 +169,7 @@ export default function Sidebar() {
                 key={item.href}
                 href={item.href}
                 onClick={() => window.innerWidth < 768 && setOpen(false)}
-                className={`flex min-h-[44px] items-center gap-3 rounded-xl px-3 py-3 text-[13px] font-medium no-underline transition-colors active:scale-[0.99] ${active ? 'bg-sky-50 text-sky-600 dark:bg-sky-950/60 dark:text-sky-400' : 'text-slate-600 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800'}`}
+                className={`flex min-h-[44px] items-center gap-3 rounded-xl px-3 py-3 text-[13px] font-medium no-underline transition-colors active:scale-[0.99] ${active ? 'border border-white/[0.1] bg-white/[0.06] text-cyan-300' : 'text-slate-400 hover:bg-white/[0.04] hover:text-slate-200'}`}
               >
                 <SidebarIcon name={item.iconId} color={color} />
                 <span className="whitespace-nowrap">{tr(item.labelKey)}</span>

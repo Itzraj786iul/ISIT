@@ -1,9 +1,8 @@
 'use client';
 
+import SiteShell from '@/components/SiteShell';
 import { useRouter } from 'next/navigation';
 import { Search, Calendar, Clock, ArrowRight } from 'lucide-react';
-import PublicNav from '@/components/PublicNav';
-import Footer from '@/components/Footer';
 import { RevealOnView, RevealStagger } from '@/components/RevealMotion';
 import { useT } from '@/lib/t';
 import type { I18nKey } from '@/lib/t';
@@ -74,9 +73,7 @@ export default function BlogPage() {
   ];
 
   return (
-    <div className="isit-cosmic-bg min-h-screen flex flex-col text-cyan-50">
-      <PublicNav active="blog" />
-
+    <SiteShell variant="public" active="blog">
       {/* ================= HERO ================= */}
       <section className="py-12 sm:py-20 text-center px-4 sm:px-6">
         <RevealOnView>
@@ -237,9 +234,6 @@ export default function BlogPage() {
 </div>
         </RevealOnView>
       </section>
-
-      <Footer />
-
-    </div>
+    </SiteShell>
   );
 }

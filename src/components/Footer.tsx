@@ -1,142 +1,172 @@
 'use client';
 
 import Link from 'next/link';
-import { Mail, Phone, MapPin, Facebook, Instagram, Linkedin, Youtube } from 'lucide-react';
-import { useT } from '@/lib/t';
+import { Instagram, Linkedin, Mail, MapPin, Sparkles, Youtube } from 'lucide-react';
+import { getSupportEmail } from '@/lib/support-email';
+import { RevealOnView, RevealStagger } from '@/components/RevealMotion';
 
-const social = [
-  { Icon: Facebook, href: 'https://www.facebook.com', label: 'Facebook' },
-  { Icon: Instagram, href: 'https://www.instagram.com', label: 'Instagram' },
-  { Icon: Youtube, href: 'https://www.youtube.com', label: 'YouTube' },
-  { Icon: Linkedin, href: 'https://www.linkedin.com', label: 'LinkedIn' },
+/** X (Twitter) — lucide `Twitter` removed in some versions; simple path icon */
+function IconX({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden>
+      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+    </svg>
+  );
+}
+
+const contactEmail = process.env.NEXT_PUBLIC_SUPPORT_EMAIL?.trim() || 'hello@isic.edu.in';
+
+const programs = [
+  { label: 'Robotics & Tech', href: '/courses' },
+  { label: 'Digital Literacy', href: '/courses' },
+  { label: 'Marketing & Comms', href: '/courses' },
+  { label: 'Entrepreneurship', href: '/courses' },
+  { label: 'Academic + AI', href: '/courses' },
+  { label: 'Innovation Labs', href: '/courses' },
 ] as const;
 
-const supportEmail = process.env.NEXT_PUBLIC_SUPPORT_EMAIL?.trim() || 'hello@isic.in';
+const coreCourses = [
+  { label: 'How the Brain Works', href: '/courses' },
+  { label: 'How Learning Happens', href: '/courses' },
+  { label: 'The Art of Imagination', href: '/courses' },
+  { label: 'Active Learning', href: '/courses' },
+] as const;
+
+const company = [
+  { label: 'About ISIC', href: '/about-us' },
+  { label: 'Careers', href: '/contact' },
+  { label: 'Press', href: '/contact' },
+  { label: 'Partnerships', href: '/contact' },
+  { label: 'For Schools', href: '/contact' },
+  { label: 'Contact', href: '/contact' },
+] as const;
+
+const social = [
+  { href: 'https://twitter.com', Icon: IconX, label: 'X' },
+  { href: 'https://www.instagram.com', Icon: Instagram, label: 'Instagram' },
+  { href: 'https://www.youtube.com', Icon: Youtube, label: 'YouTube' },
+  { href: 'https://www.linkedin.com', Icon: Linkedin, label: 'LinkedIn' },
+] as const;
 
 export default function Footer() {
-  const tr = useT();
+  const mailtoEmail = getSupportEmail();
+  const displayEmail = contactEmail.includes('@') ? contactEmail : mailtoEmail;
 
   return (
-    <footer className="relative z-10 border-t border-cyan-400/15 bg-slate-950 py-12 text-cyan-100/80 sm:py-16">
-      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-4 sm:grid-cols-2 sm:gap-10 sm:px-6 md:grid-cols-4 md:gap-12">
-        <div>
-          <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-cyan-300/25 bg-slate-900/70 px-3 py-1.5 text-xs font-semibold text-cyan-200">
-            ISIC
+    <footer className="relative z-10 overflow-hidden border-t border-white/[0.08] bg-[#050510] pb-10 pt-16 text-slate-200 sm:pb-12 sm:pt-20">
+      <div
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_90%_55%_at_50%_100%,rgba(99,102,241,0.14),transparent_60%)]"
+        aria-hidden
+      />
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6">
+        <RevealOnView>
+          <RevealStagger className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-4 lg:gap-12">
+            {/* Brand */}
+            <div className="sm:col-span-2 lg:col-span-1">
+              <div className="flex items-start gap-3">
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 via-violet-600 to-cyan-500 text-white shadow-lg shadow-violet-900/40 motion-safe:transition motion-safe:hover:scale-[1.03] motion-safe:hover:shadow-violet-500/30">
+                  <Sparkles className="h-5 w-5" strokeWidth={2} />
+                </span>
+                <div>
+                  <p className="text-lg font-bold tracking-tight text-white">ISIC</p>
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-slate-500">Innovation · Curiosity</p>
+                </div>
+              </div>
+              <p className="mt-5 max-w-sm text-sm leading-relaxed text-slate-300">
+                The Indian School of Innovation &amp; Curiosity — where every child discovers their own extraordinary genius through AI, neuroscience
+                and real-world projects.
+              </p>
+              <div className="mt-6 flex flex-wrap gap-2">
+                {social.map(({ href, Icon, label }) => (
+                  <a
+                    key={label}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`${label} (opens in new tab)`}
+                    className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/15 text-slate-200 transition hover:-translate-y-0.5 hover:border-cyan-400/35 hover:bg-white/[0.07] hover:text-white"
+                  >
+                    <Icon className="h-4 w-4" aria-hidden />
+                  </a>
+                ))}
+              </div>
+            </div>
+
+            {/* Programs */}
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-slate-500">Programs</p>
+              <ul className="mt-4 space-y-3">
+                {programs.map(({ label, href }) => (
+                  <li key={label}>
+                    <Link href={href} className="text-sm font-medium text-white/95 transition hover:text-cyan-300">
+                      {label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Core courses */}
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-slate-500">Core courses</p>
+              <ul className="mt-4 space-y-3">
+                {coreCourses.map(({ label, href }) => (
+                  <li key={label}>
+                    <Link href={href} className="text-sm font-medium text-white/95 transition hover:text-cyan-300">
+                      {label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Company */}
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-slate-500">Company</p>
+              <ul className="mt-4 space-y-3">
+                {company.map(({ label, href }) => (
+                  <li key={label}>
+                    <Link href={href} className="text-sm font-medium text-white/95 transition hover:text-cyan-300">
+                      {label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </RevealStagger>
+        </RevealOnView>
+
+        {/* Bottom bar */}
+        <RevealOnView delayMs={80} className="mt-16 border-t border-white/[0.08] pt-10">
+          <div className="flex flex-col gap-6 text-sm lg:flex-row lg:items-center lg:justify-between lg:gap-8">
+            <a
+              href={`mailto:${mailtoEmail}`}
+              className="inline-flex items-center gap-2 font-medium text-white transition hover:text-cyan-200"
+            >
+              <Mail className="h-4 w-4 shrink-0 text-slate-400" aria-hidden />
+              {displayEmail}
+            </a>
+            <p className="inline-flex items-center gap-2 font-medium text-white lg:justify-center">
+              <MapPin className="h-4 w-4 shrink-0 text-slate-400" aria-hidden />
+              Bengaluru · Mumbai · Delhi NCR
+            </p>
+            <p className="text-xs text-slate-500 lg:text-right">
+              © {new Date().getFullYear()} ISIC. All rights reserved.{' '}
+              <span className="text-slate-600" aria-hidden>
+                ·
+              </span>{' '}
+              <Link href="/privacy" className="text-slate-400 transition hover:text-cyan-300">
+                Privacy
+              </Link>{' '}
+              <span className="text-slate-600" aria-hidden>
+                ·
+              </span>{' '}
+              <Link href="/terms" className="text-slate-400 transition hover:text-cyan-300">
+                Terms
+              </Link>
+            </p>
           </div>
-          <h3 className="text-lg font-semibold text-cyan-100 sm:text-xl">Indian School of Innovation and Curiosity</h3>
-          <p className="mt-3 max-w-md text-sm text-cyan-100/70 sm:mt-4">{tr('footerTagline')}</p>
-          <div className="mt-5 flex flex-wrap items-center gap-2">
-            {social.map(({ Icon, href, label }) => (
-              <a
-                key={label}
-                href={href}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={`${label} (opens in new tab)`}
-                className="motion-safe-transition inline-flex h-10 w-10 items-center justify-center rounded-xl border border-cyan-300/25 bg-slate-900/70 text-cyan-200/80 transition hover:border-cyan-300/45 hover:bg-cyan-400/10 hover:text-cyan-100"
-              >
-                <Icon className="h-4 w-4" aria-hidden />
-              </a>
-            ))}
-          </div>
-        </div>
-
-        <div>
-          <p className="mb-3 font-medium text-cyan-100 sm:mb-4">{tr('footerLearn')}</p>
-          <ul className="space-y-2 sm:space-y-2.5">
-            <li>
-              <Link href="/subjects" className="inline-flex min-h-[2rem] items-center py-1 text-cyan-100/70 transition hover:text-cyan-200">
-                {tr('footerSubjectsLink')}
-              </Link>
-            </li>
-            <li>
-              <Link href="/how-it-works" className="inline-flex min-h-[2rem] items-center py-1 text-cyan-100/70 transition hover:text-cyan-200">
-                {tr('footerHowItWorksLink')}
-              </Link>
-            </li>
-            <li>
-              <Link href="/ai-tutor" className="inline-flex min-h-[2rem] items-center py-1 text-cyan-100/70 transition hover:text-cyan-200">
-                {tr('footerAiTutorLink')}
-              </Link>
-            </li>
-            <li>
-              <Link href="/courses" className="inline-flex min-h-[2rem] flex-col items-start gap-0.5 py-1 text-cyan-100/70 transition hover:text-cyan-200">
-                <span>{tr('footerCourseCatalogLink')}</span>
-              </Link>
-            </li>
-          </ul>
-        </div>
-
-        <div>
-          <p className="mb-3 font-medium text-cyan-100 sm:mb-4">{tr('footerCompany')}</p>
-          <ul className="space-y-2 sm:space-y-2.5">
-            <li>
-              <Link href="/about-us" className="inline-flex min-h-[2rem] items-center py-1 text-cyan-100/70 transition hover:text-cyan-200">
-                {tr('aboutUs')}
-              </Link>
-            </li>
-            <li>
-              <Link href="/contact" className="inline-flex min-h-[2rem] items-center py-1 text-cyan-100/70 transition hover:text-cyan-200">
-                {tr('footerContact')}
-              </Link>
-            </li>
-            <li>
-              <Link href="/stories" className="inline-flex min-h-[2rem] items-center py-1 text-cyan-100/70 transition hover:text-cyan-200">
-                {tr('stories')}
-              </Link>
-            </li>
-            <li>
-              <Link href="/blog" className="inline-flex min-h-[2rem] items-center py-1 text-cyan-100/70 transition hover:text-cyan-200">
-                {tr('blog')}
-              </Link>
-            </li>
-          </ul>
-        </div>
-
-        <div>
-          <p className="mb-3 font-medium text-cyan-100 sm:mb-4">{tr('footerGetInTouch')}</p>
-          <ul className="space-y-2 text-sm text-cyan-100/70">
-            <li className="flex items-start gap-2">
-              <Mail className="mt-0.5 h-4 w-4 shrink-0 text-cyan-300" aria-hidden />
-              <a href={`mailto:${supportEmail}`} className="break-all hover:text-cyan-200">
-                {supportEmail}
-              </a>
-            </li>
-            <li className="flex items-center gap-2">
-              <Phone className="h-4 w-4 shrink-0 text-cyan-300" aria-hidden />
-              <a href="tel:+911234567890" className="hover:text-cyan-200">
-                +91 12345 67890
-              </a>
-            </li>
-            <li className="flex items-center gap-2">
-              <MapPin className="h-4 w-4 shrink-0 text-cyan-300" aria-hidden />
-              India
-            </li>
-          </ul>
-          <Link href="/signup" className="isit-btn-primary mt-6 inline-flex min-h-11 items-center justify-center no-underline">
-            {tr('footerCta')}
-          </Link>
-        </div>
-      </div>
-
-      <div className="mt-10 border-t border-cyan-400/15 px-4 pt-5 text-xs text-cyan-100/55 sm:mt-12">
-        <div className="mx-auto flex max-w-7xl flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <p>© {new Date().getFullYear()} ISIC (Indian School of Innovation and Curiosity). All rights reserved.</p>
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-            <Link href="/privacy" className="hover:text-cyan-200">
-              Privacy
-            </Link>
-            <Link href="/terms" className="hover:text-cyan-200">
-              Terms
-            </Link>
-            <Link href="/refund" className="hover:text-cyan-200">
-              Refunds
-            </Link>
-            <Link href="/contact" className="hover:text-cyan-200">
-              Contact
-            </Link>
-          </div>
-        </div>
+        </RevealOnView>
       </div>
     </footer>
   );
