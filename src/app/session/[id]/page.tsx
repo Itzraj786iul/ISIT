@@ -33,28 +33,6 @@ type SessionPayload = {
   session_source?: string;
 };
 
-const MOCK_QUESTIONS: PlayerQuestion[] = [
-  {
-    _id: 'mock-1',
-    question_text: 'What is the main goal of active learning?',
-    options: [
-      'To passively watch videos only',
-      'To engage deeply with ideas and practice',
-      'To avoid asking questions',
-      'To skip difficult topics',
-    ],
-    correct_answer: 'To engage deeply with ideas and practice',
-    explanation: 'Active learning means doing, reflecting, and applying — not only consuming content.',
-  },
-  {
-    _id: 'mock-2',
-    question_text: 'When you are stuck, what is usually the best first step?',
-    options: ['Give up immediately', 'Identify what you do not understand and ask a focused question', 'Skip to the next chapter', 'Memorize without understanding'],
-    correct_answer: 'Identify what you do not understand and ask a focused question',
-    explanation: 'Naming the gap helps you and your tutor target the real issue.',
-  },
-];
-
 function formatTimer(totalSeconds: number): string {
   const m = Math.floor(totalSeconds / 60);
   const s = totalSeconds % 60;
@@ -90,6 +68,7 @@ export default function SessionPlayerPage() {
 
   const [questions, setQuestions] = useState<PlayerQuestion[]>([]);
   const [loadingQuestions, setLoadingQuestions] = useState(true);
+  const [questionsUnavailable, setQuestionsUnavailable] = useState(false);
 
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
@@ -178,12 +157,14 @@ export default function SessionPlayerPage() {
   useEffect(() => {
     if (!topicIdStr) {
       setQuestions([]);
+      setQuestionsUnavailable(true);
       setLoadingQuestions(false);
       return;
     }
     let cancelled = false;
     const loadQs = async () => {
       setLoadingQuestions(true);
+      setQuestionsUnavailable(false);
       try {
         const res = await fetchWithAuth(`/api/questions?topicId=${encodeURIComponent(topicIdStr)}`);
         const json = (await res.json()) as { success?: boolean; data?: Record<string, unknown>[] };
@@ -192,12 +173,22 @@ export default function SessionPlayerPage() {
           const normalized = json.data
             .map((q, i) => normalizeApiQuestion(q, i))
             .filter((q): q is PlayerQuestion => q != null);
-          setQuestions(normalized.length > 0 ? normalized : MOCK_QUESTIONS);
+          if (normalized.length > 0) {
+            setQuestions(normalized);
+            setQuestionsUnavailable(false);
+          } else {
+            setQuestions([]);
+            setQuestionsUnavailable(true);
+          }
         } else {
-          setQuestions(MOCK_QUESTIONS);
+          setQuestions([]);
+          setQuestionsUnavailable(true);
         }
       } catch {
-        if (!cancelled) setQuestions(MOCK_QUESTIONS);
+        if (!cancelled) {
+          setQuestions([]);
+          setQuestionsUnavailable(true);
+        }
       } finally {
         if (!cancelled) setLoadingQuestions(false);
       }
@@ -317,21 +308,21 @@ export default function SessionPlayerPage() {
   if (loadingSession) {
     return (
       <div className="min-h-[100dvh] flex flex-col isit-cosmic-bg overflow-x-hidden relative">
-        <div className="h-14 sm:h-16 border-b border-cyan-400/15 bg-slate-950/50 animate-pulse shrink-0" />
+        <div className="h-14 sm:h-16 border-b border-cyan-400/15 bg-slate-50 dark:bg-white dark:bg-slate-950/50 animate-pulse shrink-0" />
         <div className="flex-1 flex flex-col lg:flex-row min-h-0 gap-0 p-3 sm:p-4">
-          <div className="flex-1 min-h-[240px] rounded-2xl border border-cyan-400/15 bg-slate-950/40 animate-pulse" />
+          <div className="flex-1 min-h-[240px] rounded-2xl border border-cyan-400/15 bg-slate-50 dark:bg-white dark:bg-slate-950/40 animate-pulse" />
           <div className="hidden lg:block w-[min(100%,320px)] rounded-2xl bg-cyan-950/30 animate-pulse shrink-0" />
         </div>
-        <div className="h-20 border-t border-cyan-400/15 bg-slate-950/50 animate-pulse shrink-0" />
+        <div className="h-20 border-t border-cyan-400/15 bg-slate-50 dark:bg-white dark:bg-slate-950/50 animate-pulse shrink-0" />
       </div>
     );
   }
 
   if (accessDenied) {
     return (
-      <div className="isit-cosmic-bg min-h-screen text-cyan-50 flex flex-col items-center justify-center px-4 py-10 relative">
-        <p className="text-cyan-50 font-semibold text-center">Access denied</p>
-        <p className="text-cyan-100/75 text-sm text-center mt-2 max-w-md leading-relaxed">
+      <div className="isit-app-bg min-h-screen flex flex-col items-center justify-center px-4 py-10 relative">
+        <p className="isit-text-primary font-semibold text-center">Access denied</p>
+        <p className="/75 text-sm text-center mt-2 max-w-md leading-relaxed">
           You do not have permission to open this session.
         </p>
         <div className="flex flex-col sm:flex-row gap-3 mt-8">
@@ -348,9 +339,9 @@ export default function SessionPlayerPage() {
 
   if (loadError || !session) {
     return (
-      <div className="isit-cosmic-bg min-h-screen text-cyan-50 flex flex-col items-center justify-center px-4 relative">
-        <p className="text-cyan-100 font-medium text-center">{loadError || 'Session unavailable'}</p>
-        <Link href="/subjects" className="mt-4 text-cyan-300 text-sm font-medium hover:underline">
+      <div className="isit-app-bg min-h-screen flex flex-col items-center justify-center px-4 relative">
+        <p className="font-medium text-center">{loadError || 'Session unavailable'}</p>
+        <Link href="/subjects" className="mt-4 text-sky-600 dark:text-cyan-300 text-sm font-medium hover:underline">
           Browse subjects
         </Link>
       </div>
@@ -364,9 +355,9 @@ export default function SessionPlayerPage() {
 
   if (alreadyEnded) {
     return (
-      <div className="isit-cosmic-bg min-h-screen text-cyan-50 flex flex-col items-center justify-center px-4 relative">
-        <p className="text-cyan-50 font-semibold">This session has already ended.</p>
-        <Link href="/dashboard" className="mt-4 text-cyan-300 font-medium hover:underline">
+      <div className="isit-app-bg min-h-screen flex flex-col items-center justify-center px-4 relative">
+        <p className="isit-text-primary font-semibold">This session has already ended.</p>
+        <Link href="/dashboard" className="mt-4 text-sky-600 dark:text-cyan-300 font-medium hover:underline">
           Back to dashboard
         </Link>
       </div>
@@ -379,10 +370,10 @@ export default function SessionPlayerPage() {
   return (
     <div className="h-[100dvh] min-h-0 flex flex-col isit-cosmic-bg overflow-hidden overflow-x-hidden relative">
       {topicIdStr ? (
-        <div className="shrink-0 border-b border-cyan-400/20 bg-slate-950/90 px-3 py-2 sm:px-4">
+        <div className="shrink-0 border-b border-slate-200 dark:border-cyan-400/20 bg-white dark:bg-white dark:bg-slate-950/90 px-3 py-2 sm:px-4">
           <Link
             href={`/topic/${topicIdStr}`}
-            className="inline-flex max-w-full items-center gap-1.5 text-sm font-medium text-cyan-200 transition hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400 no-underline"
+            className="inline-flex max-w-full items-center gap-1.5 text-sm font-medium text-slate-600 dark:text-cyan-200 transition hover:text-slate-900 dark:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400 no-underline"
           >
             <ChevronLeft className="h-4 w-4 shrink-0" aria-hidden />
             <span className="truncate">{tr('sessionBackToTopic')}</span>
@@ -408,7 +399,7 @@ export default function SessionPlayerPage() {
             {practiceComplete ? (
               <div className="bg-white rounded-2xl border border-slate-200/90 p-8 sm:p-10 text-center shadow-md max-w-lg mx-auto">
                 <p className="text-xl font-bold text-slate-900">Nice work!</p>
-                <p className="text-slate-600 text-sm mt-3 leading-relaxed">
+                <p className="text-slate-600 dark:text-slate-300 text-sm mt-3 leading-relaxed">
                   You&apos;ve finished this practice set. Keep going with the AI Tutor or end the session when you&apos;re ready.
                 </p>
               </div>
@@ -444,9 +435,9 @@ export default function SessionPlayerPage() {
               AI Tutor
             </span>
             {mobileTutorOpen ? (
-              <ChevronUp className="w-5 h-5 text-slate-500 shrink-0" aria-hidden />
+              <ChevronUp className="w-5 h-5 text-slate-500 dark:text-slate-400 shrink-0" aria-hidden />
             ) : (
-              <ChevronDown className="w-5 h-5 text-slate-500 shrink-0" aria-hidden />
+              <ChevronDown className="w-5 h-5 text-slate-500 dark:text-slate-400 shrink-0" aria-hidden />
             )}
           </button>
           <div

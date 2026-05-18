@@ -205,7 +205,7 @@ export default function Dashboard() {
     .slice(0, 4);
 
   return (
-    <div className="isit-cosmic-bg min-h-screen flex font-sans text-cyan-50 overflow-x-hidden relative">
+    <div className="isit-app-bg min-h-screen flex font-sans overflow-x-hidden relative">
       <Sidebar />
       <main className="flex-1 min-w-0 overflow-x-hidden relative z-[1]">
         <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 pb-8 space-y-4 sm:space-y-6">
@@ -242,7 +242,7 @@ export default function Dashboard() {
                 </Link>
                 <Link
                   href="/ai-tutor"
-                  className="inline-flex min-h-[48px] flex-1 items-center justify-center gap-2 rounded-xl border border-white/35 bg-white/15 px-5 py-3 text-base font-semibold text-white no-underline backdrop-blur hover:bg-white/25 active:scale-[0.98] motion-safe-transition sm:flex-none"
+                  className="inline-flex min-h-[48px] flex-1 items-center justify-center gap-2 rounded-xl border border-white/35 bg-white/15 px-5 py-3 text-base font-semibold text-slate-900 dark:text-white no-underline backdrop-blur hover:bg-white/25 active:scale-[0.98] motion-safe-transition sm:flex-none"
                 >
                   <Bot className="h-5 w-5 shrink-0" />
                   {tr('aiTutor')}

@@ -36,11 +36,11 @@ export default function ForgotPasswordPage() {
     <SiteShell variant="auth" showFooter={false}>
       <main className="flex-1 max-w-md mx-auto px-4 py-12 w-full">
         <div className="isit-glass rounded-3xl p-8">
-          <h1 className="text-2xl font-bold text-cyan-100">{tr('forgotPasswordTitle')}</h1>
-          <p className="text-cyan-100/70 text-sm mt-2">{tr('forgotPasswordLead')}</p>
+          <h1 className="text-2xl font-bold isit-body">{tr('forgotPasswordTitle')}</h1>
+          <p className="isit-body/70 text-sm mt-2">{tr('forgotPasswordLead')}</p>
           <form onSubmit={onSubmit} className="mt-6 space-y-4">
             <div>
-              <label htmlFor="fp-email" className="block text-sm font-medium text-cyan-100/90 mb-1">
+              <label htmlFor="fp-email" className="block text-sm font-medium isit-body/90 mb-1">
                 {tr('labelEmail')}
               </label>
               <input
@@ -50,7 +50,7 @@ export default function ForgotPasswordPage() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full rounded-xl border border-cyan-400/25 bg-slate-950/70 px-4 py-3 text-cyan-50 placeholder:text-cyan-100/40 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                className="w-full rounded-xl border border-slate-200 dark:border-cyan-400/25 bg-slate-100 dark:bg-white dark:bg-slate-950/70 px-4 py-3 isit-text-primary placeholder:isit-body/40 focus:outline-none focus:ring-2 focus:ring-cyan-400"
               />
             </div>
             {err && <p className="text-red-300 text-sm">{err}</p>}
@@ -63,8 +63,8 @@ export default function ForgotPasswordPage() {
               {busy ? 'Sending…' : 'Send reset link'}
             </button>
           </form>
-          <p className="mt-6 text-center text-sm text-cyan-100/70">
-            <Link href="/login" className="text-cyan-300 hover:underline font-medium">
+          <p className="mt-6 text-center text-sm isit-body/70">
+            <Link href="/login" className="text-sky-600 dark:text-cyan-300 hover:underline font-medium">
               Back to sign in
             </Link>
           </p>

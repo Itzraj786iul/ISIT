@@ -204,24 +204,24 @@ export default function LessonPlayerPage() {
 
   if (loading) {
     return (
-      <div className="h-screen isit-cosmic-bg flex flex-col items-center justify-center text-cyan-200 relative px-4">
+      <div className="h-screen isit-cosmic-bg flex flex-col items-center justify-center relative px-4">
         <div className="isit-glass rounded-2xl p-6 max-w-md w-full space-y-4 relative z-[1]">
           <div className="aspect-video rounded-xl bg-cyan-400/10 animate-pulse border border-cyan-400/10" />
           <div className="h-3 rounded-full bg-cyan-400/10 animate-pulse w-4/5" />
           <div className="h-3 rounded-full bg-cyan-400/10 animate-pulse w-3/5" />
         </div>
-        <p className="relative z-[1] mt-6 text-sm text-cyan-200/75">{tr('lessonLoading')}</p>
+        <p className="relative z-[1] mt-6 text-sm text-slate-600 dark:text-cyan-200/75">{tr('lessonLoading')}</p>
       </div>
     );
   }
 
   if (!currentLesson || !course) {
     return (
-      <div className="h-screen isit-cosmic-bg flex flex-col items-center justify-center gap-6 p-4 text-cyan-50 relative">
+      <div className="h-screen isit-cosmic-bg flex flex-col items-center justify-center gap-6 p-4 relative">
         <div className="isit-glass max-w-md w-full rounded-2xl p-8 text-center relative z-[1]">
           <BookOpen className="w-12 h-12 text-cyan-400 mx-auto mb-4 opacity-90" aria-hidden />
-          <p className="font-semibold text-cyan-50">{tr('lessonNotFoundTitle')}</p>
-          <p className="mt-2 text-sm text-cyan-100/70">{tr('lessonNotFoundLead')}</p>
+          <p className="font-semibold isit-text-primary">{tr('lessonNotFoundTitle')}</p>
+          <p className="mt-2 text-sm /70">{tr('lessonNotFoundLead')}</p>
           <Link href="/dashboard" className="isit-btn-primary mt-6 inline-flex min-h-11 items-center justify-center px-6 no-underline">
             {tr('goToDashboard')}
           </Link>
@@ -232,10 +232,10 @@ export default function LessonPlayerPage() {
 
   if (accessDenied) {
     return (
-      <div className="h-screen isit-cosmic-bg flex flex-col items-center justify-center gap-6 p-4 text-cyan-50 relative">
+      <div className="h-screen isit-cosmic-bg flex flex-col items-center justify-center gap-6 p-4 relative">
         <div className="isit-glass max-w-md w-full rounded-2xl p-8 text-center relative z-[1]">
-          <p className="font-semibold text-cyan-50">{tr('lessonEnrollmentTitle')}</p>
-          <p className="mt-2 text-sm leading-relaxed text-cyan-100/75">{tr('lessonEnrollmentLead')}</p>
+          <p className="font-semibold isit-text-primary">{tr('lessonEnrollmentTitle')}</p>
+          <p className="mt-2 text-sm leading-relaxed /75">{tr('lessonEnrollmentLead')}</p>
           <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
             <Link href={`/course/${course._id}`} className="isit-btn-primary inline-flex min-h-11 items-center justify-center px-6 no-underline">
               {tr('lessonViewCourseEnroll')}
@@ -254,7 +254,7 @@ export default function LessonPlayerPage() {
 
   const aiTutorContent = (
     <>
-      <div className="flex-1 overflow-y-auto p-4 space-y-3 min-h-0 bg-slate-950/25">
+      <div className="flex-1 overflow-y-auto p-4 space-y-3 min-h-0 bg-white dark:bg-slate-950/25">
         {messages.map((msg) => (
           <div
             key={msg.id}
@@ -263,8 +263,8 @@ export default function LessonPlayerPage() {
             <div
               className={`px-4 py-3 rounded-2xl text-sm max-w-[85%] sm:max-w-[280px] leading-relaxed ${
                 msg.sender === 'user'
-                  ? 'bg-cyan-500/25 text-cyan-50 border border-cyan-400/35 rounded-br-md shadow-[0_8px_24px_rgba(6,182,212,0.12)]'
-                  : 'isit-glass text-cyan-50/95 rounded-bl-md border-cyan-400/25'
+                  ? 'bg-cyan-500/25 isit-text-primary border border-cyan-400/35 rounded-br-md shadow-[0_8px_24px_rgba(6,182,212,0.12)]'
+                  : 'isit-glass isit-text-primary/95 rounded-bl-md border-slate-200 dark:border-cyan-400/25'
               }`}
             >
               {msg.text}
@@ -272,13 +272,13 @@ export default function LessonPlayerPage() {
           </div>
         ))}
       </div>
-      <div className="p-4 border-t border-cyan-400/15 bg-slate-950/50 backdrop-blur-md flex-shrink-0">
+      <div className="p-4 border-t border-cyan-400/15 bg-slate-50 dark:bg-white dark:bg-slate-950/50 backdrop-blur-md flex-shrink-0">
         <form onSubmit={handleSendMessage} className="flex gap-2">
           <input
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             placeholder={tr('lessonTutorPlaceholder')}
-            className="flex-1 min-w-0 px-4 py-2.5 rounded-xl text-sm bg-slate-950/70 border border-cyan-400/25 text-cyan-50 placeholder:text-cyan-200/45 focus:outline-none focus:ring-2 focus:ring-cyan-400/40"
+            className="flex-1 min-w-0 px-4 py-2.5 rounded-xl text-sm bg-slate-100 dark:bg-white dark:bg-slate-950/70 border border-slate-200 dark:border-cyan-400/25 isit-text-primary placeholder:text-slate-600 dark:text-cyan-200/45 focus:outline-none focus:ring-2 focus:ring-cyan-400/40"
           />
           <button
             type="submit"
@@ -293,12 +293,12 @@ export default function LessonPlayerPage() {
 
   const aiTutorPanel = (
     <>
-      <div className="p-4 border-b border-cyan-400/15 bg-slate-950/40 backdrop-blur-md flex-shrink-0 flex items-start gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-cyan-400/15 border border-cyan-400/30 text-cyan-300 shrink-0">
+      <div className="p-4 border-b border-cyan-400/15 bg-slate-50 dark:bg-white dark:bg-slate-950/40 backdrop-blur-md flex-shrink-0 flex items-start gap-3">
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-cyan-400/15 border border-cyan-400/30 text-sky-600 dark:text-cyan-300 shrink-0">
           <Sparkles className="w-5 h-5" aria-hidden />
         </div>
         <div className="min-w-0">
-          <p className="text-sm font-semibold text-cyan-50">{tr('lessonTutorTitle')}</p>
+          <p className="text-sm font-semibold isit-text-primary">{tr('lessonTutorTitle')}</p>
           <p className="mt-0.5 text-xs font-medium text-emerald-400/90">● {tr('lessonTutorContext')}</p>
         </div>
       </div>
@@ -309,28 +309,28 @@ export default function LessonPlayerPage() {
   const lessonsSidebar = (
     <>
       <div className="p-5 border-b border-cyan-400/15">
-        <h2 className="text-[10px] font-bold uppercase tracking-widest text-cyan-300/90">{tr('lessonCrumbCourse')}</h2>
+        <h2 className="text-[10px] font-bold uppercase tracking-widest isit-accent-text">{tr('lessonCrumbCourse')}</h2>
         <Link
           href={`/course/${course._id}`}
-          className="text-sm font-semibold text-cyan-50 mt-2 block hover:text-cyan-200 no-underline leading-snug"
+          className="text-sm font-semibold isit-text-primary mt-2 block hover:text-slate-600 dark:text-cyan-200 no-underline leading-snug"
           onClick={() => setMobileLessonsOpen(false)}
         >
           {course.title}
         </Link>
         <div className="mt-4">
-          <div className="h-2 bg-slate-950/60 rounded-full overflow-hidden border border-cyan-400/15">
+          <div className="h-2 bg-white dark:bg-slate-950/60 rounded-full overflow-hidden border border-cyan-400/15">
             <div
               className="h-full bg-gradient-to-r from-cyan-500 to-teal-400 transition-all duration-500"
               style={{ width: `${progress}%` }}
             />
           </div>
-          <p className="mt-1.5 text-xs text-cyan-200/65">
+          <p className="mt-1.5 text-xs text-slate-600 dark:text-cyan-200/65">
             {tr('lessonProgressPercent').replace(/\{percent\}/g, String(Math.round(progress)))}
           </p>
         </div>
       </div>
       <div className="flex-1 overflow-y-auto p-4 min-h-0">
-        <h4 className="mb-3 text-[10px] font-bold uppercase tracking-widest text-cyan-300/70">{tr('lessonLessonsHeading')}</h4>
+        <h4 className="mb-3 text-[10px] font-bold uppercase tracking-widest text-sky-600 dark:text-cyan-300/70">{tr('lessonLessonsHeading')}</h4>
         <div className="space-y-1.5">
           {lessonsList.map((lesson, index) => {
             const done = completedLessons.includes(lesson._id);
@@ -346,7 +346,7 @@ export default function LessonPlayerPage() {
                 className={`w-full flex items-start gap-3 p-3 rounded-xl text-left cursor-pointer transition motion-safe-transition border ${
                   active
                     ? 'border-cyan-400/45 bg-cyan-400/10 shadow-[0_0_20px_rgba(34,211,238,0.08)]'
-                    : 'border-transparent hover:bg-slate-950/45 hover:border-cyan-400/15'
+                    : 'border-transparent hover:bg-white dark:bg-slate-950/45 hover:border-cyan-400/15'
                 }`}
               >
                 <div
@@ -356,7 +356,7 @@ export default function LessonPlayerPage() {
                 >
                   {done ? '✓' : index + 1}
                 </div>
-                <p className={`text-sm font-medium leading-snug ${active ? 'text-cyan-50' : 'text-cyan-100/85'}`}>
+                <p className={`text-sm font-medium leading-snug ${active ? 'isit-text-primary' : 'isit-muted'}`}>
                   {lesson.title}
                 </p>
               </button>
@@ -364,40 +364,40 @@ export default function LessonPlayerPage() {
           })}
         </div>
       </div>
-      <div className="p-4 border-t border-cyan-400/15 flex justify-between text-center text-sm bg-slate-950/30">
+      <div className="p-4 border-t border-cyan-400/15 flex justify-between text-center text-sm bg-white dark:bg-slate-950/30">
         <div>
-          <p className="font-bold text-cyan-50">{completedLessons.length}</p>
-          <p className="text-[10px] uppercase tracking-wide text-cyan-200/55">{tr('lessonDoneLabel')}</p>
+          <p className="font-bold isit-text-primary">{completedLessons.length}</p>
+          <p className="text-[10px] uppercase tracking-wide text-slate-600 dark:text-cyan-200/55">{tr('lessonDoneLabel')}</p>
         </div>
         <div>
-          <p className="font-bold text-cyan-50">{lessonsList.length - completedLessons.length}</p>
-          <p className="text-[10px] uppercase tracking-wide text-cyan-200/55">{tr('lessonLeftLabel')}</p>
+          <p className="font-bold isit-text-primary">{lessonsList.length - completedLessons.length}</p>
+          <p className="text-[10px] uppercase tracking-wide text-slate-600 dark:text-cyan-200/55">{tr('lessonLeftLabel')}</p>
         </div>
       </div>
     </>
   );
 
   return (
-    <div className="h-screen flex flex-col md:flex-row isit-cosmic-bg overflow-hidden relative text-cyan-50">
+    <div className="h-screen flex flex-col md:flex-row isit-cosmic-bg overflow-hidden relative ">
       {mobileLessonsOpen && (
         <div className="fixed inset-0 z-50 md:hidden">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setMobileLessonsOpen(false)} aria-hidden />
-          <aside className="absolute left-0 top-0 bottom-0 w-[min(20rem,88vw)] isit-glass border-r border-cyan-400/25 flex flex-col shadow-2xl">
+          <aside className="absolute left-0 top-0 bottom-0 w-[min(20rem,88vw)] isit-glass border-r border-slate-200 dark:border-cyan-400/25 flex flex-col shadow-2xl">
             {lessonsSidebar}
           </aside>
         </div>
       )}
-      <aside className="hidden md:flex w-72 lg:w-80 flex-col flex-shrink-0 isit-glass border-r border-cyan-400/20 rounded-none min-h-0">
+      <aside className="hidden md:flex w-72 lg:w-80 flex-col flex-shrink-0 isit-glass border-r border-slate-200 dark:border-cyan-400/20 rounded-none min-h-0">
         {lessonsSidebar}
       </aside>
 
       <div className="flex-1 flex flex-col min-w-0 min-h-0 relative z-[1]">
-        <header className="flex-shrink-0 border-b border-cyan-400/15 bg-slate-950/45 backdrop-blur-xl px-4 sm:px-6 py-3 sm:py-0 sm:min-h-[4rem] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <header className="flex-shrink-0 border-b border-cyan-400/15 bg-white dark:bg-slate-950/45 backdrop-blur-xl px-4 sm:px-6 py-3 sm:py-0 sm:min-h-[4rem] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex flex-wrap items-center gap-2 sm:gap-4 min-w-0">
             <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0 text-xs sm:text-sm">
               <Link
                 href="/dashboard"
-                className="inline-flex items-center gap-1 text-cyan-300 hover:text-cyan-100 font-medium no-underline"
+                className="inline-flex items-center gap-1 text-sky-600 dark:text-cyan-300 hover:font-medium no-underline"
               >
                 <ChevronLeft className="w-4 h-4 shrink-0" aria-hidden />
                 {tr('dashboard')}
@@ -405,7 +405,7 @@ export default function LessonPlayerPage() {
               <span className="hidden text-cyan-500/40 sm:inline" aria-hidden>
                 ·
               </span>
-              <Link href={`/course/${course._id}`} className="font-medium text-cyan-300 no-underline hover:text-cyan-100">
+              <Link href={`/course/${course._id}`} className="font-medium text-sky-600 dark:text-cyan-300 no-underline hover:isit-body">
                 {tr('lessonCrumbCourse')}
               </Link>
             </div>
@@ -415,8 +415,8 @@ export default function LessonPlayerPage() {
                   .replace(/\{current\}/g, String(currentIndex + 1))
                   .replace(/\{total\}/g, String(lessonsList.length))}
               </p>
-              <h1 className="text-base sm:text-lg font-bold text-cyan-50 truncate">{currentLesson.title}</h1>
-              <p className="text-xs text-cyan-200/65 truncate">{course.title}</p>
+              <h1 className="text-base sm:text-lg font-bold isit-text-primary truncate">{currentLesson.title}</h1>
+              <p className="text-xs text-slate-600 dark:text-cyan-200/65 truncate">{course.title}</p>
             </div>
           </div>
           <div className="flex items-center gap-2 flex-shrink-0">
@@ -439,19 +439,19 @@ export default function LessonPlayerPage() {
         <div className="flex-1 flex flex-col lg:flex-row overflow-hidden min-h-0">
           <div className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8 min-h-0">
             <div className="isit-glass p-4 sm:p-6 rounded-2xl">
-              <div className="rounded-xl overflow-hidden border border-cyan-400/20 bg-slate-950/80 shadow-[inset_0_0_0_1px_rgba(34,211,238,0.06)]">
+              <div className="rounded-xl overflow-hidden border border-slate-200 dark:border-cyan-400/20 bg-white dark:bg-slate-950/80 shadow-[inset_0_0_0_1px_rgba(34,211,238,0.06)]">
                 {hasVideo ? (
                   <div className="aspect-video">
                     <iframe src={videoUrl} allowFullScreen className="w-full h-full border-0" title={currentLesson.title} />
                   </div>
                 ) : (
                   <div className="aspect-video flex flex-col items-center justify-center gap-3 p-8 text-center">
-                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-cyan-400/25 bg-cyan-400/10 text-cyan-300">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-slate-200 dark:border-cyan-400/25 bg-cyan-400/10 text-sky-600 dark:text-cyan-300">
                       <Video className="w-7 h-7 opacity-90" aria-hidden />
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-cyan-50">{tr('lessonNoVideoTitle')}</p>
-                      <p className="mx-auto mt-1 max-w-xs text-xs text-cyan-200/60">{tr('lessonNoVideoLead')}</p>
+                      <p className="text-sm font-medium isit-text-primary">{tr('lessonNoVideoTitle')}</p>
+                      <p className="mx-auto mt-1 max-w-xs text-xs text-slate-600 dark:text-cyan-200/60">{tr('lessonNoVideoLead')}</p>
                     </div>
                   </div>
                 )}
@@ -467,7 +467,7 @@ export default function LessonPlayerPage() {
                   {tr('lessonPrevious')}
                 </button>
                 <div className="order-1 sm:order-2 flex flex-col sm:flex-row items-center gap-2 sm:gap-4">
-                  <span className="text-sm text-cyan-200/80 font-medium tabular-nums">
+                  <span className="text-sm isit-body font-medium tabular-nums">
                     {currentIndex + 1} / {lessonsList.length}
                   </span>
                   <button
@@ -496,33 +496,33 @@ export default function LessonPlayerPage() {
 
             {currentLesson.content ? (
               <div className="mt-6 isit-glass p-5 sm:p-6 rounded-2xl">
-                <h3 className="font-semibold text-cyan-50 mb-2 flex items-center gap-2">
+                <h3 className="font-semibold isit-text-primary mb-2 flex items-center gap-2">
                   <BookOpen className="w-4 h-4 text-cyan-400 shrink-0" aria-hidden />
                   {tr('lessonFromLesson')}
                 </h3>
-                <p className="text-cyan-100/85 text-sm whitespace-pre-wrap leading-relaxed">{currentLesson.content}</p>
+                <p className="isit-muted text-sm whitespace-pre-wrap leading-relaxed">{currentLesson.content}</p>
               </div>
             ) : null}
 
             <div className="mt-6 isit-glass p-5 sm:p-6 rounded-2xl">
-              <h3 className="mb-2 font-semibold text-cyan-50">{tr('lessonYourNotes')}</h3>
+              <h3 className="mb-2 font-semibold isit-text-primary">{tr('lessonYourNotes')}</h3>
               <textarea
                 value={userNotes}
                 onChange={(e) => saveUserNotes(e.target.value)}
                 placeholder={tr('lessonNotesPlaceholder')}
                 rows={6}
-                className="w-full px-4 py-3 rounded-xl text-sm bg-slate-950/70 border border-cyan-400/25 text-cyan-50 placeholder:text-cyan-200/40 focus:outline-none focus:ring-2 focus:ring-cyan-400/35 resize-y min-h-[120px]"
+                className="w-full px-4 py-3 rounded-xl text-sm bg-slate-100 dark:bg-white dark:bg-slate-950/70 border border-slate-200 dark:border-cyan-400/25 isit-text-primary placeholder:text-slate-600 dark:text-cyan-200/40 focus:outline-none focus:ring-2 focus:ring-cyan-400/35 resize-y min-h-[120px]"
               />
-              <p className="mt-2 text-xs text-cyan-200/55">{tr('lessonNotesSavedDevice')}</p>
+              <p className="mt-2 text-xs text-slate-600 dark:text-cyan-200/55">{tr('lessonNotesSavedDevice')}</p>
             </div>
 
             <div className="mt-10 isit-glass rounded-2xl p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div>
-                <h2 className="text-lg font-semibold text-cyan-50">{tr('lessonMoreCoursesTitle')}</h2>
-                <p className="mt-1 text-sm text-cyan-100/70">{tr('lessonMoreCoursesLead')}</p>
-                <p className="mt-3 text-sm text-cyan-200/80">
+                <h2 className="text-lg font-semibold isit-text-primary">{tr('lessonMoreCoursesTitle')}</h2>
+                <p className="mt-1 text-sm isit-body/70">{tr('lessonMoreCoursesLead')}</p>
+                <p className="mt-3 text-sm isit-body">
                   {tr('lessonPreferSubjects')}{' '}
-                  <Link href="/subjects" className="font-medium text-cyan-300 underline hover:text-cyan-100">
+                  <Link href="/subjects" className="font-medium text-sky-600 dark:text-cyan-300 underline hover:isit-body">
                     {tr('lessonOpenSubjects')}
                   </Link>
                 </p>
@@ -536,7 +536,7 @@ export default function LessonPlayerPage() {
             </div>
           </div>
 
-          <div className="hidden lg:flex w-[min(100%,24rem)] flex-col flex-shrink-0 isit-glass border-l border-cyan-400/20 rounded-none min-h-0">
+          <div className="hidden lg:flex w-[min(100%,24rem)] flex-col flex-shrink-0 isit-glass border-l border-slate-200 dark:border-cyan-400/20 rounded-none min-h-0">
             {aiTutorPanel}
           </div>
         </div>
@@ -554,21 +554,21 @@ export default function LessonPlayerPage() {
         {mobileTutorOpen && (
           <div className="fixed inset-0 z-50 lg:hidden flex flex-col">
             <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setMobileTutorOpen(false)} aria-hidden />
-            <div className="absolute bottom-0 left-0 right-0 top-[12%] sm:top-[18%] isit-glass rounded-t-3xl border border-cyan-400/25 border-b-0 flex flex-col overflow-hidden shadow-2xl">
-              <div className="flex items-center justify-between p-4 border-b border-cyan-400/15 flex-shrink-0 bg-slate-950/40">
+            <div className="absolute bottom-0 left-0 right-0 top-[12%] sm:top-[18%] isit-glass rounded-t-3xl border border-slate-200 dark:border-cyan-400/25 border-b-0 flex flex-col overflow-hidden shadow-2xl">
+              <div className="flex items-center justify-between p-4 border-b border-cyan-400/15 flex-shrink-0 bg-slate-50 dark:bg-white dark:bg-slate-950/40">
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-cyan-400/15 border border-cyan-400/30 text-cyan-300 shrink-0">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-cyan-400/15 border border-cyan-400/30 text-sky-600 dark:text-cyan-300 shrink-0">
                     <Sparkles className="w-5 h-5" aria-hidden />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-sm font-semibold text-cyan-50">{tr('lessonTutorTitle')}</p>
+                    <p className="text-sm font-semibold isit-text-primary">{tr('lessonTutorTitle')}</p>
                     <p className="text-xs font-medium text-emerald-400/90">● {tr('lessonTutorMobileContext')}</p>
                   </div>
                 </div>
                 <button
                   type="button"
                   onClick={() => setMobileTutorOpen(false)}
-                  className="p-2.5 rounded-xl text-cyan-200/80 hover:bg-cyan-400/10 border border-transparent hover:border-cyan-400/20"
+                  className="p-2.5 rounded-xl isit-body hover:bg-cyan-400/10 border border-transparent hover:border-slate-200 dark:border-cyan-400/20"
                   aria-label={tr('lessonTutorCloseAria')}
                 >
                   <X className="w-5 h-5" aria-hidden />

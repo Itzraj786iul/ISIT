@@ -172,9 +172,9 @@ function TutorContent() {
     <div className="mx-auto w-full max-w-7xl p-4 sm:p-6">
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <div>
-          <p className="text-xs uppercase tracking-[0.2em] text-cyan-300">{tr('aiTutorPageEyebrow')}</p>
+          <p className="text-xs uppercase tracking-[0.2em] text-sky-600 dark:text-cyan-300">{tr('aiTutorPageEyebrow')}</p>
           <h1 className="mt-1 text-3xl font-black sm:text-4xl">{tr('aiTutor')}</h1>
-          <p className="mt-2 max-w-2xl text-sm text-cyan-100/70">{tr('aiTutorPageLead')}</p>
+          <p className="mt-2 max-w-2xl text-sm isit-body/70">{tr('aiTutorPageLead')}</p>
         </div>
         <div className="flex items-center gap-2 text-xs">
           <span className="isit-chip">
@@ -191,29 +191,29 @@ function TutorContent() {
 
       <div className="mb-4 grid gap-3 md:grid-cols-4">
         <div className="isit-glass rounded-2xl p-3">
-          <p className="text-[11px] uppercase text-cyan-300">{tr('aiTutorReadiness')}</p>
-          <p className="mt-1 flex items-center gap-2 text-sm font-semibold text-cyan-100">
+          <p className="text-[11px] uppercase text-sky-600 dark:text-cyan-300">{tr('aiTutorReadiness')}</p>
+          <p className="mt-1 flex items-center gap-2 text-sm font-semibold isit-body">
             <Gauge className="h-4 w-4" />
             {tr('aiTutorReadinessHigh')}
           </p>
         </div>
         <div className="isit-glass rounded-2xl p-3">
-          <p className="text-[11px] uppercase text-cyan-300">{tr('aiTutorFocusTime')}</p>
-          <p className="mt-1 flex items-center gap-2 text-sm font-semibold text-cyan-100">
+          <p className="text-[11px] uppercase text-sky-600 dark:text-cyan-300">{tr('aiTutorFocusTime')}</p>
+          <p className="mt-1 flex items-center gap-2 text-sm font-semibold isit-body">
             <Clock3 className="h-4 w-4" />
             {tr('aiTutorFocusTimeValue')}
           </p>
         </div>
         <div className="isit-glass rounded-2xl p-3">
-          <p className="text-[11px] uppercase text-cyan-300">{tr('aiTutorPracticePack')}</p>
-          <p className="mt-1 flex items-center gap-2 text-sm font-semibold text-cyan-100">
+          <p className="text-[11px] uppercase text-sky-600 dark:text-cyan-300">{tr('aiTutorPracticePack')}</p>
+          <p className="mt-1 flex items-center gap-2 text-sm font-semibold isit-body">
             <BookMarked className="h-4 w-4" />
             {tr('aiTutorPracticePackValue')}
           </p>
         </div>
         <div className="isit-glass rounded-2xl p-3">
-          <p className="text-[11px] uppercase text-cyan-300">{tr('aiTutorSafety')}</p>
-          <p className="mt-1 flex items-center gap-2 text-sm font-semibold text-cyan-100">
+          <p className="text-[11px] uppercase text-sky-600 dark:text-cyan-300">{tr('aiTutorSafety')}</p>
+          <p className="mt-1 flex items-center gap-2 text-sm font-semibold isit-body">
             <ShieldCheck className="h-4 w-4" />
             {tr('aiTutorSafetyValue')}
           </p>
@@ -222,8 +222,8 @@ function TutorContent() {
 
       <div className="grid gap-4 lg:grid-cols-[260px,1fr,280px]">
         <aside className="isit-glass rounded-2xl p-4">
-          <p className="mb-3 text-sm font-semibold text-cyan-100">{tr('aiTutorQuickPrompts')}</p>
-          <div className="mb-3 grid grid-cols-3 gap-1 rounded-lg border border-cyan-300/20 bg-slate-900/70 p-1 text-[11px]">
+          <p className="mb-3 text-sm font-semibold isit-body">{tr('aiTutorQuickPrompts')}</p>
+          <div className="mb-3 grid grid-cols-3 gap-1 rounded-lg border border-slate-200 dark:border-cyan-300/20 bg-slate-900/70 p-1 text-[11px]">
             {(
               [
                 { id: 'explain' as const, labelKey: 'aiTutorTabExplain' as const },
@@ -235,7 +235,7 @@ function TutorContent() {
                 key={id}
                 type="button"
                 onClick={() => setActiveTab(id)}
-                className={`rounded-md px-2 py-1.5 uppercase tracking-wide ${activeTab === id ? 'bg-cyan-400/20 text-cyan-100' : 'text-cyan-100/70'}`}
+                className={`rounded-md px-2 py-1.5 uppercase tracking-wide ${activeTab === id ? 'bg-cyan-400/20 isit-body' : 'isit-body/70'}`}
               >
                 {tr(labelKey)}
               </button>
@@ -247,7 +247,7 @@ function TutorContent() {
                 key={key}
                 type="button"
                 onClick={() => void sendMessage(tr(key))}
-                className="w-full rounded-xl border border-cyan-300/20 bg-slate-900/70 p-3 text-left text-xs text-cyan-100/85 hover:bg-cyan-400/10"
+                className="w-full rounded-xl border border-slate-200 dark:border-cyan-300/20 bg-slate-900/70 p-3 text-left text-xs isit-muted hover:bg-cyan-400/10"
               >
                 {tr(key)}
               </button>
@@ -256,17 +256,17 @@ function TutorContent() {
         </aside>
 
         <section className="isit-glass flex min-h-[560px] flex-col rounded-2xl">
-          <div className="border-b border-cyan-300/20 px-4 py-3 text-sm font-semibold text-cyan-100">{tr('aiTutorConversation')}</div>
+          <div className="border-b border-slate-200 dark:border-cyan-300/20 px-4 py-3 text-sm font-semibold isit-body">{tr('aiTutorConversation')}</div>
           <div ref={scrollerRef} className="flex-1 space-y-3 overflow-y-auto p-4">
             {messages.map((m) => (
               <div key={m.id} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                 <div
                   className={`max-w-[82%] whitespace-pre-wrap rounded-2xl px-4 py-3 text-sm ${
                     m.role === 'user'
-                      ? 'bg-cyan-400/20 border border-cyan-300/30 text-cyan-100'
+                      ? 'bg-cyan-400/20 border border-cyan-300/30 isit-body'
                       : m.error
                         ? 'bg-red-500/10 border border-red-300/30 text-red-200'
-                        : 'bg-slate-900/75 border border-cyan-300/20 text-cyan-50'
+                        : 'bg-slate-900/75 border border-slate-200 dark:border-cyan-300/20 isit-text-primary'
                   }`}
                 >
                   {m.content}
@@ -277,7 +277,7 @@ function TutorContent() {
               </div>
             ))}
             {thinking && (
-              <div className="inline-flex items-center gap-2 rounded-xl border border-cyan-300/20 bg-slate-900/70 px-3 py-2 text-xs text-cyan-200">
+              <div className="inline-flex items-center gap-2 rounded-xl border border-slate-200 dark:border-cyan-300/20 bg-slate-900/70 px-3 py-2 text-xs text-slate-600 dark:text-cyan-200">
                 <Bot className="h-4 w-4" />
                 {tr('aiTutorThinking')}
               </div>
@@ -286,14 +286,14 @@ function TutorContent() {
               <button
                 type="button"
                 onClick={() => void sendMessage(lastPrompt, true)}
-                className="inline-flex items-center gap-2 rounded-lg border border-cyan-300/25 bg-slate-900/70 px-3 py-2 text-xs text-cyan-100"
+                className="inline-flex items-center gap-2 rounded-lg border border-cyan-300/25 bg-slate-900/70 px-3 py-2 text-xs isit-body"
               >
                 <RotateCcw className="h-3.5 w-3.5" />
                 {tr('aiTutorRetryLast')}
               </button>
             )}
           </div>
-          <div className="border-t border-cyan-300/20 p-3">
+          <div className="border-t border-slate-200 dark:border-cyan-300/20 p-3">
             <div className="flex items-center gap-2 rounded-xl border border-cyan-300/25 bg-slate-900/75 p-2">
               <input
                 value={input}
@@ -302,7 +302,7 @@ function TutorContent() {
                   if (e.key === 'Enter' && canSend) void sendMessage(input);
                 }}
                 placeholder={tr('aiTutorPlaceholderAsk')}
-                className="flex-1 border-0 bg-transparent px-2 py-2 text-sm text-cyan-100 outline-none placeholder:text-cyan-100/50"
+                className="flex-1 border-0 bg-transparent px-2 py-2 text-sm isit-body outline-none placeholder:isit-body/50"
               />
               <button
                 type="button"
@@ -318,36 +318,36 @@ function TutorContent() {
 
         <aside className="space-y-3">
           <div className="isit-glass rounded-2xl p-4">
-            <p className="mb-2 text-sm font-semibold text-cyan-100">{tr('aiTutorSessionAssist')}</p>
+            <p className="mb-2 text-sm font-semibold isit-body">{tr('aiTutorSessionAssist')}</p>
             <div className="space-y-2">
               <button
                 type="button"
-                className="flex w-full items-center gap-2 rounded-xl border border-cyan-300/20 bg-slate-900/70 px-3 py-2 text-sm text-cyan-100/85"
+                className="flex w-full items-center gap-2 rounded-xl border border-slate-200 dark:border-cyan-300/20 bg-slate-900/70 px-3 py-2 text-sm isit-muted"
               >
-                <Lightbulb className="h-4 w-4 text-cyan-300" />
+                <Lightbulb className="h-4 w-4 text-sky-600 dark:text-cyan-300" />
                 {tr('aiTutorExplainSimpler')}
               </button>
               <button
                 type="button"
-                className="flex w-full items-center gap-2 rounded-xl border border-cyan-300/20 bg-slate-900/70 px-3 py-2 text-sm text-cyan-100/85"
+                className="flex w-full items-center gap-2 rounded-xl border border-slate-200 dark:border-cyan-300/20 bg-slate-900/70 px-3 py-2 text-sm isit-muted"
               >
-                <Wand2 className="h-4 w-4 text-cyan-300" />
+                <Wand2 className="h-4 w-4 text-sky-600 dark:text-cyan-300" />
                 {tr('aiTutorGenQuiz')}
               </button>
             </div>
           </div>
           <div className="isit-glass rounded-2xl p-4">
-            <p className="mb-2 text-sm font-semibold text-cyan-100">{tr('aiTutorSignals')}</p>
-            <div className="space-y-2 text-xs text-cyan-100/75">
+            <p className="mb-2 text-sm font-semibold isit-body">{tr('aiTutorSignals')}</p>
+            <div className="space-y-2 text-xs isit-body">
               {stats.map((row) => (
-                <div key={row.label} className="flex items-center justify-between rounded-lg border border-cyan-300/20 bg-slate-900/70 px-3 py-2">
+                <div key={row.label} className="flex items-center justify-between rounded-lg border border-slate-200 dark:border-cyan-300/20 bg-slate-900/70 px-3 py-2">
                   <span>{row.label}</span>
-                  <span className="font-semibold text-cyan-200">{row.value}</span>
+                  <span className="font-semibold text-slate-600 dark:text-cyan-200">{row.value}</span>
                 </div>
               ))}
             </div>
-            <div className="mt-3 rounded-lg border border-cyan-300/20 bg-slate-900/70 px-3 py-2 text-[11px] text-cyan-100/75">
-              <AlertTriangle className="mr-1 inline h-3.5 w-3.5 text-cyan-300" />
+            <div className="mt-3 rounded-lg border border-slate-200 dark:border-cyan-300/20 bg-slate-900/70 px-3 py-2 text-[11px] isit-body">
+              <AlertTriangle className="mr-1 inline h-3.5 w-3.5 text-sky-600 dark:text-cyan-300" />
               {tr('aiTutorHintSessionFirst')}
             </div>
           </div>
@@ -370,7 +370,7 @@ export default function AITutorPage() {
 
   if (loading) {
     return (
-      <div className="isit-cosmic-bg flex min-h-screen items-center justify-center text-cyan-200">
+      <div className="isit-cosmic-bg flex min-h-screen items-center justify-center">
         <p className="text-sm">{tr('courseLoading')}</p>
       </div>
     );
@@ -379,7 +379,7 @@ export default function AITutorPage() {
   const role = user?.role?.toLowerCase();
 
   if (!user) {
-    return <div className="isit-cosmic-bg min-h-screen" />;
+    return <div className="isit-app-bg min-h-screen" />;
   }
 
   if (role === 'teacher' || role === 'admin') {
@@ -392,7 +392,7 @@ export default function AITutorPage() {
 
   if (role === 'parent') {
     return (
-      <div className="isit-cosmic-bg min-h-screen text-cyan-50">
+      <div className="isit-app-bg min-h-screen ">
         <ParentNav />
         <main className="ml-[250px]">
           <TutorContent />
@@ -402,10 +402,10 @@ export default function AITutorPage() {
   }
 
   return (
-    <div className="isit-cosmic-bg flex min-h-screen text-cyan-50">
+    <div className="isit-cosmic-bg flex min-h-screen ">
       <Sidebar />
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="shrink-0 border-b border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-950/95">
+        <header className="shrink-0 border-b border-slate-200 bg-white dark:border-slate-700 dark:bg-white dark:bg-slate-950/95">
           <div className="px-4 py-3 sm:px-6">
             <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-2 text-sm">
               <Link href="/dashboard" className="font-medium text-sky-600 hover:underline dark:text-sky-400">

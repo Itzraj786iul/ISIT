@@ -61,10 +61,10 @@ export default function LearningPathPage() {
   }, [router]);
 
   return (
-    <div className="isit-cosmic-bg relative flex min-h-screen font-sans text-cyan-50">
+    <div className="isit-cosmic-bg relative flex min-h-screen font-sans ">
       <Sidebar />
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="shrink-0 border-b border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-950/95">
+        <header className="shrink-0 border-b border-slate-200 bg-white dark:border-slate-700 dark:bg-white dark:bg-slate-950/95">
           <div className="px-4 py-3 sm:px-6 md:px-8">
             <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-2 text-sm">
               <Link href="/dashboard" className="font-medium text-sky-600 hover:underline dark:text-sky-400">
@@ -88,7 +88,7 @@ export default function LearningPathPage() {
           </div>
         ) : paths.length === 0 ? (
           <div className="bg-white rounded-xl border border-slate-200 p-8 text-center">
-            <Layers className="w-12 h-12 text-slate-300 mx-auto mb-3" />
+            <Layers className="w-12 h-12 text-slate-600 dark:text-slate-300 mx-auto mb-3" />
             <p className="font-medium text-slate-600 dark:text-slate-300">{tr('learningPathEmptyTitle')}</p>
             <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{tr('learningPathEmptyLead')}</p>
           </div>
@@ -103,13 +103,13 @@ export default function LearningPathPage() {
                     <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                       <div>
                         <h2 className="text-xl font-bold text-slate-800">{path.name}</h2>
-                        {path.description && <p className="text-slate-500 text-sm mt-0.5">{path.description}</p>}
+                        {path.description && <p className="text-slate-500 dark:text-slate-400 text-sm mt-0.5">{path.description}</p>}
                         <div className="flex flex-wrap gap-4 mt-3">
-                          <span className="inline-flex items-center gap-1.5 text-sm text-slate-600">
+                          <span className="inline-flex items-center gap-1.5 text-sm text-slate-600 dark:text-slate-300">
                             <Target className="w-4 h-4 text-slate-400" />
                             {tr('learningPathTopicCount').replace(/\{count\}/g, String(totalTopics))}
                           </span>
-                          <span className="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-md font-medium">{path.grade}</span>
+                          <span className="text-xs bg-slate-100 text-slate-600 dark:text-slate-300 px-2 py-0.5 rounded-md font-medium">{path.grade}</span>
                         </div>
                       </div>
                     </div>

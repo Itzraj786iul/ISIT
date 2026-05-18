@@ -9,7 +9,12 @@ const options: { value: Language; label: string }[] = [
   { value: 'hi', label: 'हिंदी' },
 ];
 
-export default function LanguageSwitcher() {
+type LanguageSwitcherProps = {
+  /** Minimal styling for the public navbar utility row */
+  compact?: boolean;
+};
+
+export default function LanguageSwitcher({ compact = false }: LanguageSwitcherProps) {
   const [open, setOpen] = useState(false);
   const { language, setLanguage } = useLanguage();
   const ref = useRef<HTMLDivElement>(null);
@@ -28,18 +33,23 @@ export default function LanguageSwitcher() {
   };
 
   const currentLabel = options.find((o) => o.value === language)?.label ?? 'English';
+  const compactLabel = language === 'hi' ? 'हि' : 'EN';
 
   return (
     <div className="relative" ref={ref}>
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="flex items-center gap-1 text-sm text-slate-600 hover:text-slate-900 transition rounded-lg px-2 py-1.5 hover:bg-slate-100 dark:text-slate-300 dark:hover:text-white dark:hover:bg-slate-800"
+        className={
+          compact
+            ? 'inline-flex h-8 min-w-[2.25rem] items-center justify-center gap-0.5 rounded-full px-2 text-xs font-semibold uppercase tracking-wide text-[color:var(--isit-nav-text-muted)] transition hover:bg-[var(--isit-nav-hover-bg)] hover:text-[color:var(--isit-text)]'
+            : 'inline-flex min-h-10 items-center gap-1 rounded-xl border border-[color:var(--isit-border)] bg-[var(--isit-surface)] px-2.5 py-2 text-sm font-medium text-[color:var(--isit-text-secondary)] shadow-sm transition hover:bg-[var(--isit-surface-muted)] hover:text-[color:var(--isit-text)]'
+        }
         aria-expanded={open}
         aria-haspopup="listbox"
         aria-label="Select language"
       >
-        <span>{currentLabel}</span>
+        <span>{compact ? compactLabel : currentLabel}</span>
         <ChevronDown className={`w-4 h-4 transition ${open ? 'rotate-180' : ''}`} />
       </button>
       {open && (

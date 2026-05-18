@@ -3,7 +3,7 @@
  */
 export default function Loading() {
   return (
-    <div className="isit-cosmic-bg min-h-screen flex flex-col items-center justify-center px-6 text-cyan-50">
+    <div className="isit-app-bg min-h-screen flex flex-col items-center justify-center px-6 ">
       <div className="relative z-[1] w-full max-w-sm space-y-4">
         <div className="flex items-center gap-3">
           <div className="h-11 w-11 rounded-2xl isit-glass animate-pulse shrink-0" aria-hidden />
@@ -17,7 +17,7 @@ export default function Loading() {
           <div className="h-3 rounded-full bg-cyan-400/10 animate-pulse w-5/6" />
           <div className="h-3 rounded-full bg-cyan-400/10 animate-pulse w-2/3" />
         </div>
-        <p className="text-center text-sm text-cyan-200/80">Loading…</p>
+        <p className="text-center text-sm isit-body">Loading…</p>
       </div>
     </div>
   );

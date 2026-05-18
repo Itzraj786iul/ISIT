@@ -30,15 +30,15 @@ export default function ParentNav() {
   ];
 
   return (
-    <aside className="w-[250px] min-w-[250px] bg-slate-950/95 border-r border-cyan-300/20 flex flex-col fixed h-screen top-0 z-10 backdrop-blur-xl">
-      <div className="p-6 border-b border-cyan-300/20 flex items-center justify-between gap-2">
+    <aside className="w-[250px] min-w-[250px] isit-shell-aside flex flex-col fixed h-screen top-0 z-10 backdrop-blur-xl">
+      <div className="p-6 border-b border-[color:var(--isit-shell-border)] flex items-center justify-between gap-2">
         <div className="flex items-center gap-3 min-w-0">
           <div className="w-9 h-9 rounded-lg bg-violet-500 flex items-center justify-center text-white font-bold shrink-0">
             I
           </div>
           <div className="min-w-0">
-            <p className="font-bold text-cyan-100 text-sm">ISIC</p>
-            <p className="text-[10px] text-cyan-200/70 font-medium">{tr('parentPortal')}</p>
+            <p className="font-bold text-sm isit-text-primary">ISIC</p>
+            <p className="text-[10px] isit-muted font-medium">{tr('parentPortal')}</p>
           </div>
         </div>
         <ThemeToggle className="!p-1.5 shrink-0" />
@@ -53,7 +53,7 @@ export default function ParentNav() {
               key={href}
               href={href}
               className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium no-underline transition ${
-                active ? 'bg-cyan-400/15 text-cyan-200' : 'text-cyan-100/85 hover:bg-cyan-300/10'
+                active ? 'bg-cyan-400/15 text-slate-600 dark:text-cyan-200' : 'isit-nav-link dark:hover:bg-cyan-300/10'
               }`}
             >
               {icon}
@@ -62,10 +62,10 @@ export default function ParentNav() {
           );
         })}
       </nav>
-      <div className="p-3 border-t border-cyan-300/20 space-y-1">
+      <div className="p-3 border-t border-[color:var(--isit-shell-border)] space-y-1">
         <Link
           href="/settings"
-          className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-cyan-100/85 hover:bg-cyan-300/10 no-underline ${
+          className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium isit-nav-link dark:hover:bg-cyan-300/10 no-underline ${
             pathname === '/settings' ? 'bg-cyan-400/15' : ''
           }`}
         >

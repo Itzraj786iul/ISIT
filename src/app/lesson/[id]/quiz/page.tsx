@@ -143,8 +143,8 @@ export default function LessonQuizPage() {
 
   if (loading) {
     return (
-      <div className="isit-cosmic-bg min-h-screen text-cyan-50 flex items-center justify-center relative z-[1]">
-        <div className="flex items-center gap-3 text-cyan-200/90">
+      <div className="isit-app-bg min-h-screen flex items-center justify-center relative z-[1]">
+        <div className="flex items-center gap-3 text-slate-600 dark:text-cyan-200/90">
           <Loader2 className="w-5 h-5 animate-spin text-cyan-400" aria-hidden />
           <span className="text-sm">{tr('lessonQuizLoading')}</span>
         </div>
@@ -154,17 +154,17 @@ export default function LessonQuizPage() {
 
   if (questions.length === 0) {
     return (
-      <div className="isit-cosmic-bg min-h-screen text-cyan-50 p-4 sm:p-6 md:p-8 relative">
+      <div className="isit-app-bg min-h-screen p-4 sm:p-6 md:p-8 relative">
         <div className="max-w-2xl mx-auto relative z-[1]">
           <Link
             href={`/lesson/${lessonId}`}
-            className="inline-flex items-center gap-2 text-cyan-300 hover:text-cyan-100 text-sm font-medium mb-6 no-underline"
+            className="inline-flex items-center gap-2 text-sky-600 dark:text-cyan-300 hover:text-sm font-medium mb-6 no-underline"
           >
             <ArrowLeft className="h-4 w-4" aria-hidden /> {tr('lessonQuizBack')}
           </Link>
           <div className="isit-glass rounded-2xl p-8 text-center">
-            <p className="font-medium text-cyan-100/90">{tr('lessonQuizEmptyTitle')}</p>
-            <p className="mt-2 text-sm text-cyan-200/60">{tr('lessonQuizEmptyLead')}</p>
+            <p className="font-medium isit-body/90">{tr('lessonQuizEmptyTitle')}</p>
+            <p className="mt-2 text-sm text-slate-600 dark:text-cyan-200/60">{tr('lessonQuizEmptyLead')}</p>
             <Link
               href={`/lesson/${lessonId}`}
               className="isit-btn-primary mt-6 inline-flex min-h-11 items-center justify-center px-6 text-sm no-underline"
@@ -178,19 +178,19 @@ export default function LessonQuizPage() {
   }
 
   return (
-    <div className="isit-cosmic-bg min-h-screen text-cyan-50 p-4 sm:p-6 md:p-8 relative">
+    <div className="isit-app-bg min-h-screen p-4 sm:p-6 md:p-8 relative">
       <div className="max-w-2xl mx-auto relative z-[1]">
         <Link
           href={`/lesson/${lessonId}`}
-          className="inline-flex items-center gap-2 text-cyan-300 hover:text-cyan-100 text-sm font-medium mb-6 no-underline"
+          className="inline-flex items-center gap-2 text-sky-600 dark:text-cyan-300 hover:text-sm font-medium mb-6 no-underline"
         >
           <ArrowLeft className="h-4 w-4" aria-hidden /> {tr('lessonQuizBack')}
         </Link>
 
         <div className="mb-8">
           <p className="mb-2 text-[10px] font-bold uppercase tracking-widest text-cyan-400/80">{tr('lessonQuizEyebrow')}</p>
-          <h1 className="mb-1 text-2xl font-bold text-cyan-50">{lessonTitle}</h1>
-          <p className="text-sm text-cyan-100/70">{tr('lessonQuizInstructions')}</p>
+          <h1 className="mb-1 text-2xl font-bold isit-text-primary">{lessonTitle}</h1>
+          <p className="text-sm isit-body/70">{tr('lessonQuizInstructions')}</p>
         </div>
 
         {!submitted ? (
@@ -198,7 +198,7 @@ export default function LessonQuizPage() {
             <div className="space-y-6">
               {questions.map((q, qIndex) => (
                 <div key={q._id} className="isit-glass rounded-2xl p-5 sm:p-6">
-                  <p className="font-semibold text-cyan-50 mb-4 leading-snug">
+                  <p className="font-semibold isit-text-primary mb-4 leading-snug">
                     <span className="text-cyan-400/90 tabular-nums">{qIndex + 1}.</span> {q.question_text}
                   </p>
                   <div className="space-y-3">
@@ -210,7 +210,7 @@ export default function LessonQuizPage() {
                           className={`flex w-full items-start gap-3 p-4 rounded-xl cursor-pointer transition motion-safe-transition border-2 ${
                             selected
                               ? 'border-cyan-400 bg-cyan-500/20 shadow-[inset_0_0_0_1px_rgba(34,211,238,0.25)]'
-                              : 'border-cyan-400/25 bg-[rgb(15,23,42)]/95 hover:border-cyan-300/50 hover:bg-[rgb(15,23,42)]'
+                              : 'border-slate-200 dark:border-cyan-400/25 bg-[rgb(15,23,42)]/95 hover:border-cyan-300/50 hover:bg-[rgb(15,23,42)]'
                           }`}
                         >
                           <input
@@ -218,7 +218,7 @@ export default function LessonQuizPage() {
                             name={q._id}
                             checked={selected}
                             onChange={() => setAnswers((prev) => ({ ...prev, [q._id]: optIndex }))}
-                            className="mt-1 h-4 w-4 shrink-0 cursor-pointer rounded-full border-2 border-cyan-300/80 bg-slate-950 accent-cyan-400 text-cyan-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(15,23,42)]"
+                            className="mt-1 h-4 w-4 shrink-0 cursor-pointer rounded-full border-2 border-cyan-300/80 bg-white dark:bg-slate-950 accent-cyan-400 text-cyan-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(15,23,42)]"
                           />
                           <span
                             className="flex-1 min-w-0 text-sm font-medium leading-relaxed text-pretty"
@@ -257,8 +257,8 @@ export default function LessonQuizPage() {
             ) : (
               <XCircle className="w-16 h-16 text-amber-400 mx-auto mb-4" aria-hidden />
             )}
-            <h2 className="mb-2 text-xl font-bold text-cyan-50">{passed ? tr('lessonQuizPassedTitle') : tr('lessonQuizRetryTitle')}</h2>
-            <p className="mb-2 text-sm text-cyan-100/85">
+            <h2 className="mb-2 text-xl font-bold isit-text-primary">{passed ? tr('lessonQuizPassedTitle') : tr('lessonQuizRetryTitle')}</h2>
+            <p className="mb-2 text-sm isit-muted">
               {tr('lessonQuizScoreSummary')
                 .replace(/\{score\}/g, String(score ?? 0))
                 .replace(/\{total\}/g, String(questions.length))
@@ -267,7 +267,7 @@ export default function LessonQuizPage() {
                   String(score != null && questions.length > 0 ? Math.round((score / questions.length) * 100) : 0)
                 )}
             </p>
-            <p className="mb-6 text-sm text-cyan-200/65">{passed ? tr('lessonQuizPassedLead') : tr('lessonQuizFailedLead')}</p>
+            <p className="mb-6 text-sm text-slate-600 dark:text-cyan-200/65">{passed ? tr('lessonQuizPassedLead') : tr('lessonQuizFailedLead')}</p>
 
             {submitted && (
               <div className="text-left space-y-3 mb-6">
@@ -284,10 +284,10 @@ export default function LessonQuizPage() {
                           : 'border-red-400/25 bg-red-500/10'
                       }`}
                     >
-                      <p className="font-medium text-cyan-50">
+                      <p className="font-medium isit-text-primary">
                         {idx + 1}. {q.question_text}
                       </p>
-                      <p className="text-xs mt-2 text-cyan-100/80">
+                      <p className="text-xs mt-2 isit-body">
                         {tr('lessonQuizYourAnswer')}{' '}
                         <strong className={isCorrect ? 'text-emerald-300' : 'text-red-300'}>{yourLabel}</strong>
                         {!isCorrect && q.correctAnswer ? (
@@ -297,7 +297,7 @@ export default function LessonQuizPage() {
                           </span>
                         ) : null}
                       </p>
-                      {q.explanation ? <p className="text-xs text-cyan-200/70 mt-2">{q.explanation}</p> : null}
+                      {q.explanation ? <p className="text-xs text-slate-500 dark:text-cyan-200/70 mt-2">{q.explanation}</p> : null}
                     </div>
                   );
                 })}

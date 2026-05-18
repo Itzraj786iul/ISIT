@@ -51,6 +51,7 @@ function CheckoutForm() {
     state: '',
     zip: '',
   });
+  const [emailBlocked, setEmailBlocked] = useState(false);
 
   // Require course id and auth
   useEffect(() => {
@@ -231,7 +232,7 @@ function CheckoutForm() {
 
   if (loading) {
     return (
-      <div className="isit-cosmic-bg flex min-h-screen items-center justify-center text-cyan-200">
+      <div className="isit-cosmic-bg flex min-h-screen items-center justify-center">
         <p className="text-sm">{tr('checkoutLoading')}</p>
       </div>
     );
@@ -239,9 +240,9 @@ function CheckoutForm() {
 
   if (error && !course) {
     return (
-      <div className="isit-cosmic-bg relative flex min-h-screen flex-col items-center justify-center gap-4 px-4 text-cyan-50">
+      <div className="isit-cosmic-bg relative flex min-h-screen flex-col items-center justify-center gap-4 px-4 ">
         <p className="text-center text-sm text-red-300">{error}</p>
-        <Link href="/courses" className="font-medium text-cyan-300 hover:underline">
+        <Link href="/courses" className="font-medium text-sky-600 dark:text-cyan-300 hover:underline">
           {tr('checkoutBackToCatalog')}
         </Link>
       </div>
@@ -257,13 +258,13 @@ function CheckoutForm() {
   const courseImage = course.image || '';
 
   return (
-    <div className="isit-cosmic-bg min-h-screen text-cyan-50 flex flex-col relative">
-      <header className="border-b border-cyan-400/15 bg-slate-950/40 backdrop-blur-xl">
+    <div className="isit-app-bg min-h-screen flex flex-col relative">
+      <header className="border-b border-cyan-400/15 bg-slate-50 dark:bg-white dark:bg-slate-950/40 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-          <Link href="/" className="text-cyan-200 font-bold text-xl no-underline hover:text-cyan-100">
+          <Link href="/" className="text-slate-600 dark:text-cyan-200 font-bold text-xl no-underline hover:">
             ISIC
           </Link>
-          <Link href="/courses" className="text-sm text-cyan-200/80 no-underline hover:text-cyan-100">
+          <Link href="/courses" className="text-sm isit-body no-underline hover:isit-body">
             {tr('checkoutBackToCatalog')}
           </Link>
         </div>
@@ -436,7 +437,7 @@ function CheckoutForm() {
 function CheckoutSuspenseFallback() {
   const tr = useT();
   return (
-    <div className="isit-cosmic-bg flex min-h-screen items-center justify-center text-cyan-200">
+    <div className="isit-cosmic-bg flex min-h-screen items-center justify-center">
       <p className="text-sm">{tr('checkoutLoading')}</p>
     </div>
   );

@@ -12,7 +12,7 @@ import { AnimatedCursor } from "@/components/AnimatedCursor";
 import { SkipLink } from "@/components/SkipLink";
 import { getPublicSiteUrl } from "@/lib/public-site-url";
 
-const themeAndLangBootstrap = `(function(){try{var t=localStorage.getItem('isit-theme');var dark=t==='dark'||(t!=='light'&&window.matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.classList.toggle('dark',dark);var l=localStorage.getItem('isit-language')||localStorage.getItem('isit-locale');document.documentElement.lang=l==='hi'?'hi':'en';}catch(e){}})();`;
+const themeAndLangBootstrap = `(function(){try{var t=localStorage.getItem('isit-theme');var dark=t==='dark'||(t!=='light'&&window.matchMedia('(prefers-color-scheme: dark)').matches);var mode=dark?'dark':'light';document.documentElement.classList.toggle('dark',dark);document.documentElement.setAttribute('data-theme',mode);document.documentElement.style.colorScheme=mode;var l=localStorage.getItem('isit-language')||localStorage.getItem('isit-locale');document.documentElement.lang=l==='hi'?'hi':'en';}catch(e){}})();`;
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -64,7 +64,7 @@ export const viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
-  themeColor: "#030712",
+  themeColor: "#020617",
 };
 
 export default function RootLayout({
@@ -75,7 +75,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`isit-theme ${geistSans.variable} ${geistMono.variable} antialiased bg-[#05070a] text-slate-200`}
+        className={`isit-app ${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Script
           id="isit-theme-lang-bootstrap"

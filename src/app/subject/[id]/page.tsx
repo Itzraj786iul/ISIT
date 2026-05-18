@@ -119,7 +119,7 @@ export default function SubjectDetailPage() {
 
   if (loading) {
     return (
-      <div className="isit-cosmic-bg min-h-screen flex font-sans text-cyan-50 relative">
+      <div className="isit-app-bg min-h-screen flex font-sans relative">
         <Sidebar />
         <main className="flex-1 p-4 sm:p-6 md:p-8 min-w-0">
           <div className="max-w-4xl mx-auto animate-pulse">
@@ -139,12 +139,12 @@ export default function SubjectDetailPage() {
 
   if (forbidden) {
     return (
-      <div className="isit-cosmic-bg min-h-screen flex font-sans text-cyan-50 relative">
+      <div className="isit-app-bg min-h-screen flex font-sans relative">
         <Sidebar />
         <main className="flex min-h-[50vh] flex-1 flex-col items-center justify-center p-4 sm:p-6 md:p-8">
           <AlertCircle className="mb-4 h-12 w-12 text-amber-400" />
-          <h1 className="text-xl font-semibold text-cyan-50">{tr('subjectAccessDeniedTitle')}</h1>
-          <p className="mt-2 max-w-md text-center text-sm text-cyan-100/80">{tr('subjectAccessDeniedLead')}</p>
+          <h1 className="text-xl font-semibold isit-text-primary">{tr('subjectAccessDeniedTitle')}</h1>
+          <p className="mt-2 max-w-md text-center text-sm /80">{tr('subjectAccessDeniedLead')}</p>
           <Link href="/subjects" className="mt-6 font-medium text-sky-400 hover:underline">
             ← {tr('subjects')}
           </Link>
@@ -155,12 +155,12 @@ export default function SubjectDetailPage() {
 
   if (notFound || !subject) {
     return (
-      <div className="isit-cosmic-bg min-h-screen flex font-sans text-cyan-50 relative">
+      <div className="isit-app-bg min-h-screen flex font-sans relative">
         <Sidebar />
         <main className="flex min-h-[50vh] flex-1 flex-col items-center justify-center p-4 sm:p-6 md:p-8">
-          <AlertCircle className="mb-4 h-12 w-12 text-cyan-300/60" />
-          <h1 className="text-xl font-semibold text-cyan-50">{tr('subjectNotFoundTitle')}</h1>
-          <p className="mt-2 text-center text-sm text-cyan-100/75">{tr('subjectNotFoundLead')}</p>
+          <AlertCircle className="mb-4 h-12 w-12 text-sky-600 dark:text-cyan-300/60" />
+          <h1 className="text-xl font-semibold isit-text-primary">{tr('subjectNotFoundTitle')}</h1>
+          <p className="mt-2 text-center text-sm /75">{tr('subjectNotFoundLead')}</p>
           <Link href="/subjects" className="mt-6 font-medium text-sky-400 hover:underline">
             ← {tr('subjects')}
           </Link>
@@ -170,7 +170,7 @@ export default function SubjectDetailPage() {
   }
 
   return (
-    <div className="isit-cosmic-bg min-h-screen flex font-sans text-cyan-50 relative">
+    <div className="isit-app-bg min-h-screen flex font-sans relative">
       <Sidebar />
       <main className="flex-1 p-4 sm:p-6 md:p-8 min-w-0 overflow-x-auto">
         <div className="max-w-4xl mx-auto">
@@ -201,7 +201,7 @@ export default function SubjectDetailPage() {
           </div>
           <h1 className="text-2xl font-bold text-slate-900 mb-2">{subject.name}</h1>
           {subject.description && (
-            <p className="text-slate-600 text-sm leading-relaxed mb-8">{subject.description}</p>
+            <p className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed mb-8">{subject.description}</p>
           )}
 
           <h2 className="mb-1 flex items-center gap-2 text-lg font-semibold text-slate-900 dark:text-slate-100">
@@ -210,8 +210,8 @@ export default function SubjectDetailPage() {
           </h2>
           <p className="mb-4 text-sm text-slate-600 dark:text-slate-400">{tr('learningFlowSubjectTopicsLead')}</p>
           {topics.length === 0 ? (
-            <div className="bg-white rounded-xl border border-slate-200 p-8 text-center text-slate-500">
-              <BookOpen className="w-10 h-10 mx-auto mb-2 text-slate-300" />
+            <div className="bg-white rounded-xl border border-slate-200 p-8 text-center text-slate-500 dark:text-slate-400">
+              <BookOpen className="w-10 h-10 mx-auto mb-2 text-slate-600 dark:text-slate-300" />
               <p className="text-sm font-medium">No topics in this subject yet.</p>
             </div>
           ) : (
@@ -237,7 +237,7 @@ export default function SubjectDetailPage() {
                           <div className="flex flex-wrap items-center gap-2 mt-2">
                             {difficultyBadge(topic.difficulty_level)}
                             {topic.estimated_time != null && topic.estimated_time > 0 && (
-                              <span className="inline-flex items-center gap-1 text-slate-500 text-xs">
+                              <span className="inline-flex items-center gap-1 text-slate-500 dark:text-slate-400 text-xs">
                                 <Clock className="w-3.5 h-3.5" />
                                 {topic.estimated_time} min
                               </span>
@@ -257,14 +257,14 @@ export default function SubjectDetailPage() {
                                     style={{ width: `${Math.min(100, mastery.mastery_score)}%` }}
                                   />
                                 </div>
-                                <p className="text-xs text-slate-500 mt-1">
+                                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                                   Progress: {mastery.mastery_score}%
                                 </p>
                               </div>
                             )}
                           </div>
                         </div>
-                        <ChevronRight className="w-5 h-5 text-slate-300 group-hover:text-sky-500 flex-shrink-0 mt-0.5" />
+                        <ChevronRight className="w-5 h-5 text-slate-600 dark:text-slate-300 group-hover:text-sky-500 flex-shrink-0 mt-0.5" />
                       </div>
                     </Link>
                   </li>

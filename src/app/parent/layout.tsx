@@ -32,14 +32,14 @@ export default function ParentLayout({ children }: { children: React.ReactNode }
 
   if (!allowed) {
     return (
-      <div className="isit-cosmic-bg min-h-screen flex items-center justify-center text-cyan-200">
+      <div className="isit-app-bg min-h-screen flex items-center justify-center">
         <p className="text-sm">Loading…</p>
       </div>
     );
   }
 
   return (
-    <div className="isit-cosmic-bg min-h-screen flex text-cyan-50 relative">
+    <div className="isit-app-bg min-h-screen flex relative">
       <ParentNav />
       <main className="flex-1 ml-[250px] min-w-0 p-6 md:p-8 relative z-[1]">
         {children}

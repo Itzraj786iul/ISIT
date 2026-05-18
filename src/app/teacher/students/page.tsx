@@ -76,21 +76,21 @@ export default function TeacherStudentsPage() {
     <TeacherShell user={user}>
       <div className="max-w-4xl mx-auto">
         <h1 className="text-2xl font-bold text-slate-900 mb-2">Students</h1>
-        <p className="text-slate-500 text-sm mb-6">Students enrolled in your courses</p>
+        <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Students enrolled in your courses</p>
 
         <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
           {loading ? (
-            <div className="p-6 text-slate-500 text-sm">Loading students...</div>
+            <div className="p-6 text-slate-500 dark:text-slate-400 text-sm">Loading students...</div>
           ) : students.length === 0 ? (
             <div className="p-12 text-center">
-              <Users className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-              <p className="text-slate-600 font-medium">No students enrolled yet</p>
-              <p className="text-slate-500 text-sm mt-1">Students will appear here when they enroll in your courses.</p>
+              <Users className="w-12 h-12 text-slate-600 dark:text-slate-300 mx-auto mb-3" />
+              <p className="text-slate-600 dark:text-slate-300 font-medium">No students enrolled yet</p>
+              <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Students will appear here when they enroll in your courses.</p>
             </div>
           ) : (
             <>
               <div className="px-5 py-3 border-b border-slate-100 bg-slate-50/50">
-                <p className="text-sm font-medium text-slate-600">{students.length} student{students.length !== 1 ? 's' : ''} total</p>
+                <p className="text-sm font-medium text-slate-600 dark:text-slate-300">{students.length} student{students.length !== 1 ? 's' : ''} total</p>
               </div>
               <div className="divide-y divide-slate-100">
                 {students.map((student) => (
@@ -100,9 +100,9 @@ export default function TeacherStudentsPage() {
                     </div>
                     <div className="min-w-0 flex-1">
                       <p className="font-semibold text-slate-800 text-sm truncate">{student.name}</p>
-                      {student.email && <p className="text-xs text-slate-500 truncate">{student.email}</p>}
+                      {student.email && <p className="text-xs text-slate-500 dark:text-slate-400 truncate">{student.email}</p>}
                     </div>
-                    <div className="flex items-center gap-1.5 text-sm text-slate-600">
+                    <div className="flex items-center gap-1.5 text-sm text-slate-600 dark:text-slate-300">
                       <GraduationCap className="w-4 h-4 text-slate-400" />
                       <span>{student.enrolledCourses} course{student.enrolledCourses !== 1 ? 's' : ''}</span>
                     </div>

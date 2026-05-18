@@ -54,7 +54,7 @@ export async function assertTeacherCanAssignTopic(
     return { ok: false, response: errorResponse('Forbidden', 403) };
   }
 
-  return { ok: true, userId: gate.userId, organizationId: gate.organizationId, topic, subject };
+  return { ok: true, userId: gate.userId, organizationId: gate.organizationId, role: gate.role, topic, subject };
 }
 
 export async function assertTeacherCanTargetClass(

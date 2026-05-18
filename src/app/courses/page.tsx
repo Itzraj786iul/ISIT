@@ -97,9 +97,7 @@ export default function CoursesPage() {
   }, [courses, searchQuery, selectedCategories, maxPrice, difficulty, sortBy]);
 
   const toggleCategory = (cat: string) => {
-    setSelectedCategories((prev) =>
-      prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat]
-    );
+    setSelectedCategories((prev) => (prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat]));
   };
 
   const clearFilters = () => {
@@ -113,80 +111,69 @@ export default function CoursesPage() {
   const loadErrorMessage =
     loadErrorKind === 'network' ? tr('catalogNetworkError') : loadErrorKind === 'http' ? tr('catalogLoadError') : null;
 
+  const isNewCourse = (createdAt?: string) =>
+    createdAt && Date.now() - new Date(createdAt).getTime() < 30 * 24 * 60 * 60 * 1000;
+
   return (
     <SiteShell variant="public" active="courses">
-      <div className="border-b border-cyan-300/15 bg-slate-950/40">
+      <div className="border-b border-[color:var(--isit-border)] bg-[var(--isit-surface-muted)]">
         <nav aria-label="Breadcrumb" className="mx-auto flex max-w-7xl flex-wrap items-center gap-2 px-4 py-3 text-sm sm:px-6">
-          <Link href="/" className="font-medium text-sky-400 hover:underline">
+          <Link href="/" className="font-medium isit-accent-text hover:underline">
             {tr('home')}
           </Link>
-          <ChevronRight className="h-3.5 w-3.5 shrink-0 text-slate-500" aria-hidden />
-          <span className="font-medium text-cyan-100">{tr('catalogPageShortTitle')}</span>
+          <ChevronRight className="h-3.5 w-3.5 shrink-0 text-[color:var(--isit-text-muted)]" aria-hidden />
+          <span className="font-medium isit-text-primary">{tr('catalogPageShortTitle')}</span>
         </nav>
       </div>
 
-      {/* ================= HERO SECTION ================= */}
-      <section className="pb-10 sm:pb-12 pt-8 sm:pt-10">
+      <section className="pb-10 pt-8 sm:pb-12 sm:pt-10">
         <RevealOnView>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center">
-          <h1 className="mb-4 sm:mb-6 text-3xl font-bold text-gray-900 sm:text-4xl md:text-5xl dark:text-slate-100">
-            {tr('catalogHeroTitle')}
-          </h1>
-          <p className="mx-auto mb-6 max-w-2xl text-base text-gray-500 sm:mb-8 sm:text-lg dark:text-slate-400">
-            {tr('catalogHeroLead')}
-          </p>
-
-          {/* Search Bar */}
-          <div className="max-w-2xl mx-auto relative">
-            <input
-              type="text"
-              placeholder={tr('catalogSearchPlaceholder')}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-12 pr-4 py-4 rounded-xl border border-cyan-300/25 bg-slate-950/70 focus:bg-slate-950/85 shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-400 transition text-cyan-50"
-            />
-            <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
-               <Search size={20} />
+                    <div className="mx-auto max-w-7xl px-4 text-center sm:px-6">
+            <h1 className="mb-4 text-3xl font-bold isit-text-primary sm:mb-6 sm:text-4xl md:text-5xl">{tr('catalogHeroTitle')}</h1>
+            <p className="mx-auto mb-6 max-w-2xl text-base isit-body sm:mb-8 sm:text-lg">{tr('catalogHeroLead')}</p>
+            <div className="relative mx-auto max-w-2xl">
+              <input
+                type="search"
+                placeholder={tr('catalogSearchPlaceholder')}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="isit-input w-full py-3.5 pl-12 pr-4 shadow-sm"
+              />
+              <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[color:var(--isit-text-muted)]" />
             </div>
-          </div>
-        </div>
+                              </div>
         </RevealOnView>
       </section>
 
-      <div className="border-t border-cyan-300/20"></div>
-      
-      {/* ================= MAIN CONTENT ================= */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12 grid grid-cols-1 lg:grid-cols-4 gap-6 sm:gap-8 flex-1">
-        <div className="lg:col-span-4 order-first">
+            <div className="border-t border-[color:var(--isit-border)]" />
+
+      <section className="mx-auto grid max-w-7xl flex-1 grid-cols-1 gap-6 px-4 py-8 sm:gap-8 sm:px-6 sm:py-12 lg:grid-cols-4">
+        <div className="lg:col-span-4">
           <LegacyMarketplaceBanner />
         </div>
 
         {loadErrorMessage && (
-          <div className="lg:col-span-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+          <div className="lg:col-span-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800 dark:border-red-500/30 dark:bg-red-950/40 dark:text-red-200">
             {loadErrorMessage}
           </div>
         )}
 
-        {/* ================= FILTER SIDEBAR ================= */}
-        <aside className="isit-glass p-4 sm:p-6 rounded-2xl h-fit lg:order-2">
-          <div className="flex items-center gap-2 mb-6">
-            <SlidersHorizontal size={18} className="text-slate-600 dark:text-slate-400" />
-            <h3 className="text-lg font-bold text-cyan-100">{tr('catalogFiltersTitle')}</h3>
+        <aside className="isit-catalog-filter h-fit p-4 sm:p-6 lg:order-2">
+          <div className="mb-6 flex items-center gap-2">
+            <SlidersHorizontal className="h-[18px] w-[18px] isit-accent-text" />
+            <h3 className="text-lg font-bold isit-text-primary">{tr('catalogFiltersTitle')}</h3>
           </div>
 
-          {/* Categories */}
           <div className="mb-8">
-            <h4 className="mb-4 text-sm font-semibold uppercase tracking-wide text-slate-700 dark:text-slate-300">
-              {tr('catalogCategoriesHeading')}
-            </h4>
-            <div className="space-y-3 text-sm text-slate-600">
+            <h4 className="mb-4 text-xs font-semibold uppercase tracking-wide isit-muted">{tr('catalogCategoriesHeading')}</h4>
+                        <div className="space-y-3 text-sm isit-body">
               {categoryOptions.map((cat) => (
-                <label key={cat} className="flex items-center gap-3 cursor-pointer hover:text-sky-500 transition">
+                <label key={cat} className="flex cursor-pointer items-center gap-3 transition hover:text-[color:var(--isit-text)]">
                   <input
                     type="checkbox"
                     checked={selectedCategories.includes(cat)}
                     onChange={() => toggleCategory(cat)}
-                    className="rounded border-gray-300 text-sky-500 focus:ring-sky-500"
+                    className="rounded border-[color:var(--isit-border)] text-[color:var(--isit-accent)] focus:ring-[color:var(--isit-ring)]"
                   />
                   {cat}
                 </label>
@@ -194,11 +181,8 @@ export default function CoursesPage() {
             </div>
           </div>
 
-          {/* Price */}
           <div className="mb-8">
-            <h4 className="mb-4 text-sm font-semibold uppercase tracking-wide text-slate-700 dark:text-slate-300">
-              {tr('catalogPriceRangeHeading')}
-            </h4>
+            <h4 className="mb-4 text-xs font-semibold uppercase tracking-wide isit-muted">{tr('catalogPriceRangeHeading')}</h4>
             <input
               type="range"
               min={0}
@@ -208,17 +192,14 @@ export default function CoursesPage() {
               aria-label="Maximum price"
               className="w-full cursor-pointer"
             />
-            <div className="flex justify-between text-xs text-slate-600 mt-2 font-medium">
+            <div className="mt-2 flex justify-between text-xs font-medium isit-muted">
               <span>₹0</span>
               <span>₹{maxPrice.toLocaleString('en-IN')}</span>
             </div>
           </div>
 
-          {/* Difficulty */}
           <div className="mb-8">
-            <h4 className="mb-4 text-sm font-semibold uppercase tracking-wide text-slate-700 dark:text-slate-300">
-              {tr('catalogDifficultyHeading')}
-            </h4>
+            <h4 className="mb-4 text-xs font-semibold uppercase tracking-wide isit-muted">{tr('catalogDifficultyHeading')}</h4>
             <div className="flex flex-wrap gap-2">
               {(
                 [
@@ -231,11 +212,7 @@ export default function CoursesPage() {
                   key={value}
                   type="button"
                   onClick={() => setDifficulty((d) => (d === value ? null : value))}
-                  className={`rounded-full border bg-slate-950/70 px-4 py-2 text-xs transition ${
-                    difficulty === value
-                      ? 'border-cyan-400 text-cyan-100 ring-1 ring-cyan-400/50'
-                      : 'border-cyan-300/30 hover:border-cyan-300 hover:text-cyan-200'
-                  }`}
+                  className={difficulty === value ? 'isit-filter-chip isit-filter-chip-active' : 'isit-filter-chip'}
                 >
                   {tr(labelKey)}
                 </button>
@@ -243,31 +220,23 @@ export default function CoursesPage() {
             </div>
           </div>
 
-          <button
-            type="button"
-            onClick={clearFilters}
-            className="w-full rounded-xl border border-gray-200 py-2.5 text-sm text-gray-600 transition hover:bg-gray-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800/80"
-          >
+          <button type="button" onClick={clearFilters} className="isit-btn-secondary w-full py-2.5 text-sm">
             {tr('catalogClearFilters')}
           </button>
         </aside>
 
-        {/* ================= COURSES GRID ================= */}
-        <div className="lg:col-span-3 order-1 lg:order-1 min-w-0">
-
-          {/* Top Bar */}
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 sm:mb-8 gap-4">
+        <div className="min-w-0 lg:col-span-3 lg:order-1">
+          <div className="mb-6 flex flex-col items-start justify-between gap-4 sm:mb-8 sm:flex-row sm:items-center">
             <div>
-              <h3 className="text-2xl font-bold text-gray-900 dark:text-slate-100">
+              <h3 className="text-2xl font-bold isit-text-primary">
                 {loading ? tr('catalogResultsLoading') : tr('catalogResultsCount').replace(/\{count\}/g, String(filteredCourses.length))}
               </h3>
-              <p className="mt-1 text-sm text-gray-500 dark:text-slate-400">{tr('catalogResultsLead')}</p>
+              <p className="mt-1 text-sm isit-muted">{tr('catalogResultsLead')}</p>
             </div>
-
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as 'popular' | 'newest' | 'price')}
-              className="w-full rounded-xl border border-cyan-300/30 bg-slate-950/75 px-4 py-2 text-sm text-cyan-100 shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-400 sm:w-auto"
+              className="isit-input w-full py-2 text-sm sm:w-auto"
             >
               <option value="popular">{tr('catalogSortPopular')}</option>
               <option value="newest">{tr('catalogSortNewest')}</option>
@@ -275,70 +244,48 @@ export default function CoursesPage() {
             </select>
           </div>
 
-          {/* Grid */}
           {loading ? (
-             <div className="grid md:grid-cols-2 gap-6">
-               {[1, 2, 3, 4].map(i => (
-                 <div key={i} className="bg-gray-100 h-80 rounded-2xl animate-pulse"></div>
-               ))}
-             </div>
+            <div className="grid gap-6 md:grid-cols-2">
+              {[1, 2, 3, 4].map((i) => (
+                                <div key={i} className="h-80 animate-pulse rounded-2xl bg-[var(--isit-surface-muted)]" />
+              ))}
+            </div>
           ) : filteredCourses.length === 0 ? (
-             <div className="rounded-2xl border border-dashed border-cyan-300/30 bg-slate-950/65 px-6 py-12 text-center">
-                <p className="font-medium text-cyan-100">
-                  {courses.length === 0 ? tr('catalogEmptyNoCourses') : tr('catalogEmptyFiltered')}
-                </p>
-                <p className="mx-auto mt-2 max-w-md text-sm text-slate-300">
-                  {courses.length === 0 ? tr('catalogEmptyNoCoursesLead') : tr('catalogEmptyFilteredLead')}
-                </p>
-                <Link
-                  href="/subjects"
-                  className="btn-primary mt-5 inline-flex px-6 py-2.5 no-underline"
-                >
-                  {tr('browseSubjects')}
-                </Link>
-             </div>
+            <div className="isit-card rounded-2xl border-dashed px-6 py-12 text-center">
+              <p className="font-medium isit-text-primary">
+                {courses.length === 0 ? tr('catalogEmptyNoCourses') : tr('catalogEmptyFiltered')}
+              </p>
+              <p className="mx-auto mt-2 max-w-md text-sm isit-body">
+                {courses.length === 0 ? tr('catalogEmptyNoCoursesLead') : tr('catalogEmptyFilteredLead')}
+              </p>
+              <Link href="/subjects" className="isit-btn-primary mt-5 inline-flex px-6 py-2.5 no-underline">
+                {tr('browseSubjects')}
+              </Link>
+            </div>
           ) : (
-            <RevealStagger className="grid md:grid-cols-2 gap-6">
+            <RevealStagger className="grid gap-6 md:grid-cols-2">
               {filteredCourses.map((course) => (
-                <div
-                  key={course._id}
-                  className="bg-slate-950/65 rounded-2xl shadow-sm border border-cyan-300/20 overflow-hidden hover:shadow-md hover:border-cyan-300/45 motion-safe-transition duration-300 hover:-translate-y-1 group"
-                >
-                  {/* Image */}
-                  <div className="h-40 sm:h-48 bg-gradient-to-br from-sky-50 to-blue-100 flex items-center justify-center relative">
-                    <span className="text-sky-300 text-4xl sm:text-5xl font-bold">
-                      {course.title.charAt(0)}
+                <article key={course._id} className="isit-course-card group">
+                  <div className="isit-course-card-media">
+                    <span className="isit-course-card-letter" aria-hidden>
+                      {course.title.charAt(0).toUpperCase()}
                     </span>
-                    {course.createdAt && (Date.now() - new Date(course.createdAt).getTime()) < 30 * 24 * 60 * 60 * 1000 && (
-                      <div className="absolute left-4 top-4 rounded-full bg-white/90 px-3 py-1 text-xs font-bold text-sky-600 shadow-sm backdrop-blur">
+                    {isNewCourse(course.createdAt) && (
+                      <span className="absolute left-3 top-3 rounded-full border border-[color:var(--isit-border)] bg-[var(--isit-surface)] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide isit-accent-text shadow-sm">
                         {tr('catalogCardNew')}
-                      </div>
+                      </span>
                     )}
                   </div>
 
-                  {/* Content */}
-                  <div className="p-6">
-                    <span className="text-xs font-bold uppercase tracking-wider text-sky-600">
-                      {course.level || tr('catalogAllLevels')}
-                    </span>
+                  <div className="isit-course-card-body">
+                    <span className="isit-course-card-level">{course.level || tr('catalogAllLevels')}</span>
+                    <h4 className="mt-2 line-clamp-2 text-lg font-bold leading-snug isit-text-primary sm:text-xl">{course.title}</h4>
+                    <p className="mt-2 line-clamp-2 flex-1 text-sm isit-body">{course.description}</p>
 
-                    <h4 className="font-bold text-lg sm:text-xl text-slate-900 mt-2 mb-2 leading-snug">
-                      {course.title}
-                    </h4>
-
-                    <p className="text-sm text-slate-600 line-clamp-2 mb-4">
-                      {course.description}
-                    </p>
-
-                    {/* Meta */}
-                    <div className="flex items-center gap-4 text-xs text-gray-500 border-t border-gray-100 pt-4 mb-4">
-                      {course.category && (
-                        <span className="bg-slate-100 text-slate-600 px-2 py-0.5 rounded-md font-medium">
-                          {course.category}
-                        </span>
-                      )}
-                      <span className="flex items-center gap-1">
-                        <BookOpen size={14} />{' '}
+                    <div className="isit-course-card-meta">
+                      {course.category && <span className="isit-course-card-tag">{course.category}</span>}
+                      <span className="inline-flex items-center gap-1">
+                        <BookOpen className="h-3.5 w-3.5" aria-hidden />
                         {tr('catalogLessonsCount').replace(
                           /\{count\}/g,
                           String(course.lessonCount ?? course.lessons?.length ?? 0)
@@ -346,40 +293,28 @@ export default function CoursesPage() {
                       </span>
                     </div>
 
-                    {/* Bottom */}
-                    <div className="flex justify-between items-center">
-                      <span className="text-sky-600 font-bold text-2xl">
-                        ₹{course.price}
-                      </span>
-
-                      <Link
-                        href={`/course/${course._id}`}
-                        className="rounded-full bg-sky-500 px-6 py-2.5 text-sm font-medium text-white shadow-lg shadow-sky-500/20 transition hover:bg-sky-600"
-                      >
+                    <div className="isit-course-card-footer">
+                      <span className="isit-course-card-price">₹{course.price.toLocaleString('en-IN')}</span>
+                      <Link href={`/course/${course._id}`} className="isit-btn-primary shrink-0 px-5 py-2.5 text-sm no-underline">
                         {tr('catalogEnrollNow')}
                       </Link>
                     </div>
                   </div>
-                </div>
+                </article>
               ))}
             </RevealStagger>
           )}
-
         </div>
       </section>
 
-      {/* ================= CTA SECTION (Common Part) ================= */}
-      <section className="mt-10 px-6 py-24 text-center">
-        <h2 className="text-3xl font-bold text-slate-100">{tr('catalogCtaTitle')}</h2>
-        <p className="mx-auto mt-4 max-w-2xl text-slate-400">{tr('catalogCtaLead')}</p>
+      <section className="border-t border-[color:var(--isit-border)] bg-[var(--isit-surface-muted)] px-6 py-16 text-center sm:py-20">
+        <h2 className="text-3xl font-bold isit-text-primary">{tr('catalogCtaTitle')}</h2>
+        <p className="mx-auto mt-4 max-w-2xl isit-body">{tr('catalogCtaLead')}</p>
         <div className="mt-10 flex flex-col justify-center gap-4 sm:flex-row">
-          <Link
-            href="/signup"
-            className="rounded-full bg-sky-500 px-8 py-3 font-medium text-white shadow-lg shadow-sky-500/30 transition hover:bg-sky-600"
-          >
+          <Link href="/signup" className="isit-btn-primary px-8 py-3 no-underline">
             {tr('catalogCtaSignup')}
           </Link>
-          <Link href="/how-it-works" className="isit-btn-secondary">
+          <Link href="/how-it-works" className="isit-btn-secondary px-8 py-3 no-underline">
             {tr('howItWorks')}
           </Link>
         </div>

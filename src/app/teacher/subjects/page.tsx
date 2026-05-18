@@ -65,7 +65,7 @@ export default function TeacherSubjectsPage() {
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-2xl font-bold text-slate-900">Subjects & Curriculum</h1>
-            <p className="text-slate-500 text-sm mt-1">Manage your organization&apos;s subjects and topics</p>
+            <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Manage your organization&apos;s subjects and topics</p>
           </div>
         </div>
 
@@ -90,9 +90,9 @@ export default function TeacherSubjectsPage() {
 
         {!loading && !error && subjects.length === 0 && (
           <div className="bg-white rounded-xl border border-slate-200 p-8 text-center">
-            <BookOpen className="w-12 h-12 text-slate-300 mx-auto mb-4" />
-            <p className="text-slate-600 font-medium">No subjects available yet.</p>
-            <p className="text-slate-500 text-sm mt-1">Subjects will appear here when they are added.</p>
+            <BookOpen className="w-12 h-12 text-slate-600 dark:text-slate-300 mx-auto mb-4" />
+            <p className="text-slate-600 dark:text-slate-300 font-medium">No subjects available yet.</p>
+            <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Subjects will appear here when they are added.</p>
           </div>
         )}
 
@@ -115,22 +115,22 @@ export default function TeacherSubjectsPage() {
                       </h2>
                     </div>
                     <div className="flex flex-wrap gap-2 mb-3">
-                      <span className="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-md font-medium">{subject.grade}</span>
-                      <span className="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-md font-medium">{subject.board}</span>
+                      <span className="text-xs bg-slate-100 text-slate-600 dark:text-slate-300 px-2 py-0.5 rounded-md font-medium">{subject.grade}</span>
+                      <span className="text-xs bg-slate-100 text-slate-600 dark:text-slate-300 px-2 py-0.5 rounded-md font-medium">{subject.board}</span>
                       {subject.status && (
                         <span className={`text-xs px-2 py-0.5 rounded-md font-medium ${
                           subject.status === 'published' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'
                         }`}>{subject.status}</span>
                       )}
                     </div>
-                    <p className="text-sm text-slate-600">
+                    <p className="text-sm text-slate-600 dark:text-slate-300">
                       <span className="font-semibold">{topicCounts[subject._id] ?? '...'}</span> topics
                     </p>
                     {subject.description && (
-                      <p className="text-xs text-slate-500 mt-2 line-clamp-2">{subject.description}</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 line-clamp-2">{subject.description}</p>
                     )}
                   </div>
-                  <ChevronRight className="w-5 h-5 text-slate-300 group-hover:text-sky-500 flex-shrink-0 mt-1" />
+                  <ChevronRight className="w-5 h-5 text-slate-600 dark:text-slate-300 group-hover:text-sky-500 flex-shrink-0 mt-1" />
                 </div>
               </Link>
             ))}

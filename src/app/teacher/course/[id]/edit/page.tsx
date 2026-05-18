@@ -194,17 +194,17 @@ export default function TeacherEditCoursePage() {
 
   if (loading || !course) {
     return (
-      <div className="isit-cosmic-bg min-h-screen flex items-center justify-center text-cyan-200 relative">
-        <p className="text-slate-600">Loading...</p>
+      <div className="isit-app-bg min-h-screen flex items-center justify-center relative">
+        <p className="text-slate-600 dark:text-slate-300">Loading...</p>
       </div>
     );
   }
 
   return (
-    <div className="isit-cosmic-bg min-h-screen font-sans text-cyan-50 relative">
+    <div className="isit-app-bg min-h-screen font-sans relative">
       <header className="bg-white border-b border-slate-200 sticky top-0 z-10 px-4 sm:px-6 py-4 flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-4">
-          <Link href="/teacher/dashboard" className="flex items-center gap-2 text-slate-600 hover:text-slate-800 font-medium text-sm">
+          <Link href="/teacher/dashboard" className="flex items-center gap-2 text-slate-600 dark:text-slate-300 hover:text-slate-800 font-medium text-sm">
             <ChevronLeft size={20} /> Back to Dashboard
           </Link>
           <h1 className="text-lg font-bold text-slate-900">Edit Course</h1>
@@ -273,12 +273,12 @@ export default function TeacherEditCoursePage() {
                 tabIndex={0}
                 onClick={handleThumbnailClick}
                 onKeyDown={(e) => e.key === 'Enter' && handleThumbnailClick()}
-                className="w-full aspect-video max-w-sm rounded-lg border-2 border-dashed border-slate-300 flex flex-col items-center justify-center bg-slate-50 text-slate-500 cursor-pointer hover:bg-slate-100"
+                className="w-full aspect-video max-w-sm rounded-lg border-2 border-dashed border-slate-300 flex flex-col items-center justify-center bg-slate-50 text-slate-500 dark:text-slate-400 cursor-pointer hover:bg-slate-100"
                 style={imageUrl ? { backgroundImage: `url(${imageUrl})`, backgroundSize: 'cover' } : undefined}
               >
                 {uploading && <span className="text-sm font-medium">Uploading...</span>}
                 {!imageUrl && !uploading && <><Upload size={24} className="mb-1" /> <span className="text-sm">Click to upload</span></>}
-                {imageUrl && !uploading && <span className="text-xs bg-black/60 text-white px-2 py-1 rounded">Change</span>}
+                {imageUrl && !uploading && <span className="text-xs bg-black/60 text-slate-900 dark:text-white px-2 py-1 rounded">Change</span>}
               </div>
               {uploadError && <p className="text-red-600 text-sm mt-1">{uploadError}</p>}
             </div>
@@ -298,7 +298,7 @@ export default function TeacherEditCoursePage() {
           </div>
           <div className="space-y-3">
             {lessons.length === 0 && (
-              <p className="text-slate-500 text-sm">No lessons yet. Add one to get started.</p>
+              <p className="text-slate-500 dark:text-slate-400 text-sm">No lessons yet. Add one to get started.</p>
             )}
             {lessons.map((lesson, idx) => (
               <LessonRow
@@ -316,7 +316,7 @@ export default function TeacherEditCoursePage() {
           <Link href={`/course/${courseId}`} className="text-sky-600 font-medium text-sm hover:underline">
             View course page
           </Link>
-          <Link href="/teacher/dashboard" className="text-slate-600 text-sm hover:underline">
+          <Link href="/teacher/dashboard" className="text-slate-600 dark:text-slate-300 text-sm hover:underline">
             Back to dashboard
           </Link>
         </div>
@@ -353,7 +353,7 @@ function LessonRow({
   return (
     <div className="border border-slate-200 rounded-lg overflow-hidden">
       <div className="flex items-center gap-3 p-3 bg-slate-50">
-        <FileText size={18} className="text-slate-500 flex-shrink-0" />
+        <FileText size={18} className="text-slate-500 dark:text-slate-400 flex-shrink-0" />
         {!editing ? (
           <>
             <span className="font-medium text-slate-800 flex-1 min-w-0 truncate">Lesson {index + 1}: {lesson.title}</span>
@@ -371,18 +371,18 @@ function LessonRow({
               placeholder="Lesson title"
             />
             <button type="button" onClick={save} className="text-sky-600 text-sm font-medium">Save</button>
-            <button type="button" onClick={() => { setEditing(false); setTitle(lesson.title); setContent(lesson.content); setVideoUrl(lesson.videoUrl || ''); }} className="text-slate-500 text-sm">Cancel</button>
+            <button type="button" onClick={() => { setEditing(false); setTitle(lesson.title); setContent(lesson.content); setVideoUrl(lesson.videoUrl || ''); }} className="text-slate-500 dark:text-slate-400 text-sm">Cancel</button>
           </>
         )}
       </div>
       {editing && (
         <div className="p-3 border-t border-slate-200 space-y-2">
           <div>
-            <label className="block text-xs font-medium text-slate-500 mb-0.5">Content / notes</label>
+            <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-0.5">Content / notes</label>
             <textarea value={content} onChange={(e) => setContent(e.target.value)} rows={2} className="w-full px-2 py-1 border border-slate-300 rounded text-sm" />
           </div>
           <div>
-            <label className="block text-xs font-medium text-slate-500 mb-0.5">Video URL (optional)</label>
+            <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-0.5">Video URL (optional)</label>
             <input type="text" value={videoUrl} onChange={(e) => setVideoUrl(e.target.value)} placeholder="https://..." className="w-full px-2 py-1 border border-slate-300 rounded text-sm" />
           </div>
         </div>

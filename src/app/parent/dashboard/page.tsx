@@ -108,7 +108,7 @@ export default function ParentDashboardPage() {
                     className={`px-4 py-2 rounded-full text-sm font-medium transition ${
                       selectedChildId === c.id
                         ? 'bg-violet-600 text-white shadow-md'
-                        : 'bg-white text-slate-600 border border-slate-200 hover:border-violet-200'
+                        : 'bg-white text-slate-600 dark:text-slate-300 border border-slate-200 hover:border-violet-200'
                     }`}
                   >
                     {c.name}
@@ -119,7 +119,7 @@ export default function ParentDashboardPage() {
           </div>
 
           {insightsLoading && (
-            <div className="bg-white rounded-2xl border border-slate-200 p-8 text-center text-slate-500 text-sm">
+            <div className="bg-white rounded-2xl border border-slate-200 p-8 text-center text-slate-500 dark:text-slate-400 text-sm">
               Gathering a gentle snapshot…
             </div>
           )}
@@ -133,7 +133,7 @@ export default function ParentDashboardPage() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <h3 className="text-xl font-bold text-slate-900">{insights.child_name}</h3>
-                    <p className="text-sm text-slate-500 mt-0.5">{trendPhrase(insights.improvement_trend)}</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">{trendPhrase(insights.improvement_trend)}</p>
                     <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Overall progress</p>
@@ -141,7 +141,7 @@ export default function ParentDashboardPage() {
                           {insights.linked_account ? `${insights.avg_mastery}%` : '—'}
                         </p>
                         {!insights.linked_account && (
-                          <p className="text-xs text-slate-500 mt-1">Shows once they learn with this account</p>
+                          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Shows once they learn with this account</p>
                         )}
                       </div>
                       <div>
@@ -151,7 +151,7 @@ export default function ParentDashboardPage() {
                             ? 'No sessions yet'
                             : `${insights.recent_activity} learning ${insights.recent_activity === 1 ? 'session' : 'sessions'}`}
                         </p>
-                        <p className="text-sm text-slate-500 mt-1">{engagementLabel(insights.engagement_score)}</p>
+                        <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">{engagementLabel(insights.engagement_score)}</p>
                       </div>
                     </div>
                   </div>
@@ -170,7 +170,7 @@ export default function ParentDashboardPage() {
                     <CheckCircle2 className="w-4 h-4" /> Strengths
                   </div>
                   {insights.strong_topics.length === 0 ? (
-                    <p className="text-sm text-slate-500">We will highlight wins here as they learn.</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">We will highlight wins here as they learn.</p>
                   ) : (
                     <ul className="space-y-2">
                       {insights.strong_topics.map((t) => (
@@ -186,7 +186,7 @@ export default function ParentDashboardPage() {
                     <Lightbulb className="w-4 h-4" /> Where a little help goes far
                   </div>
                   {insights.weak_topics.length === 0 ? (
-                    <p className="text-sm text-slate-500">No focus areas flagged yet—that is okay.</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">No focus areas flagged yet—that is okay.</p>
                   ) : (
                     <ul className="space-y-2">
                       {insights.weak_topics.map((t) => (
@@ -230,7 +230,7 @@ export default function ParentDashboardPage() {
           )}
 
           {!insightsLoading && !insights && selectedChildId && (
-            <div className="bg-white rounded-2xl border border-slate-200 p-6 text-sm text-slate-500">
+            <div className="bg-white rounded-2xl border border-slate-200 p-6 text-sm text-slate-500 dark:text-slate-400">
               We could not load insights right now. Please try again later.
             </div>
           )}
@@ -246,9 +246,9 @@ export default function ParentDashboardPage() {
             </div>
             <div className="flex-1 min-w-0">
               <p className="font-semibold">My Children</p>
-              <p className="text-xs text-slate-500">View and manage linked accounts</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400">View and manage linked accounts</p>
             </div>
-            <ChevronRight className="w-5 h-5 text-slate-300 group-hover:text-violet-500 shrink-0" />
+            <ChevronRight className="w-5 h-5 text-slate-600 dark:text-slate-300 group-hover:text-violet-500 shrink-0" />
           </Link>
           <Link href="/parent/children/add" className="group flex items-center gap-4 p-5 bg-white rounded-xl border border-slate-200 shadow-sm hover:border-violet-200 hover:shadow-md transition no-underline text-slate-800">
             <div className="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center group-hover:bg-emerald-200 transition">
@@ -256,9 +256,9 @@ export default function ParentDashboardPage() {
             </div>
             <div className="flex-1 min-w-0">
               <p className="font-semibold">Add Child</p>
-              <p className="text-xs text-slate-500">{"Link a child's account"}</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400">{"Link a child's account"}</p>
             </div>
-            <ChevronRight className="w-5 h-5 text-slate-300 group-hover:text-emerald-500 shrink-0" />
+            <ChevronRight className="w-5 h-5 text-slate-600 dark:text-slate-300 group-hover:text-emerald-500 shrink-0" />
           </Link>
           <Link href="/courses" className="group flex items-center gap-4 p-5 bg-white rounded-xl border border-slate-200 shadow-sm hover:border-sky-200 hover:shadow-md transition no-underline text-slate-800">
             <div className="w-12 h-12 rounded-xl bg-sky-100 flex items-center justify-center group-hover:bg-sky-200 transition">
@@ -266,9 +266,9 @@ export default function ParentDashboardPage() {
             </div>
             <div className="flex-1 min-w-0">
               <p className="font-semibold">Browse Courses</p>
-              <p className="text-xs text-slate-500">Find courses for your child</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400">Find courses for your child</p>
             </div>
-            <ChevronRight className="w-5 h-5 text-slate-300 group-hover:text-sky-500 shrink-0" />
+            <ChevronRight className="w-5 h-5 text-slate-600 dark:text-slate-300 group-hover:text-sky-500 shrink-0" />
           </Link>
         </div>
       </section>
@@ -283,8 +283,8 @@ export default function ParentDashboardPage() {
         ) : children.length === 0 ? (
           <div className="bg-white rounded-xl border border-slate-200 border-dashed p-8 text-center">
             <Sparkles className="w-10 h-10 text-violet-300 mx-auto mb-3" />
-            <p className="text-slate-600 font-medium">No children linked yet</p>
-            <p className="text-sm text-slate-500 mt-1">Add your first child to start tracking their learning.</p>
+            <p className="text-slate-600 dark:text-slate-300 font-medium">No children linked yet</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Add your first child to start tracking their learning.</p>
             <Link href="/parent/children/add" className="inline-flex items-center gap-2 mt-4 px-5 py-2.5 bg-violet-500 text-white rounded-xl text-sm font-medium hover:bg-violet-600 transition">
               <Plus className="w-4 h-4" /> Add Child
             </Link>
@@ -299,7 +299,7 @@ export default function ParentDashboardPage() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="font-semibold truncate">{c.name}</p>
-                    <p className="text-xs text-slate-500 truncate">{c.email}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 truncate">{c.email}</p>
                   </div>
                   <span className="text-violet-600 text-sm font-medium">{"View progress \u2192"}</span>
                 </Link>

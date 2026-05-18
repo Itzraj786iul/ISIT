@@ -25,10 +25,10 @@ export default function HelpPage() {
   }, [router]);
 
   return (
-    <div className="isit-cosmic-bg relative flex min-h-screen font-sans text-cyan-50">
+    <div className="isit-cosmic-bg relative flex min-h-screen font-sans ">
       <Sidebar />
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="relative z-[1] shrink-0 border-b border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-950/95">
+        <header className="relative z-[1] shrink-0 border-b border-slate-200 bg-white dark:border-slate-700 dark:bg-white dark:bg-slate-950/95">
           <div className="px-4 py-3 sm:px-6 md:px-8">
             <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-2 text-sm">
               <Link href="/dashboard" className="font-medium text-sky-600 hover:underline dark:text-sky-400">
@@ -42,41 +42,41 @@ export default function HelpPage() {
 
         <main className="relative z-[1] min-w-0 flex-1 overflow-x-hidden p-4 sm:p-6 md:p-8">
           <div className="mb-6">
-            <h1 className="text-2xl font-extrabold tracking-tight text-cyan-50">{tr('settingsHelpLinkLabel')}</h1>
-            <p className="mt-1 text-sm text-cyan-100/70">{tr('helpPageLead')}</p>
+            <h1 className="text-2xl font-extrabold tracking-tight isit-text-primary">{tr('settingsHelpLinkLabel')}</h1>
+            <p className="mt-1 text-sm /70">{tr('helpPageLead')}</p>
           </div>
 
           <div className="max-w-2xl space-y-4">
             <Link
               href="/schedule"
-              className="isit-glass motion-safe-transition flex items-center justify-between rounded-xl p-4 text-cyan-50 no-underline hover:border-cyan-300/40"
+              className="isit-card motion-safe-transition flex items-center justify-between rounded-xl p-4 isit-text-primary no-underline hover:border-cyan-300/40"
             >
               <div className="flex items-center gap-3">
                 <Video className="h-5 w-5 text-cyan-400" />
                 <span className="font-medium">{tr('helpLiveClass')}</span>
               </div>
-              <ChevronRight className="h-5 w-5 text-cyan-300/50" />
+              <ChevronRight className="h-5 w-5 text-sky-600 dark:text-cyan-300/50" />
             </Link>
             <Link
               href="/my-courses"
-              className="isit-glass motion-safe-transition flex items-center justify-between rounded-xl p-4 text-cyan-50 no-underline hover:border-cyan-300/40"
+              className="isit-card motion-safe-transition flex items-center justify-between rounded-xl p-4 isit-text-primary no-underline hover:border-cyan-300/40"
             >
               <div className="flex items-center gap-3">
                 <BookOpen className="h-5 w-5 text-cyan-400" />
                 <span className="font-medium">{tr('helpCoursesLessons')}</span>
               </div>
-              <ChevronRight className="h-5 w-5 text-cyan-300/50" />
+              <ChevronRight className="h-5 w-5 text-sky-600 dark:text-cyan-300/50" />
             </Link>
             <div className="isit-glass rounded-xl p-4">
               <div className="mb-2 flex items-center gap-3">
                 <Mail className="h-5 w-5 text-cyan-400" />
-                <span className="font-medium text-cyan-50">{tr('helpContactTitle')}</span>
+                <span className="font-medium isit-text-primary">{tr('helpContactTitle')}</span>
               </div>
-              <p className="text-sm text-cyan-100/75">{tr('helpContactBody')}</p>
+              <p className="text-sm isit-body">{tr('helpContactBody')}</p>
             </div>
             <Link
               href="/dashboard"
-              className="inline-flex items-center gap-2 text-sm font-medium text-cyan-300 hover:underline"
+              className="inline-flex items-center gap-2 text-sm font-medium text-sky-600 dark:text-cyan-300 hover:underline"
             >
               <ChevronRight className="h-4 w-4 rotate-180" /> {tr('helpBackDashboard')}
             </Link>

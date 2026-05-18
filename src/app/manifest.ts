@@ -7,12 +7,12 @@ export default function manifest(): MetadataRoute.Manifest {
     description: 'AI-powered adaptive learning, mastery tracking, and tools for schools and families.',
     start_url: '/',
     display: 'standalone',
-    background_color: '#030712',
-    theme_color: '#030712',
+    background_color: '#020617',
+    theme_color: '#020617',
     orientation: 'portrait-primary',
     icons: [
       {
-        src: '/apple-icon',
+        src: '/brand/isic-logo-icon.png',
         sizes: '180x180',
         type: 'image/png',
         purpose: 'any',

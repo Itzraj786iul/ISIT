@@ -1,10 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import AssignTopicModal from '@/components/AssignTopicModal';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import TeacherShell from '../../_components/TeacherShell';
-import { BookOpen, ChevronRight, Clock, FileText, HelpCircle, Video, AlertCircle, Layers, Check } from 'lucide-react';
+import { BookOpen, ChevronRight, Clock, FileText, HelpCircle, Video, AlertCircle, Layers, Check, ClipboardList } from 'lucide-react';
 
 type User = { _id?: string; name: string; role: string; organization_id?: string };
 type Subject = { _id: string; name: string; grade: string; board: string; description?: string };
@@ -41,6 +42,7 @@ export default function TeacherSubjectDetailPage() {
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [forbidden, setForbidden] = useState(false);
+  const [assignTopic, setAssignTopic] = useState<{ id: string; name: string } | null>(null);
 
   useEffect(() => {
     if (!id) return;
@@ -52,7 +54,8 @@ export default function TeacherSubjectDetailPage() {
         if (!meRes.ok) { router.push('/login'); return; }
         const meData = await meRes.json();
         const userData = meData.user as User;
-        if (!userData || userData.role?.toLowerCase() !== 'teacher') { router.push('/dashboard'); return; }
+        const role = userData?.role?.toLowerCase();
+        if (!userData || (role !== 'teacher' && role !== 'admin')) { router.push('/dashboard'); return; }
         setUser(userData);
 
         const [subjectRes, topicsRes] = await Promise.all([
@@ -129,7 +132,7 @@ export default function TeacherSubjectDetailPage() {
         <div className="flex flex-col items-center justify-center py-20 px-4">
           <AlertCircle className="w-12 h-12 text-amber-500 mb-4" />
           <h1 className="text-xl font-semibold text-slate-900">Access denied</h1>
-          <p className="text-slate-600 text-sm mt-2 text-center max-w-md">
+          <p className="text-slate-600 dark:text-slate-300 text-sm mt-2 text-center max-w-md">
             This subject is outside your assigned classes or subjects.
           </p>
           <Link href="/teacher/subjects" className="mt-4 text-sky-600 font-medium hover:underline">Back to Subjects</Link>
@@ -163,34 +166,34 @@ export default function TeacherSubjectDetailPage() {
           <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
           <Link href="/teacher/subjects" className="text-sky-600 font-medium hover:underline">Subjects</Link>
           <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
-          <span className="text-slate-500">{subject.name}</span>
+          <span className="text-slate-500 dark:text-slate-400">{subject.name}</span>
         </div>
 
         {/* Subject header */}
         <div className="flex flex-wrap gap-2 mb-2">
-          <span className="text-xs bg-slate-100 text-slate-600 px-2.5 py-0.5 rounded-md font-medium">{subject.grade}</span>
-          <span className="text-xs bg-slate-100 text-slate-600 px-2.5 py-0.5 rounded-md font-medium">{subject.board}</span>
+          <span className="text-xs bg-slate-100 text-slate-600 dark:text-slate-300 px-2.5 py-0.5 rounded-md font-medium">{subject.grade}</span>
+          <span className="text-xs bg-slate-100 text-slate-600 dark:text-slate-300 px-2.5 py-0.5 rounded-md font-medium">{subject.board}</span>
         </div>
         <h1 className="text-2xl font-bold text-slate-900 mb-2">{subject.name}</h1>
-        {subject.description && <p className="text-slate-600 text-sm leading-relaxed mb-6">{subject.description}</p>}
+        {subject.description && <p className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed mb-6">{subject.description}</p>}
 
         {/* Summary stats */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
           <div className="bg-white rounded-xl border border-slate-200 p-4 text-center">
             <div className="text-xl font-bold text-slate-900">{topics.length}</div>
-            <div className="text-xs text-slate-500 font-medium">Topics</div>
+            <div className="text-xs text-slate-500 dark:text-slate-400 font-medium">Topics</div>
           </div>
           <div className="bg-white rounded-xl border border-slate-200 p-4 text-center">
             <div className="text-xl font-bold text-slate-900">{totalNotes}</div>
-            <div className="text-xs text-slate-500 font-medium">Notes</div>
+            <div className="text-xs text-slate-500 dark:text-slate-400 font-medium">Notes</div>
           </div>
           <div className="bg-white rounded-xl border border-slate-200 p-4 text-center">
             <div className="text-xl font-bold text-slate-900">{totalQuestions}</div>
-            <div className="text-xs text-slate-500 font-medium">Questions</div>
+            <div className="text-xs text-slate-500 dark:text-slate-400 font-medium">Questions</div>
           </div>
           <div className="bg-white rounded-xl border border-slate-200 p-4 text-center">
             <div className="text-xl font-bold text-slate-900">{totalVideos}</div>
-            <div className="text-xs text-slate-500 font-medium">Videos</div>
+            <div className="text-xs text-slate-500 dark:text-slate-400 font-medium">Videos</div>
           </div>
         </div>
 
@@ -201,8 +204,8 @@ export default function TeacherSubjectDetailPage() {
 
         {topics.length === 0 ? (
           <div className="bg-white rounded-xl border border-slate-200 p-8 text-center">
-            <BookOpen className="w-10 h-10 text-slate-300 mx-auto mb-2" />
-            <p className="text-sm text-slate-500 font-medium">No topics in this subject yet.</p>
+            <BookOpen className="w-10 h-10 text-slate-600 dark:text-slate-300 mx-auto mb-2" />
+            <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">No topics in this subject yet.</p>
           </div>
         ) : (
           <div className="space-y-3">
@@ -219,32 +222,33 @@ export default function TeacherSubjectDetailPage() {
                       <div className="flex flex-wrap items-center gap-2 ml-7">
                         {difficultyBadge(topic.difficulty_level)}
                         {topic.estimated_time != null && topic.estimated_time > 0 && (
-                          <span className="inline-flex items-center gap-1 text-slate-500 text-xs">
+                          <span className="inline-flex items-center gap-1 text-slate-500 dark:text-slate-400 text-xs">
                             <Clock className="w-3.5 h-3.5" /> {topic.estimated_time} min
                           </span>
                         )}
                         {topic.status && (
                           <span className={`text-xs px-1.5 py-0.5 rounded font-medium ${
-                            topic.status === 'published' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'
+                            topic.status === 'published' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500 dark:text-slate-400'
                           }`}>{topic.status}</span>
                         )}
                       </div>
                       {/* Content counts */}
                       <div className="flex flex-wrap gap-4 mt-3 ml-7">
-                        <span className="inline-flex items-center gap-1.5 text-xs text-slate-600">
+                        <span className="inline-flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-300">
                           <Video className="w-3.5 h-3.5 text-sky-500" />
                           {counts.videos} video{counts.videos !== 1 ? 's' : ''}
                         </span>
-                        <span className="inline-flex items-center gap-1.5 text-xs text-slate-600">
+                        <span className="inline-flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-300">
                           <FileText className="w-3.5 h-3.5 text-emerald-500" />
                           {counts.notes} note{counts.notes !== 1 ? 's' : ''}
                         </span>
-                        <span className="inline-flex items-center gap-1.5 text-xs text-slate-600">
+                        <span className="inline-flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-300">
                           <HelpCircle className="w-3.5 h-3.5 text-amber-500" />
                           {counts.questions} question{counts.questions !== 1 ? 's' : ''}
                         </span>
                       </div>
                       {topic.key_concepts && topic.key_concepts.length > 0 && (
+                        
                         <div className="flex flex-wrap gap-1.5 mt-2 ml-7">
                           {topic.key_concepts.slice(0, 5).map((c, i) => (
                             <span key={i} className="text-[11px] bg-sky-50 text-sky-700 px-2 py-0.5 rounded-full">{c}</span>
@@ -252,12 +256,28 @@ export default function TeacherSubjectDetailPage() {
                         </div>
                       )}
                     </div>
+                    <button
+                      type="button"
+                      onClick={() => setAssignTopic({ id: topic._id, name: topic.topic_name })}
+                      className="shrink-0 inline-flex items-center gap-1.5 rounded-lg border border-sky-200 bg-sky-50 text-sky-700 px-3 py-1.5 text-xs font-semibold hover:bg-sky-100 dark:border-sky-800 dark:bg-sky-950/40 dark:text-sky-300"
+                    >
+                      <ClipboardList className="w-3.5 h-3.5" />
+                      Assign
+                    </button>
                   </div>
+                
                 </div>
               );
             })}
           </div>
         )}
+
+        <AssignTopicModal
+          open={assignTopic !== null}
+          topicId={assignTopic?.id ?? ''}
+          topicName={assignTopic?.name}
+          onClose={() => setAssignTopic(null)}
+        />
       </div>
     </TeacherShell>
   );

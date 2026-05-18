@@ -75,9 +75,7 @@ function LandingBadge({
   className?: string;
 }) {
   return (
-    <span
-      className={`inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-[11px] font-medium text-slate-200 backdrop-blur-sm sm:px-4 sm:text-xs ${className}`}
-    >
+    <span className={`landing-badge sm:text-xs ${className}`}>
       {children}
     </span>
   );
@@ -86,7 +84,7 @@ function LandingBadge({
 function GlassCard({ className = '', children }: { className?: string; children: ReactNode }) {
   return (
     <div
-      className={`rounded-2xl border border-white/[0.08] bg-white/[0.03] p-4 shadow-[0_0_40px_rgba(0,0,0,0.35)] backdrop-blur-md ${className}`}
+      className={`landing-glass p-4 ${className}`}
     >
       {children}
     </div>
@@ -167,12 +165,12 @@ function LandingStatsCountUp() {
         <div key={s.key} className="min-w-0">
           <p
             className={`tabular-nums text-2xl font-black sm:text-3xl ${
-              s.gradient ? 'isit-gradient-text-strong' : 'text-white'
+              s.gradient ? 'isit-gradient-text-strong' : 'text-slate-900 dark:text-white'
             }`}
           >
             {s.format(values[i] ?? 0)}
           </p>
-          <p className="mt-1 text-[11px] text-slate-500 sm:text-xs">{s.label}</p>
+          <p className="mt-1 text-[11px] text-slate-500 dark:text-slate-400 sm:text-xs">{s.label}</p>
         </div>
       ))}
     </div>
@@ -181,14 +179,14 @@ function LandingStatsCountUp() {
 
 function TestimonialSlide({ t }: { t: (typeof TESTIMONIAL_CARDS)[number] }) {
   return (
-    <div className="relative w-[min(100vw-3rem,380px)] shrink-0 overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.03] p-6 backdrop-blur-sm transition hover:border-cyan-500/20">
+    <div className="relative w-[min(100vw-3rem,380px)] shrink-0 overflow-hidden landing-glass p-6 transition hover:border-sky-300 dark:hover:border-cyan-500/20">
       <span className="pointer-events-none absolute right-4 top-2 text-7xl font-serif leading-none text-white/[0.04]">&quot;</span>
       <div className="flex gap-0.5">
         {[1, 2, 3, 4, 5].map((s) => (
           <Star key={s} className="h-4 w-4 fill-amber-400 text-amber-400" />
         ))}
       </div>
-      <p className="relative z-10 mt-4 text-sm leading-relaxed text-slate-200">&quot;{t.quote}&quot;</p>
+      <p className="relative z-10 mt-4 text-sm leading-relaxed text-slate-600 dark:text-slate-200">&quot;{t.quote}&quot;</p>
       <div className="mt-6 flex items-center gap-3">
         <span
           className={`flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br ${t.color} text-sm font-bold text-white`}
@@ -196,8 +194,8 @@ function TestimonialSlide({ t }: { t: (typeof TESTIMONIAL_CARDS)[number] }) {
           {t.initial}
         </span>
         <div>
-          <p className="font-bold text-white">{t.name}</p>
-          <p className="text-xs text-slate-500">{t.meta}</p>
+          <p className="font-bold text-slate-900 dark:text-white">{t.name}</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400">{t.meta}</p>
         </div>
       </div>
     </div>
@@ -219,10 +217,10 @@ export default function LandingHomeContent({
   const pillPrimary =
     'inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-indigo-500 via-violet-600 to-purple-600 px-6 py-3.5 text-sm font-semibold text-white shadow-[0_12px_40px_rgba(99,102,241,0.45)] transition hover:brightness-110 active:scale-[0.98]';
   const pillGhost =
-    'inline-flex items-center justify-center gap-2 rounded-full border border-white/20 bg-white/[0.04] px-6 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/[0.08]';
+    'landing-pill-ghost inline-flex items-center justify-center gap-2 rounded-full px-6 py-3.5 text-sm font-semibold transition active:scale-[0.98]';
 
   return (
-    <div className="isit-landing-replica text-slate-200">
+    <div className="isit-landing-replica isit-text-primary">
       {/* Hero */}
       <section className="relative overflow-hidden pt-8 pb-16 sm:pt-12 sm:pb-24">
         <div className="isit-landing-glow-orb -right-24 top-0 h-80 w-80 bg-purple-600/40" aria-hidden />
@@ -255,7 +253,7 @@ export default function LandingHomeContent({
               <span className="block">
                 Where every child{' '}
                 <span className="relative inline-block">
-                  <span className="bg-gradient-to-r from-cyan-300 via-sky-300 to-cyan-200 bg-clip-text text-transparent">discovers genius</span>
+                  <span className="landing-hero-gradient-word">discovers genius</span>
                   <svg
                     className="pointer-events-none absolute -bottom-1 left-0 w-full max-w-[min(100%,320px)] sm:-bottom-1.5"
                     viewBox="0 0 280 12"
@@ -278,19 +276,20 @@ export default function LandingHomeContent({
                   </svg>
                 </span>
               </span>
-              <span className="mt-1 block text-white sm:mt-2">within them.</span>
+              <span className="mt-1 block text-slate-900 dark:text-white sm:mt-2">within them.</span>
             </h1>
 
-            <p className="max-w-xl text-base leading-relaxed text-slate-300 sm:text-lg">
-              India&apos;s future-first ed-tech ecosystem combining <strong className="font-semibold text-white">AI mentorship</strong>,{' '}
-              <strong className="font-semibold text-white">neuroscience</strong> and{' '}
-              <strong className="font-semibold text-white">real-world innovation</strong> — so students don&apos;t just learn, they think, create and
-              lead.
+            <p className="max-w-xl text-base leading-relaxed text-slate-600 dark:text-slate-300 sm:text-lg">
+              India&apos;s future-first ed-tech ecosystem combining{' '}
+              <strong className="font-semibold text-slate-900 dark:text-white">AI mentorship</strong>,{' '}
+              <strong className="font-semibold text-slate-900 dark:text-white">neuroscience</strong> and{' '}
+              <strong className="font-semibold text-slate-900 dark:text-white">real-world innovation</strong> — so students don&apos;t just learn, they
+              think, create and lead.
             </p>
 
             <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center">
               {authLoading ? (
-                <div className="h-12 w-56 animate-pulse rounded-full bg-white/10" />
+                <div className="h-12 w-56 animate-pulse rounded-full bg-slate-200 dark:bg-white/10" />
               ) : (
                 <Link href={tutorCtaHref} className={pillPrimary}>
                   <Bot className="h-4 w-4 shrink-0" />
@@ -299,7 +298,7 @@ export default function LandingHomeContent({
                 </Link>
               )}
               <Link href="/watch-demo" className={pillGhost}>
-                <Play className="h-4 w-4 fill-current text-cyan-300" />
+                <Play className="h-4 w-4 fill-current text-sky-600 dark:text-cyan-300" />
                 Watch 90-second demo
               </Link>
             </div>
@@ -310,7 +309,7 @@ export default function LandingHomeContent({
                   {['A', 'P', 'R', 'S', 'M'].map((l, i) => (
                     <span
                       key={l}
-                      className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-[#05070a] text-xs font-bold text-white"
+                      className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-white text-xs font-bold text-slate-900 dark:text-white shadow-sm dark:border-[#05070a]"
                       style={{
                         background: ['#2563eb', '#14b8a6', '#1e3a5f', '#ec4899', '#f97316'][i % 5],
                       }}
@@ -324,12 +323,12 @@ export default function LandingHomeContent({
                     {[1, 2, 3, 4, 5].map((s) => (
                       <Star key={s} className="h-4 w-4 fill-amber-400 text-amber-400" />
                     ))}
-                    <span className="ml-1 text-sm font-bold text-white">4.9 / 5</span>
-                  </div>
-                  <p className="text-xs text-slate-500">Trusted by 10,000+ families · 200+ schools</p>
+                    <span className="ml-1 text-sm font-bold text-slate-900 dark:text-white">4.9 / 5</span>
+                                    </div>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">Trusted by 10,000+ families · 200+ schools</p>
                 </div>
               </div>
-              <div className="flex items-center gap-2 text-sm text-slate-300">
+              <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
                 <span className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-400">✓</span>
                 CBSE & ICSE aligned
               </div>
@@ -341,14 +340,14 @@ export default function LandingHomeContent({
         </div>
 
         <RevealOnView delayMs={40} className="relative z-10 mx-auto mt-16 max-w-6xl px-4 sm:px-6">
-          <p className="mb-6 text-center text-[10px] font-semibold uppercase tracking-[0.25em] text-slate-500">Recognised & accredited by</p>
+          <p className="mb-6 text-center text-[10px] font-semibold uppercase tracking-[0.25em] text-slate-500 dark:text-slate-400">Recognised & accredited by</p>
           <div className="landing-marquee-mask">
             <div className="landing-marquee-track items-center">
               {[0, 1, 2].flatMap((cycle) =>
                 PARTNER_NAMES.map((name) => (
                   <span
                     key={`${name}-${cycle}`}
-                    className="whitespace-nowrap text-xs font-medium text-slate-500 opacity-90 sm:text-sm"
+                    className="whitespace-nowrap text-xs font-medium text-slate-500 dark:text-slate-400 opacity-90 sm:text-sm"
                   >
                     {name}
                   </span>
@@ -360,9 +359,9 @@ export default function LandingHomeContent({
       </section>
 
       {/* Feature bar */}
-      <section className="border-y border-white/[0.06] bg-black/20 py-4">
+      <section className="border-y border-slate-200 dark:border-white/[0.06] bg-slate-100 dark:bg-black/20 py-4">
         <RevealOnView>
-          <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-x-4 gap-y-2 px-4 text-[11px] text-cyan-300/90 sm:gap-x-6 sm:px-6 sm:text-xs">
+          <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-x-4 gap-y-2 px-4 text-[11px] isit-accent-text sm:gap-x-6 sm:px-6 sm:text-xs">
             {[
               { icon: Brain, label: 'Neuroscience-Backed' },
               { icon: Layers, label: 'CBSE & ICSE Aligned' },
@@ -370,8 +369,8 @@ export default function LandingHomeContent({
               { icon: Code2, label: 'Coding & Robotics' },
               { icon: Microscope, label: 'Curiosity-First Method' },
             ].map(({ icon: Icon, label }, i) => (
-              <div key={label} className="group flex items-center gap-2 transition hover:text-cyan-200">
-                {i > 0 && <span className="hidden text-slate-600 sm:inline">·</span>}
+              <div key={label} className="group flex items-center gap-2 transition hover:text-slate-600 dark:text-cyan-200">
+                {i > 0 && <span className="hidden text-slate-600 dark:text-slate-300 sm:inline">·</span>}
                 <Icon className="h-3.5 w-3.5 shrink-0 text-cyan-400 transition group-hover:scale-110" />
                 <span>{label}</span>
               </div>
@@ -396,13 +395,13 @@ export default function LandingHomeContent({
                 className={`rounded-2xl border p-5 transition hover:-translate-y-0.5 ${
                   highlight
                     ? 'border-cyan-400/40 bg-cyan-500/[0.06] shadow-[0_0_30px_rgba(34,211,238,0.12)]'
-                    : 'border-white/[0.06] bg-white/[0.02]'
+                    : 'border-slate-200 dark:border-white/[0.06] bg-white shadow-sm dark:bg-white/[0.02] dark:shadow-none'
                 }`}
               >
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-cyan-500/15 text-cyan-400">
                   <Icon className="h-5 w-5" />
                 </div>
-                <h3 className="mt-4 text-base font-bold text-white">{title}</h3>
+                <h3 className="mt-4 text-base font-bold text-slate-900 dark:text-white">{title}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-slate-400">{desc}</p>
               </div>
             ))}
@@ -414,35 +413,35 @@ export default function LandingHomeContent({
       <section className="py-12 sm:py-20">
         <RevealOnView className="mx-auto grid max-w-7xl items-stretch gap-10 px-4 sm:px-6 lg:grid-cols-2 lg:gap-14 xl:gap-16">
           <div className="flex h-full min-h-[22rem] flex-col lg:min-h-0">
-            <div className="motion-safe:transition motion-safe:hover:border-cyan-500/25 motion-safe:hover:shadow-[0_0_48px_rgba(34,211,238,0.1)] flex h-full min-h-0 flex-col overflow-hidden rounded-3xl border border-white/[0.1] bg-gradient-to-b from-slate-950/90 to-[#070a12] shadow-[0_20px_50px_rgba(0,0,0,0.45)] backdrop-blur-xl">
-              <div className="flex shrink-0 items-center justify-between gap-3 border-b border-white/[0.06] bg-slate-950/40 px-5 py-4">
+            <div className="landing-tutor-mock isit-card flex h-full min-h-0 flex-col overflow-hidden rounded-3xl motion-safe:transition dark:motion-safe:hover:border-cyan-500/25 dark:motion-safe:hover:shadow-[0_0_48px_rgba(34,211,238,0.1)]">
+              <div className="flex shrink-0 items-center justify-between gap-3 border-b border-slate-200 dark:border-white/[0.06] bg-slate-50 dark:bg-white dark:bg-slate-100 dark:bg-slate-950/40 px-5 py-4">
                 <div className="flex min-w-0 items-center gap-3">
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-violet-600 to-indigo-600">
-                    <Bot className="h-5 w-5 text-white" />
+                    <Bot className="h-5 w-5 text-slate-900 dark:text-white" />
                   </div>
                   <div className="min-w-0">
-                    <p className="font-bold text-white">ISIC AI Tutor</p>
+                    <p className="font-bold text-slate-900 dark:text-white">ISIC AI Tutor</p>
                     <p className="text-xs text-emerald-400">● Online · Ready to help</p>
                   </div>
                 </div>
-                <span className="shrink-0 text-[10px] text-slate-500">GPT-powered</span>
+                <span className="shrink-0 text-[10px] text-slate-500 dark:text-slate-400">GPT-powered</span>
               </div>
-              <div className="landing-chat-stagger flex min-h-0 flex-1 flex-col bg-slate-950/40 px-5 py-5">
+              <div className="landing-chat-stagger flex min-h-0 flex-1 flex-col bg-slate-50 dark:bg-slate-950/40 px-5 py-5">
                 <div className="space-y-4">
                   <div className="flex gap-2">
-                    <Bot className="mt-1 h-4 w-4 shrink-0 text-slate-500" />
-                    <div className="max-w-[90%] rounded-2xl rounded-tl-sm border border-white/[0.06] bg-slate-900/80 px-4 py-3 text-sm text-slate-200">
+                    <Bot className="mt-1 h-4 w-4 shrink-0 text-slate-500 dark:text-slate-400" />
+                    <div className="max-w-[90%] rounded-2xl rounded-tl-sm border border-slate-200 dark:border-white/[0.06] bg-slate-100 dark:bg-slate-900/80 px-4 py-3 text-sm text-slate-600 dark:text-slate-200">
                       Hi! I&apos;m your personal AI Tutor. What shall we learn today? 👋
                     </div>
                   </div>
                   <div className="flex justify-end gap-2">
-                    <div className="max-w-[90%] rounded-2xl rounded-tr-sm border border-cyan-500/20 bg-cyan-500/10 px-4 py-3 text-sm text-cyan-50">
+                    <div className="max-w-[90%] rounded-2xl rounded-tr-sm border border-sky-200 bg-sky-50 px-4 py-3 text-sm text-sky-900 dark:border-cyan-500/20 dark:bg-cyan-500/10 dark:text-cyan-50">
                       I&apos;m struggling with quadratic equations 🧐
                     </div>
                   </div>
                   <div className="flex gap-2">
-                    <Bot className="mt-1 h-4 w-4 shrink-0 text-slate-500" />
-                    <div className="max-w-[95%] rounded-2xl rounded-tl-sm border border-white/[0.06] bg-slate-900/80 px-4 py-3 text-sm leading-relaxed text-slate-200">
+                    <Bot className="mt-1 h-4 w-4 shrink-0 text-slate-500 dark:text-slate-400" />
+                    <div className="max-w-[95%] rounded-2xl rounded-tl-sm border border-slate-200 dark:border-white/[0.06] bg-slate-100 dark:bg-slate-900/80 px-4 py-3 text-sm leading-relaxed text-slate-600 dark:text-slate-200">
                       No worries! Let&apos;s use a real example — rocket trajectories! 🚀 A rocket&apos;s path follows ax² + bx + c. Let&apos;s break that down
                       step by step...
                     </div>
@@ -450,13 +449,13 @@ export default function LandingHomeContent({
                 </div>
                 <div className="min-h-6 flex-1" aria-hidden />
               </div>
-              <div className="shrink-0 border-t border-white/[0.06] bg-slate-950/50 p-3">
+              <div className="shrink-0 border-t border-slate-200 dark:border-white/[0.06] bg-slate-50 dark:bg-slate-950/50 p-3">
                 <div className="flex gap-2">
                   <input
                     type="text"
                     readOnly
                     placeholder="Ask anything... try 'Explain photosynthesis like I'm 10'"
-                    className="min-h-11 flex-1 rounded-xl border border-white/[0.06] bg-slate-900/70 px-4 text-sm text-slate-200 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/25"
+                    className="min-h-11 flex-1 rounded-xl border border-slate-200 dark:border-white/[0.06] bg-white dark:bg-slate-900/70 px-4 text-sm text-slate-600 dark:text-slate-200 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/25"
                   />
                   <button
                     type="button"
@@ -471,11 +470,11 @@ export default function LandingHomeContent({
           </div>
 
           <div className="flex min-h-0 h-full flex-col justify-start lg:pl-2">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">⚡ The core differentiator</p>
-            <h2 className="mt-3 text-3xl font-bold leading-tight text-white sm:text-4xl lg:text-5xl">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">⚡ The core differentiator</p>
+            <h2 className="mt-3 text-3xl font-bold leading-tight text-slate-900 dark:text-white sm:text-4xl lg:text-5xl">
               Meet your <span className="isit-gradient-text-strong">personal AI Tutor</span>
             </h2>
-            <p className="mt-5 text-base leading-relaxed text-slate-400">
+            <p className="mt-5 text-base leading-relaxed text-slate-600 dark:text-slate-400">
               A hyper-personalised learning companion that adapts to your child&apos;s pace, thinking style and curiosity — anytime, anywhere.
             </p>
             <RevealStagger className="mt-8 space-y-4">
@@ -503,13 +502,13 @@ export default function LandingHomeContent({
               ].map(({ icon: Icon, title, desc }) => (
                 <div
                   key={title}
-                  className="flex gap-4 rounded-2xl border border-white/[0.08] bg-white/[0.02] p-4 backdrop-blur-sm"
+                  className="flex gap-4 rounded-2xl border border-slate-200 dark:border-white/[0.08] bg-white shadow-sm dark:bg-white/[0.02] dark:shadow-none p-4 backdrop-blur-sm"
                 >
                   <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-sky-500/30 bg-sky-500/10">
                     <Icon className="h-5 w-5 text-sky-300" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-white">{title}</h3>
+                    <h3 className="font-bold text-slate-900 dark:text-white">{title}</h3>
                     <p className="mt-1 text-sm leading-relaxed text-slate-400">{desc}</p>
                   </div>
                 </div>
@@ -522,10 +521,10 @@ export default function LandingHomeContent({
       {/* Stats + CTA */}
       <section className="pb-16 sm:pb-24">
         <RevealOnView delayMs={60} className="mx-auto max-w-7xl px-4 sm:px-6">
-          <div className="flex flex-col gap-8 rounded-3xl border border-white/[0.08] bg-white/[0.02] p-6 backdrop-blur-md lg:flex-row lg:items-center lg:justify-between lg:p-8">
+          <div className="flex flex-col gap-8 rounded-3xl border border-slate-200 dark:border-white/[0.08] bg-white shadow-sm dark:bg-white/[0.02] dark:shadow-none p-6 backdrop-blur-md lg:flex-row lg:items-center lg:justify-between lg:p-8">
             <LandingStatsCountUp />
             <div className="shrink-0 rounded-2xl border border-violet-500/30 bg-gradient-to-br from-violet-950/80 to-indigo-950/60 p-5 shadow-[0_0_40px_rgba(124,58,237,0.2)] motion-safe:transition motion-safe:hover:shadow-[0_0_50px_rgba(124,58,237,0.28)]">
-              <p className="max-w-[220px] text-sm font-medium leading-snug text-white">Start your child&apos;s learning journey today</p>
+              <p className="max-w-[220px] text-sm font-medium leading-snug text-slate-900 dark:text-white">Start your child&apos;s learning journey today</p>
               {authLoading ? (
                 <div className="mt-4 h-10 w-36 animate-pulse rounded-full bg-white/10" />
               ) : (
@@ -547,8 +546,8 @@ export default function LandingHomeContent({
         <RevealOnView className="mx-auto max-w-7xl px-4 sm:px-6">
           <div className="mb-12 flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Explore our programs</p>
-              <h2 className="mt-2 text-3xl font-bold leading-tight text-white sm:text-4xl lg:text-5xl">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">Explore our programs</p>
+              <h2 className="mt-2 text-3xl font-bold leading-tight text-slate-900 dark:text-white sm:text-4xl lg:text-5xl">
                 Beyond textbooks.
                 <br />
                 Building <span className="isit-gradient-text-strong">skills, mindset & curiosity.</span>
@@ -587,13 +586,13 @@ export default function LandingHomeContent({
                 href: '/courses',
               },
             ].map(({ tag, title, desc, gradient, icon: Icon, href }) => (
-              <Link key={title} href={href} className="group block overflow-hidden rounded-2xl border border-white/[0.06] bg-[#0a0c14] transition hover:border-cyan-400/25">
+              <Link key={title} href={href} className="group block overflow-hidden rounded-2xl border border-slate-200 dark:border-white/[0.06] bg-slate-100 dark:bg-[#0a0c14] transition hover:border-slate-200 dark:border-cyan-400/25">
                 <div className={`relative h-44 bg-gradient-to-br ${gradient} p-4`}>
                   <span className="inline-block rounded-full bg-black/25 px-2.5 py-1 text-[10px] font-medium text-white/90 backdrop-blur-sm">{tag}</span>
                   <Icon className="absolute bottom-4 right-4 h-16 w-16 text-white/90 transition group-hover:scale-105" strokeWidth={1.25} />
                 </div>
                 <div className="p-5">
-                  <h3 className="text-lg font-bold text-white">{title}</h3>
+                  <h3 className="text-lg font-bold text-slate-900 dark:text-white">{title}</h3>
                   <p className="mt-2 text-sm text-slate-400">{desc}</p>
                   <span className="mt-4 inline-flex items-center text-sm font-medium text-cyan-400">
                     Explore program <ChevronRight className="ml-0.5 h-4 w-4" />
@@ -641,8 +640,8 @@ export default function LandingHomeContent({
               <Link
                 key={title}
                 href="/courses"
-                className={`group block overflow-hidden rounded-2xl border bg-[#0a0c14] transition hover:-translate-y-0.5 ${
-                  glow ? 'border-cyan-400/35 shadow-[0_20px_50px_rgba(34,211,238,0.12)]' : 'border-white/[0.06] hover:border-white/15'
+                className={`group block overflow-hidden rounded-2xl border bg-slate-100 dark:bg-[#0a0c14] transition hover:-translate-y-0.5 ${
+                  glow ? 'border-cyan-400/35 shadow-[0_20px_50px_rgba(34,211,238,0.12)]' : 'border-slate-200 dark:border-white/[0.06] hover:border-slate-300 dark:hover:border-white/15'
                 }`}
               >
                 <div className={`relative h-44 bg-gradient-to-br ${gradient} p-4`}>
@@ -650,7 +649,7 @@ export default function LandingHomeContent({
                   <Icon className="absolute bottom-4 right-4 h-16 w-16 text-white/90" strokeWidth={1.25} />
                 </div>
                 <div className="p-5">
-                  <h3 className="text-lg font-bold text-white">{title}</h3>
+                  <h3 className="text-lg font-bold text-slate-900 dark:text-white">{title}</h3>
                   <p className="mt-2 text-sm text-slate-400">{desc}</p>
                   <span className="mt-4 inline-flex items-center text-sm font-medium text-cyan-400">
                     Explore program <ChevronRight className="ml-0.5 h-4 w-4" />
@@ -666,7 +665,7 @@ export default function LandingHomeContent({
       <section className="py-16 sm:py-24">
         <RevealOnView className="mx-auto max-w-7xl px-4 text-center sm:px-6">
           <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-sky-400/90">⭐ Must-enroll core courses</p>
-          <h2 className="mt-3 text-3xl font-bold text-white sm:text-4xl lg:text-5xl">
+          <h2 className="mt-3 text-3xl font-bold text-slate-900 dark:text-white sm:text-4xl lg:text-5xl">
             Learn how you <span className="isit-gradient-text-strong">learn</span>
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-slate-400 sm:text-base">
@@ -708,14 +707,14 @@ export default function LandingHomeContent({
                 icon: Target,
               },
             ].map(({ n, lab, title, desc, gradient, icon: Icon }) => (
-              <Link key={n} href="/courses" className="group block overflow-hidden rounded-3xl border border-white/[0.06] bg-[#0a0c14] text-left transition hover:border-cyan-400/20">
+              <Link key={n} href="/courses" className="group block overflow-hidden rounded-3xl border border-slate-200 dark:border-white/[0.06] bg-slate-100 dark:bg-[#0a0c14] text-left transition hover:border-slate-200 dark:border-cyan-400/20">
                 <div className={`relative h-40 bg-gradient-to-br ${gradient} px-4 pt-4`}>
                   <span className="absolute right-3 top-2 text-5xl font-black text-white/15">{n}</span>
                   <Icon className="absolute bottom-3 left-1/2 h-14 w-14 -translate-x-1/2 text-white/95" strokeWidth={1.15} />
                 </div>
                 <div className="p-5">
-                  <span className="inline-block rounded-full bg-white/[0.06] px-2.5 py-0.5 text-[10px] font-medium text-slate-300">{lab}</span>
-                  <h3 className="mt-3 text-lg font-bold text-white">{title}</h3>
+                  <span className="inline-block rounded-full bg-white/[0.06] px-2.5 py-0.5 text-[10px] font-medium text-slate-600 dark:text-slate-300">{lab}</span>
+                  <h3 className="mt-3 text-lg font-bold text-slate-900 dark:text-white">{title}</h3>
                   <p className="mt-2 text-sm leading-relaxed text-slate-400">{desc}</p>
                 </div>
               </Link>
@@ -728,7 +727,7 @@ export default function LandingHomeContent({
       <section className="py-16 sm:py-24">
         <RevealOnView className="mx-auto max-w-7xl px-4 text-center sm:px-6">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-sky-400/90">The ISIC student journey</p>
-          <h2 className="mt-3 text-3xl font-bold text-white sm:text-4xl lg:text-5xl">
+          <h2 className="mt-3 text-3xl font-bold text-slate-900 dark:text-white sm:text-4xl lg:text-5xl">
             A path designed for <span className="isit-gradient-text-strong">real transformation</span>
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-sm text-slate-400 sm:text-base">
@@ -747,13 +746,13 @@ export default function LandingHomeContent({
               ].map(({ step, icon: Icon, title, desc }) => (
                 <div key={step} className="group relative flex flex-col items-center">
                   <div className="relative z-10 flex h-16 w-16 items-center justify-center rounded-full border border-cyan-500/20 bg-slate-900/90 shadow-[0_0_24px_rgba(34,211,238,0.15)] transition duration-300 group-hover:scale-105 group-hover:border-cyan-400/40 group-hover:shadow-[0_0_32px_rgba(34,211,238,0.25)]">
-                    <Icon className="h-7 w-7 text-cyan-300" strokeWidth={1.25} />
+                    <Icon className="h-7 w-7 text-sky-600 dark:text-cyan-300" strokeWidth={1.25} />
                     <span className="absolute -right-1 -top-1 flex h-6 w-6 items-center justify-center rounded-full bg-sky-500 text-[11px] font-bold text-white">
                       {step}
                     </span>
                   </div>
-                  <h3 className="mt-5 text-base font-bold text-white">{title}</h3>
-                  <p className="mt-2 max-w-[200px] text-xs leading-relaxed text-slate-500">{desc}</p>
+                  <h3 className="mt-5 text-base font-bold text-slate-900 dark:text-white">{title}</h3>
+                  <p className="mt-2 max-w-[200px] text-xs leading-relaxed text-slate-500 dark:text-slate-400">{desc}</p>
                 </div>
               ))}
             </RevealStagger>
@@ -767,7 +766,7 @@ export default function LandingHomeContent({
           <RevealOnView className="mb-10 flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.15em] text-slate-400">Loved by students • Trusted by parents</p>
-              <h2 className="mt-2 text-3xl font-bold text-white sm:text-4xl lg:text-5xl">
+              <h2 className="mt-2 text-3xl font-bold text-slate-900 dark:text-white sm:text-4xl lg:text-5xl">
                 What our <span className="isit-gradient-text">community says</span>
               </h2>
             </div>
@@ -791,8 +790,8 @@ export default function LandingHomeContent({
       <section className="py-16 sm:pb-24">
         <RevealOnView className="mx-auto max-w-3xl px-4 text-center sm:px-6">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-sky-400/90">Got questions?</p>
-          <h2 className="mt-2 text-3xl font-bold text-white sm:text-4xl">Everything you need to know</h2>
-          <p className="mt-3 text-sm text-slate-400">Can&apos;t find what you&apos;re looking for? Our team is one message away.</p>
+          <h2 className="mt-2 text-3xl font-bold text-slate-900 dark:text-white sm:text-4xl">Everything you need to know</h2>
+          <p className="mt-3 text-sm text-slate-600 dark:text-slate-400">Can&apos;t find what you&apos;re looking for? Our team is one message away.</p>
 
           <RevealStagger className="mt-10 space-y-3 text-left">
             {[
@@ -806,19 +805,23 @@ export default function LandingHomeContent({
             ].map((item, i) => {
               const open = faqOpen === i;
               return (
-                <div key={item.q} className="overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.04]">
+                <div key={item.q} className="overflow-hidden rounded-2xl border border-slate-200 dark:border-white/[0.08] bg-slate-50 dark:bg-white/[0.04]">
                   <button
                     type="button"
                     onClick={() => setFaqOpen(open ? -1 : i)}
-                    className="flex w-full items-center gap-3 p-4 text-left transition hover:bg-white/[0.03]"
+                    className="flex w-full items-center gap-3 p-4 text-left transition hover:bg-white dark:bg-white/[0.03]"
                   >
-                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-sky-500/40 bg-sky-500/10 text-sky-300">
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-sky-500/30 bg-sky-50 text-sky-600 dark:border-sky-500/40 dark:bg-sky-500/10 dark:text-sky-300">
                       ?
                     </span>
-                    <span className="flex-1 font-semibold text-white">{item.q}</span>
-                    <span className="text-slate-400">{open ? '−' : '+'}</span>
+                    <span className="flex-1 font-semibold text-slate-900 dark:text-white">{item.q}</span>
+                    <span className="text-slate-500 dark:text-slate-400">{open ? '−' : '+'}</span>
                   </button>
-                  {open && <p className="border-t border-white/[0.06] px-4 pb-4 pl-[3.25rem] pt-3 text-sm leading-relaxed text-slate-400">{item.a}</p>}
+                  {open && (
+                    <p className="border-t border-slate-200 dark:border-white/[0.06] px-4 pb-4 pl-[3.25rem] pt-3 text-sm leading-relaxed text-slate-600 dark:text-slate-400">
+                      {item.a}
+                    </p>
+                  )}
                 </div>
               );
             })}
@@ -828,12 +831,12 @@ export default function LandingHomeContent({
 
       {/* Final CTA */}
       <section className="px-4 pb-20 sm:px-6 sm:pb-28">
-        <RevealOnView className="mx-auto max-w-4xl rounded-[2rem] border border-white/[0.1] bg-gradient-to-b from-slate-900/90 to-[#060818] p-8 text-center shadow-[0_0_80px_rgba(79,70,229,0.15)] sm:p-12">
+        <RevealOnView className="mx-auto max-w-4xl rounded-[2rem] border border-slate-200 dark:border-white/[0.1] bg-gradient-to-b from-slate-900/90 to-[#060818] p-8 text-center shadow-[0_0_80px_rgba(79,70,229,0.15)] sm:p-12">
           <div className="mx-auto mb-6 inline-flex items-center gap-2 rounded-full border border-amber-400/30 bg-amber-500/10 px-4 py-1.5 text-xs font-medium text-amber-100">
             <Sparkles className="h-3.5 w-3.5 text-amber-300" />
             14-day free trial · No card needed
           </div>
-          <h2 className="text-3xl font-bold leading-tight text-white sm:text-4xl lg:text-5xl">
+          <h2 className="text-3xl font-bold leading-tight text-slate-900 dark:text-white sm:text-4xl lg:text-5xl">
             Start learning with
             <br />
             <span className="isit-gradient-text-strong">confidence & curiosity</span>
@@ -856,7 +859,7 @@ export default function LandingHomeContent({
               Talk to an advisor
             </Link>
           </div>
-          <div className="mt-10 flex flex-wrap items-center justify-center gap-6 text-xs text-slate-500">
+          <div className="mt-10 flex flex-wrap items-center justify-center gap-6 text-xs text-slate-500 dark:text-slate-400">
             {['100% safe & ad-free', 'Cancel anytime', 'Parent dashboard included'].map((x) => (
               <span key={x} className="inline-flex items-center gap-2">
                 <Shield className="h-4 w-4 text-emerald-400" />
@@ -867,7 +870,7 @@ export default function LandingHomeContent({
         </RevealOnView>
 
         {!authLoading && isAuthed && (
-          <p className="mt-8 text-center text-sm text-slate-500">
+          <p className="mt-8 text-center text-sm text-slate-500 dark:text-slate-400">
             <Link href={primaryCtaHref} className="text-cyan-400 underline-offset-4 hover:underline">
               {primaryCtaLabel}
             </Link>

@@ -154,10 +154,10 @@ export default function AchievementsPage() {
   };
 
   return (
-    <div className="isit-cosmic-bg relative flex min-h-screen font-sans text-cyan-50">
+    <div className="isit-cosmic-bg relative flex min-h-screen font-sans ">
       <Sidebar />
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="shrink-0 border-b border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-950/95">
+        <header className="shrink-0 border-b border-slate-200 bg-white dark:border-slate-700 dark:bg-white dark:bg-slate-950/95">
           <div className="px-4 py-3 sm:px-6 md:px-8">
             <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-2 text-sm">
               <Link href="/dashboard" className="font-medium text-sky-600 hover:underline dark:text-sky-400">
@@ -210,7 +210,7 @@ export default function AchievementsPage() {
                 >
                   {a.unlocked && (
                     <div className="absolute right-3 top-3 flex h-6 w-6 items-center justify-center rounded-full bg-emerald-500">
-                      <svg className="h-3.5 w-3.5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                      <svg className="h-3.5 w-3.5 text-slate-900 dark:text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
                         <polyline points="20 6 9 17 4 12" />
                       </svg>
                     </div>

@@ -1,11 +1,11 @@
 import mongoose from 'mongoose';
 import { connectToDB } from '@/lib/db';
 import { successResponse, errorResponse } from '@/lib/api-response';
-import { requireTeacherOrganization } from '@/lib/teacher-org';
+import { requireAdminOrganization } from '@/lib/teacher-org';
 
 export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const gate = await requireTeacherOrganization(req);
+    const gate = await requireAdminOrganization(req);
     if (!gate.ok) return gate.response;
 
     const { id } = await params;

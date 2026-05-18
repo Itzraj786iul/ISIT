@@ -167,7 +167,7 @@ export default function CreateCourse() {
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
         <div className="flex items-center gap-3">
-          <Link href="/teacher/dashboard" className="flex items-center gap-2 text-slate-500 hover:text-slate-700 text-sm font-medium">
+          <Link href="/teacher/dashboard" className="flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-slate-700 text-sm font-medium">
             <ChevronLeft className="w-4 h-4" /> Back
           </Link>
           <div className="h-5 w-px bg-slate-200" />
@@ -200,7 +200,7 @@ export default function CreateCourse() {
                 <a href={`/course/${createdCourseId}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-emerald-700 text-xs font-medium hover:underline">
                   <ExternalLink className="w-3.5 h-3.5" /> View course
                 </a>
-                <button type="button" onClick={() => router.push('/teacher/dashboard')} className="text-xs text-slate-600 hover:underline">
+                <button type="button" onClick={() => router.push('/teacher/dashboard')} className="text-xs text-slate-600 dark:text-slate-300 hover:underline">
                   Go to dashboard
                 </button>
               </div>
@@ -241,13 +241,13 @@ export default function CreateCourse() {
                 </div>
                 <h2 className="text-base font-bold text-slate-800">Course Curriculum</h2>
               </div>
-              <button type="button" onClick={handleAddModule} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 border border-dashed border-slate-300 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-200">
+              <button type="button" onClick={handleAddModule} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 border border-dashed border-slate-300 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-200">
                 <PlusCircle className="w-4 h-4" /> Add Module
               </button>
             </div>
             <div className="space-y-4">
               {modules.length === 0 && (
-                <p className="text-slate-500 text-sm text-center py-6">No modules yet. Click &quot;Add Module&quot; to get started.</p>
+                <p className="text-slate-500 dark:text-slate-400 text-sm text-center py-6">No modules yet. Click &quot;Add Module&quot; to get started.</p>
               )}
               {modules.map((module, mIdx) => (
                 <div key={mIdx} className="border border-slate-200 rounded-lg overflow-hidden">
@@ -295,7 +295,7 @@ export default function CreateCourse() {
               className="w-full aspect-video border-2 border-dashed border-slate-200 rounded-lg flex flex-col items-center justify-center text-slate-400 cursor-pointer hover:border-slate-300 bg-slate-50 relative overflow-hidden"
               style={imageUrl ? { backgroundImage: `url(${imageUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' } : undefined}
             >
-              {uploading && <span className="text-xs font-medium text-slate-600">Uploading...</span>}
+              {uploading && <span className="text-xs font-medium text-slate-600 dark:text-slate-300">Uploading...</span>}
               {!imageUrl && !uploading && (
                 <>
                   <Upload className="w-6 h-6 mb-1" />
@@ -303,7 +303,7 @@ export default function CreateCourse() {
                 </>
               )}
               {imageUrl && !uploading && (
-                <span className="absolute bottom-2 right-2 bg-black/60 text-white text-[10px] px-2 py-0.5 rounded">Change</span>
+                <span className="absolute bottom-2 right-2 bg-black/60 text-slate-900 dark:text-white text-[10px] px-2 py-0.5 rounded">Change</span>
               )}
             </div>
             {uploadError && <p className="text-red-600 text-xs mt-2">{uploadError}</p>}
@@ -314,14 +314,14 @@ export default function CreateCourse() {
             <h3 className="text-sm font-bold text-slate-800 mb-4">Course Settings</h3>
             <div className="space-y-4">
               <div>
-                <label className="block text-xs font-medium text-slate-600 mb-1.5">Price (INR)</label>
+                <label className="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5">Price (INR)</label>
                 <div className="relative">
                   <span className="absolute left-3 top-2.5 text-slate-400 text-sm">{'\u20B9'}</span>
                   <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} placeholder="0 for free" className="w-full pl-7 pr-3 py-2.5 rounded-lg border border-slate-200 text-sm outline-none focus:ring-2 focus:ring-sky-500" />
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-600 mb-1.5">Category</label>
+                <label className="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5">Category</label>
                 <select value={category} onChange={(e) => setCategory(e.target.value)} className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm outline-none focus:ring-2 focus:ring-sky-500">
                   <option>Development</option>
                   <option>Business</option>
@@ -333,7 +333,7 @@ export default function CreateCourse() {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-600 mb-1.5">Level</label>
+                <label className="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5">Level</label>
                 <select value={level} onChange={(e) => setLevel(e.target.value)} className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm outline-none focus:ring-2 focus:ring-sky-500">
                   <option>Beginner</option>
                   <option>Intermediate</option>
@@ -351,7 +351,7 @@ export default function CreateCourse() {
               </div>
               <h3 className="text-sm font-bold text-slate-800">How it works</h3>
             </div>
-            <ol className="text-xs text-slate-600 space-y-1.5 pl-4 list-decimal leading-relaxed">
+            <ol className="text-xs text-slate-600 dark:text-slate-300 space-y-1.5 pl-4 list-decimal leading-relaxed">
               <li>Your course appears on the course page with thumbnail and description.</li>
               <li>Students enroll (or purchase if paid).</li>
               <li>They see the lesson list and open lessons in order.</li>

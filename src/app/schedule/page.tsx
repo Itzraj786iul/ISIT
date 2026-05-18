@@ -124,25 +124,25 @@ export default function SchedulePage() {
   const goNext = () => setViewDate(new Date(year, month + 1, 1));
 
   return (
-    <div className="isit-cosmic-bg relative flex min-h-screen font-sans text-cyan-50">
+    <div className="isit-cosmic-bg relative flex min-h-screen font-sans ">
       <Sidebar />
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="shrink-0 border-b border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-950/95">
+        <header className="shrink-0 border-b border-slate-200 bg-white dark:border-slate-700 dark:bg-white dark:bg-slate-950/95">
           <div className="px-4 py-3 sm:px-6 md:px-8">
             <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-2 text-sm">
               <Link href="/dashboard" className="font-medium text-sky-600 hover:underline dark:text-sky-400">
                 {tr('dashboard')}
               </Link>
               <ChevronRight className="h-3.5 w-3.5 shrink-0 text-slate-400" aria-hidden />
-              <span className="font-medium text-slate-700 dark:text-slate-200">{tr('schedule')}</span>
+              <span className="font-medium text-slate-700 dark:text-slate-200">{tr('activity')}</span>
             </nav>
           </div>
         </header>
 
         <main className="min-w-0 flex-1 overflow-x-hidden p-4 sm:p-6 md:p-8">
         <div className="mb-6">
-          <h1 className="text-2xl font-extrabold tracking-tight text-slate-800 dark:text-slate-100">{tr('schedule')}</h1>
-          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{tr('schedulePageLead')}</p>
+          <h1 className="text-2xl font-extrabold tracking-tight text-slate-800 dark:text-slate-100">{tr('activity')}</h1>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{tr('activityPageLead')}</p>
         </div>
 
         {loading ? (
@@ -159,7 +159,7 @@ export default function SchedulePage() {
                   <button
                     type="button"
                     onClick={goPrev}
-                    className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
+                    className="rounded-lg p-2 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
                     aria-label={tr('schedulePrevMonthAria')}
                   >
                     <span className="text-lg font-bold">&lt;</span>
@@ -167,7 +167,7 @@ export default function SchedulePage() {
                   <button
                     type="button"
                     onClick={goNext}
-                    className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
+                    className="rounded-lg p-2 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
                     aria-label={tr('scheduleNextMonthAria')}
                   >
                     <span className="text-lg font-bold">&gt;</span>
@@ -220,7 +220,11 @@ export default function SchedulePage() {
                 ) : (
                   <div className="space-y-3">
                     {selectedDaySessions.map((s) => (
-                      <div key={s._id} className="flex items-start gap-3 p-3 rounded-xl border border-slate-100">
+                      <Link
+                        key={s._id}
+                        href={`/session/${s._id}`}
+                        className="flex items-start gap-3 p-3 rounded-xl border border-slate-100 hover:border-sky-200 hover:bg-sky-50/50 dark:border-slate-700 dark:hover:border-sky-800 dark:hover:bg-sky-950/30 transition no-underline"
+                      >
                         <div className="w-10 h-10 rounded-lg bg-sky-100 flex items-center justify-center flex-shrink-0">
                           <Layers className="w-5 h-5 text-sky-600" />
                         </div>
@@ -241,8 +245,11 @@ export default function SchedulePage() {
                               </span>
                             )}
                           </div>
+                        
+                        
                         </div>
-                      </div>
+                        <ChevronRight className="h-4 w-4 shrink-0 text-slate-400" aria-hidden />
+                      </Link>
                     ))}
                   </div>
                 )}
@@ -260,7 +267,11 @@ export default function SchedulePage() {
             <div className="p-4">
               <div className="space-y-3">
                 {sessions.slice(0, 10).map((s) => (
-                  <div key={s._id} className="flex items-center gap-4 p-3 rounded-xl border border-slate-100">
+                  <Link
+                    key={s._id}
+                    href={`/session/${s._id}`}
+                    className="flex items-center gap-4 p-3 rounded-xl border border-slate-100 hover:border-sky-200 hover:bg-sky-50/50 dark:border-slate-700 dark:hover:border-sky-800 transition no-underline"
+                  >
                     <div className="w-10 h-10 rounded-lg bg-sky-100 flex items-center justify-center flex-shrink-0">
                       <Clock className="w-5 h-5 text-sky-600" />
                     </div>
@@ -268,12 +279,13 @@ export default function SchedulePage() {
                       <div className="text-sm font-semibold text-slate-800 dark:text-slate-100">
                         {s.session_type || tr('scheduleSessionDefaultName')}
                       </div>
-                      <div className="text-xs text-slate-500">{upcomingLabel(s)}</div>
+                      <div className="text-xs text-slate-500 dark:text-slate-400">{upcomingLabel(s)}</div>
                     </div>
                     <div className="shrink-0 text-xs text-slate-400">
                       {tr('scheduleMinutesShort').replace(/\{n\}/g, String(s.duration_minutes ?? s.total_time_minutes ?? 0))}
                     </div>
-                  </div>
+                    <ChevronRight className="h-4 w-4 shrink-0 text-slate-400" aria-hidden />
+                  </Link>
                 ))}
               </div>
             </div>

@@ -92,7 +92,7 @@ export default function SubjectsPage() {
   }, [router]);
 
   return (
-    <div className="isit-cosmic-bg min-h-screen flex font-sans text-cyan-50 overflow-x-hidden relative">
+    <div className="isit-app-bg min-h-screen flex font-sans overflow-x-hidden relative">
       <Sidebar />
       <main className="flex-1 p-4 sm:p-6 md:p-8 min-w-0 overflow-x-hidden">
         <div className="max-w-6xl mx-auto">
@@ -181,7 +181,7 @@ export default function SubjectsPage() {
                         <p className="mt-3 text-slate-600 dark:text-slate-400 text-sm line-clamp-3">{subject.description}</p>
                       )}
                     </div>
-                    <ChevronRight className="w-5 h-5 text-slate-300 flex-shrink-0 group-hover:text-sky-500 group-hover:translate-x-0.5 transition" />
+                    <ChevronRight className="w-5 h-5 text-slate-600 dark:text-slate-300 flex-shrink-0 group-hover:text-sky-500 group-hover:translate-x-0.5 transition" />
                   </div>
                 </Link>
               ))}

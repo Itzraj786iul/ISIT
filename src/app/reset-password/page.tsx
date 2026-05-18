@@ -51,8 +51,8 @@ function ResetPasswordForm() {
   if (!token) {
     return (
       <div className="isit-glass rounded-3xl p-8 text-center">
-        <p className="text-cyan-100">This reset link is invalid or expired.</p>
-        <Link href="/forgot-password" className="inline-block mt-4 text-cyan-300 hover:underline font-medium">
+        <p className="isit-body">This reset link is invalid or expired.</p>
+        <Link href="/forgot-password" className="inline-block mt-4 text-sky-600 dark:text-cyan-300 hover:underline font-medium">
           Request a new link
         </Link>
       </div>
@@ -61,11 +61,11 @@ function ResetPasswordForm() {
 
   return (
     <div className="isit-glass rounded-3xl p-8">
-      <h1 className="text-2xl font-bold text-cyan-100">Set a new password</h1>
-      <p className="mt-2 text-sm text-cyan-100/70">{tr('resetPasswordLead')}</p>
+      <h1 className="text-2xl font-bold isit-body">Set a new password</h1>
+      <p className="mt-2 text-sm isit-body/70">{tr('resetPasswordLead')}</p>
       <form onSubmit={onSubmit} className="mt-6 space-y-4">
         <div>
-          <label htmlFor="np" className="block text-sm font-medium text-cyan-100/90 mb-1">
+          <label htmlFor="np" className="block text-sm font-medium isit-body/90 mb-1">
             New password
           </label>
           <input
@@ -75,11 +75,11 @@ function ResetPasswordForm() {
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full rounded-xl border border-cyan-400/25 bg-slate-950/70 px-4 py-3 text-cyan-50 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+            className="w-full rounded-xl border border-slate-200 dark:border-cyan-400/25 bg-slate-100 dark:bg-white dark:bg-slate-950/70 px-4 py-3 isit-text-primary focus:outline-none focus:ring-2 focus:ring-cyan-400"
           />
         </div>
         <div>
-          <label htmlFor="npc" className="block text-sm font-medium text-cyan-100/90 mb-1">
+          <label htmlFor="npc" className="block text-sm font-medium isit-body/90 mb-1">
             Confirm password
           </label>
           <input
@@ -89,7 +89,7 @@ function ResetPasswordForm() {
             required
             value={confirm}
             onChange={(e) => setConfirm(e.target.value)}
-            className="w-full rounded-xl border border-cyan-400/25 bg-slate-950/70 px-4 py-3 text-cyan-50 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+            className="w-full rounded-xl border border-slate-200 dark:border-cyan-400/25 bg-slate-100 dark:bg-white dark:bg-slate-950/70 px-4 py-3 isit-text-primary focus:outline-none focus:ring-2 focus:ring-cyan-400"
           />
         </div>
         {err && <p className="text-red-300 text-sm">{err}</p>}
@@ -105,7 +105,7 @@ export default function ResetPasswordPage() {
   return (
     <SiteShell variant="auth" showFooter={false}>
       <main className="flex-1 max-w-md mx-auto px-4 py-12 w-full">
-        <Suspense fallback={<div className="text-cyan-200 text-sm">Loading…</div>}>
+        <Suspense fallback={<div className="text-slate-600 dark:text-cyan-200 text-sm">Loading…</div>}>
           <ResetPasswordForm />
         </Suspense>
       </main>

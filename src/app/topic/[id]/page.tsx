@@ -27,11 +27,13 @@ import { getLearningMode } from '@/lib/learning-mode';
 import { useT } from '@/lib/t';
 import type { LearningMode } from '@/lib/learning-mode';
 import { assignmentStatusLabelForStudent } from '@/lib/assignment-status-ui';
+import { needsEmailVerification } from '@/lib/email-verify-gate';
 
 type User = {
   _id: string;
   name?: string;
   email?: string;
+  email_verified?: boolean;
   role?: string;
   learning_mode?: LearningMode;
 };
@@ -221,6 +223,10 @@ export default function TopicLearningPage() {
   const startPracticeSessionRedirect = useCallback(async () => {
     if (!user?._id) {
       router.push(`/login?returnUrl=${encodeURIComponent(`/topic/${id}`)}`);
+      return;
+    }
+    if (needsEmailVerification(user)) {
+      router.push(`/verify-email?returnUrl=${encodeURIComponent(`/topic/${id}`)}`);
       return;
     }
     setPracticeRedirecting(true);
@@ -486,7 +492,7 @@ export default function TopicLearningPage() {
 
   if (loading) {
     return (
-      <div className="isit-cosmic-bg relative flex min-h-screen overflow-x-hidden font-sans text-cyan-50">
+      <div className="isit-cosmic-bg relative flex min-h-screen overflow-x-hidden font-sans ">
         <Sidebar />
         <div className="min-w-0 flex-1">
           <div className="mx-auto max-w-4xl space-y-6 px-4 py-8 sm:px-6">
@@ -501,12 +507,12 @@ export default function TopicLearningPage() {
 
   if (notFound || !topic) {
     return (
-      <div className="isit-cosmic-bg relative flex min-h-screen overflow-x-hidden font-sans text-cyan-50">
+      <div className="isit-cosmic-bg relative flex min-h-screen overflow-x-hidden font-sans ">
         <Sidebar />
         <main className="flex min-h-[50vh] flex-1 flex-col items-center justify-center gap-4 p-4">
-          <AlertCircle className="h-12 w-12 text-cyan-300/60" />
-          <h1 className="text-xl font-semibold text-cyan-50">{tr('topicNotFoundTitle')}</h1>
-          <p className="text-center text-sm text-cyan-100/75">{tr('topicNotFoundLead')}</p>
+          <AlertCircle className="h-12 w-12 text-sky-600 dark:text-cyan-300/60" />
+          <h1 className="text-xl font-semibold isit-text-primary">{tr('topicNotFoundTitle')}</h1>
+          <p className="text-center text-sm /75">{tr('topicNotFoundLead')}</p>
           <Link href="/dashboard" className="font-medium text-sky-400 hover:underline">
             ← {tr('dashboard')}
           </Link>
@@ -519,10 +525,10 @@ export default function TopicLearningPage() {
   const loginHref = `/login?returnUrl=${encodeURIComponent(`/topic/${id}`)}`;
 
   return (
-    <div className="isit-cosmic-bg relative flex min-h-screen overflow-x-hidden font-sans text-cyan-50">
+    <div className="isit-cosmic-bg relative flex min-h-screen overflow-x-hidden font-sans ">
       <Sidebar />
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-20 border-b border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-950/95">
+        <header className="sticky top-0 z-20 border-b border-slate-200 bg-white dark:border-slate-700 dark:bg-white dark:bg-slate-950/95">
           <div className="mx-auto max-w-4xl px-4 py-3 sm:px-6">
             <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-2 text-sm">
               <Link href="/dashboard" className="font-medium text-sky-600 hover:underline dark:text-sky-400">
@@ -572,7 +578,7 @@ export default function TopicLearningPage() {
               </div>
             ) : null}
             {topic.difficulty_level ? (
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-white/20 text-white ring-1 ring-white/30">
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-white/20 text-slate-900 dark:text-white ring-1 ring-white/30">
                 {topic.difficulty_level}
               </span>
             ) : null}
@@ -585,7 +591,7 @@ export default function TopicLearningPage() {
           </div>
 
           <p className="mt-6 text-xs font-semibold uppercase tracking-wider text-sky-200/90">Learning mode</p>
-          <p className="mt-1 text-lg font-bold text-white tracking-tight">
+          <p className="mt-1 text-lg font-bold text-slate-900 dark:text-white tracking-tight">
             {user && (user.role || '').toLowerCase() === 'student'
               ? getLearningMode(user) === 'teacher_learning'
                 ? tr('teacherLearningMode')
@@ -662,7 +668,7 @@ export default function TopicLearningPage() {
                     type="button"
                     onClick={() => setActiveTab(t.id)}
                     className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition ${
-                      active ? 'bg-white text-sky-700 shadow-sm ring-1 ring-slate-200' : 'text-slate-600 hover:bg-white/80'
+                      active ? 'bg-white text-sky-700 shadow-sm ring-1 ring-slate-200' : 'text-slate-600 dark:text-slate-300 hover:bg-white/80'
                     }`}
                   >
                     <Icon className="w-4 h-4 shrink-0" />
@@ -686,14 +692,14 @@ export default function TopicLearningPage() {
                         />
                       </div>
                       {videos.length > 1 && (
-                        <p className="text-slate-500 text-sm">
+                        <p className="text-slate-500 dark:text-slate-400 text-sm">
                           {videos.length} video{videos.length !== 1 ? 's' : ''} for this topic.
                         </p>
                       )}
                     </div>
                   ) : (
-                    <div className="flex flex-col items-center justify-center py-12 text-slate-500">
-                      <Video className="w-12 h-12 text-slate-300 mb-3" />
+                    <div className="flex flex-col items-center justify-center py-12 text-slate-500 dark:text-slate-400">
+                      <Video className="w-12 h-12 text-slate-600 dark:text-slate-300 mb-3" />
                       <p className="text-sm font-medium">No videos for this topic yet.</p>
                       <p className="text-xs mt-1 text-center">Use Start learning for the AI session, or check back later.</p>
                     </div>
@@ -708,7 +714,7 @@ export default function TopicLearningPage() {
                       {notes.map((note) => (
                         <div key={note._id} className="border-b border-slate-100 last:border-0 pb-6 last:pb-0">
                           {note.note_type && (
-                            <span className="text-xs font-medium text-slate-500 uppercase tracking-wide">
+                            <span className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">
                               {note.note_type.replace(/_/g, ' ')}
                             </span>
                           )}
@@ -722,8 +728,8 @@ export default function TopicLearningPage() {
                       ))}
                     </div>
                   ) : (
-                    <div className="flex flex-col items-center justify-center py-12 text-slate-500">
-                      <BookOpen className="w-12 h-12 text-slate-300 mb-3" />
+                    <div className="flex flex-col items-center justify-center py-12 text-slate-500 dark:text-slate-400">
+                      <BookOpen className="w-12 h-12 text-slate-600 dark:text-slate-300 mb-3" />
                       <p className="text-sm font-medium">No notes for this topic yet.</p>
                     </div>
                   )}
@@ -782,7 +788,7 @@ export default function TopicLearningPage() {
                         )}
                       </div>
                       {questions.length === 0 && user?._id && (
-                        <p className="text-xs text-slate-500">
+                        <p className="text-xs text-slate-500 dark:text-slate-400">
                           No question bank for this topic yet — use <strong>Start practice session</strong> for the AI player (it can still run with built-in practice).
                         </p>
                       )}
@@ -790,7 +796,7 @@ export default function TopicLearningPage() {
                   ) : (
                     <div className="space-y-4">
                       <div className="flex flex-wrap items-center justify-between gap-2">
-                        <p className="text-sm text-slate-600">
+                        <p className="text-sm text-slate-600 dark:text-slate-300">
                           Quick practice · Question {quickCurrentIndex + 1} of {questions.length}
                         </p>
                         <button
@@ -927,21 +933,21 @@ export default function TopicLearningPage() {
                       {assignments.map((a) => (
                         <li key={a._id} className="border border-slate-200 rounded-lg p-4">
                           {a.assignment_type && (
-                            <span className="text-xs font-medium text-slate-500 uppercase tracking-wide">
+                            <span className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">
                               {a.assignment_type}
                             </span>
                           )}
                           {a.description ? (
                             <p className="mt-2 text-slate-700 text-sm leading-relaxed">{a.description}</p>
                           ) : (
-                            <p className="mt-2 text-slate-500 text-sm">No description provided.</p>
+                            <p className="mt-2 text-slate-500 dark:text-slate-400 text-sm">No description provided.</p>
                           )}
                         </li>
                       ))}
                     </ul>
                   ) : (
-                    <div className="flex flex-col items-center justify-center py-12 text-slate-500">
-                      <FileText className="w-12 h-12 text-slate-300 mb-3" />
+                    <div className="flex flex-col items-center justify-center py-12 text-slate-500 dark:text-slate-400">
+                      <FileText className="w-12 h-12 text-slate-600 dark:text-slate-300 mb-3" />
                       <p className="text-sm font-medium">No assignments for this topic yet.</p>
                     </div>
                   )}

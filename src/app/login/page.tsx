@@ -8,6 +8,7 @@ import { useAuth } from '@/lib/auth-context';
 import { useT } from '@/lib/t';
 import { Sparkles } from 'lucide-react';
 import SiteShell from '@/components/SiteShell';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 function LoginForm() {
   const router = useRouter();
@@ -87,37 +88,40 @@ function LoginForm() {
 
   return (
     <SiteShell variant="auth" className="flex flex-col">
-      <header className="relative z-[1] border-b border-white/[0.08] bg-[#050510]/90 backdrop-blur-xl">
+      <header className="isit-shell-header relative z-[1]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between gap-4">
           <Link
             href="/"
-            className="inline-flex items-center gap-2 text-cyan-200 font-semibold transition-colors no-underline hover:text-cyan-100"
+            className="inline-flex items-center gap-2 isit-accent-text font-semibold transition-colors no-underline hover:isit-body"
           >
-            <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-cyan-400/20 text-cyan-200 animate-pulse-cyan">
+            <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-cyan-400/20 isit-accent-text animate-pulse-cyan">
               <Sparkles className="h-4 w-4" />
             </span>
             <span>ISIC</span>
           </Link>
-          <Link href="/" className="text-sm text-cyan-200/80 hover:text-cyan-100 no-underline">
-            {tr('funnelBackHome')}
-          </Link>
+          <div className="flex items-center gap-3">
+            <ThemeToggle />
+            <Link href="/" className="text-sm isit-muted hover:isit-text-primary no-underline">
+              {tr('funnelBackHome')}
+            </Link>
+          </div>
         </div>
       </header>
 
       <div className="flex-1 flex flex-col lg:flex-row relative z-[1]">
         <div className="flex-1 flex flex-col justify-center px-6 py-12 lg:px-16 order-2 lg:order-1">
-          <div className="max-w-md w-full mx-auto isit-glass rounded-3xl p-8 sm:p-10 shadow-2xl">
-            <p className="text-xs font-semibold uppercase tracking-widest text-cyan-300/90 mb-2">Welcome back</p>
-            <h1 className="text-2xl sm:text-3xl font-bold text-cyan-50 mb-2">{tr('logIn')}</h1>
-            <p className="text-sm text-cyan-100/75 mb-6">{tr('loginLead')}</p>
+          <div className="max-w-md w-full mx-auto isit-auth-panel p-8 sm:p-10">
+            <p className="text-xs font-semibold uppercase tracking-widest isit-accent-text opacity-90 mb-2">Welcome back</p>
+            <h1 className="text-2xl sm:text-3xl font-bold isit-text-primary mb-2">{tr('logIn')}</h1>
+            <p className="text-sm isit-body mb-6">{tr('loginLead')}</p>
 
             {safeReturn && (
               <div
                 role="status"
-                className="mb-6 rounded-xl border border-cyan-400/25 bg-slate-950/70 px-4 py-3 text-xs leading-relaxed text-cyan-100/85"
+                className="mb-6 rounded-xl border border-[color:var(--isit-border)] bg-[var(--isit-surface-muted)] px-4 py-3 text-xs leading-relaxed isit-body"
               >
                 {tr('loginContinueTo')}{' '}
-                <span className="font-semibold text-cyan-50">{safeReturn}</span>
+                <span className="font-semibold isit-text-primary">{safeReturn}</span>
               </div>
             )}
 
@@ -141,7 +145,7 @@ function LoginForm() {
 
               <div className="space-y-3">
                 <div>
-                  <label htmlFor="email-address" className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-cyan-200/85">
+                  <label htmlFor="email-address" className="mb-1.5 block text-xs font-semibold uppercase tracking-wide isit-accent-text/85">
                     {tr('labelEmail')}
                   </label>
                   <input
@@ -150,14 +154,14 @@ function LoginForm() {
                     type="email"
                     autoComplete="email"
                     required
-                    className="w-full rounded-xl border border-cyan-400/25 bg-slate-950/70 px-4 py-3 text-cyan-50 placeholder:text-cyan-200/45 focus:outline-none focus:ring-2 focus:ring-cyan-400/50"
+                    className="isit-input"
                     placeholder="you@example.com"
                     value={formData.email}
                     onChange={handleChange}
                   />
                 </div>
                 <div>
-                  <label htmlFor="password" className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-cyan-200/85">
+                  <label htmlFor="password" className="mb-1.5 block text-xs font-semibold uppercase tracking-wide isit-accent-text/85">
                     {tr('labelPassword')}
                   </label>
                   <input
@@ -166,7 +170,7 @@ function LoginForm() {
                     type="password"
                     autoComplete="current-password"
                     required
-                    className="w-full rounded-xl border border-cyan-400/25 bg-slate-950/70 px-4 py-3 text-cyan-50 placeholder:text-cyan-200/45 focus:outline-none focus:ring-2 focus:ring-cyan-400/50"
+                    className="isit-input"
                     placeholder="••••••••"
                     value={formData.password}
                     onChange={handleChange}
@@ -177,12 +181,12 @@ function LoginForm() {
                     type="checkbox"
                     checked={rememberMe}
                     onChange={(e) => setRememberMe(e.target.checked)}
-                    className="rounded border-cyan-400/40 bg-slate-950/80 text-cyan-400 focus:ring-cyan-400"
+                    className="rounded border-cyan-400/40 bg-white dark:bg-slate-950/80 text-cyan-400 focus:ring-cyan-400"
                   />
-                  <span className="text-sm text-cyan-100/80">Remember me on this device</span>
+                  <span className="text-sm isit-body">Remember me on this device</span>
                 </label>
                 <div className="text-right">
-                  <Link href="/forgot-password" className="text-sm font-medium text-cyan-300 hover:text-cyan-200 underline-offset-2 hover:underline">
+                  <Link href="/forgot-password" className="text-sm font-medium isit-accent-text hover:isit-accent-text underline-offset-2 hover:underline">
                     Forgot password?
                   </Link>
                 </div>
@@ -193,31 +197,31 @@ function LoginForm() {
               </button>
             </form>
 
-            <p className="mt-6 text-center text-sm text-cyan-100/75">
+            <p className="mt-6 text-center text-sm isit-body">
               Don&apos;t have an account?{' '}
-              <Link href="/signup" className="font-semibold text-cyan-300 hover:text-cyan-200 underline-offset-2 hover:underline">
+              <Link href="/signup" className="font-semibold isit-accent-text hover:isit-accent-text underline-offset-2 hover:underline">
                 {tr('signUp')}
               </Link>
             </p>
-            <p className="mt-4 text-center text-sm text-cyan-100/60">
+            <p className="mt-4 text-center text-sm isit-muted">
               New to ISIC?{' '}
-              <Link href="/how-it-works" className="font-medium text-cyan-300 underline-offset-2 hover:underline">
+              <Link href="/how-it-works" className="font-medium isit-accent-text underline-offset-2 hover:underline">
                 {tr('footerHowItWorksLink')}
               </Link>
             </p>
           </div>
         </div>
 
-        <div className="hidden lg:flex flex-1 order-1 lg:order-2 items-stretch justify-center p-10 xl:p-16 border-l border-cyan-400/10 bg-gradient-to-br from-cyan-950/40 via-slate-950/20 to-transparent">
+        <div className="hidden lg:flex flex-1 order-1 lg:order-2 items-stretch justify-center p-10 xl:p-16 border-l border-[color:var(--isit-border)] isit-auth-marketing">
           <div className="max-w-md flex flex-col justify-center text-left">
             <div className="inline-flex items-center gap-2 isit-chip mb-6 w-fit">
-              <Sparkles className="w-4 h-4 text-cyan-300" aria-hidden />
+              <Sparkles className="w-4 h-4 isit-accent-text" aria-hidden />
               AI-first learning
             </div>
-            <h2 className="text-3xl xl:text-4xl font-bold text-cyan-50 mb-4 leading-tight">
+            <h2 className="text-3xl xl:text-4xl font-bold isit-text-primary mb-4 leading-tight">
               Learn with a tutor that adapts to you
             </h2>
-            <p className="text-cyan-100/80 leading-relaxed">
+            <p className="isit-body leading-relaxed">
               Indian School of Innovation and Curiosity — structured curriculum, mastery tracking, and classroom tools
               for schools and families.
             </p>
@@ -232,7 +236,7 @@ export default function LoginPage() {
   return (
     <Suspense
       fallback={
-        <div className="isit-cosmic-bg min-h-screen flex items-center justify-center text-cyan-200">
+        <div className="isit-app-bg min-h-screen flex items-center justify-center">
           <p className="text-sm">Loading…</p>
         </div>
       }

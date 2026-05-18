@@ -54,9 +54,9 @@ function VerifyEmailInner() {
 
   return (
     <div className="isit-glass rounded-3xl p-8 text-center">
-      <h1 className="text-xl font-bold text-cyan-50">{tr('verifyEmailHeading')}</h1>
-      <p className="mt-2 text-sm text-cyan-100/70">{tr('verifyEmailIntro')}</p>
-      {status === 'idle' && <p className="mt-6 text-cyan-100">Verifying your email…</p>}
+      <h1 className="text-xl font-bold isit-text-primary">{tr('verifyEmailHeading')}</h1>
+      <p className="mt-2 text-sm isit-body/70">{tr('verifyEmailIntro')}</p>
+      {status === 'idle' && <p className="mt-6 isit-body">Verifying your email…</p>}
       {status === 'ok' && <p className="mt-6 text-emerald-300 font-medium">{msg}</p>}
       {status === 'bad' && <p className="mt-6 text-red-300">{msg}</p>}
       <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
@@ -75,7 +75,7 @@ export default function VerifyEmailPage() {
   return (
     <SiteShell variant="auth" showFooter={false}>
       <main className="flex-1 max-w-md mx-auto px-4 py-12 w-full">
-        <Suspense fallback={<div className="text-cyan-200 text-sm text-center">Loading…</div>}>
+        <Suspense fallback={<div className="text-slate-600 dark:text-cyan-200 text-sm text-center">Loading…</div>}>
           <VerifyEmailInner />
         </Suspense>
       </main>

@@ -27,7 +27,7 @@ const moreNavItems: { iconId: string; href: string; labelKey: I18nKey }[] = [
   { iconId: 'Analytics', href: '/analytics', labelKey: 'analytics' },
   { iconId: 'Learning Path', href: '/learning-path', labelKey: 'learningPath' },
   { iconId: 'Achievements', href: '/achievements', labelKey: 'achievements' },
-  { iconId: 'Schedule', href: '/schedule', labelKey: 'schedule' },
+  { iconId: 'Schedule', href: '/schedule', labelKey: 'activity' },
 ];
 
 function SidebarIcon({ name, color }: { name: string; color: string }) {
@@ -85,16 +85,16 @@ export default function Sidebar() {
       )}
       <aside
         id="student-sidebar"
-        className={`flex flex-col fixed left-0 top-0 h-dvh z-30 border-white/[0.08] bg-[#050510]/95 shadow-lg md:shadow-none transition-[width] duration-200 ease-out overflow-hidden backdrop-blur-xl ${
+        className={`flex flex-col fixed left-0 top-0 h-dvh z-30 isit-shell-aside shadow-lg md:shadow-none transition-[width] duration-200 ease-out overflow-hidden ${
           open ? 'w-[min(85vw,260px)] md:w-[220px] border-r' : 'w-0 border-r-0'
         }`}
       >
-        <div className="p-4 flex items-center justify-between gap-2 border-b border-cyan-300/20 w-[min(85vw,260px)] md:w-[220px] shrink-0">
+        <div className="p-4 flex items-center justify-between gap-2 border-b border-[color:var(--isit-shell-border)] w-[min(85vw,260px)] md:w-[220px] shrink-0">
           <Link href="/dashboard" className="flex items-center gap-2 no-underline min-w-0" onClick={() => window.innerWidth < 768 && setOpen(false)}>
             <div className="w-8 h-8 rounded-md bg-sky-500 flex items-center justify-center text-white font-bold text-xs shrink-0">I</div>
             <div className="min-w-0">
-              <div className="font-bold text-cyan-100 text-sm">ISIC</div>
-              <div className="text-[10px] text-cyan-200/70 font-medium">{tr('studentPortal')}</div>
+              <div className="font-bold text-sm isit-text-primary">ISIC</div>
+              <div className="text-[10px] isit-muted font-medium">{tr('studentPortal')}</div>
               {user && user.role?.toLowerCase() === 'student' ? (
                 <div className="text-[10px] text-sky-600 dark:text-sky-400 font-semibold mt-0.5">
                   {getLearningMode(user) === 'teacher_learning' ? tr('teacherLearningMode') : tr('freeLearningMode')}
@@ -107,7 +107,7 @@ export default function Sidebar() {
             <button
               type="button"
               onClick={() => setOpen(false)}
-              className="md:hidden min-h-[44px] min-w-[44px] inline-flex items-center justify-center text-slate-500 hover:text-slate-800 rounded-xl dark:hover:text-slate-200 active:scale-95 transition-transform"
+              className="md:hidden min-h-[44px] min-w-[44px] inline-flex items-center justify-center text-slate-500 hover:text-slate-800 rounded-xl dark:hover:text-slate-600 dark:text-slate-200 active:scale-95 transition-transform"
               aria-label="Close menu"
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" /></svg>
@@ -115,7 +115,7 @@ export default function Sidebar() {
             <button
               type="button"
               onClick={() => setOpen(false)}
-              className="hidden md:inline-flex p-1.5 text-slate-400 hover:text-slate-600 rounded dark:hover:text-slate-300"
+              className="hidden md:inline-flex p-1.5 text-slate-400 hover:text-slate-600 rounded dark:hover:text-slate-600 dark:text-slate-300"
               aria-label="Collapse sidebar"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="15 18 9 12 15 6" /></svg>
@@ -126,15 +126,15 @@ export default function Sidebar() {
         {user && (
           <Link
             href="/dashboard"
-            className="p-4 flex items-center gap-3 border-b border-cyan-300/20 no-underline hover:bg-cyan-300/10 transition w-[min(85vw,260px)] md:w-[220px] shrink-0"
+            className="p-4 flex items-center gap-3 border-b border-[color:var(--isit-shell-border)] no-underline hover:bg-cyan-300/10 transition w-[min(85vw,260px)] md:w-[220px] shrink-0"
             onClick={() => window.innerWidth < 768 && setOpen(false)}
           >
             <div className="w-10 h-10 rounded-full bg-sky-100 text-sky-600 flex items-center justify-center flex-shrink-0 dark:bg-sky-900/50 dark:text-sky-300">
               <User className="w-5 h-5" />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="font-semibold text-cyan-100 text-sm truncate">{user.name || 'Student'}</p>
-              <p className="text-xs text-cyan-200/70 truncate">{user.email || ''}</p>
+              <p className="font-semibold text-sm truncate isit-text-primary">{user.name || 'Student'}</p>
+              <p className="text-xs isit-muted truncate">{user.email || ''}</p>
             </div>
           </Link>
         )}
@@ -151,7 +151,7 @@ export default function Sidebar() {
                 key={item.href}
                 href={item.href}
                 onClick={() => window.innerWidth < 768 && setOpen(false)}
-                className={`flex min-h-[44px] items-center gap-3 rounded-xl px-3 py-3 text-[13px] font-medium no-underline transition-colors active:scale-[0.99] ${active ? 'border border-white/[0.1] bg-white/[0.06] text-cyan-300' : 'text-slate-400 hover:bg-white/[0.04] hover:text-slate-200'}`}
+                className={`flex min-h-[44px] items-center gap-3 rounded-xl px-3 py-3 text-[13px] font-medium no-underline transition-colors active:scale-[0.99] ${active ? 'isit-nav-link-active' : 'isit-nav-link'}`}
               >
                 <SidebarIcon name={item.iconId} color={color} />
                 <span className="whitespace-nowrap">{tr(item.labelKey)}</span>
@@ -169,7 +169,7 @@ export default function Sidebar() {
                 key={item.href}
                 href={item.href}
                 onClick={() => window.innerWidth < 768 && setOpen(false)}
-                className={`flex min-h-[44px] items-center gap-3 rounded-xl px-3 py-3 text-[13px] font-medium no-underline transition-colors active:scale-[0.99] ${active ? 'border border-white/[0.1] bg-white/[0.06] text-cyan-300' : 'text-slate-400 hover:bg-white/[0.04] hover:text-slate-200'}`}
+                className={`flex min-h-[44px] items-center gap-3 rounded-xl px-3 py-3 text-[13px] font-medium no-underline transition-colors active:scale-[0.99] ${active ? 'isit-nav-link-active' : 'isit-nav-link'}`}
               >
                 <SidebarIcon name={item.iconId} color={color} />
                 <span className="whitespace-nowrap">{tr(item.labelKey)}</span>
@@ -178,11 +178,11 @@ export default function Sidebar() {
           })}
         </nav>
 
-        <div className="p-2 border-t border-cyan-300/20 w-[min(85vw,260px)] md:w-[220px] shrink-0">
+        <div className="p-2 border-t border-[color:var(--isit-shell-border)] w-[min(85vw,260px)] md:w-[220px] shrink-0">
           <Link
             href="/settings"
             onClick={() => window.innerWidth < 768 && setOpen(false)}
-            className="flex items-center gap-3 px-3 py-3 min-h-[44px] rounded-xl text-[13px] font-medium text-slate-600 hover:bg-slate-50 no-underline dark:text-slate-300 dark:hover:bg-slate-800 active:scale-[0.99]"
+            className="flex items-center gap-3 px-3 py-3 min-h-[44px] rounded-xl text-[13px] font-medium isit-nav-link no-underline active:scale-[0.99]"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2"><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" /></svg>
             {tr('settings')}
@@ -190,7 +190,7 @@ export default function Sidebar() {
           <Link
             href="/help"
             onClick={() => window.innerWidth < 768 && setOpen(false)}
-            className="flex items-center gap-3 px-3 py-3 min-h-[44px] rounded-xl text-[13px] font-medium text-slate-600 hover:bg-slate-50 no-underline dark:text-slate-300 dark:hover:bg-slate-800 active:scale-[0.99]"
+            className="flex items-center gap-3 px-3 py-3 min-h-[44px] rounded-xl text-[13px] font-medium isit-nav-link no-underline active:scale-[0.99]"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
             {tr('help')}
@@ -210,7 +210,7 @@ export default function Sidebar() {
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="fixed top-[max(0.75rem,env(safe-area-inset-top))] left-[max(0.75rem,env(safe-area-inset-left))] z-40 md:hidden min-h-[44px] min-w-[44px] inline-flex items-center justify-center rounded-xl bg-slate-950/90 border border-cyan-300/25 text-cyan-100 shadow-md hover:bg-cyan-300/10 active:scale-95 transition-transform"
+          className="fixed top-[max(0.75rem,env(safe-area-inset-top))] left-[max(0.75rem,env(safe-area-inset-left))] z-40 md:hidden min-h-[44px] min-w-[44px] inline-flex items-center justify-center rounded-xl isit-card shadow-md isit-text-primary hover:bg-[var(--isit-nav-hover-bg)] active:scale-95 transition-transform"
           aria-label="Open menu"
           aria-controls="student-sidebar"
           aria-expanded={false}

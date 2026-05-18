@@ -38,7 +38,7 @@ export default function BottomControls({
                 className={`text-2xl leading-none p-1.5 rounded-lg transition-all duration-200 ${
                   confidence != null && star <= confidence
                     ? 'text-amber-400 scale-110 drop-shadow-sm'
-                    : 'text-slate-200 hover:text-amber-200 hover:scale-105'
+                    : 'text-slate-600 dark:text-slate-200 hover:text-amber-200 hover:scale-105'
                 }`}
                 aria-label={`${star} of 5 stars`}
                 aria-pressed={confidence != null && star <= confidence}

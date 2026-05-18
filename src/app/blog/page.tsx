@@ -77,11 +77,11 @@ export default function BlogPage() {
       {/* ================= HERO ================= */}
       <section className="py-12 sm:py-20 text-center px-4 sm:px-6">
         <RevealOnView>
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 dark:text-gray-900">
           {tr('blogHeroTitle')} <span className="text-sky-600">{tr('blogHeroAccent')}</span>
         </h1>
 
-        <p className="text-gray-800 mt-3 sm:mt-4 max-w-2xl mx-auto text-sm sm:text-base">
+        <p className="text-slate-700 dark:text-gray-800 mt-3 sm:mt-4 max-w-2xl mx-auto text-sm sm:text-base">
           {tr('blogHeroLead')}
         </p>
 
@@ -100,7 +100,7 @@ export default function BlogPage() {
       </section>
 
       {/* Categories */}
-      <div className="py-6 border-b border-cyan-300/20">
+      <div className="py-6 border-b border-slate-200 dark:border-cyan-300/20">
         <div className="max-w-7xl mx-auto px-6 flex flex-wrap gap-3 justify-center">
           {BLOG_CATEGORY_KEYS.map((catKey, index) => (
               <button
@@ -109,7 +109,7 @@ export default function BlogPage() {
                 className={`px-4 py-2 rounded-full text-sm font-medium transition ${
                   index === 0
                     ? 'bg-sky-600 text-white'
-                    : 'bg-gray-200 text-gray-800 hover:bg-sky-100'
+                    : 'bg-gray-200 text-slate-700 dark:text-gray-800 hover:bg-sky-100'
                 }`}
               >
                 {tr(catKey)}
@@ -123,13 +123,13 @@ export default function BlogPage() {
 
         {/* FEATURED */}
         <RevealOnView delayMs={40}>
-        <h2 className="text-2xl font-bold mb-8 text-gray-900">
+        <h2 className="text-2xl font-bold mb-8 text-slate-900 dark:text-gray-900">
           {tr('blogFeaturedHeading')}
         </h2>
 
         <div
           onClick={() => router.push('/blog/featured')}
-          className="bg-slate-950/65 rounded-2xl shadow border border-cyan-300/20 overflow-hidden grid md:grid-cols-2 cursor-pointer motion-safe-transition duration-300 hover:shadow-lg hover:-translate-y-0.5 hover:border-cyan-300/35"
+          className="isit-card rounded-2xl shadow-sm border overflow-hidden grid md:grid-cols-2 cursor-pointer motion-safe-transition duration-300 hover:shadow-lg hover:-translate-y-0.5 hover:border-cyan-300/35"
         >
           <img
             src={featuredArticle.image}
@@ -142,15 +142,15 @@ export default function BlogPage() {
               {featuredArticle.category}
             </span>
 
-            <h3 className="text-2xl font-bold mt-4 text-gray-900">
+            <h3 className="text-2xl font-bold mt-4 text-slate-900 dark:text-gray-900">
               {featuredArticle.title}
             </h3>
 
-            <p className="text-gray-700 mt-4">
+            <p className="text-slate-600 dark:text-gray-700 mt-4">
               {featuredArticle.description}
             </p>
 
-            <div className="flex items-center gap-6 text-sm text-gray-700 mt-6">
+            <div className="flex items-center gap-6 text-sm text-slate-600 dark:text-gray-700 mt-6">
               <span>{featuredArticle.author}</span>
               <span className="flex items-center gap-1">
                 <Calendar size={14} /> {featuredArticle.date}
@@ -169,7 +169,7 @@ export default function BlogPage() {
 
         {/* LATEST */}
         <RevealOnView>
-        <h2 className="text-2xl font-bold mt-20 mb-8 text-gray-900">
+        <h2 className="text-2xl font-bold mt-20 mb-8 text-slate-900 dark:text-gray-900">
           {tr('blogLatestHeading')}
         </h2>
         </RevealOnView>
@@ -179,7 +179,7 @@ export default function BlogPage() {
             <div
               key={article.id}
               onClick={() => router.push(`/blog/${article.id}`)}
-              className="bg-slate-950/65 rounded-xl shadow border border-cyan-300/20 overflow-hidden cursor-pointer motion-safe-transition duration-300 hover:shadow-lg hover:-translate-y-1"
+              className="isit-card rounded-xl shadow-sm border overflow-hidden cursor-pointer motion-safe-transition duration-300 hover:shadow-lg hover:-translate-y-1"
             >
               <img
                 src={article.image}
@@ -192,15 +192,15 @@ export default function BlogPage() {
                   {article.category}
                 </span>
 
-                <h4 className="text-lg font-bold mt-4 text-gray-900">
+                <h4 className="text-lg font-bold mt-4 text-slate-900 dark:text-gray-900">
                   {article.title}
                 </h4>
 
-                <p className="text-gray-700 text-sm mt-3">
+                <p className="text-slate-600 dark:text-gray-700 text-sm mt-3">
                   {article.description}
                 </p>
 
-                <div className="flex items-center justify-between text-xs text-gray-700 mt-6">
+                <div className="flex items-center justify-between text-xs text-slate-600 dark:text-gray-700 mt-6">
                   <span>{article.author}</span>
                   <span className="flex items-center gap-1">
                     <Clock size={12} /> {article.readTime}
@@ -218,7 +218,7 @@ export default function BlogPage() {
         <h2 className="text-3xl font-bold">
           {tr('blogNewsletterTitle')}
         </h2>
-        <p className="mt-4 text-white">
+        <p className="mt-4 text-slate-900 dark:text-white">
           {tr('blogNewsletterLead')}
         </p>
 
@@ -226,7 +226,7 @@ export default function BlogPage() {
   <input
     type="email"
     placeholder={tr('blogNewsletterPlaceholder')}
-    className="flex-1 px-5 py-3 rounded-lg bg-white border border-white text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white shadow-md"
+    className="flex-1 px-5 py-3 rounded-lg bg-white border border-white text-slate-900 dark:text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white shadow-md"
   />
   <button type="button" className="bg-white text-blue-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition shadow-md">
     {tr('blogNewsletterSubscribe')}

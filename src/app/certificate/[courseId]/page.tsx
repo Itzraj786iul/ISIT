@@ -53,7 +53,7 @@ export default function CertificatePage() {
 
   if (loading) {
     return (
-      <div className="isit-cosmic-bg min-h-screen flex font-sans text-cyan-50 relative">
+      <div className="isit-app-bg min-h-screen flex font-sans relative">
         <Sidebar />
         <main className="flex-1 flex items-center justify-center">
           <Loader2 className="w-6 h-6 text-slate-400 animate-spin" aria-hidden />
@@ -63,10 +63,10 @@ export default function CertificatePage() {
   }
 
   return (
-    <div className="isit-cosmic-bg min-h-screen flex font-sans text-cyan-50 relative">
+    <div className="isit-app-bg min-h-screen flex font-sans relative">
       <Sidebar />
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="shrink-0 border-b border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-950/95">
+        <header className="shrink-0 border-b border-slate-200 bg-white dark:border-slate-700 dark:bg-white dark:bg-slate-950/95">
           <div className="px-4 py-3 sm:px-6 md:px-8">
             <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-2 text-sm">
               <Link href="/dashboard" className="font-medium text-sky-600 hover:underline dark:text-sky-400">

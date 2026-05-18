@@ -115,8 +115,8 @@ export default function CourseDetailsPage() {
 
   if (loading || !viewerResolved) {
     return (
-      <div className="isit-cosmic-bg flex min-h-screen items-center justify-center text-cyan-50">
-        <p className="text-lg font-semibold text-cyan-200">{tr('courseLoading')}</p>
+      <div className="isit-cosmic-bg flex min-h-screen items-center justify-center ">
+        <p className="text-lg font-semibold text-slate-600 dark:text-cyan-200">{tr('courseLoading')}</p>
       </div>
     );
   }
@@ -132,10 +132,10 @@ export default function CourseDetailsPage() {
     );
     if (useStudentChrome) {
       return (
-        <div className="isit-cosmic-bg relative flex min-h-screen text-cyan-50">
+        <div className="isit-cosmic-bg relative flex min-h-screen ">
           <Sidebar />
           <div className="flex min-w-0 flex-1 flex-col">
-            <header className="shrink-0 border-b border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-950/95">
+            <header className="shrink-0 border-b border-slate-200 bg-white dark:border-slate-700 dark:bg-white dark:bg-slate-950/95">
               <div className="px-4 py-3 sm:px-6">
                 <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-2 text-sm">
                   <Link href="/dashboard" className="font-medium text-sky-600 hover:underline dark:text-sky-400">
@@ -154,7 +154,7 @@ export default function CourseDetailsPage() {
       );
     }
     return (
-      <div className="isit-cosmic-bg flex min-h-screen flex-col text-cyan-50">
+      <div className="isit-cosmic-bg flex min-h-screen flex-col ">
         <PublicNav active="courses" />
         {notFoundBody}
         <Footer />
@@ -196,7 +196,7 @@ export default function CourseDetailsPage() {
   const lessonCount = course.lessons?.length ?? 0;
 
   const breadcrumbNav = useStudentChrome ? (
-    <header className="shrink-0 border-b border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-950/95">
+    <header className="shrink-0 border-b border-slate-200 bg-white dark:border-slate-700 dark:bg-white dark:bg-slate-950/95">
       <div className="mx-auto max-w-7xl px-4 py-3 sm:px-6">
         <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-2 text-sm">
           <Link href="/dashboard" className="font-medium text-sky-600 hover:underline dark:text-sky-400">
@@ -216,7 +216,7 @@ export default function CourseDetailsPage() {
   ) : null;
 
   const mainSection = (
-    <section className="bg-white py-12 dark:bg-slate-950">
+    <section className="bg-white py-12 dark:bg-white dark:bg-slate-950">
       <div className="mx-auto grid max-w-7xl gap-12 px-6 lg:grid-cols-3">
         <div className="lg:col-span-2">
           {useStudentChrome ? (
@@ -340,7 +340,7 @@ export default function CourseDetailsPage() {
   );
 
   return (
-    <div className="isit-cosmic-bg min-h-screen text-cyan-50">
+    <div className="isit-app-bg min-h-screen ">
       {useStudentChrome ? (
         <div className="relative flex min-h-screen">
           <Sidebar />

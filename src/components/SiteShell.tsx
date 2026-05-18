@@ -15,25 +15,6 @@ type SiteShellProps = {
   contentClassName?: string;
 };
 
-function SiteGlows({ subtle }: { subtle?: boolean }) {
-  return (
-    <>
-      <div
-        className={`pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_90%_60%_at_50%_-10%,rgba(99,102,241,0.22),transparent)] ${subtle ? 'opacity-70' : ''}`}
-        aria-hidden
-      />
-      <div
-        className="pointer-events-none absolute -right-40 top-1/3 h-[420px] w-[420px] rounded-full bg-cyan-500/5 blur-3xl"
-        aria-hidden
-      />
-      <div
-        className="pointer-events-none absolute bottom-0 left-1/4 h-[360px] w-[360px] rounded-full bg-fuchsia-600/5 blur-3xl"
-        aria-hidden
-      />
-    </>
-  );
-}
-
 export default function SiteShell({
   children,
   variant = 'bare',
@@ -44,12 +25,12 @@ export default function SiteShell({
 }: SiteShellProps) {
   const isPublic = variant === 'public';
   const isApp = variant === 'app';
+  const isAuth = variant === 'auth';
 
   return (
     <div
-      className={`relative min-h-screen overflow-hidden isit-cosmic-bg text-slate-200 ${isApp ? 'flex' : ''} ${className}`.trim()}
+      className={`relative min-h-screen overflow-hidden isit-app-bg ${isApp ? 'flex' : ''} ${isAuth ? 'flex flex-col' : ''} ${className}`.trim()}
     >
-      <SiteGlows subtle={variant === 'auth'} />
       {isPublic && <PublicNav active={active} />}
       <div
         className={`relative z-10 ${isApp ? 'flex min-h-screen min-w-0 w-full flex-1' : ''} ${contentClassName}`.trim()}

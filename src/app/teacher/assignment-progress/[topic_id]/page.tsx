@@ -133,7 +133,7 @@ export default function TeacherAssignmentProgressPage() {
                   Not started
                 </p>
                 <p className="text-3xl font-bold text-slate-700 dark:text-slate-200 mt-1">{data.not_started}</p>
-                <p className="text-xs text-slate-500 mt-2">of {data.total_students} students</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">of {data.total_students} students</p>
               </div>
               <div className="rounded-2xl border border-amber-200/80 dark:border-amber-900/60 bg-amber-50/80 dark:bg-amber-950/20 p-5 shadow-sm">
                 <p className="text-xs font-semibold uppercase tracking-wide text-amber-800 dark:text-amber-200/90">

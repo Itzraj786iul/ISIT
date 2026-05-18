@@ -47,10 +47,13 @@ async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const method = req.method;
 
-  // --- Teacher pages: must be authenticated + teacher role ---
+  // --- Teacher pages: teacher or admin ---
   if (pathname.startsWith('/teacher')) {
     const payload = await getPayload(req);
     if (!payload) return redirectToLogin(req);
+    if (payload.role === 'admin') {
+      return NextResponse.redirect(new URL('/organization', req.url));
+    }
     if (payload.role !== 'teacher') {
       return NextResponse.redirect(new URL('/dashboard', req.url));
     }
@@ -78,13 +81,25 @@ async function proxy(req: NextRequest) {
   const protectedPages = [
     '/dashboard', '/analytics', '/schedule', '/achievements',
     '/settings', '/help', '/my-courses', '/learning-path',
-    '/certificate', '/live', '/lesson', '/checkout',
-    '/subjects', '/subject', '/topic', '/session',
+    '/certificate', '/lesson', '/checkout',
+    '/subjects', '/subject', '/topic', '/session', '/ai-tutor',
   ];
   for (const prefix of protectedPages) {
     if (pathname === prefix || pathname.startsWith(prefix + '/')) {
       const payload = await getPayload(req);
       if (!payload) return redirectToLogin(req);
+      const isAiTutor = pathname === '/ai-tutor' || pathname.startsWith('/ai-tutor/');
+      if (!isAiTutor) {
+        if (payload.role === 'parent') {
+          return NextResponse.redirect(new URL('/parent/dashboard', req.url));
+        }
+        if (payload.role === 'teacher') {
+          return NextResponse.redirect(new URL('/teacher/dashboard', req.url));
+        }
+        if (payload.role === 'admin') {
+          return NextResponse.redirect(new URL('/organization', req.url));
+        }
+      }
       return NextResponse.next();
     }
   }
@@ -104,11 +119,18 @@ async function proxy(req: NextRequest) {
     return NextResponse.next();
   }
 
-  // --- Teacher-only API routes (/api/teacher/*) ---
+  // --- Teacher API routes (/api/teacher/*) — teachers and admins ---
   if (pathname.startsWith('/api/teacher/')) {
     const payload = await getPayload(req);
     if (!payload) return unauthorized();
-    if (payload.role !== 'teacher') return forbidden();
+    if (payload.role !== 'teacher' && payload.role !== 'admin') return forbidden();
+    return NextResponse.next();
+  }
+
+  if (pathname === '/api/students' || pathname.startsWith('/api/students/')) {
+    const payload = await getPayload(req);
+    if (!payload) return unauthorized();
+    if (payload.role !== 'teacher' && payload.role !== 'admin') return forbidden();
     return NextResponse.next();
   }
 
@@ -172,8 +194,8 @@ export const config = {
     '/my-courses',
     '/learning-path',
     '/certificate/:path*',
-    '/live/:path*',
     '/lesson/:path*',
+    '/ai-tutor',
     '/checkout',
     '/subjects',
     '/subject/:path*',
@@ -201,5 +223,7 @@ export const config = {
     '/api/videos',
     '/api/topic-notes',
     '/api/teacher/:path*',
+    '/api/students',
+    '/api/students/:path*',
   ],
 };

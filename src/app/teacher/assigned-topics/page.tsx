@@ -85,7 +85,14 @@ export default function TeacherAssignedTopicsPage() {
             </div>
           ) : rows.length === 0 ? (
             <div className="p-8 text-center text-slate-600 dark:text-slate-400">
-              <p>No assignments yet. Use the API POST /api/teacher/assign-topic or a future UI action from a topic page.</p>
+              <p>No assignments yet.</p>
+              <p className="mt-2 text-sm">
+                Open a subject from{' '}
+                <Link href="/teacher/subjects" className="font-semibold text-sky-600 hover:underline">
+                  Subjects
+                </Link>{' '}
+                and use Assign on a topic.
+              </p>
             </div>
           ) : (
             <div className="overflow-x-auto">

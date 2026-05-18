@@ -55,7 +55,7 @@ export default function ParentChildProgressPage() {
   if (!child) {
     return (
       <div className="max-w-2xl">
-        <p className="text-slate-500 mb-4">Child not found.</p>
+        <p className="text-slate-500 dark:text-slate-400 mb-4">Child not found.</p>
         <Link href="/parent/children" className="text-violet-600 font-medium hover:underline">
           {"\u2190 Back to My Children"}
         </Link>
@@ -65,7 +65,7 @@ export default function ParentChildProgressPage() {
 
   return (
     <div className="max-w-2xl">
-      <Link href="/parent/children" className="inline-flex items-center gap-2 text-slate-600 hover:text-violet-600 text-sm font-medium mb-6 no-underline">
+      <Link href="/parent/children" className="inline-flex items-center gap-2 text-slate-600 dark:text-slate-300 hover:text-violet-600 text-sm font-medium mb-6 no-underline">
         <ArrowLeft className="w-4 h-4" /> Back to My Children
       </Link>
 
@@ -75,14 +75,14 @@ export default function ParentChildProgressPage() {
         </div>
         <div>
           <h1 className="text-2xl font-bold text-slate-800">{child.name}</h1>
-          <p className="text-slate-500 text-sm">{child.email}</p>
+          <p className="text-slate-500 dark:text-slate-400 text-sm">{child.email}</p>
         </div>
       </div>
 
       <section className="mb-8" aria-label="Learning insights">
         <h2 className="text-lg font-bold text-slate-800 mb-4">Learning snapshot</h2>
         {insightsLoading && (
-          <div className="bg-white rounded-xl border border-slate-200 p-6 text-slate-500 text-sm">Loading…</div>
+          <div className="bg-white rounded-xl border border-slate-200 p-6 text-slate-500 dark:text-slate-400 text-sm">Loading…</div>
         )}
         {!insightsLoading && insights && (
           <div className="space-y-5">
@@ -93,8 +93,8 @@ export default function ParentChildProgressPage() {
                   ? 'No sessions yet'
                   : `${insights.recent_activity} learning ${insights.recent_activity === 1 ? 'session' : 'sessions'}`}
               </p>
-              <p className="text-sm text-slate-500 mt-1">{trendPhrase(insights.improvement_trend)} · {engagementLabel(insights.engagement_score)}</p>
-              <p className="text-sm text-slate-600 mt-3">
+              <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">{trendPhrase(insights.improvement_trend)} · {engagementLabel(insights.engagement_score)}</p>
+              <p className="text-sm text-slate-600 dark:text-slate-300 mt-3">
                 Overall progress:{' '}
                 <span className="font-semibold text-slate-900">
                   {insights.linked_account ? `${insights.avg_mastery}%` : '—'}
@@ -114,7 +114,7 @@ export default function ParentChildProgressPage() {
                   <CheckCircle2 className="w-4 h-4" /> Strengths
                 </div>
                 {insights.strong_topics.length === 0 ? (
-                  <p className="text-sm text-slate-500">Highlights will appear with more learning.</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Highlights will appear with more learning.</p>
                 ) : (
                   <ul className="text-sm text-slate-800 space-y-1">
                     {insights.strong_topics.map((t) => (
@@ -128,7 +128,7 @@ export default function ParentChildProgressPage() {
                   <Lightbulb className="w-4 h-4" /> Extra support
                 </div>
                 {insights.weak_topics.length === 0 ? (
-                  <p className="text-sm text-slate-500">Nothing flagged yet.</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Nothing flagged yet.</p>
                 ) : (
                   <ul className="text-sm text-slate-800 space-y-1">
                     {insights.weak_topics.map((t) => (
@@ -157,7 +157,7 @@ export default function ParentChildProgressPage() {
           </div>
         )}
         {!insightsLoading && !insights && (
-          <p className="text-sm text-slate-500">Insights are unavailable. Try again later.</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">Insights are unavailable. Try again later.</p>
         )}
       </section>
 
@@ -169,7 +169,7 @@ export default function ParentChildProgressPage() {
           </div>
           <div>
             <p className="font-semibold">Browse courses</p>
-            <p className="text-xs text-slate-500">Find courses for {child.name} to enroll in</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400">Find courses for {child.name} to enroll in</p>
           </div>
           <span className="text-violet-600 text-sm font-medium ml-auto">{"Explore \u2192"}</span>
         </Link>

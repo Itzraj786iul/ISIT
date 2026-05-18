@@ -3,7 +3,7 @@ import { getAuthFromRequest } from '@/lib/auth';
 import { connectToDB } from '@/lib/db';
 import { errorResponse } from '@/lib/api-response';
 
-export type TeacherOrgOk = { ok: true; userId: string; organizationId: string };
+export type TeacherOrgOk = { ok: true; userId: string; organizationId: string; role: string };
 export type TeacherOrgFail = { ok: false; response: ReturnType<typeof errorResponse> };
 
 export async function requireTeacherOrganization(req: Request): Promise<TeacherOrgOk | TeacherOrgFail> {
@@ -20,5 +20,15 @@ export async function requireTeacherOrganization(req: Request): Promise<TeacherO
   const oid = user?.organization_id?.toString();
   if (!oid) return { ok: false, response: errorResponse('No organization', 400) };
 
-  return { ok: true, userId: auth.userId, organizationId: oid };
+  return { ok: true, userId: auth.userId, organizationId: oid, role: r };
+}
+
+/** Mutations (create/delete classes, teachers, enroll students) — admin only. */
+export async function requireAdminOrganization(req: Request): Promise<TeacherOrgOk | TeacherOrgFail> {
+  const gate = await requireTeacherOrganization(req);
+  if (!gate.ok) return gate;
+  if (gate.role !== 'admin') {
+    return { ok: false, response: errorResponse('Only organization administrators can perform this action', 403) };
+  }
+  return gate;
 }

@@ -1,177 +1,96 @@
 'use client';
 
 import SiteShell from '@/components/SiteShell';
-import { useRouter } from 'next/navigation';
-import {
-  Calendar,
-  Clock,
-  Facebook,
-  Twitter,
-  Linkedin,
-  ArrowLeft
-} from 'lucide-react';
+import { useRouter, useParams } from 'next/navigation';
+import Link from 'next/link';
+import { Calendar, Clock, Facebook, Twitter, Linkedin, ArrowLeft } from 'lucide-react';
 import { useT } from '@/lib/t';
+import { getBlogPostById, getRelatedPosts } from '@/lib/blog-data';
 
 export default function BlogDetailPage() {
   const tr = useT();
   const router = useRouter();
+  const params = useParams();
+  const id = typeof params.id === 'string' ? params.id : '';
 
-  const article = {
-    title: "10 Essential Tips to Master Full Stack Development in 2026",
-    author: "Dr. Amit Kumar",
-    date: "January 15, 2025",
-    readTime: "8 min read",
-    image:
-      "https://images.unsplash.com/photo-1498050108023-c5249f4df085",
-    content: [
-      "Full Stack Development continues to be one of the most in-demand skills in 2026...",
-      "The first and most important step is building a strong foundation...",
-      "Choosing the right tech stack is equally important...",
-      "Frontend development in 2026 is more than just designing pages...",
-      "On the backend side, you must understand how servers, APIs, and databases communicate...",
-      "Databases are the backbone of any application...",
-      "In 2026, deployment knowledge is no longer optional...",
-      "Building real-world projects is one of the fastest ways to grow...",
-      "Writing clean and scalable code is another essential habit...",
-      "Finally, continuous learning is the key to long-term success..."
-    ]
-  };
+  const article = getBlogPostById(id);
+  const relatedArticles = article ? getRelatedPosts(article.id) : [];
 
-  const relatedArticles = [
-    {
-      id: 1,
-      title: "How to Transition from Non-Tech to Tech Career",
-      image:
-        "https://images.unsplash.com/photo-1552664730-d307ca884978"
-    },
-    {
-      id: 2,
-      title: "How to Transition from Non-Tech to Tech Career",
-      image:
-        "https://images.unsplash.com/photo-1519389950473-47ba0277781c"
-    },
-    {
-      id: 3,
-      title: "How to Transition from Non-Tech to Tech Career",
-      image:
-        "https://images.unsplash.com/photo-1492724441997-5dc865305da7"
-    }
-  ];
+  if (!article) {
+    return (
+      <SiteShell variant="public" active="blog">
+        <main className="mx-auto max-w-lg px-4 py-24 text-center">
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Article not found</h1>
+          <p className="mt-3 text-slate-400">This post may have been moved or removed.</p>
+          <Link href="/blog" className="mt-8 inline-flex text-cyan-300 hover:text-slate-600 dark:text-cyan-200">
+            Back to blog
+          </Link>
+        </main>
+      </SiteShell>
+    );
+  }
 
   return (
     <SiteShell variant="public" active="blog">
-      {/* ================= HERO IMAGE ================= */}
-      <div className="relative h-[420px] w-full overflow-hidden">
-        <img
-          src={article.image}
-          alt={article.title}
-          className="w-full h-full object-cover"
-        />
+      <div className="relative h-[280px] w-full overflow-hidden sm:h-[360px]">
+        <img src={article.image} alt="" className="h-full w-full object-cover opacity-90" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#05070a] via-[#05070a]/40 to-transparent" />
       </div>
 
-      {/* ================= ARTICLE CARD ================= */}
-      <main className="flex-1 max-w-4xl mx-auto px-6 -mt-40 relative z-10">
-        <div className="bg-white rounded-2xl shadow-xl p-10 border border-gray-200">
-
-          {/* Back */}
+      <main className="relative z-10 mx-auto max-w-4xl px-4 pb-20 sm:px-6">
+        <article className="-mt-24 rounded-2xl border border-white/[0.1] bg-white dark:bg-white dark:bg-slate-950/90 p-6 shadow-xl backdrop-blur-xl sm:p-10">
           <button
             type="button"
             onClick={() => router.push('/blog')}
-            className="flex items-center gap-2 text-sm text-sky-600 font-medium hover:underline"
+            className="inline-flex items-center gap-2 text-sm font-medium text-cyan-300 hover:text-slate-600 dark:text-cyan-200"
           >
             <ArrowLeft size={16} aria-hidden />
             {tr('blogDetailBack')}
           </button>
 
-          {/* Title */}
-          <h1 className="text-4xl font-bold text-gray-900 mt-6 leading-tight">
-            {article.title}
-          </h1>
+          <h1 className="mt-6 text-3xl font-bold leading-tight text-slate-900 dark:text-white sm:text-4xl">{article.title}</h1>
 
-          {/* Meta */}
-          <div className="flex items-center gap-6 text-sm text-gray-600 mt-6 border-b border-gray-200 pb-6">
-            <span className="font-medium">{article.author}</span>
-            <span className="flex items-center gap-1">
+          <div className="mt-6 flex flex-wrap items-center gap-4 border-b border-white/[0.08] pb-6 text-sm text-slate-400">
+            <span className="font-medium text-slate-600 dark:text-slate-300">{article.author}</span>
+            <span className="inline-flex items-center gap-1">
               <Calendar size={14} /> {article.date}
             </span>
-            <span className="flex items-center gap-1">
+            <span className="inline-flex items-center gap-1">
               <Clock size={14} /> {article.readTime}
+            </span>
+            <span className="rounded-full border border-cyan-400/30 bg-cyan-500/10 px-2.5 py-0.5 text-xs text-cyan-200">
+              {article.category}
             </span>
           </div>
 
-          {/* Share */}
-          <div className="flex items-center gap-4 mt-6 text-gray-500">
-            <span className="text-sm">{tr('blogDetailShare')}:</span>
-            <Facebook className="cursor-pointer hover:text-blue-600" size={18}/>
-            <Twitter className="cursor-pointer hover:text-blue-400" size={18}/>
-            <Linkedin className="cursor-pointer hover:text-blue-700" size={18}/>
-          </div>
-
-          {/* Divider */}
-          <div className="border-t border-gray-200 my-8"></div>
-
-          {/* Article Body */}
-          <div className="space-y-6 text-gray-700 leading-relaxed text-[15px]">
+          <div className="mt-8 space-y-5 text-[15px] leading-relaxed text-slate-600 dark:text-slate-300">
             {article.content.map((para, i) => (
               <p key={i}>{para}</p>
             ))}
           </div>
+        </article>
 
-          {/* About Author */}
-          <div className="mt-10 bg-gray-50 p-6 rounded-xl border border-gray-200">
-            <h3 className="font-semibold text-gray-900 mb-4">
-              {tr('blogDetailAboutAuthor')}
-            </h3>
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-sky-500 text-white rounded-full flex items-center justify-center font-bold">
-                D
-              </div>
-              <div>
-                <p className="font-semibold text-gray-900">
-                  {article.author}
-                </p>
-                <p className="text-sm text-gray-600">
-                  {tr('blogDetailAuthorBio')}
-                </p>
-              </div>
+        {relatedArticles.length > 0 && (
+          <section className="mt-16">
+            <h2 className="text-xl font-semibold text-slate-900 dark:text-white">{tr('blogDetailRelatedHeading')}</h2>
+            <div className="mt-8 grid gap-6 sm:grid-cols-3">
+              {relatedArticles.map((rel) => (
+                <Link
+                  key={rel.id}
+                  href={`/blog/${rel.id}`}
+                  className="overflow-hidden rounded-xl border border-white/[0.08] bg-white/[0.03] transition hover:border-cyan-400/30"
+                >
+                  <img src={rel.image} alt="" className="h-36 w-full object-cover" />
+                  <div className="p-4">
+                    <span className="text-xs isit-accent-text">{rel.category}</span>
+                    <h3 className="mt-2 text-sm font-semibold leading-snug text-slate-900 dark:text-white">{rel.title}</h3>
+                  </div>
+                </Link>
+              ))}
             </div>
-          </div>
-
-        </div>
-
-        {/* ================= RELATED ARTICLES ================= */}
-        <section className="mt-20">
-          <h2 className="text-xl font-semibold text-gray-900 mb-8">
-            {tr('blogDetailRelatedHeading')}
-          </h2>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {relatedArticles.map(article => (
-              <div
-                key={article.id}
-                onClick={() => router.push(`/blog/${article.id}`)}
-                className="bg-white rounded-xl shadow border border-gray-200 overflow-hidden cursor-pointer hover:shadow-lg transition"
-              >
-                <img
-                  src={article.image}
-                  className="h-44 w-full object-cover"
-                  alt={article.title}
-                />
-                <div className="p-5">
-                  <span className="text-xs text-sky-600 bg-sky-100 px-3 py-1 rounded-full">
-                    {tr('blogRelatedCategoryLabel')}
-                  </span>
-                  <h4 className="mt-4 text-sm font-semibold text-gray-900 leading-snug">
-                    {article.title}
-                  </h4>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
+          </section>
+        )}
       </main>
-
     </SiteShell>
   );
 }

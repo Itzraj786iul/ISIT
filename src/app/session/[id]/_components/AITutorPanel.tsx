@@ -225,7 +225,7 @@ export default function AITutorPanel({ sessionId, onTutorQuestionSent, onAdaptiv
     const v = line.variant ?? (line.role === 'user' ? 'student' : 'ai');
     switch (v) {
       case 'student':
-        return 'bg-slate-800 text-white rounded-br-md shadow-md border border-slate-700/80';
+        return 'bg-slate-800 text-slate-900 dark:text-white rounded-br-md shadow-md border border-slate-700/80';
       case 'hint':
         return 'bg-amber-50 text-amber-950 rounded-bl-md border border-amber-200/90 shadow-sm';
       case 'explanation':
@@ -251,7 +251,7 @@ export default function AITutorPanel({ sessionId, onTutorQuestionSent, onAdaptiv
               </span>
               AI Tutor
             </h2>
-            <p className="text-xs text-slate-600 mt-1 pl-10 leading-snug">Ask anything or get help — hints, explanations, and quick checks.</p>
+            <p className="text-xs text-slate-600 dark:text-slate-300 mt-1 pl-10 leading-snug">Ask anything or get help — hints, explanations, and quick checks.</p>
           </div>
         </div>
         {/* Mode chips — drive `tab` for free-text sends */}
@@ -264,7 +264,7 @@ export default function AITutorPanel({ sessionId, onTutorQuestionSent, onAdaptiv
               className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold capitalize transition-all ${
                 tab === t
                   ? 'bg-violet-600 text-white shadow-sm'
-                  : 'bg-white text-slate-600 border border-slate-200 hover:border-violet-200 hover:text-violet-700'
+                  : 'bg-white text-slate-600 dark:text-slate-300 border border-slate-200 hover:border-violet-200 hover:text-violet-700'
               }`}
             >
               {t === 'quiz' ? 'Quiz help' : t}
@@ -299,7 +299,7 @@ export default function AITutorPanel({ sessionId, onTutorQuestionSent, onAdaptiv
               )}
             </div>
             {msg.role === 'assistant' && msg.meta && (
-              <span className="mt-1 text-[10px] text-slate-500 px-1 font-medium">{msg.meta}</span>
+              <span className="mt-1 text-[10px] text-slate-500 dark:text-slate-400 px-1 font-medium">{msg.meta}</span>
             )}
             {msg.role === 'assistant' && msg.showRetry && (
               <button
@@ -315,7 +315,7 @@ export default function AITutorPanel({ sessionId, onTutorQuestionSent, onAdaptiv
         ))}
         {sending && (
           <div className="flex justify-start">
-            <div className="bg-white rounded-2xl rounded-bl-md px-4 py-3 flex items-center gap-2.5 text-slate-600 text-sm border border-slate-200 shadow-sm">
+            <div className="bg-white rounded-2xl rounded-bl-md px-4 py-3 flex items-center gap-2.5 text-slate-600 dark:text-slate-300 text-sm border border-slate-200 shadow-sm">
               <Loader2 className="w-4 h-4 animate-spin text-violet-500 shrink-0" />
               <span className="font-medium">AI is thinking…</span>
             </div>
@@ -332,7 +332,7 @@ export default function AITutorPanel({ sessionId, onTutorQuestionSent, onAdaptiv
 
       {/* Toolbar */}
       <div className="shrink-0 px-3 pt-3 pb-2 border-t border-slate-100 bg-white">
-        <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-2">Quick actions</p>
+        <p className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">Quick actions</p>
         <div className="flex flex-wrap gap-2">
           <button
             type="button"
@@ -392,7 +392,7 @@ export default function AITutorPanel({ sessionId, onTutorQuestionSent, onAdaptiv
                       ? 'Quiz or check question…'
                       : 'Ask a question…'
             }
-            className="flex-1 min-w-0 rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/25 focus:border-violet-400 transition-shadow disabled:bg-slate-50 disabled:text-slate-500"
+            className="flex-1 min-w-0 rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/25 focus:border-violet-400 transition-shadow disabled:bg-slate-50 disabled:text-slate-500 dark:text-slate-400"
             disabled={sending}
             aria-label="Message to AI tutor"
           />

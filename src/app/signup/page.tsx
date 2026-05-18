@@ -8,6 +8,7 @@ import { useAuth } from '@/lib/auth-context';
 import { useT } from '@/lib/t';
 import { Sparkles } from 'lucide-react';
 import SiteShell from '@/components/SiteShell';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 /** Roles allowed on the public signup form (API also rejects any other role except student/parent). */
 type SignupRole = 'Student' | 'Parent';
@@ -109,45 +110,48 @@ export default function SignupPage() {
   };
 
   const inputClass =
-    'w-full rounded-xl border border-cyan-400/25 bg-slate-950/70 px-4 py-3 text-sm text-cyan-50 placeholder:text-cyan-200/45 focus:outline-none focus:ring-2 focus:ring-cyan-400/50 transition-all';
+    'w-full rounded-xl border border-slate-200 dark:border-cyan-400/25 bg-slate-100 dark:bg-white dark:bg-slate-950/70 px-4 py-3 text-sm isit-text-primary placeholder:text-slate-600 dark:text-cyan-200/45 focus:outline-none focus:ring-2 focus:ring-cyan-400/50 transition-all';
 
   const toggleBtn = (active: boolean) =>
     `py-2.5 px-3 rounded-xl border text-sm font-semibold transition-all ${
       active
-        ? 'border-cyan-400/50 bg-cyan-400/20 text-cyan-50 shadow-[0_0_20px_rgba(34,211,238,0.15)]'
-        : 'border-cyan-400/20 bg-slate-950/50 text-cyan-100/70 hover:border-cyan-400/35'
+        ? 'border-cyan-400/50 bg-cyan-400/20 isit-text-primary shadow-[0_0_20px_rgba(34,211,238,0.15)]'
+        : 'border-slate-200 dark:border-cyan-400/20 bg-slate-50 dark:bg-white dark:bg-slate-950/50 isit-body/70 hover:border-cyan-400/35'
     }`;
 
   return (
     <SiteShell variant="auth" className="flex flex-col">
-      <header className="relative z-[1] border-b border-white/[0.08] bg-[#050510]/90 backdrop-blur-xl">
+      <header className="isit-shell-header relative z-[1]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between gap-4">
           <Link
             href="/"
-            className="inline-flex items-center gap-2 text-cyan-200 font-semibold transition-colors no-underline hover:text-cyan-100"
+            className="inline-flex items-center gap-2 text-slate-600 dark:text-cyan-200 font-semibold transition-colors no-underline hover:isit-body"
           >
-            <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-cyan-400/20 text-cyan-200">
+            <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-cyan-400/20 text-slate-600 dark:text-cyan-200">
               <Sparkles className="h-4 w-4" />
             </span>
             <span>ISIC</span>
           </Link>
-          <Link href="/" className="text-sm text-cyan-200/80 hover:text-cyan-100 no-underline">
-            {tr('funnelBackHome')}
-          </Link>
+          <div className="flex items-center gap-3">
+            <ThemeToggle />
+            <Link href="/" className="text-sm isit-muted hover:isit-text-primary no-underline">
+              {tr('funnelBackHome')}
+            </Link>
+                    </div>
         </div>
       </header>
 
       <div className="flex-1 flex flex-col lg:flex-row relative z-[1]">
-        <div className="hidden lg:flex lg:w-[42%] flex-col justify-center p-10 xl:p-16 border-r border-cyan-400/10 bg-gradient-to-br from-cyan-950/45 via-slate-950/30 to-transparent">
+        <div className="hidden lg:flex lg:w-[42%] flex-col justify-center p-10 xl:p-16 border-r border-[color:var(--isit-border)] isit-auth-marketing">
           <div className="max-w-md">
-            <p className="text-xs font-semibold uppercase tracking-widest text-cyan-300/90 mb-3">{tr('signupAsideEyebrow')}</p>
-            <h2 className="text-3xl xl:text-4xl font-bold text-cyan-50 mb-4 leading-tight">{tr('signupAsideTitle')}</h2>
-            <p className="text-sm leading-relaxed text-cyan-100/80 xl:text-base">{tr('signupAsideBody')}</p>
-            <p className="mt-6 text-sm text-cyan-100/65">
-              <Link href="/how-it-works" className="font-medium text-cyan-300 underline-offset-2 hover:underline">
+            <p className="text-xs font-semibold uppercase tracking-widest isit-accent-text mb-3">{tr('signupAsideEyebrow')}</p>
+            <h2 className="text-3xl xl:text-4xl font-bold isit-text-primary mb-4 leading-tight">{tr('signupAsideTitle')}</h2>
+            <p className="text-sm leading-relaxed isit-body xl:text-base">{tr('signupAsideBody')}</p>
+            <p className="mt-6 text-sm isit-body/65">
+              <Link href="/how-it-works" className="font-medium text-sky-600 dark:text-cyan-300 underline-offset-2 hover:underline">
                 {tr('footerHowItWorksLink')}
               </Link>
-              <span className="text-cyan-100/55">{tr('signupAsidePreview')}</span>
+              <span className="isit-body/55">{tr('signupAsidePreview')}</span>
             </p>
           </div>
         </div>
@@ -155,11 +159,11 @@ export default function SignupPage() {
         <div className="flex-1 flex items-center justify-center px-6 py-12 lg:px-16">
           <div className="w-full max-w-md isit-glass rounded-3xl p-8 sm:p-10">
             <div className="text-center mb-6">
-              <span className="text-xs font-semibold text-cyan-300/90 uppercase tracking-widest block mb-1">
+              <span className="text-xs font-semibold isit-accent-text uppercase tracking-widest block mb-1">
                 {role.toLowerCase()}
               </span>
-              <h1 className="text-2xl sm:text-3xl font-bold text-cyan-50">Join us</h1>
-              <p className="text-sm text-cyan-100/70 mt-1">Start your learning journey today</p>
+              <h1 className="text-2xl sm:text-3xl font-bold isit-text-primary">Join us</h1>
+              <p className="text-sm isit-body/70 mt-1">Start your learning journey today</p>
 
               <div className="mt-6 flex justify-center relative group cursor-pointer">
                 <input
@@ -172,13 +176,13 @@ export default function SignupPage() {
                   className={`w-20 h-20 rounded-full border-2 border-dashed flex flex-col items-center justify-center overflow-hidden transition-colors ${
                     profileImage
                       ? 'border-solid border-cyan-400/60'
-                      : 'border-cyan-400/30 group-hover:border-cyan-400/50 bg-slate-950/50'
+                      : 'border-cyan-400/30 group-hover:border-cyan-400/50 bg-slate-50 dark:bg-white dark:bg-slate-950/50'
                   }`}
                 >
                   {profileImage ? (
                     <img src={profileImage} alt="Profile preview" className="w-full h-full object-cover" />
                   ) : (
-                    <span className="text-center text-[10px] text-cyan-200/70 group-hover:text-cyan-100 font-medium leading-tight px-1">
+                    <span className="text-center text-[10px] text-slate-500 dark:text-cyan-200/70 group-hover:isit-body font-medium leading-tight px-1">
                       {tr('signupPhotoHint')}
                     </span>
                   )}
@@ -194,7 +198,7 @@ export default function SignupPage() {
               )}
 
               <div>
-                <label className="block text-xs font-bold text-cyan-200/80 mb-2 uppercase tracking-wide">I am a…</label>
+                <label className="block text-xs font-bold isit-body mb-2 uppercase tracking-wide">I am a…</label>
                 <div className="grid grid-cols-2 gap-2">
                   {(['Student', 'Parent'] as const).map((item) => (
                     <button
@@ -207,14 +211,14 @@ export default function SignupPage() {
                     </button>
                   ))}
                 </div>
-                <p className="text-xs text-cyan-100/60 mt-2 leading-relaxed">
+                <p className="text-xs isit-muted mt-2 leading-relaxed">
                   Teachers are onboarded by their institution. If you teach at a school using ISIC, ask your administrator
                   for an account.
                 </p>
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-cyan-200/80 mb-2 uppercase tracking-wide">Account type</label>
+                <label className="block text-xs font-bold isit-body mb-2 uppercase tracking-wide">Account type</label>
                 <div className="grid grid-cols-2 gap-2">
                   <button
                     type="button"
@@ -244,7 +248,7 @@ export default function SignupPage() {
               </div>
 
               <div>
-                <label htmlFor="signup-name" className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-cyan-200/85">
+                <label htmlFor="signup-name" className="mb-1.5 block text-xs font-semibold uppercase tracking-wide isit-muted">
                   {tr('labelFullName')}
                 </label>
                 <input
@@ -261,7 +265,7 @@ export default function SignupPage() {
               </div>
 
               <div>
-                <label htmlFor="signup-email" className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-cyan-200/85">
+                <label htmlFor="signup-email" className="mb-1.5 block text-xs font-semibold uppercase tracking-wide isit-muted">
                   {tr('labelEmail')}
                 </label>
                 <input
@@ -278,7 +282,7 @@ export default function SignupPage() {
               </div>
 
               <div>
-                <label htmlFor="signup-password" className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-cyan-200/85">
+                <label htmlFor="signup-password" className="mb-1.5 block text-xs font-semibold uppercase tracking-wide isit-muted">
                   {tr('labelPassword')}
                 </label>
                 <input
@@ -295,7 +299,7 @@ export default function SignupPage() {
               </div>
 
               <div>
-                <label htmlFor="signup-confirm" className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-cyan-200/85">
+                <label htmlFor="signup-confirm" className="mb-1.5 block text-xs font-semibold uppercase tracking-wide isit-muted">
                   {tr('labelConfirmPassword')}
                 </label>
                 <input
@@ -359,18 +363,18 @@ export default function SignupPage() {
                   type="checkbox"
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
-                  className="rounded border-cyan-400/40 bg-slate-950/80 text-cyan-400 focus:ring-cyan-400"
+                  className="rounded border-cyan-400/40 bg-white dark:bg-slate-950/80 text-cyan-400 focus:ring-cyan-400"
                 />
-                <span className="text-sm text-cyan-100/80">Remember me on this device</span>
+                <span className="text-sm isit-body">Remember me on this device</span>
               </label>
 
-              <p className="text-center text-xs leading-relaxed text-cyan-100/65">
+              <p className="text-center text-xs leading-relaxed isit-body/65">
                 {tr('authSignupAgreementPrefix')}{' '}
-                <Link href="/terms" className="font-semibold text-cyan-300 underline-offset-2 hover:text-cyan-200 hover:underline">
+                <Link href="/terms" className="font-semibold text-cyan-300 underline-offset-2 hover:text-slate-600 dark:text-cyan-200 hover:underline">
                   {tr('termsLink')}
                 </Link>{' '}
                 {tr('authAgreementAnd')}{' '}
-                <Link href="/privacy" className="font-semibold text-cyan-300 underline-offset-2 hover:text-cyan-200 hover:underline">
+                <Link href="/privacy" className="font-semibold text-cyan-300 underline-offset-2 hover:text-slate-600 dark:text-cyan-200 hover:underline">
                   {tr('privacyLink')}
                 </Link>
                 .
@@ -380,9 +384,9 @@ export default function SignupPage() {
                 {loading ? 'Creating account…' : 'Create account'}
               </button>
 
-              <p className="text-center text-xs text-cyan-100/65 mt-4">
+              <p className="text-center text-xs isit-body/65 mt-4">
                 Already have an account?{' '}
-                <Link href="/login" className="text-cyan-300 font-semibold hover:text-cyan-200 underline-offset-2 hover:underline">
+                <Link href="/login" className="text-cyan-300 font-semibold hover:text-slate-600 dark:text-cyan-200 underline-offset-2 hover:underline">
                   {tr('logIn')}
                 </Link>
               </p>

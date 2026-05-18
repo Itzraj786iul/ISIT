@@ -12,13 +12,13 @@ export default function WatchDemoPage() {
       <main className="mx-auto max-w-4xl px-4 py-12 sm:px-6 sm:py-16">
         <Link
           href="/"
-          className="inline-flex items-center gap-2 text-sm font-medium text-cyan-300/90 transition hover:text-cyan-200"
+          className="inline-flex items-center gap-2 text-sm font-medium isit-accent-text transition hover:text-slate-600 dark:text-cyan-200"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to home
         </Link>
 
-        <h1 className="mt-8 text-3xl font-bold tracking-tight text-white sm:text-4xl">Watch the 90-second demo</h1>
+        <h1 className="mt-8 text-3xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-4xl">Watch the 90-second demo</h1>
         <p className="mt-4 max-w-2xl text-base leading-relaxed text-slate-400">
           See how ISIC combines an adaptive AI tutor, curriculum-aligned practice, and insights for students, parents, and schools — in under two
           minutes.
@@ -42,7 +42,7 @@ export default function WatchDemoPage() {
               </div>
               <p className="max-w-md text-sm text-slate-400">
                 Add a hosted demo URL in{' '}
-                <code className="rounded bg-white/10 px-1.5 py-0.5 text-xs text-cyan-200">NEXT_PUBLIC_DEMO_VIDEO_URL</code> (YouTube embed, Loom,
+                <code className="rounded bg-white/10 px-1.5 py-0.5 text-xs text-slate-600 dark:text-cyan-200">NEXT_PUBLIC_DEMO_VIDEO_URL</code> (YouTube embed, Loom,
                 or similar) to show your video here.
               </p>
               <Link

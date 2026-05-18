@@ -25,7 +25,7 @@ export default function EmptyState({
       className={`flex flex-col items-center justify-center py-14 px-4 text-center bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm ${className}`}
       role="status"
     >
-      <Icon className="w-12 h-12 text-slate-300 dark:text-slate-600 mb-4" aria-hidden />
+      <Icon className="w-12 h-12 text-slate-600 dark:text-slate-300 dark:text-slate-600 mb-4" aria-hidden />
       <p className="text-slate-800 dark:text-slate-100 font-semibold text-base">{title}</p>
       {description ? (
         <p className="text-slate-500 dark:text-slate-400 text-sm mt-2 max-w-md leading-relaxed">{description}</p>

@@ -31,7 +31,7 @@ export default function SessionHeader({
     <header className="flex flex-wrap items-center justify-between gap-3 px-4 sm:px-6 py-3 border-b border-slate-200/90 bg-white/95 backdrop-blur-sm shadow-sm shrink-0 z-10">
       <div className="min-w-0 flex-1 basis-[min(100%,280px)]">
         <div className="flex flex-wrap items-center gap-2 mb-0.5">
-          <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Topic</p>
+          <p className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Topic</p>
           {teacherAssigned ? (
             <span className="text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-200/80">
               Teacher Assigned Session
@@ -52,7 +52,7 @@ export default function SessionHeader({
                 style={{ width: `${progressPct}%` }}
               />
             </div>
-            <span className="text-xs font-medium text-slate-500 tabular-nums shrink-0">
+            <span className="text-xs font-medium text-slate-500 dark:text-slate-400 tabular-nums shrink-0">
               {progress.current}/{progress.total}
             </span>
           </div>
@@ -63,7 +63,7 @@ export default function SessionHeader({
         <div className="flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-2">
           <Clock className="w-4 h-4 text-sky-600 shrink-0" aria-hidden />
           <div>
-            <p className="text-[10px] font-medium text-slate-500 uppercase tracking-wide leading-none">Session</p>
+            <p className="text-[10px] font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide leading-none">Session</p>
             <p className="font-mono text-lg font-bold text-sky-600 tabular-nums leading-tight">{timerLabel}</p>
           </div>
         </div>

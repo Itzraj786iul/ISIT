@@ -41,7 +41,7 @@ export default function LearningPanel({
     return (
       <div className="flex flex-col items-center justify-center min-h-[min(360px,50vh)] bg-white rounded-2xl border border-slate-200/90 shadow-md">
         <Loader2 className="w-11 h-11 text-sky-500 animate-spin mb-3" />
-        <p className="text-slate-600 text-sm font-medium">Loading questions…</p>
+        <p className="text-slate-600 dark:text-slate-300 text-sm font-medium">Loading questions…</p>
       </div>
     );
   }
@@ -50,7 +50,7 @@ export default function LearningPanel({
     return (
       <div className="flex flex-col items-center justify-center min-h-[min(360px,50vh)] bg-white rounded-2xl border-2 border-dashed border-slate-200 p-8 text-center shadow-sm">
         <p className="text-slate-800 font-semibold">No practice questions for this topic yet.</p>
-        <p className="text-slate-500 text-sm mt-2 max-w-sm">Use the AI Tutor to keep learning — ask for hints, explanations, or a quick test.</p>
+        <p className="text-slate-500 dark:text-slate-400 text-sm mt-2 max-w-sm">Use the AI Tutor to keep learning — ask for hints, explanations, or a quick test.</p>
       </div>
     );
   }
@@ -62,13 +62,13 @@ export default function LearningPanel({
       {advancing ? (
         <div className="absolute inset-0 z-20 bg-white/70 backdrop-blur-[2px] flex flex-col items-center justify-center rounded-2xl">
           <Loader2 className="w-10 h-10 text-sky-500 animate-spin mb-2" />
-          <p className="text-sm font-medium text-slate-600">Loading next question…</p>
+          <p className="text-sm font-medium text-slate-600 dark:text-slate-300">Loading next question…</p>
         </div>
       ) : null}
 
       {totalQuestions > 0 && (
         <div className="px-5 py-3.5 border-b border-slate-100 bg-gradient-to-r from-slate-50 to-sky-50/30">
-          <p className="text-xs font-semibold text-slate-600 tracking-wide">
+          <p className="text-xs font-semibold text-slate-600 dark:text-slate-300 tracking-wide">
             Question <span className="text-sky-600 tabular-nums">{questionIndex + 1}</span>
             <span className="text-slate-400 mx-1">/</span>
             <span className="tabular-nums">{totalQuestions}</span>
@@ -100,7 +100,7 @@ export default function LearningPanel({
                   onClick={() => onSelectOption(idx)}
                   className={`w-full text-left px-4 py-3.5 rounded-xl border-2 text-sm font-medium ${ring} disabled:cursor-default disabled:active:scale-100`}
                 >
-                  <span className="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-white/80 border border-slate-200/80 text-slate-600 text-xs font-bold mr-3 align-middle">
+                  <span className="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-white/80 border border-slate-200/80 text-slate-600 dark:text-slate-300 text-xs font-bold mr-3 align-middle">
                     {String.fromCharCode(65 + idx)}
                   </span>
                   {opt}

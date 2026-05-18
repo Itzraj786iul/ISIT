@@ -151,10 +151,10 @@ export default function AnalyticsPage() {
   }
 
   return (
-    <div className="isit-cosmic-bg relative flex min-h-screen font-sans text-cyan-50">
+    <div className="isit-cosmic-bg relative flex min-h-screen font-sans ">
       <Sidebar />
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="shrink-0 border-b border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-950/95">
+        <header className="shrink-0 border-b border-slate-200 bg-white dark:border-slate-700 dark:bg-white dark:bg-slate-950/95">
           <div className="px-4 py-3 sm:px-6 md:px-8">
             <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-2 text-sm">
               <Link href="/dashboard" className="font-medium text-sky-600 hover:underline dark:text-sky-400">
@@ -248,7 +248,7 @@ export default function AnalyticsPage() {
                       />
                     )}
                     {d.hours > 0 && (
-                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-white drop-shadow">
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-slate-900 dark:text-white drop-shadow">
                         {d.hours}
                         {tr('analyticsHoursUnit')}
                       </span>

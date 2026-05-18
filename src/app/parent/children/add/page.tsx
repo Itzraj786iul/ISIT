@@ -40,11 +40,11 @@ export default function ParentAddChildPage() {
 
   return (
     <div className="max-w-md">
-      <Link href="/parent/children" className="inline-flex items-center gap-2 text-slate-600 hover:text-violet-600 text-sm font-medium mb-6 no-underline">
+      <Link href="/parent/children" className="inline-flex items-center gap-2 text-slate-600 dark:text-slate-300 hover:text-violet-600 text-sm font-medium mb-6 no-underline">
         <ArrowLeft className="w-4 h-4" /> Back to My Children
       </Link>
       <h1 className="text-2xl font-bold text-slate-800 mb-2">Add Child</h1>
-      <p className="text-slate-600 text-sm mb-6">
+      <p className="text-slate-600 dark:text-slate-300 text-sm mb-6">
         {"Add your child's name and email. You'll be able to track their progress once they sign in with this email."}
       </p>
 

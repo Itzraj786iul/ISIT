@@ -1,6 +1,6 @@
 import { connectToDB } from '@/lib/db';
 import { successResponse, errorResponse } from '@/lib/api-response';
-import { requireTeacherOrganization } from '@/lib/teacher-org';
+import { requireAdminOrganization, requireTeacherOrganization } from '@/lib/teacher-org';
 
 export async function GET(req: Request) {
   try {
@@ -23,7 +23,7 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   try {
-    const gate = await requireTeacherOrganization(req);
+    const gate = await requireAdminOrganization(req);
     if (!gate.ok) return gate.response;
 
     const body = await req.json();

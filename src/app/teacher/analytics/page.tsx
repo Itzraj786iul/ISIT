@@ -82,7 +82,7 @@ export default function TeacherAnalyticsPage() {
     <TeacherShell user={user}>
       <div className="max-w-4xl mx-auto">
         <h1 className="text-2xl font-bold text-slate-900 mb-2">Analytics</h1>
-        <p className="text-slate-500 text-sm mb-6">Overview of your courses and curriculum</p>
+        <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Overview of your courses and curriculum</p>
 
         {/* Summary cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
@@ -113,7 +113,7 @@ export default function TeacherAnalyticsPage() {
               </div>
               <div className="p-5">
                 {courseStats.length === 0 ? (
-                  <p className="text-slate-500 text-sm text-center py-4">No courses yet.</p>
+                  <p className="text-slate-500 dark:text-slate-400 text-sm text-center py-4">No courses yet.</p>
                 ) : (
                   <div className="space-y-3">
                     {courseStats.map((c, i) => {
@@ -123,7 +123,7 @@ export default function TeacherAnalyticsPage() {
                         <div key={i}>
                           <div className="flex items-center justify-between mb-1">
                             <span className="text-sm font-medium text-slate-800 truncate flex-1">{c.title}</span>
-                            <span className="text-sm text-slate-600 ml-2 flex-shrink-0">{c.students} students</span>
+                            <span className="text-sm text-slate-600 dark:text-slate-300 ml-2 flex-shrink-0">{c.students} students</span>
                           </div>
                           <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
                             <div className="h-full bg-violet-500 rounded-full transition-all" style={{ width: `${pct}%` }} />
@@ -145,7 +145,7 @@ export default function TeacherAnalyticsPage() {
               </div>
               <div className="p-5">
                 {subjectStats.length === 0 ? (
-                  <p className="text-slate-500 text-sm text-center py-4">No subjects yet.</p>
+                  <p className="text-slate-500 dark:text-slate-400 text-sm text-center py-4">No subjects yet.</p>
                 ) : (
                   <div className="space-y-3">
                     {subjectStats.map((s, i) => {
@@ -157,7 +157,7 @@ export default function TeacherAnalyticsPage() {
                             <span className="text-sm font-medium text-slate-800 truncate flex-1">
                               {s.name} <span className="text-xs text-slate-400 font-normal">({s.grade})</span>
                             </span>
-                            <span className="text-sm text-slate-600 ml-2 flex-shrink-0">{s.topicCount} topics</span>
+                            <span className="text-sm text-slate-600 dark:text-slate-300 ml-2 flex-shrink-0">{s.topicCount} topics</span>
                           </div>
                           <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
                             <div className="h-full bg-sky-500 rounded-full transition-all" style={{ width: `${pct}%` }} />
@@ -181,7 +181,7 @@ function SummaryCard({ label, value, icon }: { label: string; value: string | nu
     <div className="bg-white rounded-xl border border-slate-200 p-5 flex items-center gap-4 shadow-sm">
       <div className="w-11 h-11 rounded-xl bg-slate-100 flex items-center justify-center flex-shrink-0">{icon}</div>
       <div>
-        <div className="text-xs text-slate-500 font-medium">{label}</div>
+        <div className="text-xs text-slate-500 dark:text-slate-400 font-medium">{label}</div>
         <div className="text-xl font-bold text-slate-900">{value}</div>
       </div>
     </div>

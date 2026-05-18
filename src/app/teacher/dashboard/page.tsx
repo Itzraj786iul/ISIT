@@ -153,7 +153,7 @@ export default function TeacherDashboard() {
       <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Instructor Dashboard</h1>
-          <p className="text-slate-500 text-sm mt-1">Welcome back, {user?.name || 'Instructor'}</p>
+          <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Welcome back, {user?.name || 'Instructor'}</p>
         </div>
         <Link
           href="/teacher/create-course"
@@ -170,11 +170,11 @@ export default function TeacherDashboard() {
             <Sparkles className="w-6 h-6 text-violet-600" />
             <div>
               <h2 className="text-lg font-bold text-slate-900">Student insights</h2>
-              <p className="text-xs text-slate-500 mt-0.5">Who needs help and where — from mastery, sessions, and confusion signals</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Who needs help and where — from mastery, sessions, and confusion signals</p>
             </div>
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <label className="text-xs text-slate-500 font-medium sr-only" htmlFor="insight-grade">Grade</label>
+            <label className="text-xs text-slate-500 dark:text-slate-400 font-medium sr-only" htmlFor="insight-grade">Grade</label>
             <select
               id="insight-grade"
               className="text-sm border border-slate-200 rounded-lg px-3 py-2 bg-white text-slate-800 min-w-[8rem]"
@@ -188,7 +188,7 @@ export default function TeacherDashboard() {
                 <option key={g} value={g}>{g}</option>
               ))}
             </select>
-            <label className="text-xs text-slate-500 font-medium sr-only" htmlFor="insight-subject">Subject</label>
+            <label className="text-xs text-slate-500 dark:text-slate-400 font-medium sr-only" htmlFor="insight-subject">Subject</label>
             <select
               id="insight-subject"
               className="text-sm border border-slate-200 rounded-lg px-3 py-2 bg-white text-slate-800 min-w-[10rem]"
@@ -207,22 +207,22 @@ export default function TeacherDashboard() {
         </div>
 
         {insightsLoading ? (
-          <div className="text-sm text-slate-500 py-6">Loading insights…</div>
+          <div className="text-sm text-slate-500 dark:text-slate-400 py-6">Loading insights…</div>
         ) : insights ? (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
               <div className="rounded-xl bg-white/80 border border-slate-200/80 p-4">
-                <div className="text-xs font-medium text-slate-500 uppercase tracking-wide">Avg mastery</div>
+                <div className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">Avg mastery</div>
                 <div className="text-2xl font-bold text-slate-900 mt-1">{insights.overview.avg_mastery_pct}%</div>
                 <div className="text-xs text-slate-400 mt-1">Across students in this view</div>
               </div>
               <div className="rounded-xl bg-white/80 border border-slate-200/80 p-4">
-                <div className="text-xs font-medium text-slate-500 uppercase tracking-wide">Students</div>
+                <div className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">Students</div>
                 <div className="text-2xl font-bold text-slate-900 mt-1">{insights.overview.total_students}</div>
                 <div className="text-xs text-slate-400 mt-1">Active in your organization</div>
               </div>
               <div className="rounded-xl bg-white/80 border border-slate-200/80 p-4">
-                <div className="text-xs font-medium text-slate-500 uppercase tracking-wide">Struggling</div>
+                <div className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">Struggling</div>
                 <div className="text-2xl font-bold text-amber-700 mt-1">{insights.overview.students_struggling}</div>
                 <div className="text-xs text-slate-400 mt-1">Low mastery or multiple weak topics</div>
               </div>
@@ -245,7 +245,7 @@ export default function TeacherDashboard() {
             )}
 
             {insights.students.length === 0 ? (
-              <p className="text-sm text-slate-500 py-2">No students or no curriculum topics match these filters yet.</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400 py-2">No students or no curriculum topics match these filters yet.</p>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
                 {insights.students.map((stu) => (
@@ -256,7 +256,7 @@ export default function TeacherDashboard() {
                     <div className="flex items-start justify-between gap-2">
                       <div>
                         <div className="font-semibold text-slate-900">{stu.name}</div>
-                        <div className="text-xs text-slate-500 mt-0.5">Mastery {stu.avg_mastery}%</div>
+                        <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Mastery {stu.avg_mastery}%</div>
                       </div>
                       {stu.needs_attention && (
                         <span className="text-[10px] font-bold uppercase tracking-wide bg-amber-100 text-amber-800 px-2 py-1 rounded-md whitespace-nowrap">
@@ -264,7 +264,7 @@ export default function TeacherDashboard() {
                         </span>
                       )}
                     </div>
-                    <div className="mt-3 flex gap-3 text-xs text-slate-600">
+                    <div className="mt-3 flex gap-3 text-xs text-slate-600 dark:text-slate-300">
                       <span className="inline-flex items-center gap-1" title="Sessions (last 30 days)">
                         <Activity className="w-3.5 h-3.5 text-sky-600" />
                         {stu.recent_sessions_count} sessions
@@ -273,7 +273,7 @@ export default function TeacherDashboard() {
                       <span title="Engagement from sessions + events">Engagement {stu.engagement_score}</span>
                     </div>
                     <div className="mt-3">
-                      <div className="text-[11px] font-semibold text-slate-500 uppercase">Weak topics</div>
+                      <div className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase">Weak topics</div>
                       {stu.weak_topics.length === 0 ? (
                         <p className="text-xs text-slate-400 mt-1">None flagged in this view</p>
                       ) : (
@@ -295,7 +295,7 @@ export default function TeacherDashboard() {
             )}
           </>
         ) : (
-          <p className="text-sm text-slate-500">Insights unavailable. Try again later.</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">Insights unavailable. Try again later.</p>
         )}
       </section>
 
@@ -338,20 +338,20 @@ export default function TeacherDashboard() {
                   <div>
                     <h3 className="font-semibold text-slate-900 group-hover:text-sky-700">{s.name}</h3>
                     <div className="flex gap-2 mt-2">
-                      <span className="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-md font-medium">{s.grade}</span>
-                      <span className="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-md font-medium">{s.board}</span>
+                      <span className="text-xs bg-slate-100 text-slate-600 dark:text-slate-300 px-2 py-0.5 rounded-md font-medium">{s.grade}</span>
+                      <span className="text-xs bg-slate-100 text-slate-600 dark:text-slate-300 px-2 py-0.5 rounded-md font-medium">{s.board}</span>
                     </div>
-                    {s.description && <p className="text-xs text-slate-500 mt-2 line-clamp-2">{s.description}</p>}
+                    {s.description && <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 line-clamp-2">{s.description}</p>}
                   </div>
-                  <ChevronRight className="w-5 h-5 text-slate-300 group-hover:text-sky-500 flex-shrink-0" />
+                  <ChevronRight className="w-5 h-5 text-slate-600 dark:text-slate-300 group-hover:text-sky-500 flex-shrink-0" />
                 </div>
               </Link>
             ))}
           </div>
         ) : (
           <div className="bg-white rounded-xl border border-slate-200 p-8 text-center">
-            <Layers className="w-10 h-10 text-slate-300 mx-auto mb-2" />
-            <p className="text-slate-600 text-sm font-medium">No subjects in your organization yet.</p>
+            <Layers className="w-10 h-10 text-slate-600 dark:text-slate-300 mx-auto mb-2" />
+            <p className="text-slate-600 dark:text-slate-300 text-sm font-medium">No subjects in your organization yet.</p>
           </div>
         )}
       </section>
@@ -368,23 +368,23 @@ export default function TeacherDashboard() {
         </div>
         <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
           {loading ? (
-            <div className="p-6 text-slate-500 text-sm">Loading courses...</div>
+            <div className="p-6 text-slate-500 dark:text-slate-400 text-sm">Loading courses...</div>
           ) : courses.length === 0 ? (
             <div className="p-8 text-center">
-              <BookOpen className="w-10 h-10 text-slate-300 mx-auto mb-2" />
-              <p className="text-slate-600 text-sm font-medium">No courses yet. Create your first course to get started.</p>
+              <BookOpen className="w-10 h-10 text-slate-600 dark:text-slate-300 mx-auto mb-2" />
+              <p className="text-slate-600 dark:text-slate-300 text-sm font-medium">No courses yet. Create your first course to get started.</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b-2 border-slate-100 text-left">
-                    <th className="px-5 py-3 text-slate-500 font-semibold">Course</th>
-                    <th className="px-5 py-3 text-slate-500 font-semibold">Category</th>
-                    <th className="px-5 py-3 text-slate-500 font-semibold">Price</th>
-                    <th className="px-5 py-3 text-slate-500 font-semibold">Students</th>
-                    <th className="px-5 py-3 text-slate-500 font-semibold">Status</th>
-                    <th className="px-5 py-3 text-slate-500 font-semibold">Actions</th>
+                    <th className="px-5 py-3 text-slate-500 dark:text-slate-400 font-semibold">Course</th>
+                    <th className="px-5 py-3 text-slate-500 dark:text-slate-400 font-semibold">Category</th>
+                    <th className="px-5 py-3 text-slate-500 dark:text-slate-400 font-semibold">Price</th>
+                    <th className="px-5 py-3 text-slate-500 dark:text-slate-400 font-semibold">Students</th>
+                    <th className="px-5 py-3 text-slate-500 dark:text-slate-400 font-semibold">Status</th>
+                    <th className="px-5 py-3 text-slate-500 dark:text-slate-400 font-semibold">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -400,12 +400,12 @@ export default function TeacherDashboard() {
                           {date && <div className="text-xs text-slate-400 mt-0.5">Created {date}</div>}
                         </td>
                         <td className="px-5 py-4">
-                          <span className="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded-md font-medium">{course.category}</span>
+                          <span className="text-xs bg-slate-100 text-slate-600 dark:text-slate-300 px-2 py-1 rounded-md font-medium">{course.category}</span>
                         </td>
                         <td className="px-5 py-4 font-medium text-slate-900">
                           {course.price === 0 ? 'Free' : `₹${course.price}`}
                         </td>
-                        <td className="px-5 py-4 text-slate-600">{students}</td>
+                        <td className="px-5 py-4 text-slate-600 dark:text-slate-300">{students}</td>
                         <td className="px-5 py-4">
                           <span className={`text-xs font-semibold uppercase px-2 py-0.5 rounded-full ${(course.lessons?.length ?? 0) > 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>
                             {(course.lessons?.length ?? 0) > 0 ? 'Active' : 'Draft'}
@@ -418,7 +418,7 @@ export default function TeacherDashboard() {
                               className="p-1.5 rounded-md bg-slate-100 hover:bg-slate-200 transition"
                               title="Edit"
                             >
-                              <Edit className="w-4 h-4 text-slate-600" />
+                              <Edit className="w-4 h-4 text-slate-600 dark:text-slate-300" />
                             </Link>
                             <button
                               onClick={() => handleDelete(course._id)}
@@ -457,7 +457,7 @@ function StatCard({ label, value, icon, color }: { label: string; value: string 
         {icon}
       </div>
       <div>
-        <div className="text-xs text-slate-500 font-medium">{label}</div>
+        <div className="text-xs text-slate-500 dark:text-slate-400 font-medium">{label}</div>
         <div className="text-xl font-bold text-slate-900">{value}</div>
       </div>
     </div>

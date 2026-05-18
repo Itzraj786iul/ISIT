@@ -1,0 +1,79 @@
+/**
+ * Dark-only cosmic marketing effects. Never applies in light mode.
+ *
+ * Global canvas: `isit-app-bg` / `isit-cosmic-bg` + `html.dark body.isit-app` in isit-tokens.css
+ * (deep #020617 base, indigo top-left, teal header wash, cyan bottom-right bloom, star field).
+ */
+
+/* Hero title base color only — do NOT reset background on h1/h2/h3 (breaks gradient spans inside) */
+html.dark .isit-landing-replica h1.isit-hero-main-title {
+  opacity: 1;
+  transform: none;
+  color: #f8fafc;
+}
+
+html.dark .isit-landing-replica h2,
+html.dark .isit-landing-replica h3 {
+  color: #f8fafc;
+}
+
+/* Optional shimmer for generic marketing pages in dark (not landing replica) */
+html.dark .isit-marketing-shimmer h1,
+html.dark .isit-marketing-shimmer h2 {
+  background: linear-gradient(90deg, #ecfeff, #67e8f9, #ecfeff);
+  background-size: 220% 220%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: title-shimmer 10s linear infinite;
+}
+
+html.dark .isit-marketing-shimmer h3,
+html.dark .isit-marketing-shimmer h4 {
+  color: #d9f8ff;
+}
+
+/* Dark range inputs on cosmic pages */
+html.dark .isit-app-bg input[type="range"],
+html.dark .isit-cosmic-bg input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  border: none;
+  height: 1.5rem;
+  width: 100%;
+}
+
+html.dark .isit-app-bg input[type="range"]::-webkit-slider-runnable-track,
+html.dark .isit-cosmic-bg input[type="range"]::-webkit-slider-runnable-track {
+  height: 8px;
+  border-radius: 9999px;
+  background: linear-gradient(
+    90deg,
+    rgba(34, 211, 238, 0.55) 0%,
+    rgba(103, 232, 249, 0.22) 55%,
+    rgba(15, 23, 42, 0.95) 100%
+  );
+  border: 1px solid rgba(103, 232, 249, 0.45);
+}
+
+/* Landing AI tutor mock — cosmic glass only in dark */
+html.dark .isit-landing-replica .landing-tutor-mock {
+  border-color: rgba(255, 255, 255, 0.1);
+  background: linear-gradient(to bottom, rgba(2, 6, 23, 0.9), #070a12);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+html.dark .isit-app-bg input[type="range"]::-webkit-slider-thumb,
+html.dark .isit-cosmic-bg input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  margin-top: -6px;
+  border-radius: 9999px;
+  background: linear-gradient(145deg, #22d3ee, #06b6d4);
+  border: 2px solid rgba(236, 254, 255, 0.95);
+  cursor: pointer;
+}

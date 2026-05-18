@@ -78,13 +78,7 @@ function useCountTo(target: number, startDelayMs: number, durationMs: number, en
 }
 
 function Glass({ className = '', children }: { className?: string; children: ReactNode }) {
-  return (
-    <div
-      className={`rounded-2xl border border-white/[0.08] bg-white/[0.03] p-4 shadow-[0_0_40px_rgba(0,0,0,0.35)] backdrop-blur-md ${className}`}
-    >
-      {children}
-    </div>
-  );
+  return <div className={`landing-glass p-4 ${className}`}>{children}</div>;
 }
 
 const TUTOR_SNIPPET = 'I adapt to how you learn.';
@@ -121,71 +115,71 @@ export default function HeroDashboardCards() {
   }, [enabled]);
 
   return (
-    <div className="relative mx-auto min-h-[380px] w-full max-w-lg lg:max-w-none">
-      <div className="pointer-events-none absolute inset-0 rounded-3xl border border-white/[0.06] bg-gradient-to-br from-indigo-950/40 to-transparent" />
-
+    <div className="landing-hero-dashboard-scene relative mx-auto min-h-[380px] w-full max-w-lg lg:max-w-none">
       <div className="absolute right-8 top-4 z-20 hidden sm:block">
-        <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-[11px] font-medium text-emerald-300">
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-[11px] font-medium text-emerald-700 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-300">
           <GraduationCap className="h-3.5 w-3.5" />
           Olympiad-ready
         </span>
       </div>
 
       <div className="absolute left-1/2 top-1/2 z-10 flex h-[min(100%,420px)] w-[min(100%,420px)] -translate-x-1/2 -translate-y-1/2 items-center justify-center">
-        <div className="landing-orbit-slow absolute h-72 w-72 rounded-full border border-cyan-400/10" />
-        <div className="landing-orbit-slow landing-orbit-reverse absolute h-56 w-56 rounded-full border border-fuchsia-500/10" />
+        <div className="landing-orbit-ring landing-orbit-slow absolute h-72 w-72 rounded-full border border-cyan-400/10" />
+                <div className="landing-orbit-ring landing-orbit-slow landing-orbit-reverse absolute h-56 w-56 rounded-full border border-fuchsia-500/10" />
         <div className="landing-hero-glow-pulse absolute h-[340px] w-[340px] rounded-full bg-gradient-to-br from-violet-600/25 via-transparent to-cyan-500/20 blur-2xl" />
-        <div className="relative flex h-44 w-44 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 via-indigo-600 to-cyan-500 p-[3px] shadow-[0_0_60px_rgba(139,92,246,0.45)]">
-          <div className="flex h-full w-full items-center justify-center rounded-full bg-[#0a0c18]">
-            <Bot className="h-20 w-20 text-white" strokeWidth={1.25} />
+        <div className="relative flex h-44 w-44 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 via-indigo-600 to-cyan-500 p-[3px] shadow-lg dark:shadow-[0_0_60px_rgba(139,92,246,0.45)]">
+          <div className="landing-hero-bot-core flex h-full w-full items-center justify-center rounded-full">
+            <Bot className="landing-hero-bot-icon h-20 w-20" strokeWidth={1.25} />
           </div>
         </div>
       </div>
 
       <Glass className="isit-float-delayed absolute left-0 top-8 z-20 max-w-[220px] sm:left-2">
         <div className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-500/30">
-            <Bot className="h-4 w-4 text-sky-300" />
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-sky-100 dark:bg-blue-500/30">
+            <Bot className="h-4 w-4 text-sky-600 dark:text-sky-300" />
           </div>
           <div>
-            <p className="text-xs font-bold text-white">AI Tutor</p>
-            <p className="text-[10px] text-emerald-400">● Typing...</p>
+            <p className="text-xs font-bold text-slate-900 dark:text-white">AI Tutor</p>
+            <p className="text-[10px] text-emerald-600 dark:text-emerald-400">● Typing...</p>
           </div>
         </div>
-        <p className="mt-2 min-h-[2.5rem] text-[11px] leading-snug text-slate-300">
+        <p className="mt-2 min-h-[2.5rem] text-[11px] leading-snug text-slate-600 dark:text-slate-300">
           {tutorLine}
           {enabled && tutorLine.length < TUTOR_SNIPPET.length && (
-            <span className="ml-0.5 inline-block h-3 w-px animate-pulse bg-cyan-400 align-middle" aria-hidden />
+            <span className="ml-0.5 inline-block h-3 w-px animate-pulse bg-sky-500 align-middle dark:bg-cyan-400" aria-hidden />
           )}
         </p>
       </Glass>
 
       <Glass className="isit-float-delayed-3 absolute right-0 top-28 z-20 w-[210px] sm:right-4">
-        <p className="min-h-[14px] text-[10px] font-semibold uppercase tracking-wider text-slate-500">{masteryLabel}</p>
-        <p className="mt-1 bg-gradient-to-r from-cyan-300 to-sky-400 bg-clip-text text-3xl font-black tabular-nums text-transparent drop-shadow-[0_0_20px_rgba(34,211,238,0.35)]">
+        <p className="isit-label min-h-[14px] text-[10px] font-semibold uppercase tracking-wider">{masteryLabel}</p>
+        <p className="mt-1 text-3xl font-black tabular-nums text-sky-600 dark:text-cyan-300 dark:drop-shadow-[0_0_20px_rgba(34,211,238,0.35)]">
           {pct}%
         </p>
-        <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-800">
-          <div
-            className="h-full rounded-full bg-gradient-to-r from-cyan-400 to-sky-500 transition-[width] duration-700 ease-out"
+        <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-800">
+                                        <div
+            className="h-full rounded-full bg-gradient-to-r from-sky-500 to-indigo-500 transition-[width] duration-700 ease-out dark:from-cyan-400 dark:to-sky-500"
             style={{ width: `${pct}%` }}
           />
         </div>
-        <p className="mt-2 min-h-[14px] text-[11px] font-medium text-emerald-400">{masteryFoot}</p>
+        <p className="mt-2 min-h-[14px] text-[11px] font-medium text-emerald-600 dark:text-emerald-400">{masteryFoot}</p>
       </Glass>
 
       <Glass className="isit-float-delayed-2 absolute bottom-16 left-4 z-20 max-w-[240px]">
-        <p className="min-h-[14px] text-[10px] font-semibold uppercase tracking-wider text-slate-500">{strengthLabel}</p>
+        <p className="isit-label min-h-[14px] text-[10px] font-semibold uppercase tracking-wider">{strengthLabel}</p>
         <div className="mt-2 flex items-center gap-2">
-          <Brain className="h-4 w-4 shrink-0 text-violet-400" />
-          <span className="min-h-[1.25rem] text-sm font-semibold text-white">{strengthTopic}</span>
+          <Brain className="h-4 w-4 shrink-0 text-violet-500 dark:text-violet-400" />
+          <span className="min-h-[1.25rem] text-sm font-semibold text-slate-900 dark:text-white">{strengthTopic}</span>
         </div>
         <div className="mt-3 flex gap-1">
           {[1, 2, 3, 4, 5].map((i) => (
             <div
               key={i}
               className={`h-1.5 flex-1 rounded-full transition-colors duration-300 ${
-                i <= segments ? 'bg-violet-500/80 shadow-[0_0_8px_rgba(139,92,246,0.6)]' : 'bg-slate-700'
+                i <= segments
+                  ? 'bg-violet-500 shadow-sm dark:bg-violet-500/80 dark:shadow-[0_0_8px_rgba(139,92,246,0.6)]'
+                  : 'bg-slate-200 dark:bg-slate-700'
               }`}
             />
           ))}
@@ -193,11 +187,11 @@ export default function HeroDashboardCards() {
       </Glass>
 
       <Glass className="animate-float-soft absolute bottom-8 right-2 z-20 w-[190px] sm:right-8">
-        <p className="min-h-[14px] text-[10px] font-semibold uppercase tracking-wider text-slate-500">{focusLabel}</p>
-        <p className="mt-1 text-2xl font-bold tabular-nums text-white">
+        <p className="isit-label min-h-[14px] text-[10px] font-semibold uppercase tracking-wider">{focusLabel}</p>
+        <p className="mt-1 text-2xl font-bold tabular-nums text-slate-900 dark:text-white">
           {mins} mins <span className="text-lg">🔥</span>
         </p>
-        <p className="min-h-[14px] text-[11px] text-slate-500">{focusFoot}</p>
+        <p className="isit-muted min-h-[14px] text-[11px]">{focusFoot}</p>
       </Glass>
     </div>
   );

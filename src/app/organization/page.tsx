@@ -31,6 +31,13 @@ function joinRefNames(refs: TeacherRow['assigned_classes'] | undefined): string 
   return names.length ? names.join(', ') : '—';
 }
 
+function studentClassName(row: { class_id?: { _id?: string; name?: string } | string | null }): string {
+  const cls = row.class_id;
+  if (!cls) return '—';
+  if (typeof cls === 'object' && cls && typeof cls.name === 'string') return cls.name;
+  return '—';
+}
+
 type OrgGate = 'loading' | 'allowed' | 'denied' | 'unauth';
 
 export default function OrganizationPage() {
@@ -55,6 +62,35 @@ export default function OrganizationPage() {
   const [teacherDisplayName, setTeacherDisplayName] = useState('');
   const [selectedClassIds, setSelectedClassIds] = useState<string[]>([]);
   const [selectedSubjectIds, setSelectedSubjectIds] = useState<string[]>([]);
+
+  type StudentRow = {
+    _id: string;
+    email: string;
+    name?: string;
+    class_id?: { _id?: string; name?: string } | string | null;
+    email_verified?: boolean;
+  };
+  const [students, setStudents] = useState<StudentRow[]>([]);
+  const [loadingStudents, setLoadingStudents] = useState(true);
+  const [studentName, setStudentName] = useState('');
+  const [studentEmail, setStudentEmail] = useState('');
+  const [studentClassId, setStudentClassId] = useState('');
+  const [studentGrade, setStudentGrade] = useState('');
+  const [enrollNotice, setEnrollNotice] = useState<string | null>(null);
+
+  const loadStudents = useCallback(async () => {
+    setLoadingStudents(true);
+    try {
+      const res = await fetchWithAuth('/api/students');
+      const json = (await res.json()) as { success?: boolean; data?: StudentRow[] };
+      if (res.ok && json.success && Array.isArray(json.data)) setStudents(json.data);
+      else setStudents([]);
+    } catch {
+      setStudents([]);
+    } finally {
+      setLoadingStudents(false);
+    }
+  }, []);
 
   const loadTeachers = useCallback(async () => {
     setLoadingTeachers(true);
@@ -128,7 +164,46 @@ export default function OrganizationPage() {
     if (!user) return;
     loadClasses();
     loadTeachers();
-  }, [user, loadClasses, loadTeachers]);
+    loadStudents();
+  }, [user, loadClasses, loadTeachers, loadStudents]);
+
+  const enrollStudent = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setBusy('enroll-student');
+    setError('');
+    setEnrollNotice(null);
+    try {
+      const res = await fetchWithAuth('/api/students', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: studentName.trim(),
+          email: studentEmail.trim(),
+          class_id: studentClassId || undefined,
+          grade: studentGrade.trim() || undefined,
+        }),
+      });
+      const json = (await res.json()) as {
+        success?: boolean;
+        error?: string;
+        data?: { temporaryPassword?: string };
+      };
+      if (!res.ok || !json.success) throw new Error(json.error || 'Could not enroll student');
+      if (json.data?.temporaryPassword) {
+        setEnrollNotice(`Student enrolled. Temporary password: ${json.data.temporaryPassword} — share securely.`);
+      } else {
+        setEnrollNotice('Student enrolled successfully.');
+      }
+      setStudentName('');
+      setStudentEmail('');
+      setStudentGrade('');
+      await loadStudents();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Could not enroll student');
+    } finally {
+      setBusy(null);
+    }
+  };
 
   useEffect(() => {
     const oid = user?.organization_id;
@@ -308,7 +383,7 @@ export default function OrganizationPage() {
 
   if (gate === 'loading' || gate === 'unauth') {
     return (
-      <div className="isit-cosmic-bg min-h-screen flex items-center justify-center text-cyan-300 relative">
+      <div className="isit-app-bg min-h-screen flex items-center justify-center relative">
         <Loader2 className="w-10 h-10 text-cyan-400 animate-spin" aria-hidden />
         <span className="sr-only">Loading…</span>
       </div>
@@ -317,15 +392,15 @@ export default function OrganizationPage() {
 
   if (gate === 'denied') {
     return (
-      <div className="isit-cosmic-bg min-h-screen text-cyan-50 flex flex-col items-center justify-center px-4 py-12 relative">
+      <div className="isit-app-bg min-h-screen flex flex-col items-center justify-center px-4 py-12 relative">
         <div className="max-w-md w-full isit-glass rounded-2xl p-8 text-center">
-          <h1 className="text-xl font-bold text-cyan-50">Organization admin</h1>
-          <p className="text-cyan-100/80 text-sm mt-3 leading-relaxed">
-            This area is for <strong className="text-cyan-100">teachers</strong> and{' '}
-            <strong className="text-cyan-100">organization administrators</strong> only. Your
+          <h1 className="text-xl font-bold isit-text-primary">Organization admin</h1>
+          <p className="/80 text-sm mt-3 leading-relaxed">
+            This area is for <strong className="isit-body">teachers</strong> and{' '}
+            <strong className="isit-body">organization administrators</strong> only. Your
             current account does not have access.
           </p>
-          <p className="text-cyan-200/60 text-xs mt-4 leading-relaxed">
+          <p className="text-slate-600 dark:text-cyan-200/60 text-xs mt-4 leading-relaxed">
             Teachers are created by an admin in the organization console. If you should have access, ask your school
             admin or sign in with a teacher or admin account.
           </p>
@@ -348,17 +423,25 @@ export default function OrganizationPage() {
     );
   }
 
+  const isAdmin = user?.role?.toLowerCase() === 'admin';
+
   return (
     <TeacherShell user={user}>
       <div className="max-w-6xl mx-auto">
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">Organization</h1>
-          <p className="text-slate-500 text-sm mt-1">Classes and subjects for your organization</p>
+          <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Classes, students, and curriculum for your school</p>
         </div>
 
         {error && (
           <div className="mb-4 p-3 text-sm text-red-700 bg-red-50 border border-red-200 rounded-xl dark:bg-red-950/40 dark:text-red-200 dark:border-red-800">
             {error}
+          </div>
+        )}
+
+        {enrollNotice && (
+          <div className="mb-4 p-3 text-sm text-emerald-800 bg-emerald-50 border border-emerald-200 rounded-xl dark:bg-emerald-950/40 dark:text-emerald-200 dark:border-emerald-800">
+            {enrollNotice}
           </div>
         )}
 
@@ -391,6 +474,7 @@ export default function OrganizationPage() {
               <h2 className="font-bold text-slate-800 dark:text-slate-100">Classes</h2>
             </div>
             <div className="p-4 space-y-3">
+              {isAdmin && (
               <form onSubmit={addClass} className="flex gap-2">
                 <input
                   type="text"
@@ -407,13 +491,14 @@ export default function OrganizationPage() {
                   <Plus className="w-4 h-4" /> Add
                 </button>
               </form>
+              )}
 
               {loadingClasses ? (
                 <div className="flex justify-center py-8">
                   <Loader2 className="w-6 h-6 text-slate-400 animate-spin" />
                 </div>
               ) : classes.length === 0 ? (
-                <p className="text-sm text-slate-500 py-4">No classes yet. Add one above.</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400 py-4">No classes yet. Add one above.</p>
               ) : (
                 <ul className="space-y-1">
                   {classes.map((c) => {
@@ -435,6 +520,7 @@ export default function OrganizationPage() {
                             <ChevronRight className={`w-4 h-4 shrink-0 ${active ? 'text-sky-600' : 'text-slate-400'}`} />
                             <span className="truncate">{c.name}</span>
                           </button>
+{isAdmin && (
                           <button
                             type="button"
                             onClick={() => deleteClass(c._id)}
@@ -448,6 +534,7 @@ export default function OrganizationPage() {
                               <Trash2 className="w-4 h-4" />
                             )}
                           </button>
+                          )}
                         </div>
                       </li>
                     );
@@ -473,7 +560,7 @@ export default function OrganizationPage() {
             </div>
             <div className="p-4 space-y-3">
               {!selectedClassId ? (
-                <p className="text-sm text-slate-500 py-4">Select a class to manage subjects.</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400 py-4">Select a class to manage subjects.</p>
               ) : (
                 <>
                   <form onSubmit={addSubject} className="flex gap-2">
@@ -498,7 +585,7 @@ export default function OrganizationPage() {
                       <Loader2 className="w-6 h-6 text-slate-400 animate-spin" />
                     </div>
                   ) : subjects.length === 0 ? (
-                    <p className="text-sm text-slate-500 py-4">No subjects in this class yet.</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 py-4">No subjects in this class yet.</p>
                   ) : (
                     <ul className="space-y-2">
                       {subjects.map((s) => (
@@ -515,6 +602,7 @@ export default function OrganizationPage() {
                               {s.name}
                             </Link>
                           </div>
+{isAdmin && (
                           <button
                             type="button"
                             onClick={() => deleteSubject(s._id)}
@@ -528,6 +616,7 @@ export default function OrganizationPage() {
                               <Trash2 className="w-4 h-4" />
                             )}
                           </button>
+                          )}
                         </li>
                       ))}
                     </ul>
@@ -535,6 +624,96 @@ export default function OrganizationPage() {
                 </>
               )}
             </div>
+          </div>
+        </div>
+
+        {/* Students */}
+        <div className="mt-8 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
+          <div className="p-4 border-b border-slate-100 dark:border-slate-700 flex items-center gap-2">
+            <Users className="w-5 h-5 text-emerald-500" />
+            <h2 className="font-bold text-slate-800 dark:text-slate-100">Students</h2>
+            <span className="text-xs text-slate-500 dark:text-slate-400 ml-auto">{students.length} enrolled</span>
+          </div>
+          <div className="p-4">
+            {isAdmin && (
+              <form onSubmit={enrollStudent} className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
+                <input
+                  type="text"
+                  value={studentName}
+                  onChange={(e) => setStudentName(e.target.value)}
+                  placeholder="Full name"
+                  className="rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 px-3 py-2 text-sm"
+                  required
+                />
+                <input
+                  type="email"
+                  value={studentEmail}
+                  onChange={(e) => setStudentEmail(e.target.value)}
+                  placeholder="Email"
+                  autoComplete="off"
+                  className="rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 px-3 py-2 text-sm"
+                  required
+                />
+                <select
+                  value={studentClassId}
+                  onChange={(e) => setStudentClassId(e.target.value)}
+                  className="rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 px-3 py-2 text-sm"
+                >
+                  <option value="">Class (optional)</option>
+                  {classes.map((cls) => (
+                    <option key={cls._id} value={cls._id}>
+                      {cls.name}
+                    </option>
+                  ))}
+                </select>
+                <input
+                  type="text"
+                  value={studentGrade}
+                  onChange={(e) => setStudentGrade(e.target.value)}
+                  placeholder="Grade (optional)"
+                  className="rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 px-3 py-2 text-sm"
+                />
+                <button
+                  type="submit"
+                  disabled={busy !== null}
+                  className="sm:col-span-2 inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 text-white px-4 py-2.5 text-sm font-semibold hover:bg-emerald-700 disabled:opacity-50"
+                >
+                  {busy === 'enroll-student' ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
+                  Enroll student
+                </button>
+              </form>
+            )}
+            {!isAdmin && (
+              <p className="text-xs text-slate-500 dark:text-slate-400 mb-4">
+                Only organization administrators can enroll new students. You can view enrolled learners below.
+              </p>
+            )}
+            {loadingStudents ? (
+              <div className="flex justify-center py-8">
+                <Loader2 className="w-6 h-6 text-slate-400 animate-spin" />
+              </div>
+            ) : students.length === 0 ? (
+              <p className="text-sm text-slate-500 dark:text-slate-400 py-4">No students enrolled yet.</p>
+            ) : (
+              <ul className="divide-y divide-slate-100 dark:divide-slate-800">
+                {students.map((s) => (
+                  <li key={s._id} className="py-3 flex flex-wrap items-center justify-between gap-2 text-sm">
+                    <div>
+                      <p className="font-medium text-slate-800 dark:text-slate-100">{s.name || s.email}</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">{s.email}</p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className="text-xs text-slate-600 dark:text-slate-400">{studentClassName(s)}</span>
+                      <span
+                        className={`text-xs px-2 py-0.5 rounded-full ${s.email_verified ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-300' : 'bg-amber-100 text-amber-800 dark:bg-amber-950/50 dark:text-amber-300'}`}
+                      >
+                        {s.email_verified ? 'Verified' : 'Pending verify'}
+                      </span>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         </div>
 
@@ -546,6 +725,7 @@ export default function OrganizationPage() {
           </div>
 
           <div className="p-4 grid grid-cols-1 xl:grid-cols-2 gap-8">
+            {isAdmin && (
             <div>
               <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">Add teacher</h3>
               <form onSubmit={addTeacher} className="space-y-3">
@@ -579,7 +759,7 @@ export default function OrganizationPage() {
                   <p className="text-xs font-semibold text-slate-600 dark:text-slate-400 mb-2">Classes</p>
                   <div className="max-h-40 overflow-y-auto rounded-xl border border-slate-200 dark:border-slate-600 p-2 space-y-1.5">
                     {classes.length === 0 ? (
-                      <p className="text-xs text-slate-500">Create classes first.</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">Create classes first.</p>
                     ) : (
                       classes.map((c) => (
                         <label key={c._id} className="flex items-center gap-2 text-sm cursor-pointer">
@@ -600,7 +780,7 @@ export default function OrganizationPage() {
                   <p className="text-xs font-semibold text-slate-600 dark:text-slate-400 mb-2">Subjects</p>
                   <div className="max-h-48 overflow-y-auto rounded-xl border border-slate-200 dark:border-slate-600 p-2 space-y-1.5">
                     {allOrgSubjects.length === 0 ? (
-                      <p className="text-xs text-slate-500">No subjects in this organization yet.</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">No subjects in this organization yet.</p>
                     ) : (
                       allOrgSubjects.map((s) => (
                         <label key={s._id} className="flex items-center gap-2 text-sm cursor-pointer">
@@ -626,6 +806,7 @@ export default function OrganizationPage() {
                 </button>
               </form>
             </div>
+            )}
 
             <div>
               <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">Team</h3>
@@ -634,7 +815,7 @@ export default function OrganizationPage() {
                   <Loader2 className="w-6 h-6 text-slate-400 animate-spin" />
                 </div>
               ) : teachers.length === 0 ? (
-                <p className="text-sm text-slate-500">No teachers yet.</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400">No teachers yet.</p>
               ) : (
                 <ul className="space-y-3">
                   {teachers.map((t) => {
@@ -649,7 +830,7 @@ export default function OrganizationPage() {
                             <p className="font-semibold text-slate-800 dark:text-slate-100 truncate">
                               {t.name || t.email}
                             </p>
-                            <p className="text-slate-500 text-xs break-all">{t.email}</p>
+                            <p className="text-slate-500 dark:text-slate-400 text-xs break-all">{t.email}</p>
                             <p className="mt-2 text-slate-600 dark:text-slate-400 text-xs">
                               <span className="font-medium text-slate-700 dark:text-slate-300">Classes: </span>
                               {joinRefNames(t.assigned_classes)}
@@ -659,7 +840,7 @@ export default function OrganizationPage() {
                               {joinRefNames(t.assigned_subjects)}
                             </p>
                           </div>
-                          {!isSelf && (
+                          {isAdmin && !isSelf && (
                             <button
                               type="button"
                               onClick={() => deleteTeacherAccount(t._id)}
