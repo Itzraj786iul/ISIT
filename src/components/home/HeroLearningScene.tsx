@@ -203,8 +203,8 @@ function SkillSegments({ filled = 4, total = 5 }: { filled?: number; total?: num
 
 /* —— Panels —— */
 
-function AiTutorPanel({ enabled }: { enabled: boolean }) {
-  const line = useTypewriter('What shall we learn today?', enabled, 26);
+function AiTutorPanel({ enabled, prompt }: { enabled: boolean; prompt: string }) {
+  const line = useTypewriter(prompt, enabled, 26);
 
   return (
     <div className="landing-hero-tutor-panel">
@@ -328,14 +328,33 @@ function StatsRail({ mastery, mins }: { mastery: number; mins: number }) {
 /**
  * Premium hero visual — unified ecosystem: portal + connected stats rail.
  */
-export default function HeroLearningScene() {
+type HeroLearningSceneProps = {
+  tutorPrompt?: string;
+};
+
+export default function HeroLearningScene({ tutorPrompt }: HeroLearningSceneProps) {
+  const rootRef = useRef<HTMLDivElement>(null);
+  const [inView, setInView] = useState(true);
   const reduced = usePrefersReducedMotion();
-  const enabled = !reduced;
-  const mastery = useCountTo(85, enabled ? 400 : 0, enabled ? 1000 : 0, enabled);
-  const mins = useCountTo(92, enabled ? 900 : 0, enabled ? 750 : 0, enabled);
+  const motionEnabled = !reduced && inView;
+  const prompt = tutorPrompt ?? 'What shall we learn today?';
+  const mastery = useCountTo(85, motionEnabled ? 400 : 0, motionEnabled ? 1000 : 0, motionEnabled);
+  const mins = useCountTo(92, motionEnabled ? 900 : 0, motionEnabled ? 750 : 0, motionEnabled);
+
+  useEffect(() => {
+    const el = rootRef.current;
+    if (!el || reduced) return;
+
+    const ob = new IntersectionObserver(
+      ([entry]) => setInView(entry?.isIntersecting ?? false),
+      { root: null, rootMargin: '80px 0px', threshold: 0.05 }
+    );
+    ob.observe(el);
+    return () => ob.disconnect();
+  }, [reduced]);
 
   return (
-    <div className="landing-hero-premium relative w-full min-w-0">
+    <div ref={rootRef} className="landing-hero-premium relative w-full min-w-0">
       <div className="landing-hero-premium-ambient pointer-events-none" aria-hidden />
 
       <div className="landing-hero-ecosystem">
@@ -348,7 +367,7 @@ export default function HeroLearningScene() {
 
         <div className="landing-hero-visual-cluster">
           <div className="landing-hero-portal-zone">
-            <AiTutorPanel enabled={enabled} />
+            <AiTutorPanel enabled={motionEnabled} prompt={prompt} />
             <div className="landing-hero-portal-stack">
               <div className="landing-hero-premium-portal-ring landing-hero-premium-portal-ring--outer" aria-hidden />
               <div className="landing-hero-premium-portal-ring landing-hero-premium-portal-ring--inner" aria-hidden />
@@ -360,7 +379,7 @@ export default function HeroLearningScene() {
                   width={1200}
                   height={900}
                   priority
-                  sizes="(max-width: 1024px) 88vw, 540px"
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 88vw, 540px"
                   className="landing-hero-premium-portal-img"
                 />
                 <div className="landing-hero-premium-portal-shine" aria-hidden />

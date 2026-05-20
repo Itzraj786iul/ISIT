@@ -1,41 +1,14 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import ParentNav from '@/components/ParentNav';
+import AppShellSkeleton from '@/components/AppShellSkeleton';
+import { useRequireAuth } from '@/lib/use-require-auth';
 
 export default function ParentLayout({ children }: { children: React.ReactNode }) {
-  const router = useRouter();
-  const [allowed, setAllowed] = useState(false);
+  const { ready, loading } = useRequireAuth({ roles: ['parent'] });
 
-  useEffect(() => {
-    const check = async () => {
-      const res = await fetch('/api/auth/me', { credentials: 'include' });
-      if (!res.ok) {
-        router.replace('/login');
-        return;
-      }
-      const data = await res.json();
-      const role = data.user?.role?.toLowerCase();
-      if (role === 'teacher') {
-        router.replace('/teacher/dashboard');
-        return;
-      }
-      if (role !== 'parent') {
-        router.replace('/dashboard');
-        return;
-      }
-      setAllowed(true);
-    };
-    check();
-  }, [router]);
-
-  if (!allowed) {
-    return (
-      <div className="isit-app-bg min-h-screen flex items-center justify-center">
-        <p className="text-sm">Loading…</p>
-      </div>
-    );
+  if (loading || !ready) {
+    return <AppShellSkeleton variant="dashboard" />;
   }
 
   return (

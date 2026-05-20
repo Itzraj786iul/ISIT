@@ -1,253 +1,410 @@
-# ISIT — Indian School of Innovation and Thinking
+# ISIC — Indian School of Innovation and Curiosity
 
-**AI-powered personalized learning platform** (production-ready MVP)
-
----
-
-## 1. Project overview
+**AI-powered personalized learning platform** — production-ready EdTech MVP
 
 | | |
 | --- | --- |
-| **Name** | ISIT (Indian School of Innovation and Thinking) |
-| **Type** | AI-first EdTech — personalized learning with telemetry and role-based dashboards |
-| **Core idea** | *An AI tutor that adapts to how a student thinks, not just what they answer.* |
-
-### What problem we solve
-
-Students often get generic explanations and one-size-fits-all practice. Teachers and parents lack a clear picture of **who** is struggling, **where**, and **why** — beyond raw scores.
-
-ISIT ties **learning sessions**, **fine-grained events**, and **mastery** into one loop so the tutor can adapt, dashboards can surface weak topics, and families get human-readable insight.
-
-### How this differs from traditional EdTech
-
-- **Session-first learning**: Practice and tutor interactions are anchored in **sessions** linked to topics — not only static videos or PDFs.
-- **Behavioral signal**: We capture **events** (questions, answers, hints, teachback, etc.) to infer engagement and confusion patterns.
-- **Mastery as a model**: Progress is tracked per topic with explicit **mastery records** and optional **knowledge gaps**, not only “completion” flags.
-- **Three audiences**: **Students** learn; **teachers** see class-level insights; **parents** see child-friendly summaries — all on the same data spine where possible.
+| **Live website** | **[https://isic.org.in/](https://isic.org.in/)** |
+| **Product** | Adaptive learning, session-based practice, role-based dashboards, bilingual UI |
+| **Stack** | Next.js 16 · React 19 · MongoDB · OpenAI · Tailwind CSS 4 |
 
 ---
 
-## 2. Core features (grouped)
+## Table of contents
+
+1. [Overview](#overview)
+2. [Live demo](#live-demo)
+3. [Key features](#key-features)
+4. [User roles](#user-roles)
+5. [Tech stack](#tech-stack)
+6. [Architecture](#architecture)
+7. [Project structure](#project-structure)
+8. [Getting started](#getting-started)
+9. [Environment variables](#environment-variables)
+10. [Scripts](#scripts)
+11. [Internationalization & theme](#internationalization--theme)
+12. [Performance & UX](#performance--ux)
+13. [API overview](#api-overview)
+14. [Authentication & security](#authentication--security)
+15. [AI system](#ai-system)
+16. [Deployment](#deployment)
+17. [Documentation](#documentation)
+18. [License & contact](#license--contact)
+
+---
+
+## Overview
+
+**ISIC** (Indian School of Innovation and Curiosity) is a future-first EdTech platform that combines **AI mentorship**, **neuroscience-informed learning design**, and **real-world innovation programs** so students learn to think, create, and lead—not only memorize.
+
+The platform serves three primary audiences on one data spine:
+
+- **Students** — personalized dashboard, subjects/topics, session-based learning, adaptive AI tutor, mastery tracking
+- **Teachers** — class insights, weak-topic detection, assignment progress, analytics
+- **Parents** — child progress summaries, strengths/weak areas, multi-child support
+
+### Problem we solve
+
+Traditional EdTech often delivers generic content and opaque progress. ISIC ties **learning sessions**, **fine-grained telemetry**, and **per-topic mastery** into a single loop so the AI tutor adapts, educators see actionable signals, and families get clear, encouraging insight.
+
+### How we differ
+
+| Traditional EdTech | ISIC approach |
+| --- | --- |
+| Static videos / PDFs | **Session-first** learning tied to curriculum topics |
+| Completion-only progress | **Mastery model** with events and knowledge gaps |
+| One-size-fits-all explanations | **Adaptive AI tutor** (Socratic hints, difficulty awareness) |
+| Siloed parent/teacher tools | **Role-based dashboards** on shared org/subject data |
+
+---
+
+## Live demo
+
+**Production site:** [https://isic.org.in/](https://isic.org.in/)
+
+Public marketing pages (home, how it works, courses, stories, blog, contact) are available without login. Student, teacher, and parent experiences require authentication.
+
+---
+
+## Key features
+
+### Marketing & public site
+
+- Responsive landing page with hero, programs, core courses, student journey, testimonials, FAQ
+- **English / Hindi** language toggle (instant UI update, no full page reload)
+- **Light / dark** theme with persisted preference
+- Public navigation, footer, and “Ask AI tutor” entry point
+- Pages: Home, Subjects, How it Works, Courses, Stories, Blog, About, Contact, Terms, Privacy
 
 ### Student experience
 
-- **Dashboard** — greetings, continue learning, recommendations, weak areas, progress stats, subjects grid.
-- **Topic-based learning** — topic pages with videos, notes, practice, assignments; sessions created per topic.
-- **Session-based learning** — dedicated session player with timer, practice questions, and session end flow.
-- **AI tutor** — adaptive, Socratic-style help (hints, explanations, difficulty awareness) tied to session context.
-- **Practice** — in-session practice plus optional quick practice flows on topic pages.
-- **Teachback evaluation** — structured teachback flows and scoring hooks in the adaptive pipeline.
-- **Mastery tracking** — per-topic mastery scores updated from session activity.
-- **Session completion feedback** — post-session modal on the dashboard (time, questions answered, accuracy, next steps).
+- Personalized **dashboard** — continue learning, recommendations, weak areas, progress stats, subjects grid
+- **Subjects & topics** — organization-scoped curriculum catalog
+- **Session-based learning** — practice player with timer, questions, session end flow
+- **AI tutor** — standalone chat experience plus in-session adaptive help (`/api/sessions/ask`)
+- **Learning path** — structured subject paths with topic lists
+- **Achievements**, **schedule**, **analytics**, **settings**
+- Post-session completion modal on dashboard
+- Email verification banner
 
 ### Teacher experience
 
-- **Student insights** — organization-scoped view of learners (mastery, weak topics, recent sessions, engagement and confusion scores).
-- **Weak topic detection** — topics with low mastery surfaced per student and in aggregate **alerts**.
-- **Engagement and confusion signals** — derived from sessions, events, and confusion logs (not raw dumps in the UI).
-- **Alerts** — e.g. multiple students struggling on a topic, high confusion on a topic.
+- Teacher dashboard and organization tools
+- **Student insights** — mastery, engagement, confusion signals, alerts
+- **Assigned topics** and **assignment progress**
+- Subject management, student roster, analytics, course creation (legacy marketplace path)
+- Shared **AI tutor** page in teacher shell
 
 ### Parent experience
 
-- **Child insights** — per linked child: mastery snapshot, weekly activity, strengths and focus areas.
-- **AI-generated summary** — short, encouraging paragraph (OpenAI when configured; warm fallback otherwise).
-- **Strengths and weak areas** — plain-language topic lists.
-- **Action suggestions** — simple, supportive next steps for parents.
-- **Multi-child support** — switch between children on the parent dashboard.
+- Parent dashboard with **multi-child** support
+- Per-child insights: mastery snapshot, weekly activity, AI-generated summary, action suggestions
+- Child linking and management flows
+
+### Platform & engineering
+
+- JWT auth with httpOnly cookies + role-based route protection (`src/proxy.ts`)
+- MongoDB persistence via Mongoose models
+- OpenAI integration for tutor, quizzes, and parent summaries
+- Optional Razorpay checkout (legacy courses)
+- Optimized images (AVIF/WebP), code splitting, route loading states
+- Scroll and rendering optimizations for smooth 60 FPS–target experience on desktop and mobile
 
 ---
 
-## 3. System architecture
+## User roles
+
+| Role | Default landing | Access |
+| --- | --- | --- |
+| **Student** | `/dashboard` | Subjects, sessions, AI tutor, learning path, achievements |
+| **Teacher** | `/teacher/dashboard` | Insights, assignments, subjects, students, analytics |
+| **Parent** | `/parent/dashboard` | Linked children, child insights |
+| **Admin** | `/organization` | Organization management (teachers may also access) |
+
+---
+
+## Tech stack
+
+| Layer | Technology |
+| --- | --- |
+| **Framework** | [Next.js 16](https://nextjs.org/) (App Router, Turbopack) |
+| **UI** | React 19, [Tailwind CSS 4](https://tailwindcss.com/) |
+| **Language** | TypeScript 5 |
+| **Database** | MongoDB + [Mongoose](https://mongoosejs.com/) 8 |
+| **Auth** | JWT (`jose` / `jsonwebtoken`), bcrypt password hashing |
+| **AI** | OpenAI API (tutor, quizzes, parent summaries) |
+| **Payments** | Razorpay (optional) |
+| **Email** | Resend (optional) |
+| **Icons** | [Lucide React](https://lucide.dev/) |
+| **Testing** | Vitest |
+| **Compiler** | React Compiler (babel plugin) |
+
+---
+
+## Architecture
+
+### High-level data flow
+
+```text
+Student → Subject → Topic → Session → Session Events (telemetry)
+                              ↓
+                    Mastery Records + Knowledge Gaps
+                              ↓
+              AI Tutor (adaptive / Socratic) ← session context
+                              ↓
+        Student Dashboard          Teacher Insights          Parent Insights
+```
 
 ### Frontend
 
-- **Next.js** (App Router)
-- **React**
-- **Tailwind CSS**
+- **Next.js App Router** with server and client components
+- Shared design tokens (`src/styles/isit-tokens.css`, `isit-dark-cosmic.css`)
+- `LanguageProvider` + dictionary-based i18n (`src/lib/i18n/`)
+- `AuthProvider` with cached `/api/auth/me` to reduce duplicate requests
+- Lazy-loaded sidebar, dynamic landing content, navigation progress bar
 
 ### Backend
 
-- **Next.js API Routes** — primary BFF and business logic (auth, curriculum, sessions, mastery, teacher/parent APIs).
-- **FastAPI** (optional) — when `NEXT_PUBLIC_USE_EXTERNAL_API=true`, selected client calls can target an external API base URL (e.g. for session/tutor orchestration). Next.js remains the default for many catalog and dashboard calls.
+- **Next.js Route Handlers** under `src/app/api/` (primary BFF)
+- Optional external FastAPI when `NEXT_PUBLIC_USE_EXTERNAL_API=true`
 
-### Database
+### Edge / proxy
 
-- **MongoDB** with **Mongoose** models (`src/models`).
+- `src/proxy.ts` — JWT validation and role-based redirects for protected routes and APIs
 
-### AI layer
+---
 
-- **OpenAI** (and compatible APIs) for tutor replies, quizzes, and parent summaries.
-- **RAG-style context** where applicable (topic notes, session events, mastery) — **no custom model training**.
-
-### High-level data flow (text diagram)
+## Project structure
 
 ```text
-Student → Topic / Session → Events (telemetry)
-              ↓
-         Mastery + Gaps
-              ↓
-    AI Tutor (ask / adapt) ← session context
-              ↓
-Student Dashboard (recommendations, weak areas)
-              ↓
-Teacher Insights (class + alerts)    Parent Insights (per child + summary)
+edtech-mvp/
+├── public/                 # Static assets (hero images, icons)
+├── scripts/
+│   └── seed.ts             # Database seeding
+├── docs/
+│   └── AI_FIRST_MIGRATION.md
+├── src/
+│   ├── app/                # Pages (App Router) + API routes
+│   │   ├── api/            # REST-style route handlers
+│   │   ├── dashboard/      # Student dashboard
+│   │   ├── teacher/        # Teacher portal
+│   │   ├── parent/         # Parent portal
+│   │   ├── session/        # Session player
+│   │   ├── subject/        # Subject & topic flows
+│   │   └── page.tsx        # Marketing home
+│   ├── components/         # UI components (nav, shells, landing)
+│   ├── lib/                # Auth, i18n, API client, tutor logic
+│   ├── models/             # Mongoose schemas
+│   ├── styles/             # Global CSS (tokens, mobile, scroll perf)
+│   └── proxy.ts            # Auth proxy (edge)
+├── .env.example
+├── next.config.ts
+├── package.json
+└── README.md
 ```
 
 ---
 
-## 4. Key concepts
+## Getting started
 
-| Concept | Meaning |
-| --- | --- |
-| **Session-based learning** | A bounded learning attempt tied to a **topic** (and subject/org). The session player and APIs treat the session as the unit for practice and many AI calls. |
-| **Event tracking** | **Session events** record what happened (e.g. question shown, answer, hint, teachback). Used for analytics, adaptation, and downstream insights. |
-| **Mastery engine** | **Mastery records** store per-student, per-topic scores and metadata; updated as learning evidence accrues — avoid bypassing this with ad-hoc “set score” shortcuts. |
-| **Knowledge gaps** | Optional records linking students to topics that need remediation; can complement weak-topic signals. |
-| **Recommendation system** | Dashboard logic surfaces next topics to study from mastery and practice patterns (heuristics; extensible). |
-| **AI tutor adaptation** | Uses recent answers, difficulty streaks, mastery, and prompts layered for Socratic behavior — difficulty and tone adjust within the session lifecycle. |
+### Prerequisites
 
----
+- **Node.js** 20+ (LTS recommended)
+- **npm** 10+
+- **MongoDB** instance (local or Atlas)
+- **OpenAI API key** (for AI tutor and summaries)
 
-## 5. Folder structure (simplified)
-
-| Path | Role |
-| --- | --- |
-| `src/app/` | **App Router** pages (`page.tsx`, layouts) and **Route Handlers** (`route.ts` under `api/`). |
-| `src/components/` | Shared UI (nav, shells, banners, reusable widgets). |
-| `src/lib/` | Auth, API client, session API, tutor adaptation, curriculum helpers, logging, validation, etc. |
-| `src/models/` | **Mongoose** schemas (User, Session, SessionEvent, MasteryRecord, Topic, Subject, etc.). |
-| `src/proxy.ts` | Edge **auth / route protection** entry (Next.js 16+ proxy; JWT + role checks). |
-| `scripts/` | e.g. **seeding** (`npm run seed`). |
-
----
-
-## 6. API overview (selected)
-
-| Route | Purpose |
-| --- | --- |
-| **`/api/sessions`** | Create and list sessions; ties student + topic + subject + org. |
-| **`/api/session-events`** / **`/api/events`** | Ingest and query **telemetry** for sessions. |
-| **`/api/mastery`** | Read/update **mastery** aligned with learning evidence. |
-| **`/api/performance`** | Aggregated **performance / time** style metrics for dashboards. |
-| **`/api/teacher/student-insights`** | **Teacher-only**: class-style insights (filters by grade/subject), alerts, per-student cards. |
-| **`/api/parent/child-insights`** | **Parent-only**: per-child stats, trends, AI summary, suggestions (child linked via parent profile). |
-| **`/api/sessions/ask`** | **Adaptive AI tutor** for the session player (classification, difficulty, Socratic layers, OpenAI completion). |
-
-Additional notable routes: `/api/topics`, `/api/subjects`, `/api/questions`, `/api/auth/*`, `/api/parent/children`, etc.
-
----
-
-## 7. Authentication
-
-- **JWT** issued on login/signup; stored in an **httpOnly cookie** for same-origin API calls.
-- **localStorage** (`auth_token`, `user`) synced on login for **Bearer** usage when calling an **external** API base.
-- **Remember me** — longer cookie/JWT lifetime when enabled; shorter when disabled.
-- **Role-based access** — **Student**, **Teacher**, **Parent**; enforced in API handlers and edge proxy for protected routes.
-- **401 handling** — client helpers clear stale tokens and can redirect to login (`fetchWithAuth`, `apiRequest`, auth context).
-
----
-
-## 8. AI system (important)
-
-- **Adaptive tutor** — message classification, difficulty state, and quick actions (hint vs explanation) driven by **`tutor-adaptive`** logic plus session context.
-- **Difficulty adjustment** — informed by answer streaks and mastery snapshots merged with stored session tutor state.
-- **Socratic questioning** — system prompts encourage guided questions rather than dumping full solutions first.
-- **Teachback** — structured phases and JSON parsing for teachback evaluation within the same pipeline.
-- **Session-based memory** — events and session fields feed the model context so replies stay relevant to the current topic and attempt.
-
----
-
-## 9. Environment variables
-
-| Variable | Purpose |
-| --- | --- |
-| **`MONGO_URI`** | MongoDB connection string. |
-| **`JWT_SECRET`** | Signing secret for JWTs (use a long random value in production). |
-| **`OPENAI_API_KEY`** | OpenAI API access for tutor, quizzes, parent summaries, etc. |
-| **`NEXT_PUBLIC_USE_EXTERNAL_API`** | `true` to send selected client traffic to FastAPI (`NEXT_PUBLIC_API_BASE_URL`); `false` for default Next-only API usage. |
-| **`NEXT_PUBLIC_API_BASE_URL`** | Base URL for external API (e.g. `http://localhost:8000`), no trailing slash issues handled in code. |
-
-See **`.env.example`** for a starter list and production checklist.
-
----
-
-## 10. How to run the project
+### Installation
 
 ```bash
+# Clone or open the project
 cd edtech-mvp
+
+# Install dependencies
 npm install
-cp .env.example .env   # then edit values
+
+# Configure environment
+cp .env.example .env
+# Edit .env with your MONGO_URI, JWT_SECRET, OPENAI_API_KEY, etc.
+
+# Run development server
 npm run dev
 ```
 
-Open **http://localhost:3000**.
+Open **http://localhost:3000** in your browser.
 
-Optional:
+### Optional: seed database
 
-- **Seed data**: `npm run seed` (if configured in your environment).
-- **FastAPI backend**: run your API on the URL set in `NEXT_PUBLIC_API_BASE_URL` and set `NEXT_PUBLIC_USE_EXTERNAL_API=true` only when that integration is fully wired and CORS is configured.
+```bash
+npm run seed
+```
+
+### Production build locally
+
+```bash
+npm run build
+npm run start
+```
 
 ---
 
-## 11. Current status
+## Environment variables
 
-| Area | Status |
+Copy `.env.example` to `.env` and configure:
+
+| Variable | Required | Description |
+| --- | --- | --- |
+| `MONGO_URI` | Yes | MongoDB connection string |
+| `JWT_SECRET` | Yes | Strong random secret for JWT signing (32+ chars in production) |
+| `OPENAI_API_KEY` | Yes* | OpenAI API key for AI features (*required for full tutor functionality) |
+| `NEXT_PUBLIC_SITE_URL` | Yes (prod) | Public URL, e.g. `https://isic.org.in` |
+| `NEXT_PUBLIC_SUPPORT_EMAIL` | No | Contact email in footer/legal pages |
+| `NEXT_PUBLIC_USE_EXTERNAL_API` | No | `true` to use external FastAPI for some session APIs |
+| `NEXT_PUBLIC_API_BASE_URL` | No | FastAPI base URL when external API mode is enabled |
+| `RESEND_API_KEY` | No | Transactional email via Resend |
+| `RAZORPAY_*` | No | Live payment keys for checkout |
+
+See `.env.example` for the full list and production checklist.
+
+> **Never** commit `.env` or secrets to version control. Variables prefixed with `NEXT_PUBLIC_` are exposed to the browser.
+
+---
+
+## Scripts
+
+| Command | Description |
 | --- | --- |
-| **Student system** | Complete (dashboard, subjects/topics, sessions, practice, tutor, completion UX). |
-| **Teacher system** | Complete (student insights API + dashboard UI, filters, alerts). |
-| **Parent system** | Complete (child insights API, dashboard + child views, multi-child). |
-| **AI tutor** | Adaptive pipeline implemented (Socratic + difficulty + teachback hooks). |
-| **Product** | **Launch-ready MVP** — env, auth, proxy, logging hooks, and core journeys in place. |
+| `npm run dev` | Start development server (Turbopack) |
+| `npm run build` | Production build |
+| `npm run start` | Start production server |
+| `npm run lint` | Run ESLint |
+| `npm run test` | Run Vitest test suite |
+| `npm run test:watch` | Vitest in watch mode |
+| `npm run seed` | Seed MongoDB with sample data |
 
 ---
 
-## 12. Next improvements (TODO)
+## Internationalization & theme
 
-- Further **raise tutor intelligence** (richer context, safer pedagogy, evaluation loops).
-- **Analytics dashboards** with charts (engagement over time, cohort views).
-- **Real-time notifications** (WebSockets or push) for teachers/parents.
-- **Onboarding** — smoother first-run for students, teachers, and parents.
-- **Payments** — refinement of legacy marketplace checkout if still in scope.
-- **Mobile responsiveness** — polish for small screens across session player and dashboards.
+### Languages
 
----
+- **English** (`en`) and **Hindi** (`hi`)
+- Dictionaries: `src/lib/i18n/en.ts`, `src/lib/i18n/hi.ts`, `src/lib/i18n/landing.ts`
+- Reactive switching via `LanguageProvider` and `useT()` — no page refresh required
+- Preference stored in `localStorage` (`isit-language`)
 
-## 13. Theme system (to implement)
+### Theme
 
-- Add a **global theme toggle** (light / dark).
-- Persist preference in **localStorage** (and optionally respect `prefers-color-scheme` as default).
-- Enable **Tailwind dark mode** (e.g. `class` strategy on `<html>`).
-- Apply tokens consistently across **layouts, cards, and session UI**.
+- **Light** and **dark** (cosmic) themes
+- Class-based dark mode on `<html>` (`html.dark`)
+- Persisted in `localStorage` (`isit-theme`)
+- Bootstrap script in root layout prevents flash of wrong theme
 
 ---
 
-## 14. Multilingual support (to implement)
+## Performance & UX
 
-- Support **English** and **Hindi** (expandable later).
-- Use a clear **i18n** approach — simple JSON dictionaries or **`next-intl`** (or similar).
-- Store **`locale`** in localStorage (and optionally URL prefix).
-- Update incrementally: **navbar**, **dashboard**, **buttons**, then **AI prompts** (optional; requires careful prompt design per language).
+The app includes targeted optimizations for smooth scrolling and stable rendering:
 
----
-
-## 15. Notes for future development
-
-- **Do not break session-based architecture** — new learning flows should create or resume **sessions** where practice and AI attach.
-- **All learning should go through sessions** when adding features that affect mastery or tutor state.
-- **Avoid direct mastery updates** that skip events and session rules — keep one source of truth.
-- **Keep AI and frontend aligned** — when changing event types or session shape, update both API consumers and adaptation logic.
+- Scroll-performance layer: pauses decorative animations while scrolling; reduces GPU blur cost in dark mode during scroll
+- Custom cursor uses direct DOM transforms (no per-frame React re-renders)
+- Lazy-loaded heavy components (landing content, sidebar)
+- Auth response caching (`auth-me-cache.ts`)
+- Image optimization (AVIF/WebP, responsive `sizes`)
+- Mobile-responsive CSS (`src/styles/mobile-responsive.css`)
+- Route-level `loading.tsx` skeletons for dashboard, teacher, parent, login
 
 ---
 
-## 16. Author / project info
+## API overview
+
+Selected Route Handlers (see `src/app/api/` for the full set):
+
+| Endpoint | Purpose |
+| --- | --- |
+| `/api/auth/*` | Login, signup, logout, verify email, password reset |
+| `/api/auth/me` | Current user profile |
+| `/api/subjects`, `/api/topics` | Curriculum catalog |
+| `/api/sessions`, `/api/sessions/[id]` | Learning sessions |
+| `/api/sessions/ask` | Adaptive AI tutor (session context) |
+| `/api/sessions/end` | End session and persist results |
+| `/api/session-events`, `/api/events` | Learning telemetry |
+| `/api/mastery` | Per-topic mastery records |
+| `/api/performance` | Dashboard performance aggregates |
+| `/api/teacher/student-insights` | Teacher class insights |
+| `/api/teacher/assigned-topics` | Teacher topic assignments |
+| `/api/parent/children`, `/api/parent/child-insights` | Parent child management & insights |
+| `/api/ai/tutor` | General AI tutor endpoint |
+| `/api/checkout` | Course checkout (legacy) |
+
+---
+
+## Authentication & security
+
+- **JWT** issued on login/signup; **httpOnly cookie** for same-origin API calls
+- **Remember me** — extended session lifetime when enabled
+- **Role-based access** enforced in APIs and `src/proxy.ts`
+- Security headers in `next.config.ts`: `X-Frame-Options`, `HSTS` (production), `Referrer-Policy`, etc.
+- Passwords hashed with **bcryptjs**
+- Client auth helpers clear stale tokens on 401 (`fetchWithAuth`)
+
+---
+
+## AI system
+
+- **Adaptive tutor pipeline** — message classification, difficulty state, Socratic prompts
+- **Session context** — recent events, mastery, and topic notes feed the model
+- **Teachback evaluation** — structured phases within the session flow
+- **Parent summaries** — AI-generated encouraging paragraphs (with fallback copy)
+- **Quiz generation** — `/api/ai/generate-quiz`
+- No custom model training; uses OpenAI APIs with RAG-style context
+
+---
+
+## Deployment
+
+Typical production setup:
+
+1. Set environment variables on the host (Vercel, VPS, etc.)
+2. Set `NEXT_PUBLIC_SITE_URL=https://isic.org.in`
+3. Use a production `JWT_SECRET` and MongoDB Atlas URI
+4. Enable HTTPS (cookies use `Secure` in production)
+5. Run `npm run build` and `npm run start` (or platform-native Next.js deploy)
+
+`next.config.ts` includes:
+
+- `compress: true`
+- Long-cache headers for `/_next/static` and static assets
+- `optimizePackageImports` for `lucide-react`
+
+For multi-instance deployments, consider external rate-limit storage (see comments in `.env.example`).
+
+---
+
+## Documentation
+
+| Resource | Description |
+| --- | --- |
+| [Live site](https://isic.org.in/) | Production website |
+| `docs/AI_FIRST_MIGRATION.md` | AI-first vs legacy marketplace architecture |
+| `.env.example` | Environment template and production checklist |
+
+### Legacy note
+
+The codebase retains a **Course → Lesson** marketplace path (`/courses`, `/checkout`, etc.) alongside the **AI-first** Subject → Topic → Session model. New learning features should prefer the session-based architecture. See `docs/AI_FIRST_MIGRATION.md`.
+
+---
+
+## License & contact
 
 | | |
 | --- | --- |
+| **Organization** | Indian School of Innovation and Curiosity (ISIC) |
+| **Website** | [https://isic.org.in/](https://isic.org.in/) |
+| **Support email** | Configured via `NEXT_PUBLIC_SUPPORT_EMAIL` (default: hello@isic.in) |
 | **Built by** | Raziullah Ansari |
-| **Organization** | ISIT — EdTech startup |
 | **Status** | Production-ready MVP |
-| **Stack docs** | [Next.js](https://nextjs.org/docs) · Internal migration notes under `docs/` where present (e.g. AI-first migration). |
 
 ---
 
-*This README is the primary onboarding document for developers, stakeholders, and anyone continuing the product.*
+*This README is the primary onboarding document for developers, contributors, and stakeholders working on the ISIC platform.*

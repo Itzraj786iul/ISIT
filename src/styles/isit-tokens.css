@@ -368,6 +368,142 @@ html.dark .isit-app-chip-active {
   color: #e0f2fe;
 }
 
+/* —— App nested surfaces (chat, prompts, tabs) — light + dark —— */
+.isit-app-inset {
+  background: var(--isit-surface);
+  border: 1px solid var(--isit-border);
+  color: var(--isit-text-secondary);
+}
+
+html.dark .isit-app-inset {
+  background: rgba(15, 23, 42, 0.72);
+  border-color: rgba(34, 211, 238, 0.2);
+  color: #cbd5e1;
+}
+
+.isit-app-inset:hover {
+  background: var(--isit-accent-soft);
+  border-color: color-mix(in srgb, var(--isit-accent) 28%, var(--isit-border));
+  color: var(--isit-text);
+}
+
+html.dark .isit-app-inset:hover {
+  background: rgba(34, 211, 238, 0.1);
+  border-color: rgba(34, 211, 238, 0.28);
+  color: #e2e8f0;
+}
+
+.isit-app-tab-bar {
+  background: var(--isit-surface-muted);
+  border: 1px solid var(--isit-border);
+}
+
+html.dark .isit-app-tab-bar {
+  background: rgba(15, 23, 42, 0.72);
+  border-color: rgba(34, 211, 238, 0.2);
+}
+
+.isit-app-tab-btn {
+  color: var(--isit-text-muted);
+  border-radius: 0.375rem;
+}
+
+.isit-app-tab-btn.is-active {
+  background: var(--isit-accent-soft);
+  color: var(--isit-accent);
+  font-weight: 600;
+}
+
+html.dark .isit-app-tab-btn.is-active {
+  background: rgba(34, 211, 238, 0.2);
+  color: #e0f2fe;
+}
+
+.isit-app-chat-assistant {
+  background: var(--isit-surface);
+  border: 1px solid var(--isit-border);
+  color: var(--isit-text);
+  box-shadow: var(--isit-shadow-sm);
+}
+
+html.dark .isit-app-chat-assistant {
+  background: rgba(15, 23, 42, 0.78);
+  border-color: rgba(34, 211, 238, 0.2);
+  color: var(--isit-text);
+}
+
+.isit-app-chat-user {
+  background: var(--isit-accent-soft);
+  border: 1px solid color-mix(in srgb, var(--isit-accent) 32%, var(--isit-border));
+  color: var(--isit-text);
+}
+
+html.dark .isit-app-chat-user {
+  background: rgba(34, 211, 238, 0.18);
+  border-color: rgba(34, 211, 238, 0.3);
+  color: #e0f2fe;
+}
+
+.isit-app-chat-input-wrap {
+  background: var(--isit-surface);
+  border: 1px solid color-mix(in srgb, var(--isit-accent) 28%, var(--isit-border));
+}
+
+html.dark .isit-app-chat-input-wrap {
+  background: rgba(15, 23, 42, 0.78);
+  border-color: rgba(34, 211, 238, 0.25);
+}
+
+.isit-verification-banner {
+  border: 1px solid #bae6fd;
+  background: #f0f9ff;
+  color: #0c4a6e;
+}
+
+html.dark .isit-verification-banner {
+  border-color: rgba(251, 191, 36, 0.35);
+  background: rgba(69, 26, 3, 0.55);
+  color: #fef3c7;
+}
+
+.isit-verification-banner .isit-verification-banner-title {
+  color: #0369a1;
+  font-weight: 600;
+}
+
+html.dark .isit-verification-banner .isit-verification-banner-title {
+  color: #fde68a;
+}
+
+.isit-verification-banner .isit-verification-banner-body {
+  color: #0284c7;
+}
+
+html.dark .isit-verification-banner .isit-verification-banner-body {
+  color: rgba(254, 243, 199, 0.85);
+}
+
+.isit-verification-banner-btn {
+  border: 1px solid #7dd3fc;
+  background: #ffffff;
+  color: #0369a1;
+  font-weight: 600;
+}
+
+html.dark .isit-verification-banner-btn {
+  border-color: rgba(251, 191, 36, 0.4);
+  background: rgba(245, 158, 11, 0.15);
+  color: #fef3c7;
+}
+
+.isit-verification-banner-btn:hover:not(:disabled) {
+  background: #e0f2fe;
+}
+
+html.dark .isit-verification-banner-btn:hover:not(:disabled) {
+  background: rgba(245, 158, 11, 0.28);
+}
+
 .isit-achievement-card {
   position: relative;
   border-radius: 1rem;
@@ -2107,6 +2243,30 @@ html:not(.dark) .isit-app-breadcrumb-current {
   color: var(--isit-text-secondary) !important;
 }
 
+html:not(.dark) :is(.isit-app-bg, .isit-cosmic-bg) .isit-app-stat-card {
+  box-shadow: var(--isit-shadow-md);
+  background: var(--isit-surface-elevated);
+}
+
+html:not(.dark) :is(.isit-app-bg, .isit-cosmic-bg) .isit-app-header {
+  background: var(--isit-surface-elevated);
+  border-bottom: 1px solid var(--isit-border);
+}
+
+/* Light mode: remap hardcoded dark inset utilities inside app shells */
+html:not(.dark) :is(.isit-app-bg, .isit-cosmic-bg) :where([class*='bg-slate-900']) {
+  background-color: var(--isit-surface-muted) !important;
+}
+
+html:not(.dark) :is(.isit-app-bg, .isit-cosmic-bg) :where([class*='bg-slate-900']) .text-slate-600,
+html:not(.dark) :is(.isit-app-bg, .isit-cosmic-bg) :where([class*='bg-slate-900']).text-slate-600 {
+  color: var(--isit-text-secondary) !important;
+}
+
+html:not(.dark) :is(.isit-app-bg, .isit-cosmic-bg) :where([class*='bg-slate-900']) .font-semibold.text-slate-600 {
+  color: var(--isit-accent) !important;
+}
+
 /* Belt-and-suspenders: token surfaces always follow theme */
 html.dark :is(.isit-app-panel, .isit-app-stat-card, .isit-app-header, .isit-achievement-card) {
   background: var(--isit-surface-elevated);
@@ -2139,4 +2299,48 @@ html:not(.dark) :is(.isit-app-bg, .isit-cosmic-bg) .isit-app-chip:not(.isit-app-
 html.dark :is(.isit-app-bg, .isit-cosmic-bg) :is(button, a)[class*='hover:bg-slate-100']:hover:not([class*='bg-sky-']):not([class*='bg-violet-']) {
   background-color: rgba(51, 65, 85, 0.75) !important;
   color: #f1f5f9 !important;
+}
+
+/* —— Light mode: solid app panels (no dark glass bleed on tutor/dashboard) —— */
+html:not(.dark) :is(.isit-app-bg, .isit-cosmic-bg) .isit-glass {
+  background: var(--isit-surface) !important;
+  border-color: var(--isit-border) !important;
+  color: var(--isit-text) !important;
+  box-shadow: var(--isit-shadow-md) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+html:not(.dark) :is(.isit-app-bg, .isit-cosmic-bg) .isit-app-inset {
+  background: var(--isit-surface) !important;
+  border: 1px solid var(--isit-border) !important;
+  color: var(--isit-text-secondary) !important;
+}
+
+html:not(.dark) :is(.isit-app-bg, .isit-cosmic-bg) .isit-app-inset:hover {
+  background: var(--isit-accent-soft) !important;
+  border-color: color-mix(in srgb, var(--isit-accent) 28%, var(--isit-border)) !important;
+  color: var(--isit-text) !important;
+}
+
+html:not(.dark) :is(.isit-app-bg, .isit-cosmic-bg) .isit-app-tab-bar {
+  background: var(--isit-surface-muted) !important;
+  border-color: var(--isit-border) !important;
+}
+
+html:not(.dark) :is(.isit-app-bg, .isit-cosmic-bg) .isit-app-chat-assistant {
+  background: var(--isit-surface) !important;
+  border: 1px solid var(--isit-border) !important;
+  color: var(--isit-text) !important;
+  box-shadow: var(--isit-shadow-sm) !important;
+}
+
+html:not(.dark) :is(.isit-app-bg, .isit-cosmic-bg) .isit-app-chat-input-wrap {
+  background: var(--isit-surface) !important;
+  border: 1px solid var(--isit-input-border) !important;
+}
+
+html:not(.dark) :is(.isit-app-bg, .isit-cosmic-bg) .isit-app-tab-btn.is-active {
+  background: var(--isit-accent-soft) !important;
+  color: var(--isit-accent) !important;
 }

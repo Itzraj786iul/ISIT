@@ -40,6 +40,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   useLayoutEffect(() => {
     const lang = readStoredLanguage();
     setLanguageState(lang);
+    setAppLanguage(lang);
     document.documentElement.lang = lang === 'hi' ? 'hi' : 'en';
     try {
       if (!localStorage.getItem(LANGUAGE_STORAGE_KEY) && localStorage.getItem(LEGACY_LOCALE_KEY) === lang) {

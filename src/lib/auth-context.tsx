@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useState, useCallback, type ReactNode } from 'react';
 import { clearClientAuth } from '@/lib/client-auth';
+import { fetchAuthMeCached, invalidateAuthMeCache } from '@/lib/auth-me-cache';
 
 import type { LearningMode } from '@/lib/learning-mode';
 
@@ -35,19 +36,12 @@ const AuthContext = createContext<AuthContextType>({
 /** Bumps on `refresh({ force: true })` so a slow pre-login `/api/auth/me` cannot overwrite state after login. */
 let authFetchGeneration = 0;
 
-async function fetchMe(): Promise<AuthUser | null> {
-  try {
-    const res = await fetch('/api/auth/me', { credentials: 'include' });
-    if (res.status === 401) {
-      clearClientAuth();
-      return null;
-    }
-    if (!res.ok) return null;
-    const data = await res.json();
-    return data.user ?? null;
-  } catch {
-    return null;
+async function fetchMe(force?: boolean): Promise<AuthUser | null> {
+  const u = await fetchAuthMeCached({ force });
+  if (u === null) {
+    clearClientAuth();
   }
+  return u as AuthUser | null;
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -59,7 +53,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       authFetchGeneration += 1;
     }
     const generation = authFetchGeneration;
-    const u = await fetchMe();
+    const u = await fetchMe(options?.force);
     if (generation !== authFetchGeneration) {
       return u;
     }
@@ -71,6 +65,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = useCallback(async () => {
     await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
     clearClientAuth();
+    invalidateAuthMeCache();
     authFetchGeneration += 1;
     setUser(null);
     setLoading(false);

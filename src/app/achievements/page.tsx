@@ -1,9 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import Sidebar from '@/components/Sidebar';
+import Sidebar from '@/components/LazySidebar';
+import { useRequireAuth } from '@/lib/use-require-auth';
 import { Award, BookOpen, Layers, Target, Loader2, ChevronRight } from 'lucide-react';
 import { useT, type I18nKey } from '@/lib/t';
 
@@ -35,18 +35,14 @@ type MasteryRecord = {
 
 export default function AchievementsPage() {
   const tr = useT();
-  const router = useRouter();
+  const { user: authUser, loading: authLoading } = useRequireAuth({ roles: ['student'] });
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (authLoading || !authUser) return;
     const run = async () => {
       setLoading(true);
-      const meRes = await fetch('/api/auth/me', { credentials: 'include' });
-      if (!meRes.ok) { router.push('/login'); return; }
-      const meData = await meRes.json();
-      const u = meData.user;
-      if (!u || u.role?.toLowerCase() === 'teacher') { router.push('/teacher/dashboard'); return; }
 
       const achList: Achievement[] = [];
 
@@ -94,8 +90,8 @@ export default function AchievementsPage() {
           color: '#a855f7',
         });
 
-        if (u.organization_id) {
-          const subjRes = await fetch(`/api/subjects?organizationId=${encodeURIComponent(u.organization_id)}`);
+        if (authUser.organization_id) {
+          const subjRes = await fetch(`/api/subjects?organizationId=${encodeURIComponent(authUser.organization_id)}`);
           const subjJson = await subjRes.json();
           const subjectCount = subjJson.success && Array.isArray(subjJson.data) ? subjJson.data.length : 0;
 
@@ -141,7 +137,7 @@ export default function AchievementsPage() {
       setLoading(false);
     };
     run();
-  }, [router]);
+  }, [authUser, authLoading]);
 
   const unlocked = achievements.filter((a) => a.unlocked).length;
 

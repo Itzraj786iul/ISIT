@@ -4,7 +4,8 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import Sidebar from '@/components/Sidebar';
+import Sidebar from '@/components/LazySidebar';
+import { useRequireAuth } from '@/lib/use-require-auth';
 import EmptyState from '@/components/EmptyState';
 import ApiErrorState from '@/components/ApiErrorState';
 import { fetchWithAuth } from '@/lib/api-client';
@@ -36,22 +37,19 @@ export default function SubjectsPage() {
   const [err, setErr] = useState<ErrState>(null);
   const [teacherScoped, setTeacherScoped] = useState(false);
 
+  const { user: authUser, loading: authLoading } = useRequireAuth();
+
   useEffect(() => {
+    if (authLoading) return;
     const fetchSubjects = async () => {
       setLoading(true);
       setErr(null);
       try {
-        const meRes = await fetchWithAuth('/api/auth/me', { redirectOn401: true, returnUrl: '/subjects' });
-        if (!meRes.ok) {
-          if (meRes.status === 401) return;
-          const meJson = (await meRes.json().catch(() => ({}))) as { error?: string; message?: string };
-          const detail = meJson.error ?? meJson.message;
-          setErr({ kind: 'http', status: meRes.status, detail });
+        const user = authUser as User | undefined;
+        if (!user) {
           setLoading(false);
           return;
         }
-        const meData = await meRes.json();
-        const user = meData?.user as User | undefined;
         const organizationId =
           user?.organization_id ??
           (typeof process.env.NEXT_PUBLIC_ORGANIZATION_ID === 'string'
@@ -89,7 +87,7 @@ export default function SubjectsPage() {
     };
 
     fetchSubjects();
-  }, [router]);
+  }, [authUser, authLoading, router]);
 
   return (
     <div className="isit-cosmic-bg relative flex min-h-screen overflow-x-hidden font-sans">

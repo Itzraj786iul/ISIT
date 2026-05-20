@@ -2,6 +2,7 @@
  * Client-side auth mirror for `NEXT_PUBLIC_USE_EXTERNAL_API` (Bearer from localStorage).
  * httpOnly cookie remains the source of truth for same-origin Next.js API routes.
  */
+import { invalidateAuthMeCache } from '@/lib/auth-me-cache';
 
 export const STORAGE_USER_KEY = 'user';
 
@@ -23,4 +24,5 @@ export function clearClientAuth(): void {
   localStorage.removeItem('auth_token');
   localStorage.removeItem('access_token');
   localStorage.removeItem(STORAGE_USER_KEY);
+  invalidateAuthMeCache();
 }

@@ -9,7 +9,8 @@ import { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import Sidebar from '@/components/Sidebar';
+import Sidebar from '@/components/LazySidebar';
+import { useRequireAuth } from '@/lib/use-require-auth';
 import { BookOpen, ChevronRight, Search } from 'lucide-react';
 import LegacyMarketplaceBanner from '@/components/LegacyMarketplaceBanner';
 import { useT } from '@/lib/t';
@@ -33,20 +34,11 @@ export default function MyCoursesPage() {
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<Filter>('all');
 
-  useEffect(() => {
-    const run = async () => {
-      const meRes = await fetch('/api/auth/me', { credentials: 'include' });
-      if (!meRes.ok) {
-        router.push('/login');
-        return;
-      }
-      const meData = await meRes.json();
-      const userData = meData.user as { _id?: string; id?: string; role?: string };
-      if (!userData || userData.role?.toLowerCase() === 'teacher') {
-        router.push('/teacher/dashboard');
-        return;
-      }
+  const { ready, loading: authLoading } = useRequireAuth({ roles: ['student'] });
 
+  useEffect(() => {
+    if (authLoading || !ready) return;
+    const run = async () => {
       try {
         const res = await fetch('/api/student/enrolled-courses', { credentials: 'include' });
         if (res.ok) setEnrolled(await res.json());
@@ -57,7 +49,7 @@ export default function MyCoursesPage() {
       }
     };
     run();
-  }, [router]);
+  }, [authLoading, ready]);
 
   const filtered = useMemo(() => {
     let list = enrolled;

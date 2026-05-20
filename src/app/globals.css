@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @import "../styles/isit-tokens.css";
 @import "../styles/isit-dark-cosmic.css";
+@import "../styles/scroll-performance.css";
+@import "../styles/mobile-responsive.css";
 
 /* Class-based dark mode: `dark` on <html> (see root layout inline script + `applyThemeClass`). */
 @custom-variant dark (&:where(html.dark, html.dark *));
@@ -89,11 +91,11 @@ body {
 @keyframes fade-up-lg {
   from {
     opacity: 0;
-    transform: translateY(36px);
+    transform: translate3d(0, 24px, 0);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0);
   }
 }
 
@@ -133,26 +135,35 @@ body {
 
 .isit-reveal-block {
   opacity: 0;
-  transform: translateY(32px);
-  filter: blur(0);
+  transform: translate3d(0, 12px, 0);
   transition:
-    opacity 0.85s cubic-bezier(0.22, 1, 0.36, 1),
-    transform 0.85s cubic-bezier(0.22, 1, 0.36, 1);
-  will-change: opacity, transform;
+    opacity 0.28s ease-out,
+    transform 0.28s ease-out;
 }
 
-.isit-reveal-block-visible {
+.isit-reveal-block.isit-reveal-block-visible {
   opacity: 1;
-  transform: translateY(0);
+  transform: translate3d(0, 0, 0);
 }
 
 .isit-reveal-stagger > * {
   opacity: 0;
-  transform: translateY(22px);
+  transform: translate3d(0, 10px, 0);
 }
 
 .isit-reveal-stagger-visible > * {
-  animation: fade-up-lg 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation: fade-up-reveal 0.3s ease-out forwards;
+}
+
+@keyframes fade-up-reveal {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 10px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
 }
 
 .isit-reveal-stagger-visible > *:nth-child(1) {
@@ -230,7 +241,7 @@ body {
 
 @media (prefers-reduced-motion: no-preference) {
   .motion-safe-transition {
-    transition-property: color, background-color, border-color, box-shadow, opacity, transform;
+    transition-property: color, background-color, border-color, opacity, transform;
     transition-duration: 200ms;
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   }
@@ -247,8 +258,17 @@ body {
     animation: pulse-cyan 2.4s infinite;
   }
 
-  .site-motion-layer > * {
-    animation: fade-up-page 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+  #main-content.site-motion-layer {
+    animation: fade-in-main 0.28s ease-out both;
+  }
+
+  @keyframes fade-in-main {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
 
   .isit-hero-col > * {
@@ -333,7 +353,6 @@ body {
   width: max-content;
   gap: 1.5rem;
   animation: landing-marquee-x 48s linear infinite;
-  will-change: transform;
 }
 
 .landing-marquee-track:hover {
@@ -422,13 +441,23 @@ body {
   }
 }
 
+.isit-cursor-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  overflow: hidden;
+  contain: strict;
+  isolation: isolate;
+}
+
 .isit-cursor-dot,
 .isit-cursor-ring {
   pointer-events: none;
   position: fixed;
   left: 0;
   top: 0;
-  z-index: 9999;
+  margin: 0;
   transform: translate3d(-100px, -100px, 0);
 }
 

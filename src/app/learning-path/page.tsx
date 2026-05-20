@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import Sidebar from '@/components/Sidebar';
+import Sidebar from '@/components/LazySidebar';
+import { useRequireAuth } from '@/lib/use-require-auth';
 import { Target, ChevronRight, Layers, Loader2 } from 'lucide-react';
 import { useT } from '@/lib/t';
 
@@ -21,14 +22,13 @@ export default function LearningPathPage() {
   const [paths, setPaths] = useState<SubjectPath[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const { user: authUser, loading: authLoading } = useRequireAuth({ roles: ['student'] });
+
   useEffect(() => {
+    if (authLoading || !authUser) return;
     const run = async () => {
       setLoading(true);
-      const meRes = await fetch('/api/auth/me', { credentials: 'include' });
-      if (!meRes.ok) { router.push('/login'); return; }
-      const meData = await meRes.json();
-      const u = meData.user;
-      if (!u || u.role?.toLowerCase() === 'teacher') { router.push('/teacher/dashboard'); return; }
+      const u = authUser;
 
       if (!u.organization_id) { setLoading(false); return; }
 
@@ -58,7 +58,7 @@ export default function LearningPathPage() {
       }
     };
     run();
-  }, [router]);
+  }, [authUser, authLoading, router]);
 
   return (
     <div className="isit-cosmic-bg relative flex min-h-screen font-sans ">
@@ -67,11 +67,11 @@ export default function LearningPathPage() {
         <header className="isit-app-header shrink-0">
           <div className="px-4 py-3 sm:px-6 md:px-8">
             <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-2 text-sm">
-              <Link href="/dashboard" className="font-medium text-sky-600 hover:underline dark:text-sky-400">
+              <Link href="/dashboard" className="isit-app-breadcrumb-link font-medium text-sky-700 hover:underline dark:text-sky-400">
                 {tr('dashboard')}
               </Link>
               <ChevronRight className="h-3.5 w-3.5 shrink-0 text-slate-400" aria-hidden />
-              <span className="font-medium text-slate-700 dark:text-slate-200">{tr('learningPath')}</span>
+              <span className="isit-app-breadcrumb-current font-medium">{tr('learningPath')}</span>
             </nav>
           </div>
         </header>
@@ -102,7 +102,7 @@ export default function LearningPathPage() {
                   <div className="p-6 md:p-8">
                     <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                       <div>
-                        <h2 className="text-xl font-bold text-slate-800">{path.name}</h2>
+                        <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100">{path.name}</h2>
                         {path.description && <p className="text-slate-500 dark:text-slate-400 text-sm mt-0.5">{path.description}</p>}
                         <div className="flex flex-wrap gap-4 mt-3">
                           <span className="inline-flex items-center gap-1.5 text-sm text-slate-600 dark:text-slate-300">

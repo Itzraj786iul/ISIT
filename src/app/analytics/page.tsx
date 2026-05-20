@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import Sidebar from '@/components/Sidebar';
+import Sidebar from '@/components/LazySidebar';
+import { useRequireAuth } from '@/lib/use-require-auth';
 import { BookOpen, Target, TrendingUp, Layers, Clock, Loader2, ChevronRight } from 'lucide-react';
 import { useT } from '@/lib/t';
 import { useLanguage } from '@/lib/language-context';
@@ -51,18 +52,15 @@ export default function AnalyticsPage() {
   const [weeklyData, setWeeklyData] = useState<{ day: string; hours: number }[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const { user: authUser, loading: authLoading } = useRequireAuth({ roles: ['student'] });
+
   useEffect(() => {
+    if (authLoading || !authUser) return;
+    const userData = authUser;
+    setUser(userData);
+
     const run = async () => {
       setLoading(true);
-      const meRes = await fetch('/api/auth/me', { credentials: 'include' });
-      if (!meRes.ok) { router.push('/login'); return; }
-      const meData = await meRes.json();
-      const userData = meData.user;
-      if (!userData || userData?.role?.toLowerCase() === 'teacher') {
-        router.push('/teacher/dashboard');
-        return;
-      }
-      setUser(userData);
 
       const fetches: Promise<void>[] = [];
 
@@ -138,7 +136,7 @@ export default function AnalyticsPage() {
       setLoading(false);
     };
     run();
-  }, [router]);
+  }, [authUser, authLoading]);
 
   const maxHours = Math.max(...weeklyData.map((d) => d.hours), 1);
   const totalHoursThisWeek = weeklyData.reduce((s, d) => s + d.hours, 0);

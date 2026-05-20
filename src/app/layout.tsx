@@ -8,7 +8,7 @@ import Script from "next/script";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { AppProviders } from "@/components/AppProviders";
-import { AnimatedCursor } from "@/components/AnimatedCursor";
+import { ClientLayoutChrome } from "@/components/ClientLayoutChrome";
 import { SkipLink } from "@/components/SkipLink";
 import { getPublicSiteUrl } from "@/lib/public-site-url";
 
@@ -17,11 +17,15 @@ const themeAndLangBootstrap = `(function(){try{var t=localStorage.getItem('isit-
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+  display: "swap",
+  preload: true,
 });
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  display: "swap",
+  preload: false,
 });
 
 export const metadata: Metadata = {
@@ -83,7 +87,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: themeAndLangBootstrap }}
         />
         <SkipLink />
-        <AnimatedCursor />
+        <ClientLayoutChrome />
         <AppProviders>
           <div id="main-content" className="site-motion-layer outline-none" tabIndex={-1}>
             {children}

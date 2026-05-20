@@ -173,7 +173,7 @@ function TutorContent() {
       <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
         <div className="min-w-0">
           <p className="text-xs uppercase tracking-[0.2em] text-sky-600 dark:text-cyan-300">{tr('aiTutorPageEyebrow')}</p>
-          <h1 className="mt-1 text-2xl font-black sm:text-3xl md:text-4xl">{tr('aiTutor')}</h1>
+          <h1 className="mt-1 text-2xl font-black text-slate-900 dark:text-white sm:text-3xl md:text-4xl">{tr('aiTutor')}</h1>
           <p className="mt-2 max-w-2xl text-sm isit-body/70">{tr('aiTutorPageLead')}</p>
         </div>
         <div className="flex flex-wrap items-center gap-2 text-xs">
@@ -190,28 +190,28 @@ function TutorContent() {
       </div>
 
       <div className="mb-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <div className="isit-glass rounded-2xl p-3">
+        <div className="isit-app-stat-card rounded-2xl p-3">
           <p className="text-[11px] uppercase text-sky-600 dark:text-cyan-300">{tr('aiTutorReadiness')}</p>
           <p className="mt-1 flex items-center gap-2 text-sm font-semibold isit-body">
             <Gauge className="h-4 w-4" />
             {tr('aiTutorReadinessHigh')}
           </p>
         </div>
-        <div className="isit-glass rounded-2xl p-3">
+        <div className="isit-app-stat-card rounded-2xl p-3">
           <p className="text-[11px] uppercase text-sky-600 dark:text-cyan-300">{tr('aiTutorFocusTime')}</p>
           <p className="mt-1 flex items-center gap-2 text-sm font-semibold isit-body">
             <Clock3 className="h-4 w-4" />
             {tr('aiTutorFocusTimeValue')}
           </p>
         </div>
-        <div className="isit-glass rounded-2xl p-3">
+        <div className="isit-app-stat-card rounded-2xl p-3">
           <p className="text-[11px] uppercase text-sky-600 dark:text-cyan-300">{tr('aiTutorPracticePack')}</p>
           <p className="mt-1 flex items-center gap-2 text-sm font-semibold isit-body">
             <BookMarked className="h-4 w-4" />
             {tr('aiTutorPracticePackValue')}
           </p>
         </div>
-        <div className="isit-glass rounded-2xl p-3">
+        <div className="isit-app-stat-card rounded-2xl p-3">
           <p className="text-[11px] uppercase text-sky-600 dark:text-cyan-300">{tr('aiTutorSafety')}</p>
           <p className="mt-1 flex items-center gap-2 text-sm font-semibold isit-body">
             <ShieldCheck className="h-4 w-4" />
@@ -223,7 +223,7 @@ function TutorContent() {
       <div className="flex flex-col gap-4 lg:grid lg:grid-cols-[minmax(0,220px)_1fr_minmax(0,240px)]">
         <aside className="isit-glass order-2 max-h-[min(42vh,320px)] overflow-y-auto rounded-2xl p-4 lg:order-none lg:max-h-none">
           <p className="mb-3 text-sm font-semibold isit-body">{tr('aiTutorQuickPrompts')}</p>
-          <div className="mb-3 grid grid-cols-3 gap-1 rounded-lg border border-slate-200 dark:border-cyan-300/20 bg-slate-900/70 p-1 text-[11px]">
+          <div className="isit-app-tab-bar mb-3 grid grid-cols-3 gap-1 rounded-lg p-1 text-[11px]">
             {(
               [
                 { id: 'explain' as const, labelKey: 'aiTutorTabExplain' as const },
@@ -235,7 +235,7 @@ function TutorContent() {
                 key={id}
                 type="button"
                 onClick={() => setActiveTab(id)}
-                className={`rounded-md px-2 py-1.5 uppercase tracking-wide ${activeTab === id ? 'bg-cyan-400/20 isit-body' : 'isit-body/70'}`}
+                className={`isit-app-tab-btn rounded-md px-2 py-1.5 uppercase tracking-wide ${activeTab === id ? 'is-active' : ''}`}
               >
                 {tr(labelKey)}
               </button>
@@ -247,7 +247,7 @@ function TutorContent() {
                 key={key}
                 type="button"
                 onClick={() => void sendMessage(tr(key))}
-                className="w-full rounded-xl border border-slate-200 dark:border-cyan-300/20 bg-slate-900/70 p-3 text-left text-xs isit-muted hover:bg-cyan-400/10"
+                className="isit-app-inset w-full rounded-xl p-3 text-left text-xs"
               >
                 {tr(key)}
               </button>
@@ -255,7 +255,7 @@ function TutorContent() {
           </div>
         </aside>
 
-        <section className="isit-glass order-1 flex min-h-[min(58dvh,560px)] flex-col rounded-2xl lg:order-none lg:min-h-[560px]">
+        <section className="isit-app-panel order-1 flex min-h-[min(58dvh,560px)] flex-col rounded-2xl lg:order-none lg:min-h-[560px]">
           <div className="border-b border-slate-200 dark:border-cyan-300/20 px-4 py-3 text-sm font-semibold isit-body">{tr('aiTutorConversation')}</div>
           <div ref={scrollerRef} className="flex-1 space-y-3 overflow-y-auto p-4">
             {messages.map((m) => (
@@ -263,10 +263,10 @@ function TutorContent() {
                 <div
                   className={`max-w-[min(92%,420px)] whitespace-pre-wrap rounded-2xl px-4 py-3 text-sm ${
                     m.role === 'user'
-                      ? 'bg-cyan-400/20 border border-cyan-300/30 isit-body'
+                      ? 'isit-app-chat-user'
                       : m.error
-                        ? 'bg-red-500/10 border border-red-300/30 text-red-200'
-                        : 'bg-slate-900/75 border border-slate-200 dark:border-cyan-300/20 isit-text-primary'
+                        ? 'border border-red-300/40 bg-red-50 text-red-800 dark:bg-red-500/10 dark:text-red-200'
+                        : 'isit-app-chat-assistant'
                   }`}
                 >
                   {m.content}
@@ -277,7 +277,7 @@ function TutorContent() {
               </div>
             ))}
             {thinking && (
-              <div className="inline-flex items-center gap-2 rounded-xl border border-slate-200 dark:border-cyan-300/20 bg-slate-900/70 px-3 py-2 text-xs text-slate-600 dark:text-cyan-200">
+              <div className="isit-app-inset inline-flex items-center gap-2 rounded-xl px-3 py-2 text-xs">
                 <Bot className="h-4 w-4" />
                 {tr('aiTutorThinking')}
               </div>
@@ -286,7 +286,7 @@ function TutorContent() {
               <button
                 type="button"
                 onClick={() => void sendMessage(lastPrompt, true)}
-                className="inline-flex items-center gap-2 rounded-lg border border-cyan-300/25 bg-slate-900/70 px-3 py-2 text-xs isit-body"
+                className="isit-app-inset inline-flex items-center gap-2 rounded-lg px-3 py-2 text-xs"
               >
                 <RotateCcw className="h-3.5 w-3.5" />
                 {tr('aiTutorRetryLast')}
@@ -294,7 +294,7 @@ function TutorContent() {
             )}
           </div>
           <div className="border-t border-slate-200 dark:border-cyan-300/20 p-3">
-            <div className="flex items-center gap-2 rounded-xl border border-cyan-300/25 bg-slate-900/75 p-2">
+            <div className="isit-app-chat-input-wrap flex items-center gap-2 rounded-xl p-2">
               <input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
@@ -317,36 +317,36 @@ function TutorContent() {
         </section>
 
         <aside className="order-3 space-y-3 lg:order-none">
-          <div className="isit-glass rounded-2xl p-4">
+          <div className="isit-app-panel rounded-2xl p-4">
             <p className="mb-2 text-sm font-semibold isit-body">{tr('aiTutorSessionAssist')}</p>
             <div className="space-y-2">
               <button
                 type="button"
-                className="flex w-full items-center gap-2 rounded-xl border border-slate-200 dark:border-cyan-300/20 bg-slate-900/70 px-3 py-2 text-sm isit-muted"
+                className="isit-app-inset flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm"
               >
                 <Lightbulb className="h-4 w-4 text-sky-600 dark:text-cyan-300" />
                 {tr('aiTutorExplainSimpler')}
               </button>
               <button
                 type="button"
-                className="flex w-full items-center gap-2 rounded-xl border border-slate-200 dark:border-cyan-300/20 bg-slate-900/70 px-3 py-2 text-sm isit-muted"
+                className="isit-app-inset flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm"
               >
                 <Wand2 className="h-4 w-4 text-sky-600 dark:text-cyan-300" />
                 {tr('aiTutorGenQuiz')}
               </button>
             </div>
           </div>
-          <div className="isit-glass rounded-2xl p-4">
+          <div className="isit-app-panel rounded-2xl p-4">
             <p className="mb-2 text-sm font-semibold isit-body">{tr('aiTutorSignals')}</p>
             <div className="space-y-2 text-xs isit-body">
               {stats.map((row) => (
-                <div key={row.label} className="flex items-center justify-between rounded-lg border border-slate-200 dark:border-cyan-300/20 bg-slate-900/70 px-3 py-2">
+                <div key={row.label} className="isit-app-inset flex items-center justify-between rounded-lg px-3 py-2">
                   <span>{row.label}</span>
-                  <span className="font-semibold text-slate-600 dark:text-cyan-200">{row.value}</span>
+                  <span className="font-semibold text-sky-700 dark:text-cyan-200">{row.value}</span>
                 </div>
               ))}
             </div>
-            <div className="mt-3 rounded-lg border border-slate-200 dark:border-cyan-300/20 bg-slate-900/70 px-3 py-2 text-[11px] isit-body">
+            <div className="isit-app-inset mt-3 rounded-lg px-3 py-2 text-[11px]">
               <AlertTriangle className="mr-1 inline h-3.5 w-3.5 text-sky-600 dark:text-cyan-300" />
               {tr('aiTutorHintSessionFirst')}
             </div>
@@ -408,11 +408,11 @@ export default function AITutorPage() {
         <header className="isit-app-header shrink-0">
           <div className="px-4 py-3 sm:px-6">
             <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-2 text-sm">
-              <Link href="/dashboard" className="font-medium text-sky-600 hover:underline dark:text-sky-400">
+              <Link href="/dashboard" className="isit-app-breadcrumb-link font-medium text-sky-700 hover:underline dark:text-sky-400">
                 {tr('dashboard')}
               </Link>
               <ChevronRight className="h-3.5 w-3.5 shrink-0 text-slate-400" aria-hidden />
-              <span className="font-medium text-slate-700 dark:text-slate-200">{tr('aiTutor')}</span>
+              <span className="isit-app-breadcrumb-current font-medium">{tr('aiTutor')}</span>
             </nav>
           </div>
         </header>

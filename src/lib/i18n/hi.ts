@@ -1,4 +1,5 @@
 import { en } from './en';
+import { landingHi } from './landing';
 
 export const hi = {
   dashboard: 'डैशबोर्ड',
@@ -523,4 +524,5 @@ export const hi = {
   blogDetailAuthorBio: '10+ वर्षों के अनुभव वाले शिक्षक और उद्योग विशेषज्ञ।',
   blogDetailRelatedHeading: 'संबंधित लेख',
   blogRelatedCategoryLabel: 'करियर सलाह',
+  ...landingHi,
 } satisfies Record<keyof typeof en, string>;

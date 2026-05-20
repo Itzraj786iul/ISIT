@@ -1,0 +1,114 @@
+/**
+ * Scroll performance — stability-first, smooth native scroll.
+ */
+
+html {
+  scroll-behavior: auto;
+  -webkit-overflow-scrolling: touch;
+  overflow-anchor: auto;
+}
+
+body {
+  touch-action: manipulation;
+  overscroll-behavior-y: none;
+}
+
+.isit-app-main,
+.isit-public-content,
+#main-content {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Light mode: solid chrome (no backdrop-filter repaint during scroll) */
+html:not(.dark) .isit-public-nav,
+html:not(.dark) .isit-shell-aside,
+html:not(.dark) .isit-shell-header,
+html:not(.dark) .isit-app-header,
+html:not(.dark) :is(.isit-app-bg, .isit-cosmic-bg) .isit-glass {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* While scrolling: pause expensive work (single state flip, no flicker) */
+@media (prefers-reduced-motion: no-preference) {
+  html.is-scrolling .isit-cursor-layer {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  html.is-scrolling.dark .isit-app-bg::before,
+  html.is-scrolling.dark .isit-cosmic-bg::before,
+  html.is-scrolling .landing-marquee-track,
+  html.is-scrolling .isit-landing-replica .landing-hero-premium-orb,
+  html.is-scrolling .isit-landing-replica .landing-hero-premium-particle,
+  html.is-scrolling .isit-landing-replica .landing-hero-premium-scan,
+  html.is-scrolling .isit-landing-replica .landing-hero-portal-glow,
+  html.is-scrolling .isit-landing-replica .landing-hero-premium-portal-ring,
+  html.is-scrolling .landing-orbit-slow,
+  html.is-scrolling .isit-hero-orbit,
+  html.is-scrolling .animate-float-soft,
+  html.is-scrolling .isit-float-delayed,
+  html.is-scrolling .isit-float-delayed-2,
+  html.is-scrolling .isit-float-delayed-3,
+  html.is-scrolling .animate-pulse-cyan,
+  html.is-scrolling .landing-hero-glow-pulse {
+    animation-play-state: paused !important;
+  }
+
+  /* Drop GPU blur while finger/wheel is moving — surfaces stay opaque */
+  html.is-scrolling.dark .isit-glass,
+  html.is-scrolling.dark .landing-glass,
+  html.is-scrolling.dark .isit-shell-aside,
+  html.is-scrolling.dark .isit-shell-header,
+  html.is-scrolling.dark .isit-app-header,
+  html.is-scrolling.dark .isit-public-nav,
+  html.is-scrolling.dark .isit-landing-replica .landing-hero-tutor-panel-inner,
+  html.is-scrolling.dark .isit-landing-replica .landing-hero-ecosystem {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  /* Show sections immediately while scrolling (no opacity-0 lag) */
+  html.is-scrolling .isit-reveal-block {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+
+  html.is-scrolling .isit-reveal-stagger > * {
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+  }
+}
+
+/* Custom cursor — isolated layer */
+.isit-cursor-dot,
+.isit-cursor-ring {
+  pointer-events: none;
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.isit-cursor-layer {
+  transition: opacity 0.12s ease, visibility 0.12s ease;
+}
+
+/* Mobile: slightly lighter glass (static — no toggle on scroll); app shells stay solid in light */
+@media (max-width: 1023px) {
+  html.is-mobile.dark .isit-glass,
+  html.is-mobile .landing-glass,
+  html.is-mobile .isit-public-nav,
+  html.is-mobile .isit-landing-replica .landing-hero-ecosystem,
+  html.is-mobile .isit-landing-replica .landing-hero-tutor-panel-inner {
+    backdrop-filter: blur(10px) saturate(1.05);
+    -webkit-backdrop-filter: blur(10px) saturate(1.05);
+  }
+
+  html.is-mobile.dark .isit-app-bg::before,
+  html.is-mobile.dark .isit-cosmic-bg::before {
+    animation-duration: 40s;
+    opacity: 0.22;
+  }
+}

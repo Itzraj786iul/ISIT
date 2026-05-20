@@ -103,8 +103,13 @@ export default function PublicNav({ active }: PublicNavProps) {
     if (!mobileNavOpen) return;
     const prev = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setMobileNavOpen(false);
+    };
+    window.addEventListener('keydown', onKey);
     return () => {
       document.body.style.overflow = prev;
+      window.removeEventListener('keydown', onKey);
     };
   }, [mobileNavOpen]);
 
@@ -143,9 +148,10 @@ export default function PublicNav({ active }: PublicNavProps) {
             <button
               type="button"
               onClick={() => setMobileNavOpen((o) => !o)}
-              className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-[color:var(--isit-nav-text-muted)] transition hover:bg-[var(--isit-nav-hover-bg)] hover:text-[color:var(--isit-text)] lg:hidden"
+              className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-[color:var(--isit-nav-text-muted)] transition hover:bg-[var(--isit-nav-hover-bg)] hover:text-[color:var(--isit-text)] active:scale-95 lg:hidden"
               aria-label={mobileNavOpen ? 'Close menu' : 'Open menu'}
               aria-expanded={mobileNavOpen}
+              aria-controls="isit-mobile-nav-drawer"
             >
               {mobileNavOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
@@ -241,10 +247,22 @@ export default function PublicNav({ active }: PublicNavProps) {
         </div>
       </header>
 
-      {mobileNavOpen && (
-        <div className="fixed inset-0 z-40 lg:hidden">
-          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setMobileNavOpen(false)} aria-hidden />
-          <div className="absolute left-0 top-0 flex h-full w-[min(100%,20rem)] flex-col border-r border-[color:var(--isit-border)] bg-[var(--isit-bg)] shadow-2xl">
+      <div
+        className={`fixed inset-0 z-40 lg:hidden ${mobileNavOpen ? 'pointer-events-auto' : 'pointer-events-none'}`}
+        aria-hidden={!mobileNavOpen}
+      >
+        <div
+          className={`isit-mobile-nav-overlay absolute inset-0 bg-black/55 ${mobileNavOpen ? 'is-open' : ''}`}
+          onClick={() => setMobileNavOpen(false)}
+          aria-hidden
+        />
+        <div
+          id="isit-mobile-nav-drawer"
+          className={`isit-mobile-nav-drawer absolute left-0 top-0 flex h-full w-[min(100%,20rem)] flex-col border-r border-[color:var(--isit-border)] bg-[var(--isit-bg)] shadow-2xl ${mobileNavOpen ? 'is-open' : ''}`}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Mobile navigation"
+        >
             <div className="flex h-16 items-center justify-between gap-3 border-b border-[color:var(--isit-border)] px-4">
               <BrandLogo
                 variant="lockup"
@@ -255,7 +273,7 @@ export default function PublicNav({ active }: PublicNavProps) {
               <button
                 type="button"
                 onClick={() => setMobileNavOpen(false)}
-                className="inline-flex h-9 w-9 items-center justify-center rounded-lg hover:bg-[var(--isit-nav-hover-bg)]"
+                className="inline-flex h-11 w-11 items-center justify-center rounded-xl hover:bg-[var(--isit-nav-hover-bg)] active:scale-95"
                 aria-label="Close menu"
               >
                 <X className="h-5 w-5" />
@@ -333,18 +351,18 @@ export default function PublicNav({ active }: PublicNavProps) {
                 </div>
               )}
             </div>
-          </div>
         </div>
-      )}
+      </div>
 
       <button
         type="button"
         onClick={handleAskTutor}
         disabled={loading || openingTutor}
-        className="fixed bottom-[max(1.25rem,env(safe-area-inset-bottom))] right-[max(1rem,env(safe-area-inset-right))] z-40 inline-flex max-w-[calc(100vw-2rem)] items-center gap-2 rounded-full border border-[color:var(--isit-border)] bg-[var(--isit-surface)] px-3 py-2.5 text-sm font-semibold text-[color:var(--isit-text)] shadow-lg transition hover:bg-[var(--isit-surface-muted)] disabled:cursor-not-allowed disabled:opacity-70 sm:bottom-5 sm:right-5 sm:px-4 dark:border-cyan-400/25 dark:bg-slate-900/90 dark:text-cyan-100 dark:shadow-cyan-950/40 dark:hover:bg-slate-800"
+        aria-label={tr('askAiTutor')}
+        className="fixed bottom-[max(1.25rem,env(safe-area-inset-bottom))] right-[max(1rem,env(safe-area-inset-right))] z-40 inline-flex max-w-[calc(100vw-2rem)] min-h-11 items-center gap-2 rounded-full border border-[color:var(--isit-border)] bg-[var(--isit-surface)] px-3.5 py-2.5 text-sm font-semibold text-[color:var(--isit-text)] shadow-lg transition hover:bg-[var(--isit-surface-muted)] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70 sm:bottom-5 sm:right-5 sm:px-4 dark:border-cyan-400/25 dark:bg-slate-900/90 dark:text-cyan-100 dark:shadow-cyan-950/40 dark:hover:bg-slate-800"
       >
-        <Bot className="h-4 w-4 isit-accent-text" />
-        {openingTutor ? '…' : tr('askAiTutor')}
+        <Bot className="h-4 w-4 shrink-0 isit-accent-text" aria-hidden />
+        <span className="hidden min-[400px]:inline">{openingTutor ? '…' : tr('askAiTutor')}</span>
       </button>
     </>
   );

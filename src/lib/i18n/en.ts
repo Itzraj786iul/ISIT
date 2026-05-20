@@ -1,3 +1,5 @@
+import { landingEn } from './landing';
+
 export const en = {
   dashboard: 'Dashboard',
   continueLearning: 'Continue learning',
@@ -527,4 +529,5 @@ export const en = {
   blogDetailAuthorBio: 'Educator and industry expert with 10+ years of experience.',
   blogDetailRelatedHeading: 'Related articles',
   blogRelatedCategoryLabel: 'Career advice',
+  ...landingEn,
 } as const;

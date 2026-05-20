@@ -21,6 +21,7 @@ import {
   Activity,
 } from 'lucide-react';
 import TeacherShell from '../_components/TeacherShell';
+import { useRequireAuth } from '@/lib/use-require-auth';
 
 type User = { _id?: string; name: string; role: string; organization_id?: string };
 type ApiCourse = {
@@ -66,15 +67,14 @@ export default function TeacherDashboard() {
   const totalStudents = courses.reduce((sum, c) => sum + (c.enrolledStudents?.length ?? 0), 0);
   const gradeOptions = [...new Set(subjects.map((s) => s.grade))].sort();
 
-  useEffect(() => {
-    const run = async () => {
-      const meRes = await fetch('/api/auth/me', { credentials: 'include' });
-      if (!meRes.ok) { router.push('/login'); return; }
-      const meData = await meRes.json();
-      const userData = meData.user as User;
-      if (!userData || userData.role?.toLowerCase() !== 'teacher') { router.push('/dashboard'); return; }
-      setUser(userData);
+  const { user: authUser, loading: authLoading } = useRequireAuth({ roles: ['teacher'] });
 
+  useEffect(() => {
+    if (authLoading || !authUser) return;
+    const userData = authUser as User;
+    setUser(userData);
+
+    const run = async () => {
       try {
         const uid = userData._id ?? '';
         const fetches: Promise<void>[] = [
@@ -100,7 +100,7 @@ export default function TeacherDashboard() {
       }
     };
     run();
-  }, [router]);
+  }, [authUser, authLoading, router]);
 
   useEffect(() => {
     if (!user?.organization_id) {

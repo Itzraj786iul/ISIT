@@ -60,21 +60,21 @@ function LoginForm() {
         const userRole = (data.user.role ?? 'student').toString().toLowerCase();
 
         if (userRole === 'admin') {
-          router.push('/organization');
+          router.replace('/organization');
           return;
         }
         if (userRole === 'teacher') {
-          router.push('/teacher/dashboard');
+          router.replace('/teacher/dashboard');
           return;
         }
         if (userRole === 'parent') {
-          router.push('/parent/dashboard');
+          router.replace('/parent/dashboard');
           return;
         }
         if (returnUrl && returnUrl.startsWith('/') && !returnUrl.startsWith('//')) {
-          router.push(returnUrl);
+          router.replace(returnUrl);
         } else {
-          router.push('/dashboard');
+          router.replace('/dashboard');
         }
       } else {
         setError('Something went wrong. Please try signing in again.');

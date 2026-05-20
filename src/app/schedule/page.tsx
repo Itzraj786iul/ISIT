@@ -3,7 +3,8 @@
 import { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import Sidebar from '@/components/Sidebar';
+import Sidebar from '@/components/LazySidebar';
+import { useRequireAuth } from '@/lib/use-require-auth';
 import { Clock, Layers, Loader2, ChevronRight } from 'lucide-react';
 import { useT } from '@/lib/t';
 import { useLanguage } from '@/lib/language-context';
@@ -32,14 +33,13 @@ export default function SchedulePage() {
   const [sessions, setSessions] = useState<SessionItem[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const { user: authUser, loading: authLoading } = useRequireAuth({ roles: ['student'] });
+
   useEffect(() => {
+    if (authLoading || !authUser) return;
     const run = async () => {
       setLoading(true);
-      const meRes = await fetch('/api/auth/me', { credentials: 'include' });
-      if (!meRes.ok) { router.push('/login'); return; }
-      const meData = await meRes.json();
-      const u = meData.user;
-      if (!u || u.role?.toLowerCase() === 'teacher') { router.push('/teacher/dashboard'); return; }
+      const u = authUser;
 
       try {
         const res = await fetch(`/api/sessions?userId=${encodeURIComponent(u._id || '')}`, { credentials: 'include' });
@@ -55,7 +55,7 @@ export default function SchedulePage() {
       }
     };
     run();
-  }, [router]);
+  }, [authUser, authLoading, router]);
 
   const year = viewDate.getFullYear();
   const month = viewDate.getMonth();

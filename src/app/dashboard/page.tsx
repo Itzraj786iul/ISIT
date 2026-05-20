@@ -9,7 +9,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import type { LastSessionCompleteStats } from '@/lib/session-complete-storage';
 import { readSessionCompleteStats } from '@/lib/session-complete-storage';
-import Sidebar from '@/components/Sidebar';
+import Sidebar from '@/components/LazySidebar';
 import { BookOpen, Bot, ChevronRight, Library, TrendingUp, Target } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 import { useT } from '@/lib/t';
@@ -242,20 +242,20 @@ export default function Dashboard() {
                 </Link>
                 <Link
                   href="/ai-tutor"
-                  className="inline-flex min-h-[48px] flex-1 items-center justify-center gap-2 rounded-xl border border-white/35 bg-white/15 px-5 py-3 text-base font-semibold text-slate-900 dark:text-white no-underline backdrop-blur hover:bg-white/25 active:scale-[0.98] motion-safe-transition sm:flex-none"
+                  className="inline-flex min-h-[48px] flex-1 items-center justify-center gap-2 rounded-xl border border-white/40 bg-white/20 px-5 py-3 text-base font-semibold text-white no-underline backdrop-blur hover:bg-white/30 active:scale-[0.98] motion-safe-transition sm:flex-none"
                 >
                   <Bot className="h-5 w-5 shrink-0" />
                   {tr('aiTutor')}
                 </Link>
               </div>
               <div className="mt-5 flex flex-wrap gap-2 text-xs font-medium text-sky-50 sm:text-sm">
-                <span className="rounded-lg bg-black/15 px-3 py-1.5 backdrop-blur">
+                <span className="rounded-lg bg-white/25 px-3 py-1.5 backdrop-blur">
                   {subjects.length} {tr('subjects')}
                 </span>
-                <span className="rounded-lg bg-black/15 px-3 py-1.5 backdrop-blur">
+                <span className="rounded-lg bg-white/25 px-3 py-1.5 backdrop-blur">
                   {topicsInProgress} {tr('dashboardInProgress')}
                 </span>
-                <span className="rounded-lg bg-black/15 px-3 py-1.5 backdrop-blur">
+                <span className="rounded-lg bg-white/25 px-3 py-1.5 backdrop-blur">
                   {topicsMastered} {tr('dashboardMasteredLabel')}
                 </span>
               </div>
