@@ -128,7 +128,7 @@ export default function TeacherAssignmentProgressPage() {
         {!loading && data ? (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 shadow-sm">
+              <div className="isit-app-panel rounded-2xl p-5 shadow-sm">
                 <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                   Not started
                 </p>
@@ -151,7 +151,7 @@ export default function TeacherAssignmentProgressPage() {
               </div>
             </div>
 
-            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
+            <div className="isit-app-panel rounded-2xl shadow-sm overflow-hidden">
               <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-800">
                 <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">Students</h2>
               </div>

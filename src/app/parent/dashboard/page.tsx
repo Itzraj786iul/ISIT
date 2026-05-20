@@ -108,7 +108,7 @@ export default function ParentDashboardPage() {
                     className={`px-4 py-2 rounded-full text-sm font-medium transition ${
                       selectedChildId === c.id
                         ? 'bg-violet-600 text-white shadow-md'
-                        : 'bg-white text-slate-600 dark:text-slate-300 border border-slate-200 hover:border-violet-200'
+                        : 'isit-app-chip hover:border-violet-200'
                     }`}
                   >
                     {c.name}
@@ -119,14 +119,14 @@ export default function ParentDashboardPage() {
           </div>
 
           {insightsLoading && (
-            <div className="bg-white rounded-2xl border border-slate-200 p-8 text-center text-slate-500 dark:text-slate-400 text-sm">
+            <div className="isit-app-stat-card rounded-2xl p-8 text-center text-slate-500 dark:text-slate-400 text-sm">
               Gathering a gentle snapshot…
             </div>
           )}
 
           {!insightsLoading && insights && selectedChild && (
             <div className="space-y-6">
-              <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-7">
+              <div className="isit-app-stat-card rounded-2xl shadow-sm p-6 sm:p-7">
                 <div className="flex flex-wrap items-start gap-4">
                   <div className="w-14 h-14 rounded-full bg-violet-100 flex items-center justify-center text-violet-600 font-bold text-xl shrink-0">
                     {selectedChild.name.charAt(0).toUpperCase()}
@@ -165,7 +165,7 @@ export default function ParentDashboardPage() {
               />
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6">
+                <div className="isit-app-stat-card rounded-2xl p-5 sm:p-6">
                   <div className="flex items-center gap-2 text-emerald-700 font-semibold text-sm mb-3">
                     <CheckCircle2 className="w-4 h-4" /> Strengths
                   </div>
@@ -181,7 +181,7 @@ export default function ParentDashboardPage() {
                     </ul>
                   )}
                 </div>
-                <div className="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6">
+                <div className="isit-app-stat-card rounded-2xl p-5 sm:p-6">
                   <div className="flex items-center gap-2 text-amber-800 font-semibold text-sm mb-3">
                     <Lightbulb className="w-4 h-4" /> Where a little help goes far
                   </div>
@@ -206,7 +206,7 @@ export default function ParentDashboardPage() {
                 <p className="text-slate-800 text-base leading-relaxed">{insights.ai_summary}</p>
               </div>
 
-              <div className="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6">
+              <div className="isit-app-stat-card rounded-2xl p-5 sm:p-6">
                 <h3 className="font-semibold text-slate-900 text-sm mb-3">Ways you can support</h3>
                 <ul className="space-y-2">
                   {insights.action_suggestions.map((s, i) => (
@@ -230,7 +230,7 @@ export default function ParentDashboardPage() {
           )}
 
           {!insightsLoading && !insights && selectedChildId && (
-            <div className="bg-white rounded-2xl border border-slate-200 p-6 text-sm text-slate-500 dark:text-slate-400">
+            <div className="isit-app-stat-card rounded-2xl p-6 text-sm text-slate-500 dark:text-slate-400">
               We could not load insights right now. Please try again later.
             </div>
           )}
@@ -240,7 +240,7 @@ export default function ParentDashboardPage() {
       <section className="mb-8">
         <h2 className="text-lg font-bold text-slate-800 mb-4">Quick actions</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          <Link href="/parent/children" className="group flex items-center gap-4 p-5 bg-white rounded-xl border border-slate-200 shadow-sm hover:border-violet-200 hover:shadow-md transition no-underline text-slate-800">
+          <Link href="/parent/children" className="group flex items-center gap-4 p-5 isit-app-panel rounded-xl shadow-sm hover:border-violet-200 hover:shadow-md transition no-underline text-slate-800">
             <div className="w-12 h-12 rounded-xl bg-violet-100 flex items-center justify-center group-hover:bg-violet-200 transition">
               <Users className="w-6 h-6 text-violet-600" />
             </div>
@@ -250,7 +250,7 @@ export default function ParentDashboardPage() {
             </div>
             <ChevronRight className="w-5 h-5 text-slate-600 dark:text-slate-300 group-hover:text-violet-500 shrink-0" />
           </Link>
-          <Link href="/parent/children/add" className="group flex items-center gap-4 p-5 bg-white rounded-xl border border-slate-200 shadow-sm hover:border-violet-200 hover:shadow-md transition no-underline text-slate-800">
+          <Link href="/parent/children/add" className="group flex items-center gap-4 p-5 isit-app-panel rounded-xl shadow-sm hover:border-violet-200 hover:shadow-md transition no-underline text-slate-800">
             <div className="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center group-hover:bg-emerald-200 transition">
               <Plus className="w-6 h-6 text-emerald-600" />
             </div>
@@ -260,7 +260,7 @@ export default function ParentDashboardPage() {
             </div>
             <ChevronRight className="w-5 h-5 text-slate-600 dark:text-slate-300 group-hover:text-emerald-500 shrink-0" />
           </Link>
-          <Link href="/courses" className="group flex items-center gap-4 p-5 bg-white rounded-xl border border-slate-200 shadow-sm hover:border-sky-200 hover:shadow-md transition no-underline text-slate-800">
+          <Link href="/courses" className="group flex items-center gap-4 p-5 isit-app-panel rounded-xl shadow-sm hover:border-sky-200 hover:shadow-md transition no-underline text-slate-800">
             <div className="w-12 h-12 rounded-xl bg-sky-100 flex items-center justify-center group-hover:bg-sky-200 transition">
               <BookOpen className="w-6 h-6 text-sky-600" />
             </div>
@@ -276,12 +276,12 @@ export default function ParentDashboardPage() {
       <section>
         <h2 className="text-lg font-bold text-slate-800 mb-4">Your children</h2>
         {loading ? (
-          <div className="bg-white rounded-xl border border-slate-200 p-6 animate-pulse">
+          <div className="isit-app-panel rounded-xl p-6 animate-pulse">
             <div className="h-5 bg-slate-100 rounded w-1/3 mb-3" />
             <div className="h-4 bg-slate-100 rounded w-1/2" />
           </div>
         ) : children.length === 0 ? (
-          <div className="bg-white rounded-xl border border-slate-200 border-dashed p-8 text-center">
+          <div className="isit-app-panel rounded-xl border-dashed p-8 text-center">
             <Sparkles className="w-10 h-10 text-violet-300 mx-auto mb-3" />
             <p className="text-slate-600 dark:text-slate-300 font-medium">No children linked yet</p>
             <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Add your first child to start tracking their learning.</p>
@@ -293,7 +293,7 @@ export default function ParentDashboardPage() {
           <ul className="space-y-3">
             {children.slice(0, 3).map((c) => (
               <li key={c.id}>
-                <Link href={`/parent/children/${c.id}`} className="flex items-center gap-4 p-4 bg-white rounded-xl border border-slate-200 shadow-sm hover:border-violet-200 hover:shadow transition no-underline text-slate-800">
+                <Link href={`/parent/children/${c.id}`} className="flex items-center gap-4 p-4 isit-app-panel rounded-xl shadow-sm hover:border-violet-200 hover:shadow transition no-underline text-slate-800">
                   <div className="w-10 h-10 rounded-full bg-violet-100 flex items-center justify-center text-violet-600 font-semibold">
                     {c.name.charAt(0).toUpperCase()}
                   </div>

@@ -11,7 +11,7 @@ export function WeakAreasSectionSkeleton() {
       <div className="h-5 bg-slate-100 rounded w-40 mb-4 animate-pulse" />
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="bg-white rounded-xl border border-slate-200 p-4 animate-pulse flex justify-between items-center">
+          <div key={i} className="isit-app-panel rounded-xl p-4 animate-pulse flex justify-between items-center">
             <div className="space-y-2 flex-1">
               <div className="h-4 bg-slate-100 rounded w-2/3" />
               <div className="h-3 bg-slate-100 rounded w-16" />
@@ -46,7 +46,7 @@ export default function WeakAreasSection({ loading, items }: Props) {
         Topics with mastery under 50% — extra practice builds confidence.
       </p>
       {items.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-slate-200 border-dashed p-5 sm:p-8 text-center dark:bg-slate-900 dark:border-slate-700">
+        <div className="isit-app-stat-card rounded-2xl border-dashed p-5 sm:p-8 text-center dark:bg-slate-900 dark:border-slate-700">
           <p className="text-slate-600 text-sm sm:text-base dark:text-slate-300">No weak spots detected yet. Keep learning — we will highlight topics that need work.</p>
           <Link
             href="/subjects"
@@ -60,7 +60,7 @@ export default function WeakAreasSection({ loading, items }: Props) {
           {items.map((item) => (
             <div
               key={item.topicId}
-              className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm hover:border-rose-200 transition flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 overflow-hidden dark:bg-slate-900 dark:border-slate-700"
+              className="isit-app-stat-card rounded-2xl p-4 shadow-sm hover:border-rose-200 transition flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 overflow-hidden dark:bg-slate-900 dark:border-slate-700"
             >
               <div className="min-w-0 flex-1">
                 <h3 className="font-semibold text-slate-900 text-sm sm:text-base break-words dark:text-slate-100">{item.name}</h3>

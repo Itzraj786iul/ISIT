@@ -39,7 +39,7 @@ export default function SettingsPage() {
     <div className="isit-cosmic-bg relative flex min-h-screen font-sans ">
       <Sidebar />
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="relative z-[1] shrink-0 border-b border-slate-200 bg-white dark:border-slate-700 dark:bg-white dark:bg-slate-950/95">
+        <header className="relative z-[1] isit-app-header shrink-0">
           <div className="px-4 py-3 sm:px-6 md:px-8">
             <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-2 text-sm">
               <Link href="/dashboard" className="font-medium text-sky-600 hover:underline dark:text-sky-400">
@@ -51,7 +51,7 @@ export default function SettingsPage() {
           </div>
         </header>
 
-        <main className="relative z-[1] min-w-0 flex-1 overflow-x-hidden p-4 sm:p-6 md:p-8">
+        <main className="isit-app-main isit-app-main--with-nav-toggle">
           <div className="mb-6">
             <h1 className="text-2xl font-extrabold tracking-tight isit-text-primary">{tr('settings')}</h1>
             <p className="mt-1 text-sm /70">{tr('settingsPageLead')}</p>

@@ -16,7 +16,7 @@ export function ProgressStatsSkeleton() {
       <div className="h-5 bg-slate-100 rounded w-40 mb-4 animate-pulse" />
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 animate-pulse dark:bg-slate-900 dark:border-slate-700">
+          <div key={i} className="isit-app-stat-card rounded-2xl p-4 sm:p-5 animate-pulse dark:bg-slate-900 dark:border-slate-700">
             <div className="h-10 w-10 bg-slate-100 rounded-xl mb-3" />
             <div className="h-3 bg-slate-100 rounded w-24 mb-2" />
             <div className="h-8 bg-slate-100 rounded w-16" />
@@ -75,7 +75,7 @@ export default function ProgressStats({ loading, timeMinutes, topicsCompleted, m
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
         {cards.map((c) => (
           <Link key={c.label} href={c.href} className="group block no-underline min-h-[44px] active:scale-[0.99] rounded-2xl">
-            <div className="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-sm h-full hover:border-sky-200 hover:shadow-md transition flex flex-col dark:bg-slate-900 dark:border-slate-700">
+            <div className="isit-app-stat-card rounded-2xl p-4 sm:p-5 shadow-sm h-full hover:border-sky-200 hover:shadow-md transition flex flex-col dark:bg-slate-900 dark:border-slate-700">
               <div className="flex items-start justify-between gap-2">
                 <div className={`w-11 h-11 rounded-xl ${c.iconBg} flex items-center justify-center shrink-0`}>
                   <c.icon className={`w-5 h-5 ${c.iconColor}`} />

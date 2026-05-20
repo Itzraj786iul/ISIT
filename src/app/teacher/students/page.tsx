@@ -78,7 +78,7 @@ export default function TeacherStudentsPage() {
         <h1 className="text-2xl font-bold text-slate-900 mb-2">Students</h1>
         <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Students enrolled in your courses</p>
 
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+        <div className="isit-app-panel rounded-xl shadow-sm overflow-hidden">
           {loading ? (
             <div className="p-6 text-slate-500 dark:text-slate-400 text-sm">Loading students...</div>
           ) : students.length === 0 ? (

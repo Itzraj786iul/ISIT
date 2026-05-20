@@ -66,7 +66,7 @@ export default function CertificatePage() {
     <div className="isit-app-bg min-h-screen flex font-sans relative">
       <Sidebar />
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="shrink-0 border-b border-slate-200 bg-white dark:border-slate-700 dark:bg-white dark:bg-slate-950/95">
+        <header className="isit-app-header shrink-0">
           <div className="px-4 py-3 sm:px-6 md:px-8">
             <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-2 text-sm">
               <Link href="/dashboard" className="font-medium text-sky-600 hover:underline dark:text-sky-400">
@@ -82,7 +82,7 @@ export default function CertificatePage() {
           </div>
         </header>
 
-        <main className="flex-1 p-4 sm:p-6 md:p-8 min-w-0 overflow-x-hidden">
+        <main className="isit-app-main isit-app-main--with-nav-toggle">
           <Link href="/my-courses" className="inline-flex items-center gap-2 text-sky-600 hover:text-sky-700 text-sm font-medium mb-6 dark:text-sky-400 dark:hover:text-sky-300">
             <ChevronLeft className="w-4 h-4" aria-hidden /> {tr('certificateBackMyCourses')}
           </Link>

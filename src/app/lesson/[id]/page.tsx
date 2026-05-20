@@ -293,7 +293,7 @@ export default function LessonPlayerPage() {
 
   const aiTutorPanel = (
     <>
-      <div className="p-4 border-b border-cyan-400/15 bg-slate-50 dark:bg-white dark:bg-slate-950/40 backdrop-blur-md flex-shrink-0 flex items-start gap-3">
+      <div className="p-4 isit-app-header backdrop-blur-md flex-shrink-0 flex items-start gap-3">
         <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-cyan-400/15 border border-cyan-400/30 text-sky-600 dark:text-cyan-300 shrink-0">
           <Sparkles className="w-5 h-5" aria-hidden />
         </div>

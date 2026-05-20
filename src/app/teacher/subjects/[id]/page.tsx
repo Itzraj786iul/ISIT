@@ -119,7 +119,7 @@ export default function TeacherSubjectDetailPage() {
           <div className="h-5 bg-slate-200 rounded w-32 mb-6" />
           <div className="h-8 bg-slate-200 rounded w-3/4 mb-4" />
           <div className="space-y-3">
-            {[1, 2, 3, 4, 5].map((i) => <div key={i} className="h-20 bg-white rounded-xl border border-slate-200" />)}
+            {[1, 2, 3, 4, 5].map((i) => <div key={i} className="h-20 isit-app-panel rounded-xl" />)}
           </div>
         </div>
       </TeacherShell>
@@ -179,19 +179,19 @@ export default function TeacherSubjectDetailPage() {
 
         {/* Summary stats */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
-          <div className="bg-white rounded-xl border border-slate-200 p-4 text-center">
+          <div className="isit-app-panel rounded-xl p-4 text-center">
             <div className="text-xl font-bold text-slate-900">{topics.length}</div>
             <div className="text-xs text-slate-500 dark:text-slate-400 font-medium">Topics</div>
           </div>
-          <div className="bg-white rounded-xl border border-slate-200 p-4 text-center">
+          <div className="isit-app-panel rounded-xl p-4 text-center">
             <div className="text-xl font-bold text-slate-900">{totalNotes}</div>
             <div className="text-xs text-slate-500 dark:text-slate-400 font-medium">Notes</div>
           </div>
-          <div className="bg-white rounded-xl border border-slate-200 p-4 text-center">
+          <div className="isit-app-panel rounded-xl p-4 text-center">
             <div className="text-xl font-bold text-slate-900">{totalQuestions}</div>
             <div className="text-xs text-slate-500 dark:text-slate-400 font-medium">Questions</div>
           </div>
-          <div className="bg-white rounded-xl border border-slate-200 p-4 text-center">
+          <div className="isit-app-panel rounded-xl p-4 text-center">
             <div className="text-xl font-bold text-slate-900">{totalVideos}</div>
             <div className="text-xs text-slate-500 dark:text-slate-400 font-medium">Videos</div>
           </div>
@@ -203,7 +203,7 @@ export default function TeacherSubjectDetailPage() {
         </h2>
 
         {topics.length === 0 ? (
-          <div className="bg-white rounded-xl border border-slate-200 p-8 text-center">
+          <div className="isit-app-panel rounded-xl p-8 text-center">
             <BookOpen className="w-10 h-10 text-slate-600 dark:text-slate-300 mx-auto mb-2" />
             <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">No topics in this subject yet.</p>
           </div>
@@ -212,7 +212,7 @@ export default function TeacherSubjectDetailPage() {
             {topics.map((topic, idx) => {
               const counts = contentCounts[topic._id] ?? { notes: 0, questions: 0, videos: 0 };
               return (
-                <div key={topic._id} className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm hover:border-sky-200 transition">
+                <div key={topic._id} className="isit-app-panel rounded-xl p-4 shadow-sm hover:border-sky-200 transition">
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2 mb-1.5">

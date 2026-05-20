@@ -46,7 +46,7 @@ export default function ParentAssignedLearningSection({
 }) {
   if (!linkedAccount) {
     return (
-      <div className="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-sm">
+      <div className="isit-app-stat-card rounded-2xl p-5 sm:p-6 shadow-sm">
         <div className="flex items-center gap-2 text-slate-800 dark:text-slate-100 font-semibold text-sm mb-2">
           <GraduationCap className="w-4 h-4 text-violet-600" />
           {title}
@@ -60,7 +60,7 @@ export default function ParentAssignedLearningSection({
 
   if (topics.length === 0) {
     return (
-      <div className="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-sm dark:bg-slate-900 dark:border-slate-700">
+      <div className="isit-app-stat-card rounded-2xl p-5 sm:p-6 shadow-sm dark:bg-slate-900 dark:border-slate-700">
         <div className="flex items-center gap-2 text-slate-800 dark:text-slate-100 font-semibold text-sm mb-2">
           <GraduationCap className="w-4 h-4 text-violet-600" />
           {title}
@@ -71,7 +71,7 @@ export default function ParentAssignedLearningSection({
   }
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-sm dark:bg-slate-900 dark:border-slate-700">
+    <div className="isit-app-stat-card rounded-2xl p-5 sm:p-6 shadow-sm dark:bg-slate-900 dark:border-slate-700">
       <div className="flex items-center gap-2 text-slate-800 dark:text-slate-100 font-semibold text-sm mb-4">
         <GraduationCap className="w-4 h-4 text-violet-600" />
         {title}

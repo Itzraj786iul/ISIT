@@ -135,7 +135,7 @@ export default function CourseDetailsPage() {
         <div className="isit-cosmic-bg relative flex min-h-screen ">
           <Sidebar />
           <div className="flex min-w-0 flex-1 flex-col">
-            <header className="shrink-0 border-b border-slate-200 bg-white dark:border-slate-700 dark:bg-white dark:bg-slate-950/95">
+            <header className="isit-app-header shrink-0">
               <div className="px-4 py-3 sm:px-6">
                 <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-2 text-sm">
                   <Link href="/dashboard" className="font-medium text-sky-600 hover:underline dark:text-sky-400">
@@ -196,7 +196,7 @@ export default function CourseDetailsPage() {
   const lessonCount = course.lessons?.length ?? 0;
 
   const breadcrumbNav = useStudentChrome ? (
-    <header className="shrink-0 border-b border-slate-200 bg-white dark:border-slate-700 dark:bg-white dark:bg-slate-950/95">
+    <header className="isit-app-header shrink-0">
       <div className="mx-auto max-w-7xl px-4 py-3 sm:px-6">
         <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-2 text-sm">
           <Link href="/dashboard" className="font-medium text-sky-600 hover:underline dark:text-sky-400">

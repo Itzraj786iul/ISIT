@@ -22,7 +22,7 @@ export default function AssignedByTeacherSection({
           {[1, 2].map((i) => (
             <div
               key={i}
-              className="h-28 rounded-2xl border border-slate-200 bg-white dark:bg-slate-900 dark:border-slate-700 animate-pulse shadow-sm"
+              className="isit-app-panel h-28 rounded-2xl animate-pulse shadow-sm"
             />
           ))}
         </div>

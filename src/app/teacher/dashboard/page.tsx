@@ -152,7 +152,7 @@ export default function TeacherDashboard() {
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Instructor Dashboard</h1>
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Instructor Dashboard</h1>
           <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Welcome back, {user?.name || 'Instructor'}</p>
         </div>
         <Link
@@ -164,12 +164,12 @@ export default function TeacherDashboard() {
       </div>
 
       {/* AI student insights */}
-      <section className="mb-8 rounded-2xl border border-violet-200/80 bg-gradient-to-br from-violet-50/90 via-white to-sky-50/50 p-6 shadow-sm">
+      <section className="isit-app-panel mb-8 rounded-2xl p-6 shadow-sm ring-1 ring-violet-200/50 dark:ring-violet-500/20">
         <div className="flex flex-wrap items-start justify-between gap-4 mb-5">
           <div className="flex items-center gap-2">
-            <Sparkles className="w-6 h-6 text-violet-600" />
+            <Sparkles className="w-6 h-6 text-violet-600 dark:text-violet-400" />
             <div>
-              <h2 className="text-lg font-bold text-slate-900">Student insights</h2>
+              <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">Student insights</h2>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Who needs help and where — from mastery, sessions, and confusion signals</p>
             </div>
           </div>
@@ -177,7 +177,7 @@ export default function TeacherDashboard() {
             <label className="text-xs text-slate-500 dark:text-slate-400 font-medium sr-only" htmlFor="insight-grade">Grade</label>
             <select
               id="insight-grade"
-              className="text-sm border border-slate-200 rounded-lg px-3 py-2 bg-white text-slate-800 min-w-[8rem]"
+              className="isit-input text-sm min-w-[8rem] py-2 px-3"
               value={filterGrade}
               disabled={!!filterSubjectId}
               onChange={(e) => setFilterGrade(e.target.value)}
@@ -191,7 +191,7 @@ export default function TeacherDashboard() {
             <label className="text-xs text-slate-500 dark:text-slate-400 font-medium sr-only" htmlFor="insight-subject">Subject</label>
             <select
               id="insight-subject"
-              className="text-sm border border-slate-200 rounded-lg px-3 py-2 bg-white text-slate-800 min-w-[10rem]"
+              className="isit-input text-sm min-w-[10rem] py-2 px-3"
               value={filterSubjectId}
               onChange={(e) => {
                 setFilterSubjectId(e.target.value);
@@ -211,17 +211,17 @@ export default function TeacherDashboard() {
         ) : insights ? (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-              <div className="rounded-xl bg-white/80 border border-slate-200/80 p-4">
+              <div className="isit-app-panel rounded-xl p-4">
                 <div className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">Avg mastery</div>
-                <div className="text-2xl font-bold text-slate-900 mt-1">{insights.overview.avg_mastery_pct}%</div>
+                <div className="text-2xl font-bold text-slate-900 dark:text-slate-100 mt-1">{insights.overview.avg_mastery_pct}%</div>
                 <div className="text-xs text-slate-400 mt-1">Across students in this view</div>
               </div>
-              <div className="rounded-xl bg-white/80 border border-slate-200/80 p-4">
+              <div className="isit-app-panel rounded-xl p-4">
                 <div className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">Students</div>
-                <div className="text-2xl font-bold text-slate-900 mt-1">{insights.overview.total_students}</div>
+                <div className="text-2xl font-bold text-slate-900 dark:text-slate-100 mt-1">{insights.overview.total_students}</div>
                 <div className="text-xs text-slate-400 mt-1">Active in your organization</div>
               </div>
-              <div className="rounded-xl bg-white/80 border border-slate-200/80 p-4">
+              <div className="isit-app-panel rounded-xl p-4">
                 <div className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">Struggling</div>
                 <div className="text-2xl font-bold text-amber-700 mt-1">{insights.overview.students_struggling}</div>
                 <div className="text-xs text-slate-400 mt-1">Low mastery or multiple weak topics</div>
@@ -229,11 +229,11 @@ export default function TeacherDashboard() {
             </div>
 
             {insights.alerts.length > 0 && (
-              <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50/80 p-4">
-                <div className="flex items-center gap-2 text-amber-900 font-semibold text-sm mb-2">
+              <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50/80 p-4 dark:border-amber-800/60 dark:bg-amber-950/40">
+                <div className="flex items-center gap-2 text-amber-900 dark:text-amber-200 font-semibold text-sm mb-2">
                   <AlertTriangle className="w-4 h-4 flex-shrink-0" /> Alerts
                 </div>
-                <ul className="space-y-1.5 text-sm text-amber-950/90">
+                <ul className="space-y-1.5 text-sm text-amber-950/90 dark:text-amber-100/90">
                   {insights.alerts.map((a, i) => (
                     <li key={i} className="flex gap-2">
                       <span className="text-amber-600">•</span>
@@ -251,11 +251,11 @@ export default function TeacherDashboard() {
                 {insights.students.map((stu) => (
                   <div
                     key={stu.student_id}
-                    className={`rounded-xl border p-4 bg-white/90 ${stu.needs_attention ? 'border-amber-300 ring-1 ring-amber-200/60' : 'border-slate-200'}`}
+                    className={`isit-app-panel rounded-xl p-4 ${stu.needs_attention ? 'border-amber-300 ring-1 ring-amber-200/60' : ''}`}
                   >
                     <div className="flex items-start justify-between gap-2">
                       <div>
-                        <div className="font-semibold text-slate-900">{stu.name}</div>
+                        <div className="font-semibold text-slate-900 dark:text-slate-100">{stu.name}</div>
                         <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Mastery {stu.avg_mastery}%</div>
                       </div>
                       {stu.needs_attention && (
@@ -279,7 +279,7 @@ export default function TeacherDashboard() {
                       ) : (
                         <ul className="mt-1 space-y-1">
                           {stu.weak_topics.map((t) => (
-                            <li key={t.topic_id} className="text-sm text-slate-700">
+                            <li key={t.topic_id} className="text-sm text-slate-700 dark:text-slate-300">
                               {t.topic_name}
                               {t.mastery_score > 0 && (
                                 <span className="text-slate-400 text-xs ml-1">({t.mastery_score}%)</span>
@@ -300,7 +300,7 @@ export default function TeacherDashboard() {
       </section>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard label="Subjects" value={subjects.length} icon={<Layers className="w-5 h-5 text-sky-600" />} color="sky" />
         <StatCard label="Courses" value={courses.length} icon={<BookOpen className="w-5 h-5 text-violet-600" />} color="violet" />
         <StatCard label="Students" value={totalStudents} icon={<Users className="w-5 h-5 text-emerald-600" />} color="emerald" />
@@ -310,7 +310,7 @@ export default function TeacherDashboard() {
       {/* Subjects Section */}
       <section className="mb-8">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+          <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
             <Layers className="w-5 h-5 text-sky-600" /> Curriculum Subjects
           </h2>
           <Link href="/teacher/subjects" className="text-sky-600 text-sm font-medium hover:underline inline-flex items-center gap-1">
@@ -320,7 +320,7 @@ export default function TeacherDashboard() {
         {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="bg-white rounded-xl border border-slate-200 p-5 animate-pulse">
+              <div key={i} className="isit-app-panel rounded-xl p-5 animate-pulse">
                 <div className="h-5 bg-slate-100 rounded w-2/3 mb-3" />
                 <div className="h-4 bg-slate-100 rounded w-1/3" />
               </div>
@@ -332,11 +332,11 @@ export default function TeacherDashboard() {
               <Link
                 key={s._id}
                 href={`/teacher/subjects/${s._id}`}
-                className="group block bg-white rounded-xl border border-slate-200 p-5 shadow-sm hover:border-sky-300 hover:shadow-md transition no-underline"
+                className="group block isit-app-panel rounded-xl p-5 shadow-sm hover:border-sky-300 hover:shadow-md transition no-underline"
               >
                 <div className="flex items-start justify-between">
                   <div>
-                    <h3 className="font-semibold text-slate-900 group-hover:text-sky-700">{s.name}</h3>
+                    <h3 className="font-semibold text-slate-900 dark:text-slate-100 group-hover:text-sky-700 dark:group-hover:text-sky-400">{s.name}</h3>
                     <div className="flex gap-2 mt-2">
                       <span className="text-xs bg-slate-100 text-slate-600 dark:text-slate-300 px-2 py-0.5 rounded-md font-medium">{s.grade}</span>
                       <span className="text-xs bg-slate-100 text-slate-600 dark:text-slate-300 px-2 py-0.5 rounded-md font-medium">{s.board}</span>
@@ -349,7 +349,7 @@ export default function TeacherDashboard() {
             ))}
           </div>
         ) : (
-          <div className="bg-white rounded-xl border border-slate-200 p-8 text-center">
+          <div className="isit-app-panel rounded-xl p-8 text-center">
             <Layers className="w-10 h-10 text-slate-600 dark:text-slate-300 mx-auto mb-2" />
             <p className="text-slate-600 dark:text-slate-300 text-sm font-medium">No subjects in your organization yet.</p>
           </div>
@@ -359,14 +359,14 @@ export default function TeacherDashboard() {
       {/* Courses Table */}
       <section>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+          <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
             <BookOpen className="w-5 h-5 text-violet-600" /> My Courses
           </h2>
           <Link href="/teacher/create-course" className="text-sky-600 text-sm font-medium hover:underline inline-flex items-center gap-1">
             New course <Plus className="w-4 h-4" />
           </Link>
         </div>
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+        <div className="isit-app-panel rounded-xl shadow-sm overflow-hidden">
           {loading ? (
             <div className="p-6 text-slate-500 dark:text-slate-400 text-sm">Loading courses...</div>
           ) : courses.length === 0 ? (
@@ -394,7 +394,7 @@ export default function TeacherDashboard() {
                       ? new Date(course.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
                       : '';
                     return (
-                      <tr key={course._id} className="border-b border-slate-50 hover:bg-slate-50/50">
+                      <tr key={course._id} className="border-b border-slate-50 hover:bg-slate-50/50 dark:border-slate-800 dark:hover:bg-slate-800/40">
                         <td className="px-5 py-4">
                           <div className="font-semibold text-slate-800">{course.title}</div>
                           {date && <div className="text-xs text-slate-400 mt-0.5">Created {date}</div>}
@@ -452,13 +452,13 @@ const COLOR_MAP: Record<string, string> = {
 
 function StatCard({ label, value, icon, color }: { label: string; value: string | number; icon: React.ReactNode; color: string }) {
   return (
-    <div className="bg-white rounded-xl border border-slate-200 p-5 flex items-center gap-4 shadow-sm">
+    <div className="isit-app-panel rounded-xl p-5 flex items-center gap-4 shadow-sm">
       <div className={`w-11 h-11 rounded-xl ${COLOR_MAP[color] || 'bg-slate-100'} flex items-center justify-center flex-shrink-0`}>
         {icon}
       </div>
       <div>
         <div className="text-xs text-slate-500 dark:text-slate-400 font-medium">{label}</div>
-        <div className="text-xl font-bold text-slate-900">{value}</div>
+        <div className="text-xl font-bold text-slate-900 dark:text-slate-100">{value}</div>
       </div>
     </div>
   );

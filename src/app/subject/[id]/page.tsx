@@ -121,14 +121,14 @@ export default function SubjectDetailPage() {
     return (
       <div className="isit-app-bg min-h-screen flex font-sans relative">
         <Sidebar />
-        <main className="flex-1 p-4 sm:p-6 md:p-8 min-w-0">
+        <main className="isit-app-main isit-app-main--with-nav-toggle">
           <div className="max-w-4xl mx-auto animate-pulse">
             <div className="h-5 bg-slate-200 rounded w-32 mb-6" />
             <div className="h-8 bg-slate-200 rounded w-3/4 mb-4" />
             <div className="h-4 bg-slate-100 rounded w-1/2 mb-8" />
             <div className="space-y-3">
               {[1, 2, 3, 4, 5].map((i) => (
-                <div key={i} className="h-14 bg-white rounded-xl border border-slate-200" />
+                <div key={i} className="h-14 isit-app-panel rounded-xl" />
               ))}
             </div>
           </div>
@@ -172,7 +172,7 @@ export default function SubjectDetailPage() {
   return (
     <div className="isit-app-bg min-h-screen flex font-sans relative">
       <Sidebar />
-      <main className="flex-1 p-4 sm:p-6 md:p-8 min-w-0 overflow-x-auto">
+      <main className="isit-app-main isit-app-main--with-nav-toggle">
         <div className="max-w-4xl mx-auto">
           <nav aria-label="Breadcrumb" className="mb-4 flex flex-wrap items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
             <Link href="/dashboard" className="font-medium text-sky-600 hover:underline dark:text-sky-400">
@@ -210,7 +210,7 @@ export default function SubjectDetailPage() {
           </h2>
           <p className="mb-4 text-sm text-slate-600 dark:text-slate-400">{tr('learningFlowSubjectTopicsLead')}</p>
           {topics.length === 0 ? (
-            <div className="bg-white rounded-xl border border-slate-200 p-8 text-center text-slate-500 dark:text-slate-400">
+            <div className="isit-app-panel rounded-xl p-8 text-center text-slate-500 dark:text-slate-400">
               <BookOpen className="w-10 h-10 mx-auto mb-2 text-slate-600 dark:text-slate-300" />
               <p className="text-sm font-medium">No topics in this subject yet.</p>
             </div>
@@ -227,7 +227,7 @@ export default function SubjectDetailPage() {
                   <li key={topic._id}>
                     <Link
                       href={`/topic/${topic._id}`}
-                      className="group block bg-white rounded-xl border border-slate-200 p-4 shadow-sm hover:border-sky-300 hover:shadow-md transition no-underline text-inherit"
+                      className="group block isit-app-panel rounded-xl p-4 shadow-sm hover:border-sky-300 hover:shadow-md transition no-underline text-inherit"
                     >
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0 flex-1">

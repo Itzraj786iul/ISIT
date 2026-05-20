@@ -12,7 +12,7 @@ function ChildrenListSkeleton() {
       {[1, 2, 3].map((i) => (
         <div
           key={i}
-          className="h-[4.5rem] rounded-2xl border border-slate-200 bg-white dark:bg-slate-900 dark:border-slate-700 animate-pulse shadow-sm"
+          className="isit-app-panel h-[4.5rem] rounded-2xl animate-pulse shadow-sm"
         />
       ))}
     </div>
@@ -73,7 +73,7 @@ export default function ParentChildrenPage() {
         <ul className="space-y-3">
           {children.map((c) => (
             <li key={c.id}>
-              <div className="flex items-center gap-4 p-4 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm min-w-0">
+              <div className="isit-app-panel flex min-w-0 items-center gap-4 rounded-2xl p-4 shadow-sm">
                 <div className="w-11 h-11 rounded-full bg-violet-100 dark:bg-violet-950 flex items-center justify-center text-violet-600 dark:text-violet-300 font-semibold shrink-0">
                   {c.name.charAt(0).toUpperCase()}
                 </div>

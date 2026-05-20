@@ -135,11 +135,53 @@ html.dark body.isit-app {
   background-repeat: no-repeat;
 }
 
+/* —— Authenticated app main (mobile-safe padding + no horizontal scroll) —— */
+.isit-app-main {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  min-width: 0;
+  overflow-x: hidden;
+  padding: max(1rem, env(safe-area-inset-left)) max(1rem, env(safe-area-inset-right))
+    max(1rem, env(safe-area-inset-bottom));
+  padding-top: max(1rem, env(safe-area-inset-top));
+}
+
+@media (min-width: 640px) {
+  .isit-app-main {
+    padding: max(1.25rem, env(safe-area-inset-top)) max(1.5rem, env(safe-area-inset-right))
+      max(1.5rem, env(safe-area-inset-bottom)) max(1.5rem, env(safe-area-inset-left));
+  }
+}
+
+@media (min-width: 768px) {
+  .isit-app-main {
+    padding: max(1.5rem, env(safe-area-inset-top)) max(2rem, env(safe-area-inset-right))
+      max(2rem, env(safe-area-inset-bottom)) max(2rem, env(safe-area-inset-left));
+  }
+
+  .isit-app-main--with-nav-toggle {
+    padding-top: max(1.5rem, env(safe-area-inset-top));
+  }
+}
+
+@media (max-width: 767px) {
+  .isit-app-main--with-nav-toggle {
+    padding-top: max(4.25rem, calc(env(safe-area-inset-top) + 3.5rem));
+    padding-left: max(1rem, env(safe-area-inset-left));
+  }
+}
+
+/* Public pages: room for fixed Ask Tutor FAB */
+.isit-public-content {
+  padding-bottom: max(5.5rem, calc(env(safe-area-inset-bottom) + 4.5rem));
+}
+
 /* —— Page backgrounds (all public + app shells) —— */
 .isit-app-bg,
 .isit-cosmic-bg {
   position: relative;
-  overflow: hidden;
+  overflow-x: hidden;
   isolation: isolate;
   background-color: var(--isit-bg);
   background-image: var(--isit-app-bg-image);
@@ -251,6 +293,124 @@ html.dark .isit-label {
   color: var(--isit-text);
 }
 
+/* —— App chrome (student / teacher / parent logged-in pages) —— */
+.isit-app-header {
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--isit-border);
+  background: var(--isit-surface-elevated);
+  color: var(--isit-text);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+html.dark .isit-app-header {
+  background: rgba(2, 6, 23, 0.88);
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+.isit-app-breadcrumb-link {
+  color: var(--isit-accent);
+}
+
+.isit-app-breadcrumb-link:hover {
+  color: var(--isit-accent-hover);
+  text-decoration: underline;
+}
+
+.isit-app-breadcrumb-current {
+  color: var(--isit-text-secondary);
+}
+
+html.dark .isit-app-breadcrumb-current {
+  color: #cbd5e1;
+}
+
+.isit-app-panel {
+  border-radius: 1rem;
+  background: var(--isit-surface-elevated);
+  border: 1px solid var(--isit-border);
+  box-shadow: var(--isit-shadow-sm);
+  color: var(--isit-text);
+}
+
+.isit-app-stat-card {
+  border-radius: 1rem;
+  background: var(--isit-surface-elevated);
+  border: 1px solid var(--isit-border);
+  box-shadow: var(--isit-shadow-sm);
+  color: var(--isit-text);
+}
+
+.isit-app-chip {
+  border-radius: 9999px;
+  border: 1px solid var(--isit-border);
+  background: var(--isit-surface-muted);
+  color: var(--isit-text-secondary);
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.isit-app-chip:hover {
+  background: var(--isit-surface-elevated);
+  color: var(--isit-text);
+}
+
+.isit-app-chip-active {
+  border-color: color-mix(in srgb, var(--isit-accent) 45%, var(--isit-border));
+  background: var(--isit-accent-soft);
+  color: var(--isit-accent);
+  font-weight: 600;
+}
+
+html.dark .isit-app-chip-active {
+  color: #e0f2fe;
+}
+
+.isit-achievement-card {
+  position: relative;
+  border-radius: 1rem;
+  padding: 1.25rem;
+  background: var(--isit-surface-elevated);
+  border: 1px solid var(--isit-border);
+  box-shadow: var(--isit-shadow-sm);
+  color: var(--isit-text);
+}
+
+.isit-achievement-card--unlocked {
+  border-color: color-mix(in srgb, var(--isit-success) 38%, var(--isit-border));
+}
+
+.isit-achievement-card--locked {
+  opacity: 0.78;
+  background: var(--isit-surface-muted);
+}
+
+.isit-topic-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  border: 1px solid color-mix(in srgb, var(--isit-accent) 22%, var(--isit-border));
+  background: var(--isit-accent-soft);
+  color: var(--isit-accent);
+  text-decoration: none;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.isit-topic-link:hover {
+  border-color: color-mix(in srgb, var(--isit-accent) 45%, var(--isit-border));
+  background: color-mix(in srgb, var(--isit-accent-soft) 80%, var(--isit-surface-elevated));
+}
+
+html.dark .isit-topic-link {
+  color: #bae6fd;
+}
+
 /* Glass: solid in light, translucent in dark */
 .isit-glass {
   border-radius: 1rem;
@@ -334,6 +494,12 @@ html.dark .isit-label {
 
 html.dark .isit-nav-link-active {
   border-color: rgba(255, 255, 255, 0.1);
+  background: rgba(34, 211, 238, 0.08);
+  color: #e0f2fe;
+}
+
+html.dark .isit-nav-link-active svg {
+  color: #22d3ee;
 }
 
 /* —— Public marketing navbar —— */
@@ -1017,6 +1183,696 @@ html.dark .isit-landing-replica .landing-hero-dashboard-scene::before {
   background: linear-gradient(to bottom right, rgba(30, 27, 75, 0.4), transparent);
 }
 
+/* —— Landing hero spacing & copy balance —— */
+.isit-landing-replica .isit-landing-hero {
+  margin-top: 0;
+}
+
+.isit-landing-replica .isit-hero-copy {
+  position: relative;
+  z-index: 2;
+}
+
+/* —— Premium hero scene (unified ecosystem) —— */
+.isit-landing-replica .landing-hero-premium {
+  isolation: isolate;
+  width: 100%;
+}
+
+.isit-landing-replica .landing-hero-premium-ambient {
+  position: absolute;
+  inset: -4% -6% -2%;
+  z-index: 0;
+  background: radial-gradient(
+    ellipse 90% 80% at 55% 50%,
+    rgba(34, 211, 238, 0.18),
+    rgba(99, 102, 241, 0.1) 55%,
+    transparent 80%
+  );
+  filter: blur(48px);
+  pointer-events: none;
+}
+
+/* Unified glass ecosystem shell */
+.isit-landing-replica .landing-hero-ecosystem {
+  position: relative;
+  overflow: hidden;
+  border-radius: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: linear-gradient(
+    145deg,
+    rgba(15, 23, 42, 0.55) 0%,
+    rgba(2, 6, 23, 0.75) 45%,
+    rgba(15, 23, 42, 0.5) 100%
+  );
+  box-shadow:
+    0 0 0 1px rgba(34, 211, 238, 0.04),
+    0 32px 64px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+html.dark .isit-landing-replica .landing-hero-ecosystem {
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 0 0 1px rgba(34, 211, 238, 0.06),
+    0 40px 80px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.isit-landing-replica .landing-hero-ecosystem-badge {
+  position: absolute;
+  top: 0.875rem;
+  right: 0.875rem;
+  z-index: 6;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(34, 211, 238, 0.2);
+  background: rgba(2, 6, 23, 0.55);
+  padding: 0.3rem 0.65rem;
+  font-size: 0.5625rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #a5f3fc;
+  backdrop-filter: blur(10px);
+}
+
+.isit-landing-replica .landing-hero-visual-cluster {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  min-height: 320px;
+  padding: 0.875rem;
+}
+
+@media (min-width: 640px) {
+  .isit-landing-replica .landing-hero-visual-cluster {
+    min-height: 380px;
+    padding: 1rem 1rem 1rem 1.125rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .isit-landing-replica .landing-hero-visual-cluster {
+    flex-direction: row;
+    align-items: stretch;
+    gap: 0;
+    min-height: 420px;
+    padding: 1.125rem 1.125rem 1.125rem 1.25rem;
+  }
+}
+
+/* Backdrop: grid + orbs + particles */
+.isit-landing-replica .landing-hero-premium-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  border-radius: 1.5rem;
+}
+
+.isit-landing-replica .landing-hero-premium-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(34, 211, 238, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(34, 211, 238, 0.04) 1px, transparent 1px);
+  background-size: 28px 28px;
+  mask-image: radial-gradient(ellipse 90% 85% at 50% 50%, #000 30%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse 90% 85% at 50% 50%, #000 30%, transparent 75%);
+}
+
+.isit-landing-replica .landing-hero-premium-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(40px);
+  animation: landing-hero-orb-drift 12s ease-in-out infinite;
+}
+
+.isit-landing-replica .landing-hero-premium-orb--cyan {
+  width: 45%;
+  height: 50%;
+  left: 5%;
+  top: 20%;
+  background: rgba(34, 211, 238, 0.2);
+}
+
+.isit-landing-replica .landing-hero-premium-orb--violet {
+  width: 35%;
+  height: 40%;
+  right: 0;
+  top: 10%;
+  background: rgba(139, 92, 246, 0.18);
+  animation-delay: -4s;
+}
+
+.isit-landing-replica .landing-hero-premium-orb--indigo {
+  width: 50%;
+  height: 35%;
+  left: 20%;
+  bottom: 0;
+  background: rgba(79, 70, 229, 0.14);
+  animation-delay: -7s;
+}
+
+.isit-landing-replica .landing-hero-premium-particle {
+  position: absolute;
+  bottom: -4px;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: rgba(34, 211, 238, 0.7);
+  box-shadow: 0 0 8px rgba(34, 211, 238, 0.8);
+  animation: landing-hero-particle-rise 6s ease-in-out infinite;
+}
+
+.isit-landing-replica .landing-hero-premium-scan {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(34, 211, 238, 0.03) 48%,
+    transparent 52%
+  );
+  animation: landing-hero-scan 8s linear infinite;
+  pointer-events: none;
+}
+
+/* Portal zone */
+.isit-landing-replica .landing-hero-portal-zone {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+
+/* AI tutor — slim top bar, not overlapping image bottom */
+.isit-landing-replica .landing-hero-tutor-panel {
+  position: relative;
+  z-index: 5;
+  flex-shrink: 0;
+}
+
+.isit-landing-replica .landing-hero-tutor-panel-inner {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(34, 211, 238, 0.15);
+  background: rgba(2, 6, 23, 0.5);
+  padding: 0.625rem 0.875rem;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+.isit-landing-replica .landing-hero-portal-stack {
+  position: relative;
+  flex: 1;
+  min-height: 240px;
+}
+
+@media (min-width: 640px) {
+  .isit-landing-replica .landing-hero-portal-stack {
+    min-height: 300px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .isit-landing-replica .landing-hero-portal-stack {
+    min-height: 340px;
+  }
+}
+
+.isit-landing-replica .landing-hero-portal-glow {
+  position: absolute;
+  inset: 8% 10% 12% 5%;
+  z-index: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(34, 211, 238, 0.2), transparent 68%);
+  filter: blur(24px);
+  animation: landing-hero-glow-pulse 4s ease-in-out infinite;
+}
+
+/* Stats rail — connected to portal */
+.isit-landing-replica .landing-hero-stats-rail {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .isit-landing-replica .landing-hero-stats-rail {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    width: 14.75rem;
+    margin-left: -0.75rem;
+    padding-left: 0.5rem;
+  }
+
+  .isit-landing-replica .landing-hero-stats-bridge {
+    width: 1px;
+    align-self: stretch;
+    min-height: 12rem;
+    margin-right: 0.625rem;
+    background: linear-gradient(
+      180deg,
+      transparent,
+      rgba(34, 211, 238, 0.35) 25%,
+      rgba(139, 92, 246, 0.35) 75%,
+      transparent
+    );
+    box-shadow: 0 0 12px rgba(34, 211, 238, 0.2);
+  }
+
+  .isit-landing-replica .landing-hero-premium-stats--mobile {
+    display: none;
+  }
+}
+
+.isit-landing-replica .landing-hero-premium-stats--mobile .landing-hero-stats-bridge {
+  display: none;
+}
+
+.isit-landing-replica .landing-hero-premium-stats--mobile .landing-hero-stats-rail {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-left: 0;
+  padding-left: 0;
+}
+
+.isit-landing-replica .landing-hero-premium-portal-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgba(34, 211, 238, 0.1);
+  pointer-events: none;
+}
+
+.isit-landing-replica .landing-hero-premium-portal-ring--outer {
+  left: 4%;
+  top: 8%;
+  width: 62%;
+  height: 75%;
+  animation: landing-orbit 48s linear infinite;
+}
+
+.isit-landing-replica .landing-hero-premium-portal-ring--inner {
+  left: 14%;
+  top: 18%;
+  width: 42%;
+  height: 52%;
+  border-color: rgba(167, 139, 250, 0.12);
+  animation: landing-orbit 36s linear infinite reverse;
+}
+
+.isit-landing-replica .landing-hero-premium-portal-frame {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  min-height: inherit;
+  overflow: hidden;
+  border-radius: 1.125rem;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: rgba(2, 6, 23, 0.35);
+  box-shadow:
+    0 20px 40px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  animation: landing-hero-portal-float 10s ease-in-out infinite;
+}
+
+.isit-landing-replica .landing-hero-premium-portal-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 240px;
+  object-fit: cover;
+  object-position: 28% center;
+}
+
+@media (min-width: 640px) {
+  .isit-landing-replica .landing-hero-premium-portal-img {
+    min-height: 300px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .isit-landing-replica .landing-hero-premium-portal-img {
+    min-height: 340px;
+    object-position: 30% center;
+  }
+}
+
+.isit-landing-replica .landing-hero-premium-portal-shine {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: linear-gradient(
+    125deg,
+    rgba(255, 255, 255, 0.06) 0%,
+    transparent 40%,
+    transparent 60%,
+    rgba(34, 211, 238, 0.04) 100%
+  );
+  pointer-events: none;
+}
+
+.isit-landing-replica .landing-hero-portal-vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  background: linear-gradient(90deg, transparent 55%, rgba(2, 6, 23, 0.45) 100%);
+  pointer-events: none;
+}
+
+@media (max-width: 1023px) {
+  .isit-landing-replica .landing-hero-portal-vignette {
+    background: linear-gradient(to top, rgba(2, 6, 23, 0.35), transparent 42%);
+  }
+}
+
+/* Softer glass analytics cards */
+.isit-landing-replica .landing-hero-fx-card {
+  position: relative;
+  border-radius: 1.125rem;
+  padding: 1px;
+  background: linear-gradient(
+    135deg,
+    rgba(34, 211, 238, 0.22),
+    rgba(99, 102, 241, 0.12) 50%,
+    rgba(34, 211, 238, 0.08)
+  );
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.2),
+    0 0 0 1px rgba(255, 255, 255, 0.03);
+  animation: landing-hero-card-enter 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.isit-landing-replica .landing-hero-fx-card--cyan {
+  background: linear-gradient(135deg, rgba(34, 211, 238, 0.28), rgba(56, 189, 248, 0.08));
+}
+
+.isit-landing-replica .landing-hero-fx-card--violet {
+  background: linear-gradient(135deg, rgba(167, 139, 250, 0.28), rgba(99, 102, 241, 0.08));
+}
+
+.isit-landing-replica .landing-hero-fx-card--emerald {
+  background: linear-gradient(135deg, rgba(52, 211, 153, 0.25), rgba(34, 211, 238, 0.08));
+}
+
+.isit-landing-replica .landing-hero-fx-card-inner {
+  border-radius: calc(1.125rem - 1px);
+  background: rgba(15, 23, 42, 0.45);
+  padding: 0.8125rem 0.9375rem;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.isit-landing-replica .landing-hero-card-label {
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: #94a3b8;
+}
+
+.isit-landing-replica .landing-hero-card-meta {
+  font-size: 0.625rem;
+  color: #64748b;
+}
+
+.isit-landing-replica .landing-hero-icon-wrap {
+  display: flex;
+  height: 1.75rem;
+  width: 1.75rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.5rem;
+}
+
+.isit-landing-replica .landing-hero-icon-wrap--cyan {
+  background: rgba(34, 211, 238, 0.1);
+}
+
+.isit-landing-replica .landing-hero-icon-wrap--violet {
+  background: rgba(139, 92, 246, 0.12);
+  box-shadow: 0 0 14px rgba(139, 92, 246, 0.15);
+}
+
+.isit-landing-replica .landing-hero-icon-wrap--emerald {
+  background: rgba(16, 185, 129, 0.1);
+}
+
+.isit-landing-replica .landing-hero-fx-card--hover {
+  transition:
+    transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.3s ease;
+}
+
+@media (hover: hover) {
+  .isit-landing-replica .landing-hero-fx-card--hover:hover {
+    transform: translateY(-2px);
+    box-shadow:
+      0 12px 32px rgba(0, 0, 0, 0.3),
+      0 0 24px rgba(34, 211, 238, 0.08);
+  }
+
+  .isit-landing-replica .landing-hero-fx-card--hover:hover .landing-hero-fx-card-inner {
+    background: rgba(15, 23, 42, 0.58);
+  }
+}
+
+.isit-landing-replica .landing-hero-tutor-avatar {
+  position: relative;
+  background: linear-gradient(145deg, rgba(34, 211, 238, 0.15), rgba(99, 102, 241, 0.2));
+  border: 1px solid rgba(34, 211, 238, 0.2);
+}
+
+.isit-landing-replica .landing-hero-tutor-avatar-glow {
+  position: absolute;
+  inset: -4px;
+  border-radius: inherit;
+  background: radial-gradient(circle, rgba(34, 211, 238, 0.35), transparent 70%);
+  animation: landing-hero-glow-pulse 3s ease-in-out infinite;
+}
+
+.isit-landing-replica .landing-hero-live-dot span:first-child {
+  animation: pulse-cyan 2s ease-in-out infinite;
+}
+
+.isit-landing-replica .landing-hero-typing-dot {
+  display: block;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #67e8f9;
+  animation: landing-hero-typing 1.2s ease-in-out infinite;
+}
+
+/* Mastery ring */
+.isit-landing-replica .landing-hero-mastery-ring-glow {
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(34, 211, 238, 0.35), transparent 68%);
+  animation: landing-hero-glow-pulse 2.5s ease-in-out infinite;
+}
+
+.isit-landing-replica .landing-hero-sparkline polyline {
+  stroke-dasharray: 60;
+  stroke-dashoffset: 60;
+  animation: landing-hero-spark-draw 2s ease-out forwards;
+  animation-delay: 0.6s;
+}
+
+.isit-landing-replica .landing-hero-bars-item {
+  transform-origin: bottom;
+  animation: landing-hero-bar-grow 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.isit-landing-replica .landing-hero-segment--on {
+  background: linear-gradient(90deg, #7c3aed, #a78bfa);
+  box-shadow: 0 0 8px rgba(139, 92, 246, 0.5);
+  animation: landing-hero-segment-fill 0.5s ease-out both;
+}
+
+.isit-landing-replica .landing-hero-chip {
+  border-radius: 9999px;
+  background: rgba(16, 185, 129, 0.1);
+  padding: 0.125rem 0.4rem;
+  border: 1px solid rgba(52, 211, 153, 0.2);
+  font-size: 0.5625rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #6ee7b7;
+}
+
+.isit-landing-replica .landing-hero-flame-pulse {
+  animation: landing-hero-glow-pulse 2s ease-in-out infinite;
+}
+
+/* Light mode */
+html:not(.dark) .isit-landing-replica .landing-hero-ecosystem {
+  background: linear-gradient(145deg, rgba(248, 250, 252, 0.9), rgba(241, 245, 249, 0.95));
+  border-color: rgba(148, 163, 184, 0.35);
+}
+
+html:not(.dark) .isit-landing-replica .landing-hero-fx-card-inner {
+  background: rgba(255, 255, 255, 0.82);
+}
+
+html:not(.dark) .isit-landing-replica .landing-hero-fx-card-inner .text-white {
+  color: var(--isit-text);
+}
+
+html:not(.dark) .isit-landing-replica .landing-hero-tutor-panel-inner {
+  background: rgba(255, 255, 255, 0.88);
+  border-color: rgba(14, 165, 233, 0.2);
+}
+
+html:not(.dark) .isit-landing-replica .landing-hero-ecosystem-badge {
+  background: rgba(255, 255, 255, 0.92);
+  color: #0e7490;
+}
+
+/* Keyframes */
+@keyframes landing-hero-orb-drift {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(3%, -4%) scale(1.05);
+  }
+}
+
+@keyframes landing-hero-particle-rise {
+  0% {
+    transform: translateY(0) scale(0);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-120px) scale(1);
+    opacity: 0;
+  }
+}
+
+@keyframes landing-hero-scan {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes landing-hero-portal-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes landing-hero-card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes landing-hero-glow-pulse {
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes landing-hero-typing {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-2px);
+  }
+}
+
+@keyframes landing-hero-spark-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes landing-hero-bar-grow {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes landing-hero-segment-fill {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .isit-landing-replica .landing-hero-premium-orb,
+  .isit-landing-replica .landing-hero-premium-particle,
+  .isit-landing-replica .landing-hero-premium-scan,
+  .isit-landing-replica .landing-hero-premium-portal-frame,
+  .isit-landing-replica .landing-hero-premium-portal-ring,
+  .isit-landing-replica .landing-hero-portal-glow,
+  .isit-landing-replica .landing-hero-fx-card,
+  .isit-landing-replica .landing-hero-sparkline polyline,
+  .isit-landing-replica .landing-hero-bars-item,
+  .isit-landing-replica .landing-hero-segment--on,
+  .isit-landing-replica .landing-hero-tutor-avatar-glow,
+  .isit-landing-replica .landing-hero-mastery-ring-glow,
+  .isit-landing-replica .landing-hero-live-dot span:first-child,
+  .isit-landing-replica .landing-hero-flame-pulse {
+    animation: none !important;
+  }
+
+  .isit-landing-replica .landing-hero-sparkline polyline {
+    stroke-dashoffset: 0;
+  }
+
+  .isit-landing-replica .landing-hero-bars-item,
+  .isit-landing-replica .landing-hero-segment--on {
+    transform: none;
+  }
+}
+
 html:not(.dark) .isit-landing-replica .landing-orbit-ring,
 html:not(.dark) .isit-landing-replica .landing-hero-glow-pulse {
   display: none !important;
@@ -1193,6 +2049,94 @@ html.dark .isit-landing-replica .landing-glass .text-emerald-600 {
 }
 
 /* Prevent light-only hover:bg-white from flashing white panels in dark mode */
-html.dark .isit-app-bg [class*='hover:bg-white']:not([class*='hover:bg-white/']):not([class*='dark:hover:bg-']):hover {
+html.dark .isit-app-bg [class*='hover:bg-white']:not([class*='hover:bg-white/']):not([class*='dark:hover:bg-']):hover,
+html.dark .isit-cosmic-bg [class*='hover:bg-white']:not([class*='hover:bg-white/']):not([class*='dark:hover:bg-']):hover {
   background-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* —— Dark mode: fix leaked light surfaces (bg-white, broken dark:bg-white) —— */
+html.dark :is(.isit-app-bg, .isit-cosmic-bg) :where(.bg-white, .bg-slate-50, .bg-slate-100):not(.preserve-light-bg):not([class*='bg-white/']) {
+  background-color: var(--isit-surface-elevated) !important;
+  border-color: var(--isit-border) !important;
+  color: var(--isit-text);
+}
+
+html.dark :is(.isit-app-bg, .isit-cosmic-bg) [class*='dark:bg-white']:not([class*='dark:bg-white/']):not(.preserve-light-bg) {
+  background-color: var(--isit-surface-elevated) !important;
+}
+
+html.dark :is(.isit-app-bg, .isit-cosmic-bg) [class*='bg-white/']:not(.preserve-light-bg) {
+  background-color: color-mix(in srgb, var(--isit-surface-elevated) 88%, transparent) !important;
+}
+
+html.dark :is(.isit-app-bg, .isit-cosmic-bg) .isit-input,
+html.dark :is(.isit-app-bg, .isit-cosmic-bg) input:not([type='checkbox']):not([type='radio']):not(.preserve-light-bg),
+html.dark :is(.isit-app-bg, .isit-cosmic-bg) textarea:not(.preserve-light-bg),
+html.dark :is(.isit-app-bg, .isit-cosmic-bg) select:not(.preserve-light-bg) {
+  background-color: var(--isit-input-bg) !important;
+  border-color: var(--isit-input-border) !important;
+  color: var(--isit-input-text) !important;
+}
+
+html.dark :is(.isit-app-bg, .isit-cosmic-bg) :where(.text-slate-800, .text-slate-700, .text-slate-900):not(.preserve-light-text):not(
+    .isit-gradient-text
+  ):not(.isit-gradient-text-strong):not([class*='dark:text-']) {
+  color: var(--isit-text) !important;
+}
+
+html.dark :is(.isit-app-bg, .isit-cosmic-bg) :where(.text-slate-600, .text-slate-500):not([class*='dark:text-']) {
+  color: var(--isit-text-secondary) !important;
+}
+
+html.dark :is(.isit-app-bg, .isit-cosmic-bg) :where(.border-slate-100, .border-slate-200):not([class*='dark:border-']) {
+  border-color: var(--isit-border) !important;
+}
+
+/* —— Light mode: readable text on token surfaces —— */
+html:not(.dark) :is(.isit-app-bg, .isit-cosmic-bg) :is(.isit-card, .isit-app-panel, .isit-app-stat-card) .text-slate-500,
+html:not(.dark) :is(.isit-app-bg, .isit-cosmic-bg) :is(.isit-card, .isit-app-panel, .isit-app-stat-card) .text-slate-600 {
+  color: var(--isit-text-muted) !important;
+}
+
+html:not(.dark) :is(.isit-app-bg, .isit-cosmic-bg) :is(.isit-card, .isit-app-panel, .isit-app-stat-card) .text-slate-800,
+html:not(.dark) :is(.isit-app-bg, .isit-cosmic-bg) :is(.isit-card, .isit-app-panel, .isit-app-stat-card) .text-slate-700 {
+  color: var(--isit-text) !important;
+}
+
+html:not(.dark) .isit-app-breadcrumb-current {
+  color: var(--isit-text-secondary) !important;
+}
+
+/* Belt-and-suspenders: token surfaces always follow theme */
+html.dark :is(.isit-app-panel, .isit-app-stat-card, .isit-app-header, .isit-achievement-card) {
+  background: var(--isit-surface-elevated);
+  border-color: var(--isit-border);
+  color: var(--isit-text);
+}
+
+html.dark .isit-achievement-card--locked {
+  background: var(--isit-surface-muted);
+}
+
+html.dark :is(.isit-app-bg, .isit-cosmic-bg) :is(.bg-sky-50, .bg-sky-100, .bg-emerald-100, .bg-violet-100, .bg-amber-100, .bg-slate-100):not(.preserve-light-bg) {
+  background-color: rgba(255, 255, 255, 0.06) !important;
+}
+
+html.dark :is(.isit-app-bg, .isit-cosmic-bg) :is(.text-sky-800, .text-sky-700):not([class*='dark:text-']) {
+  color: #7dd3fc !important;
+}
+
+html:not(.dark) :is(.isit-app-bg, .isit-cosmic-bg) .isit-app-header :is(.text-slate-700, .text-slate-600):not(.text-sky-600):not([class*='text-sky-']) {
+  color: var(--isit-text-secondary) !important;
+}
+
+html:not(.dark) :is(.isit-app-bg, .isit-cosmic-bg) .isit-app-chip:not(.isit-app-chip-active) {
+  color: var(--isit-text-secondary) !important;
+  background: var(--isit-surface-muted) !important;
+}
+
+/* Calendar / list hovers: avoid light hover + light text in dark mode */
+html.dark :is(.isit-app-bg, .isit-cosmic-bg) :is(button, a)[class*='hover:bg-slate-100']:hover:not([class*='bg-sky-']):not([class*='bg-violet-']) {
+  background-color: rgba(51, 65, 85, 0.75) !important;
+  color: #f1f5f9 !important;
 }

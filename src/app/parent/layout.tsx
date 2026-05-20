@@ -39,11 +39,9 @@ export default function ParentLayout({ children }: { children: React.ReactNode }
   }
 
   return (
-    <div className="isit-app-bg min-h-screen flex relative">
+    <div className="isit-app-bg relative flex min-h-screen overflow-x-hidden">
       <ParentNav />
-      <main className="flex-1 ml-[250px] min-w-0 p-6 md:p-8 relative z-[1]">
-        {children}
-      </main>
+      <main className="isit-app-main isit-app-main--with-nav-toggle">{children}</main>
     </div>
   );
 }

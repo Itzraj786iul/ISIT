@@ -22,7 +22,7 @@ export function RecommendationsSectionSkeleton() {
       <div className="h-5 bg-slate-100 rounded w-48 mb-4 animate-pulse" />
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="bg-white rounded-xl border border-slate-200 p-5 animate-pulse">
+          <div key={i} className="isit-app-panel rounded-xl p-5 animate-pulse">
             <div className="h-4 bg-slate-100 rounded w-3/4 mb-3" />
             <div className="h-5 bg-slate-100 rounded w-20 mb-4" />
             <div className="h-9 bg-slate-100 rounded-lg w-full" />
@@ -60,7 +60,7 @@ export default function RecommendationsSection({ loading, items }: Props) {
           return (
             <div
               key={`${item.name}-${idx}`}
-              className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm hover:border-violet-200 hover:shadow-md transition flex flex-col"
+              className="isit-app-panel rounded-xl p-5 shadow-sm hover:border-violet-200 hover:shadow-md transition flex flex-col"
             >
               <h3 className="font-semibold text-slate-900 leading-snug">{item.name}</h3>
               <span className={`mt-2 inline-flex w-fit text-xs font-semibold px-2 py-0.5 rounded-full ring-1 ${difficultyStyles(item.difficulty)}`}>

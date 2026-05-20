@@ -207,7 +207,7 @@ export default function Dashboard() {
   return (
     <div className="isit-app-bg min-h-screen flex font-sans overflow-x-hidden relative">
       <Sidebar />
-      <main className="flex-1 min-w-0 overflow-x-hidden relative z-[1]">
+      <main className="isit-app-main isit-app-main--with-nav-toggle">
         <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 pb-8 space-y-4 sm:space-y-6">
           <SessionCompleteModal
             open={sessionModalOpen}
@@ -292,7 +292,7 @@ export default function Dashboard() {
           <SubjectsGridSection loading={loading} subjects={subjects} />
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden dark:bg-slate-900 dark:border-slate-700">
+            <div className="isit-app-stat-card rounded-2xl shadow-sm overflow-hidden dark:bg-slate-900 dark:border-slate-700">
               <div className="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between gap-2 min-w-0">
                 <Link
                   href="/analytics"
@@ -384,7 +384,7 @@ export default function Dashboard() {
               </div>
             </div>
 
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden dark:bg-slate-900 dark:border-slate-700">
+            <div className="isit-app-stat-card rounded-2xl shadow-sm overflow-hidden dark:bg-slate-900 dark:border-slate-700">
               <div className="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-700">
                 <h2 className="text-lg sm:text-xl font-bold text-slate-800 dark:text-slate-100">{tr('dashboardQuickActionsTitle')}</h2>
               </div>

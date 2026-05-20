@@ -82,11 +82,11 @@ export default function ParentChildProgressPage() {
       <section className="mb-8" aria-label="Learning insights">
         <h2 className="text-lg font-bold text-slate-800 mb-4">Learning snapshot</h2>
         {insightsLoading && (
-          <div className="bg-white rounded-xl border border-slate-200 p-6 text-slate-500 dark:text-slate-400 text-sm">Loading…</div>
+          <div className="isit-app-panel rounded-xl p-6 text-slate-500 dark:text-slate-400 text-sm">Loading…</div>
         )}
         {!insightsLoading && insights && (
           <div className="space-y-5">
-            <div className="bg-white rounded-xl border border-slate-200 p-5">
+            <div className="isit-app-panel rounded-xl p-5">
               <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide">This week</p>
               <p className="text-lg font-semibold text-slate-900 mt-1">
                 {insights.recent_activity === 0
@@ -109,7 +109,7 @@ export default function ParentChildProgressPage() {
             />
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="bg-white rounded-xl border border-slate-200 p-4">
+              <div className="isit-app-panel rounded-xl p-4">
                 <div className="flex items-center gap-2 text-emerald-700 font-semibold text-xs mb-2">
                   <CheckCircle2 className="w-4 h-4" /> Strengths
                 </div>
@@ -123,7 +123,7 @@ export default function ParentChildProgressPage() {
                   </ul>
                 )}
               </div>
-              <div className="bg-white rounded-xl border border-slate-200 p-4">
+              <div className="isit-app-panel rounded-xl p-4">
                 <div className="flex items-center gap-2 text-amber-800 font-semibold text-xs mb-2">
                   <Lightbulb className="w-4 h-4" /> Extra support
                 </div>
@@ -146,7 +146,7 @@ export default function ParentChildProgressPage() {
               <p className="text-slate-800 text-sm leading-relaxed">{insights.ai_summary}</p>
             </div>
 
-            <div className="bg-white rounded-xl border border-slate-200 p-4">
+            <div className="isit-app-panel rounded-xl p-4">
               <h3 className="font-semibold text-slate-900 text-sm mb-2">Support ideas</h3>
               <ul className="text-sm text-slate-700 space-y-1">
                 {insights.action_suggestions.map((s, i) => (
@@ -163,7 +163,7 @@ export default function ParentChildProgressPage() {
 
       <section>
         <h2 className="text-lg font-bold text-slate-800 mb-4">Suggested for your child</h2>
-        <Link href="/courses" className="flex items-center gap-4 p-4 bg-white rounded-xl border border-slate-200 shadow-sm hover:border-violet-200 hover:shadow transition no-underline text-slate-800">
+        <Link href="/courses" className="flex items-center gap-4 p-4 isit-app-panel rounded-xl shadow-sm hover:border-violet-200 hover:shadow transition no-underline text-slate-800">
           <div className="w-10 h-10 rounded-lg bg-sky-100 flex items-center justify-center">
             <BookOpen className="w-5 h-5 text-sky-600" />
           </div>

@@ -23,7 +23,7 @@ export function SubjectsGridSkeleton() {
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
         {[1, 2, 3, 4].map((i) => (
-          <div key={i} className="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 animate-pulse dark:bg-slate-900 dark:border-slate-700">
+          <div key={i} className="isit-app-stat-card rounded-2xl p-4 sm:p-5 animate-pulse dark:bg-slate-900 dark:border-slate-700">
             <div className="h-10 w-10 bg-slate-100 rounded-xl mb-3" />
             <div className="h-4 bg-slate-100 rounded w-3/4" />
           </div>
@@ -62,7 +62,7 @@ export default function SubjectsGridSection({ loading, subjects }: Props) {
               <Link
                 key={subject._id}
                 href={`/subject/${subject._id}`}
-                className={`group block bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-sm ${color.hover} hover:shadow-md transition no-underline min-h-[44px] active:scale-[0.99] overflow-hidden dark:bg-slate-900 dark:border-slate-700`}
+                className={`group block isit-app-stat-card rounded-2xl p-4 sm:p-5 shadow-sm ${color.hover} hover:shadow-md transition no-underline min-h-[44px] active:scale-[0.99] overflow-hidden dark:bg-slate-900 dark:border-slate-700`}
               >
                 <div className={`w-10 h-10 rounded-xl ${color.bg} flex items-center justify-center mb-3`}>
                   <BookOpen className={`w-5 h-5 ${color.icon}`} />

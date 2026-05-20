@@ -341,7 +341,7 @@ export default function PublicNav({ active }: PublicNavProps) {
         type="button"
         onClick={handleAskTutor}
         disabled={loading || openingTutor}
-        className="fixed bottom-5 right-5 z-40 inline-flex items-center gap-2 rounded-full border border-[color:var(--isit-border)] bg-[var(--isit-surface)] px-4 py-2.5 text-sm font-semibold text-[color:var(--isit-text)] shadow-lg transition hover:bg-[var(--isit-surface-muted)] disabled:cursor-not-allowed disabled:opacity-70 dark:border-cyan-400/25 dark:bg-slate-900/90 dark:text-cyan-100 dark:shadow-cyan-950/40 dark:hover:bg-slate-800"
+        className="fixed bottom-[max(1.25rem,env(safe-area-inset-bottom))] right-[max(1rem,env(safe-area-inset-right))] z-40 inline-flex max-w-[calc(100vw-2rem)] items-center gap-2 rounded-full border border-[color:var(--isit-border)] bg-[var(--isit-surface)] px-3 py-2.5 text-sm font-semibold text-[color:var(--isit-text)] shadow-lg transition hover:bg-[var(--isit-surface-muted)] disabled:cursor-not-allowed disabled:opacity-70 sm:bottom-5 sm:right-5 sm:px-4 dark:border-cyan-400/25 dark:bg-slate-900/90 dark:text-cyan-100 dark:shadow-cyan-950/40 dark:hover:bg-slate-800"
       >
         <Bot className="h-4 w-4 isit-accent-text" />
         {openingTutor ? '…' : tr('askAiTutor')}

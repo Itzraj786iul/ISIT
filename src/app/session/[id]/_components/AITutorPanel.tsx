@@ -240,7 +240,7 @@ export default function AITutorPanel({ sessionId, onTutorQuestionSent, onAdaptiv
   };
 
   return (
-    <div className="flex flex-col h-full min-h-0 bg-white rounded-2xl border border-slate-200/90 shadow-lg overflow-hidden">
+    <div className="flex flex-col h-full min-h-0 isit-app-stat-card rounded-2xl/90 shadow-lg overflow-hidden">
       {/* Header */}
       <div className="shrink-0 px-4 py-3.5 border-b border-slate-100 bg-gradient-to-r from-slate-50 to-violet-50/40">
         <div className="flex items-start justify-between gap-2">

@@ -154,7 +154,7 @@ export default function AnalyticsPage() {
     <div className="isit-cosmic-bg relative flex min-h-screen font-sans ">
       <Sidebar />
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="shrink-0 border-b border-slate-200 bg-white dark:border-slate-700 dark:bg-white dark:bg-slate-950/95">
+        <header className="isit-app-header shrink-0">
           <div className="px-4 py-3 sm:px-6 md:px-8">
             <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-2 text-sm">
               <Link href="/dashboard" className="font-medium text-sky-600 hover:underline dark:text-sky-400">
@@ -166,7 +166,7 @@ export default function AnalyticsPage() {
           </div>
         </header>
 
-        <main className="min-w-0 flex-1 overflow-x-hidden p-4 sm:p-6 md:p-8">
+        <main className="isit-app-main isit-app-main--with-nav-toggle">
         <div className="mb-6">
           <h1 className="text-2xl font-extrabold tracking-tight text-slate-800 dark:text-slate-100">{tr('analytics')}</h1>
           <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{tr('analyticsPageLead')}</p>
@@ -174,7 +174,7 @@ export default function AnalyticsPage() {
 
         {/* Summary cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-          <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex items-center gap-4">
+          <div className="isit-app-stat-card rounded-2xl p-6 shadow-sm flex items-center gap-4">
             <div className="w-12 h-12 rounded-xl bg-sky-100 flex items-center justify-center flex-shrink-0">
               <BookOpen className="w-6 h-6 text-sky-600" />
             </div>
@@ -183,7 +183,7 @@ export default function AnalyticsPage() {
               <div className="text-sm font-medium text-slate-500 dark:text-slate-400">{tr('analyticsTopicsStudiedLabel')}</div>
             </div>
           </div>
-          <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex items-center gap-4">
+          <div className="isit-app-stat-card rounded-2xl p-6 shadow-sm flex items-center gap-4">
             <div className="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center flex-shrink-0">
               <Target className="w-6 h-6 text-emerald-600" />
             </div>
@@ -193,7 +193,7 @@ export default function AnalyticsPage() {
             </div>
           </div>
           <Link href="/subjects" className="block no-underline">
-            <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm hover:border-violet-200 hover:shadow transition cursor-pointer flex items-center gap-4">
+            <div className="isit-app-stat-card rounded-2xl p-6 shadow-sm hover:border-violet-200 hover:shadow transition cursor-pointer flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-violet-100 flex items-center justify-center flex-shrink-0">
                 <Layers className="w-6 h-6 text-violet-600" />
               </div>
@@ -203,7 +203,7 @@ export default function AnalyticsPage() {
               </div>
             </div>
           </Link>
-          <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex items-center gap-4">
+          <div className="isit-app-stat-card rounded-2xl p-6 shadow-sm flex items-center gap-4">
             <div className="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0">
               <Clock className="w-6 h-6 text-amber-600" />
             </div>
@@ -215,7 +215,7 @@ export default function AnalyticsPage() {
         </div>
 
         {/* Weekly Learning Activity */}
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden mb-6">
+        <div className="isit-app-panel rounded-xl shadow-sm overflow-hidden mb-6">
           <div className="p-5 border-b border-slate-100 flex items-center justify-between">
             <div>
               <h3 className="text-base font-bold text-slate-800 dark:text-slate-100">{tr('analyticsWeeklyTitle')}</h3>
@@ -267,7 +267,7 @@ export default function AnalyticsPage() {
 
         {/* Bottom stats */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+          <div className="isit-app-panel rounded-xl p-6 shadow-sm">
             <h3 className="mb-4 text-base font-bold text-slate-800 dark:text-slate-100">{tr('analyticsLearningSummaryTitle')}</h3>
             <div className="flex items-center gap-4">
               <div className="w-20 h-20 rounded-full bg-sky-100 flex items-center justify-center flex-shrink-0">
@@ -281,7 +281,7 @@ export default function AnalyticsPage() {
             </div>
           </div>
 
-          <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+          <div className="isit-app-panel rounded-xl p-6 shadow-sm">
             <h3 className="mb-4 text-base font-bold text-slate-800 dark:text-slate-100">{tr('analyticsProgressOverviewTitle')}</h3>
             <ul className="space-y-2 text-sm">
               <li className="flex justify-between">

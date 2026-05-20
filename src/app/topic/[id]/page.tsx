@@ -528,7 +528,7 @@ export default function TopicLearningPage() {
     <div className="isit-cosmic-bg relative flex min-h-screen overflow-x-hidden font-sans ">
       <Sidebar />
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-20 border-b border-slate-200 bg-white dark:border-slate-700 dark:bg-white dark:bg-slate-950/95">
+        <header className="isit-app-header sticky top-0 z-20">
           <div className="mx-auto max-w-4xl px-4 py-3 sm:px-6">
             <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-2 text-sm">
               <Link href="/dashboard" className="font-medium text-sky-600 hover:underline dark:text-sky-400">
@@ -657,7 +657,7 @@ export default function TopicLearningPage() {
             <span className="shrink-0 text-xs font-medium uppercase tracking-wide text-slate-400">{tr('learningFlowTopicMaterialsBadge')}</span>
           </div>
 
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden dark:bg-slate-900 dark:border-slate-700">
+          <div className="isit-app-stat-card rounded-2xl shadow-sm overflow-hidden dark:bg-slate-900 dark:border-slate-700">
             <div className="flex flex-wrap gap-1 p-2 border-b border-slate-100 bg-slate-50/80">
               {TABS.map((t) => {
                 const Icon = t.icon;

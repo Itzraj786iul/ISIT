@@ -157,7 +157,7 @@ export default function AchievementsPage() {
     <div className="isit-cosmic-bg relative flex min-h-screen font-sans ">
       <Sidebar />
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="shrink-0 border-b border-slate-200 bg-white dark:border-slate-700 dark:bg-white dark:bg-slate-950/95">
+        <header className="isit-app-header shrink-0">
           <div className="px-4 py-3 sm:px-6 md:px-8">
             <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-2 text-sm">
               <Link href="/dashboard" className="font-medium text-sky-600 hover:underline dark:text-sky-400">
@@ -169,7 +169,7 @@ export default function AchievementsPage() {
           </div>
         </header>
 
-        <main className="min-w-0 flex-1 overflow-x-hidden p-4 sm:p-6 md:p-8">
+        <main className="isit-app-main isit-app-main--with-nav-toggle">
         <div className="mb-6">
           <h1 className="text-2xl font-extrabold tracking-tight text-slate-800 dark:text-slate-100">{tr('achievements')}</h1>
           <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{tr('achievementsPageLead')}</p>
@@ -182,16 +182,16 @@ export default function AchievementsPage() {
         ) : (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-              <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
-                <div className="text-3xl font-extrabold text-slate-800">{unlocked}</div>
+              <div className="isit-app-panel rounded-xl p-6 shadow-sm">
+                <div className="text-3xl font-extrabold text-slate-800 dark:text-slate-100">{unlocked}</div>
                 <div className="mt-1 text-sm font-medium text-slate-500 dark:text-slate-400">{tr('achievementsSummaryUnlocked')}</div>
               </div>
-              <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
-                <div className="text-3xl font-extrabold text-slate-800">{achievements.length}</div>
+              <div className="isit-app-panel rounded-xl p-6 shadow-sm">
+                <div className="text-3xl font-extrabold text-slate-800 dark:text-slate-100">{achievements.length}</div>
                 <div className="mt-1 text-sm font-medium text-slate-500 dark:text-slate-400">{tr('achievementsSummaryTotal')}</div>
               </div>
-              <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
-                <div className="text-3xl font-extrabold text-slate-800">
+              <div className="isit-app-panel rounded-xl p-6 shadow-sm">
+                <div className="text-3xl font-extrabold text-slate-800 dark:text-slate-100">
                   {achievements.length > 0 ? Math.round((unlocked / achievements.length) * 100) : 0}%
                 </div>
                 <div className="mt-1 text-sm font-medium text-slate-500 dark:text-slate-400">{tr('achievementsSummaryCompletion')}</div>
@@ -204,8 +204,8 @@ export default function AchievementsPage() {
                 return (
                 <div
                   key={a.id}
-                  className={`relative rounded-xl border bg-white p-5 shadow-sm ${
-                    a.unlocked ? 'border-emerald-200' : 'border-slate-200 opacity-60'
+                  className={`isit-achievement-card ${
+                    a.unlocked ? 'isit-achievement-card--unlocked' : 'isit-achievement-card--locked'
                   }`}
                 >
                   {a.unlocked && (

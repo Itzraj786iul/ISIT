@@ -119,7 +119,7 @@ export default function BlogPage() {
       </div>
 
       {/* ================= MAIN ================= */}
-      <main className="flex-1 max-w-7xl mx-auto px-6 py-16 w-full">
+      <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-12 sm:px-6 sm:py-16">
 
         {/* FEATURED */}
         <RevealOnView delayMs={40}>

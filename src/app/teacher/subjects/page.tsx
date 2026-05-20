@@ -72,7 +72,7 @@ export default function TeacherSubjectsPage() {
         {loading && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="bg-white rounded-xl border border-slate-200 p-6 animate-pulse">
+              <div key={i} className="isit-app-panel rounded-xl p-6 animate-pulse">
                 <div className="h-6 bg-slate-100 rounded w-3/4 mb-3" />
                 <div className="h-4 bg-slate-100 rounded w-1/2 mb-2" />
                 <div className="h-4 bg-slate-100 rounded w-1/3" />
@@ -82,14 +82,14 @@ export default function TeacherSubjectsPage() {
         )}
 
         {!loading && error && (
-          <div className="bg-white rounded-xl border border-slate-200 p-8 text-center">
+          <div className="isit-app-panel rounded-xl p-8 text-center">
             <AlertCircle className="w-12 h-12 text-amber-500 mx-auto mb-4" />
             <p className="text-slate-800 font-medium">{error}</p>
           </div>
         )}
 
         {!loading && !error && subjects.length === 0 && (
-          <div className="bg-white rounded-xl border border-slate-200 p-8 text-center">
+          <div className="isit-app-panel rounded-xl p-8 text-center">
             <BookOpen className="w-12 h-12 text-slate-600 dark:text-slate-300 mx-auto mb-4" />
             <p className="text-slate-600 dark:text-slate-300 font-medium">No subjects available yet.</p>
             <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Subjects will appear here when they are added.</p>
@@ -102,7 +102,7 @@ export default function TeacherSubjectsPage() {
               <Link
                 key={subject._id}
                 href={`/teacher/subjects/${subject._id}`}
-                className="group block bg-white rounded-xl border border-slate-200 p-6 shadow-sm hover:border-sky-300 hover:shadow-md transition no-underline"
+                className="group block isit-app-panel rounded-xl p-6 shadow-sm hover:border-sky-300 hover:shadow-md transition no-underline"
               >
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0 flex-1">

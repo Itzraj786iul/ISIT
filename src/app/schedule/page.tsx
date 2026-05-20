@@ -127,7 +127,7 @@ export default function SchedulePage() {
     <div className="isit-cosmic-bg relative flex min-h-screen font-sans ">
       <Sidebar />
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="shrink-0 border-b border-slate-200 bg-white dark:border-slate-700 dark:bg-white dark:bg-slate-950/95">
+        <header className="isit-app-header shrink-0">
           <div className="px-4 py-3 sm:px-6 md:px-8">
             <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-2 text-sm">
               <Link href="/dashboard" className="font-medium text-sky-600 hover:underline dark:text-sky-400">
@@ -139,7 +139,7 @@ export default function SchedulePage() {
           </div>
         </header>
 
-        <main className="min-w-0 flex-1 overflow-x-hidden p-4 sm:p-6 md:p-8">
+        <main className="isit-app-main isit-app-main--with-nav-toggle">
         <div className="mb-6">
           <h1 className="text-2xl font-extrabold tracking-tight text-slate-800 dark:text-slate-100">{tr('activity')}</h1>
           <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{tr('activityPageLead')}</p>
@@ -152,7 +152,7 @@ export default function SchedulePage() {
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Calendar */}
-            <div className="lg:col-span-2 bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+            <div className="lg:col-span-2 isit-app-panel rounded-xl shadow-sm overflow-hidden">
               <div className="p-4 border-b border-slate-100 flex items-center justify-between">
                 <h2 className="font-bold text-slate-800 dark:text-slate-100">{monthTitle}</h2>
                 <div className="flex gap-1">
@@ -175,25 +175,25 @@ export default function SchedulePage() {
                 </div>
               </div>
               <div className="p-4">
-                <div className="mb-2 grid grid-cols-7 gap-1">
+                <div className="mb-2 grid grid-cols-7 gap-0.5 sm:gap-1">
                   {calendarWeekdayLabels.map((d, i) => (
-                    <div key={i} className="py-1 text-center text-xs font-semibold text-slate-500 dark:text-slate-400">
+                    <div key={i} className="py-1 text-center text-[10px] font-semibold text-slate-500 sm:text-xs dark:text-slate-400">
                       {d}
                     </div>
                   ))}
                 </div>
-                <div className="grid grid-cols-7 gap-1">
+                <div className="grid grid-cols-7 gap-0.5 sm:gap-1">
                   {calendarDays.map((day, i) => (
                     <button
                       key={i}
                       type="button"
                       onClick={() => day !== null && setSelectedDate(day)}
-                      className={`aspect-square flex flex-col items-center justify-center rounded-lg text-sm font-medium transition ${
+                      className={`flex min-h-[2.25rem] flex-col items-center justify-center rounded-lg text-[11px] font-medium transition sm:aspect-square sm:min-h-0 sm:text-sm ${
                         day === null
                           ? 'invisible'
                           : day === selectedDate
-                            ? 'bg-sky-500 text-white'
-                            : 'text-slate-700 hover:bg-slate-100'
+                            ? 'bg-sky-500 text-white hover:bg-sky-600'
+                            : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-slate-100'
                       }`}
                     >
                       {day}
@@ -210,7 +210,7 @@ export default function SchedulePage() {
             </div>
 
             {/* Selected day sessions */}
-            <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+            <div className="isit-app-panel rounded-xl shadow-sm overflow-hidden">
               <div className="p-4 border-b border-slate-100">
                 <h2 className="font-bold text-slate-800 dark:text-slate-100">{selectedDayTitle}</h2>
               </div>
@@ -260,7 +260,7 @@ export default function SchedulePage() {
 
         {/* Recent sessions */}
         {!loading && sessions.length > 0 && (
-          <div className="mt-6 bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+          <div className="mt-6 isit-app-panel rounded-xl shadow-sm overflow-hidden">
             <div className="p-4 border-b border-slate-100">
               <h2 className="font-bold text-slate-800 dark:text-slate-100">{tr('scheduleRecentSessionsTitle')}</h2>
             </div>

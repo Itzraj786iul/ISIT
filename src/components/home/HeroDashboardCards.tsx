@@ -115,7 +115,7 @@ export default function HeroDashboardCards() {
   }, [enabled]);
 
   return (
-    <div className="landing-hero-dashboard-scene relative mx-auto min-h-[380px] w-full max-w-lg lg:max-w-none">
+    <div className="landing-hero-dashboard-scene relative mx-auto min-h-[280px] w-full max-w-lg sm:min-h-[340px] lg:min-h-[380px] lg:max-w-none">
       <div className="absolute right-8 top-4 z-20 hidden sm:block">
         <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-[11px] font-medium text-emerald-700 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-300">
           <GraduationCap className="h-3.5 w-3.5" />
@@ -127,14 +127,14 @@ export default function HeroDashboardCards() {
         <div className="landing-orbit-ring landing-orbit-slow absolute h-72 w-72 rounded-full border border-cyan-400/10" />
                 <div className="landing-orbit-ring landing-orbit-slow landing-orbit-reverse absolute h-56 w-56 rounded-full border border-fuchsia-500/10" />
         <div className="landing-hero-glow-pulse absolute h-[340px] w-[340px] rounded-full bg-gradient-to-br from-violet-600/25 via-transparent to-cyan-500/20 blur-2xl" />
-        <div className="relative flex h-44 w-44 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 via-indigo-600 to-cyan-500 p-[3px] shadow-lg dark:shadow-[0_0_60px_rgba(139,92,246,0.45)]">
+        <div className="relative flex h-32 w-32 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 via-indigo-600 to-cyan-500 p-[3px] shadow-lg sm:h-40 sm:w-40 md:h-44 md:w-44 dark:shadow-[0_0_60px_rgba(139,92,246,0.45)]">
           <div className="landing-hero-bot-core flex h-full w-full items-center justify-center rounded-full">
-            <Bot className="landing-hero-bot-icon h-20 w-20" strokeWidth={1.25} />
+            <Bot className="landing-hero-bot-icon h-14 w-14 sm:h-16 sm:w-16 md:h-20 md:w-20" strokeWidth={1.25} />
           </div>
         </div>
       </div>
 
-      <Glass className="isit-float-delayed absolute left-0 top-8 z-20 max-w-[220px] sm:left-2">
+      <Glass className="isit-float-delayed absolute left-0 top-8 z-20 hidden max-w-[220px] sm:left-2 sm:block">
         <div className="flex items-center gap-2">
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-sky-100 dark:bg-blue-500/30">
             <Bot className="h-4 w-4 text-sky-600 dark:text-sky-300" />
@@ -152,7 +152,7 @@ export default function HeroDashboardCards() {
         </p>
       </Glass>
 
-      <Glass className="isit-float-delayed-3 absolute right-0 top-28 z-20 w-[210px] sm:right-4">
+      <Glass className="isit-float-delayed-3 absolute right-0 top-28 z-20 hidden w-[210px] sm:right-4 sm:block">
         <p className="isit-label min-h-[14px] text-[10px] font-semibold uppercase tracking-wider">{masteryLabel}</p>
         <p className="mt-1 text-3xl font-black tabular-nums text-sky-600 dark:text-cyan-300 dark:drop-shadow-[0_0_20px_rgba(34,211,238,0.35)]">
           {pct}%
@@ -166,7 +166,7 @@ export default function HeroDashboardCards() {
         <p className="mt-2 min-h-[14px] text-[11px] font-medium text-emerald-600 dark:text-emerald-400">{masteryFoot}</p>
       </Glass>
 
-      <Glass className="isit-float-delayed-2 absolute bottom-16 left-4 z-20 max-w-[240px]">
+      <Glass className="isit-float-delayed-2 absolute bottom-16 left-4 z-20 hidden max-w-[240px] sm:block">
         <p className="isit-label min-h-[14px] text-[10px] font-semibold uppercase tracking-wider">{strengthLabel}</p>
         <div className="mt-2 flex items-center gap-2">
           <Brain className="h-4 w-4 shrink-0 text-violet-500 dark:text-violet-400" />
@@ -186,7 +186,7 @@ export default function HeroDashboardCards() {
         </div>
       </Glass>
 
-      <Glass className="animate-float-soft absolute bottom-8 right-2 z-20 w-[190px] sm:right-8">
+      <Glass className="animate-float-soft absolute bottom-8 right-2 z-20 hidden w-[190px] sm:right-8 sm:block">
         <p className="isit-label min-h-[14px] text-[10px] font-semibold uppercase tracking-wider">{focusLabel}</p>
         <p className="mt-1 text-2xl font-bold tabular-nums text-slate-900 dark:text-white">
           {mins} mins <span className="text-lg">🔥</span>

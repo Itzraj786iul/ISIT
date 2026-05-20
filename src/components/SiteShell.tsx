@@ -29,11 +29,11 @@ export default function SiteShell({
 
   return (
     <div
-      className={`relative min-h-screen overflow-hidden isit-app-bg ${isApp ? 'flex' : ''} ${isAuth ? 'flex flex-col' : ''} ${className}`.trim()}
+      className={`relative min-h-screen overflow-x-hidden isit-app-bg ${isApp ? 'flex' : ''} ${isAuth ? 'flex flex-col' : ''} ${className}`.trim()}
     >
       {isPublic && <PublicNav active={active} />}
       <div
-        className={`relative z-10 ${isApp ? 'flex min-h-screen min-w-0 w-full flex-1' : ''} ${contentClassName}`.trim()}
+        className={`relative z-10 ${isPublic ? 'isit-public-content' : ''} ${isApp ? 'flex min-h-screen min-w-0 w-full flex-1' : ''} ${contentClassName}`.trim()}
       >
         {children}
       </div>

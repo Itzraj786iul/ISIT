@@ -213,7 +213,7 @@ export default function CreateCourse() {
         {/* LEFT: Form */}
         <div className="flex-1 space-y-6 min-w-0">
           {/* Basic Info */}
-          <section className="bg-white rounded-xl border border-slate-200 p-5 sm:p-6">
+          <section className="isit-app-panel rounded-xl p-5 sm:p-6">
             <div className="flex items-center gap-2.5 mb-5">
               <div className="w-8 h-8 rounded-lg bg-sky-100 flex items-center justify-center">
                 <BookOpen className="w-4 h-4 text-sky-600" />
@@ -233,7 +233,7 @@ export default function CreateCourse() {
           </section>
 
           {/* Curriculum Builder */}
-          <section className="bg-white rounded-xl border border-slate-200 p-5 sm:p-6">
+          <section className="isit-app-panel rounded-xl p-5 sm:p-6">
             <div className="flex items-center justify-between mb-5">
               <div className="flex items-center gap-2.5">
                 <div className="w-8 h-8 rounded-lg bg-violet-100 flex items-center justify-center">
@@ -284,7 +284,7 @@ export default function CreateCourse() {
         {/* RIGHT: Settings */}
         <div className="w-full lg:w-80 flex-shrink-0 space-y-6">
           {/* Thumbnail */}
-          <section className="bg-white rounded-xl border border-slate-200 p-5">
+          <section className="isit-app-panel rounded-xl p-5">
             <h3 className="text-sm font-bold text-slate-800 mb-3">Course Thumbnail</h3>
             <input ref={fileInputRef} type="file" accept="image/jpeg,image/png,image/webp,image/gif" onChange={handleThumbnailChange} className="hidden" />
             <div
@@ -310,7 +310,7 @@ export default function CreateCourse() {
           </section>
 
           {/* Settings */}
-          <section className="bg-white rounded-xl border border-slate-200 p-5">
+          <section className="isit-app-panel rounded-xl p-5">
             <h3 className="text-sm font-bold text-slate-800 mb-4">Course Settings</h3>
             <div className="space-y-4">
               <div>
@@ -344,7 +344,7 @@ export default function CreateCourse() {
           </section>
 
           {/* Info */}
-          <section className="bg-white rounded-xl border border-slate-200 p-5">
+          <section className="isit-app-panel rounded-xl p-5">
             <div className="flex items-center gap-2.5 mb-3">
               <div className="w-8 h-8 rounded-lg bg-sky-100 flex items-center justify-center">
                 <PlayCircle className="w-4 h-4 text-sky-600" />

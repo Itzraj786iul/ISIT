@@ -85,7 +85,7 @@ export default function TeacherAnalyticsPage() {
         <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Overview of your courses and curriculum</p>
 
         {/* Summary cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <SummaryCard label="Total Courses" value={courseStats.length} icon={<BookOpen className="w-5 h-5 text-violet-600" />} />
           <SummaryCard label="Total Students" value={totalStudents} icon={<Users className="w-5 h-5 text-emerald-600" />} />
           <SummaryCard label="Subjects" value={subjectStats.length} icon={<Layers className="w-5 h-5 text-sky-600" />} />
@@ -95,7 +95,7 @@ export default function TeacherAnalyticsPage() {
         {loading ? (
           <div className="space-y-4">
             {[1, 2].map((i) => (
-              <div key={i} className="bg-white rounded-xl border border-slate-200 p-6 animate-pulse">
+              <div key={i} className="isit-app-panel rounded-xl p-6 animate-pulse">
                 <div className="h-5 bg-slate-100 rounded w-1/3 mb-4" />
                 <div className="h-4 bg-slate-100 rounded w-full mb-2" />
                 <div className="h-4 bg-slate-100 rounded w-2/3" />
@@ -105,7 +105,7 @@ export default function TeacherAnalyticsPage() {
         ) : (
           <div className="space-y-6">
             {/* Course Performance */}
-            <section className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+            <section className="isit-app-panel rounded-xl shadow-sm overflow-hidden">
               <div className="px-5 py-4 border-b border-slate-100">
                 <h2 className="font-bold text-slate-900 flex items-center gap-2">
                   <BookOpen className="w-5 h-5 text-violet-600" /> Course Enrollment
@@ -137,7 +137,7 @@ export default function TeacherAnalyticsPage() {
             </section>
 
             {/* Curriculum Overview */}
-            <section className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+            <section className="isit-app-panel rounded-xl shadow-sm overflow-hidden">
               <div className="px-5 py-4 border-b border-slate-100">
                 <h2 className="font-bold text-slate-900 flex items-center gap-2">
                   <Layers className="w-5 h-5 text-sky-600" /> Curriculum Coverage
@@ -178,7 +178,7 @@ export default function TeacherAnalyticsPage() {
 
 function SummaryCard({ label, value, icon }: { label: string; value: string | number; icon: React.ReactNode }) {
   return (
-    <div className="bg-white rounded-xl border border-slate-200 p-5 flex items-center gap-4 shadow-sm">
+    <div className="isit-app-panel rounded-xl p-5 flex items-center gap-4 shadow-sm">
       <div className="w-11 h-11 rounded-xl bg-slate-100 flex items-center justify-center flex-shrink-0">{icon}</div>
       <div>
         <div className="text-xs text-slate-500 dark:text-slate-400 font-medium">{label}</div>

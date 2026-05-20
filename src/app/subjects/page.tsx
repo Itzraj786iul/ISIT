@@ -92,19 +92,22 @@ export default function SubjectsPage() {
   }, [router]);
 
   return (
-    <div className="isit-app-bg min-h-screen flex font-sans overflow-x-hidden relative">
+    <div className="isit-cosmic-bg relative flex min-h-screen overflow-x-hidden font-sans">
       <Sidebar />
-      <main className="flex-1 p-4 sm:p-6 md:p-8 min-w-0 overflow-x-hidden">
+      <div className="flex min-w-0 flex-1 flex-col">
+        <header className="isit-app-header shrink-0">
+          <div className="px-4 py-3 sm:px-6 md:px-8">
+            <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-2 text-sm">
+              <Link href="/dashboard" className="isit-app-breadcrumb-link font-medium">
+                {tr('dashboard')}
+              </Link>
+              <ChevronRight className="h-3.5 w-3.5 shrink-0 text-slate-400" aria-hidden />
+              <span className="isit-app-breadcrumb-current font-medium">{tr('subjects')}</span>
+            </nav>
+          </div>
+        </header>
+      <main className="isit-app-main isit-app-main--with-nav-toggle">
         <div className="max-w-6xl mx-auto">
-          <nav aria-label="Breadcrumb" className="mb-4 flex flex-wrap items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
-            <Link href="/dashboard" className="font-medium text-sky-600 hover:underline dark:text-sky-400">
-              {tr('dashboard')}
-            </Link>
-            <span className="text-slate-400" aria-hidden>
-              /
-            </span>
-            <span className="font-semibold text-slate-800 dark:text-slate-100">{tr('subjects')}</span>
-          </nav>
           <h1 className="mb-2 text-2xl font-bold text-slate-900 dark:text-slate-100">{tr('subjects')}</h1>
           <p className={`text-sm text-slate-600 dark:text-slate-400 ${teacherScoped ? 'mb-2' : 'mb-8'}`}>
             {tr('learningFlowSubjectsLead')}
@@ -120,7 +123,7 @@ export default function SubjectsPage() {
               {[1, 2, 3, 4, 5, 6].map((i) => (
                 <div
                   key={i}
-                  className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 p-6 shadow-sm animate-pulse min-h-[140px]"
+                  className="isit-app-panel rounded-2xl p-6 shadow-sm animate-pulse min-h-[140px]"
                   aria-hidden
                 >
                   <div className="h-6 bg-slate-200 dark:bg-slate-800 rounded w-3/4 mb-3" />
@@ -162,7 +165,7 @@ export default function SubjectsPage() {
                 <Link
                   key={subject._id}
                   href={`/subject/${subject._id}`}
-                  className="group block bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 p-6 shadow-sm hover:border-sky-300 hover:shadow-md transition no-underline text-inherit min-h-[44px]"
+                  className="group block isit-app-panel rounded-2xl p-6 shadow-sm hover:border-sky-300 hover:shadow-md transition no-underline text-inherit min-h-[44px]"
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0 flex-1">
@@ -189,6 +192,7 @@ export default function SubjectsPage() {
           )}
         </div>
       </main>
+      </div>
     </div>
   );
 }

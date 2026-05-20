@@ -39,7 +39,7 @@ export default function LearningPanel({
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[min(360px,50vh)] bg-white rounded-2xl border border-slate-200/90 shadow-md">
+      <div className="flex flex-col items-center justify-center min-h-[min(360px,50vh)] isit-app-stat-card rounded-2xl/90 shadow-md">
         <Loader2 className="w-11 h-11 text-sky-500 animate-spin mb-3" />
         <p className="text-slate-600 dark:text-slate-300 text-sm font-medium">Loading questions…</p>
       </div>
@@ -58,7 +58,7 @@ export default function LearningPanel({
   const showAiBlock = revealed && (question.explanation || !isCorrect);
 
   return (
-    <div className="relative bg-white rounded-2xl border border-slate-200/90 shadow-md overflow-hidden flex flex-col min-h-[min(360px,50vh)] transition-shadow duration-300 hover:shadow-lg">
+    <div className="relative isit-app-stat-card rounded-2xl/90 shadow-md overflow-hidden flex flex-col min-h-[min(360px,50vh)] transition-shadow duration-300 hover:shadow-lg">
       {advancing ? (
         <div className="absolute inset-0 z-20 bg-white/70 backdrop-blur-[2px] flex flex-col items-center justify-center rounded-2xl">
           <Loader2 className="w-10 h-10 text-sky-500 animate-spin mb-2" />

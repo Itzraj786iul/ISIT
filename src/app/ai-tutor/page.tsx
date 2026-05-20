@@ -169,14 +169,14 @@ function TutorContent() {
   );
 
   return (
-    <div className="mx-auto w-full max-w-7xl p-4 sm:p-6">
-      <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-        <div>
+    <div className="mx-auto w-full max-w-7xl">
+      <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+        <div className="min-w-0">
           <p className="text-xs uppercase tracking-[0.2em] text-sky-600 dark:text-cyan-300">{tr('aiTutorPageEyebrow')}</p>
-          <h1 className="mt-1 text-3xl font-black sm:text-4xl">{tr('aiTutor')}</h1>
+          <h1 className="mt-1 text-2xl font-black sm:text-3xl md:text-4xl">{tr('aiTutor')}</h1>
           <p className="mt-2 max-w-2xl text-sm isit-body/70">{tr('aiTutorPageLead')}</p>
         </div>
-        <div className="flex items-center gap-2 text-xs">
+        <div className="flex flex-wrap items-center gap-2 text-xs">
           <span className="isit-chip">
             <Sparkles className="h-3.5 w-3.5" />
             {tr('aiTutorChip247')}
@@ -189,7 +189,7 @@ function TutorContent() {
         </div>
       </div>
 
-      <div className="mb-4 grid gap-3 md:grid-cols-4">
+      <div className="mb-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
         <div className="isit-glass rounded-2xl p-3">
           <p className="text-[11px] uppercase text-sky-600 dark:text-cyan-300">{tr('aiTutorReadiness')}</p>
           <p className="mt-1 flex items-center gap-2 text-sm font-semibold isit-body">
@@ -220,8 +220,8 @@ function TutorContent() {
         </div>
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-[260px,1fr,280px]">
-        <aside className="isit-glass rounded-2xl p-4">
+      <div className="flex flex-col gap-4 lg:grid lg:grid-cols-[minmax(0,220px)_1fr_minmax(0,240px)]">
+        <aside className="isit-glass order-2 max-h-[min(42vh,320px)] overflow-y-auto rounded-2xl p-4 lg:order-none lg:max-h-none">
           <p className="mb-3 text-sm font-semibold isit-body">{tr('aiTutorQuickPrompts')}</p>
           <div className="mb-3 grid grid-cols-3 gap-1 rounded-lg border border-slate-200 dark:border-cyan-300/20 bg-slate-900/70 p-1 text-[11px]">
             {(
@@ -255,13 +255,13 @@ function TutorContent() {
           </div>
         </aside>
 
-        <section className="isit-glass flex min-h-[560px] flex-col rounded-2xl">
+        <section className="isit-glass order-1 flex min-h-[min(58dvh,560px)] flex-col rounded-2xl lg:order-none lg:min-h-[560px]">
           <div className="border-b border-slate-200 dark:border-cyan-300/20 px-4 py-3 text-sm font-semibold isit-body">{tr('aiTutorConversation')}</div>
           <div ref={scrollerRef} className="flex-1 space-y-3 overflow-y-auto p-4">
             {messages.map((m) => (
               <div key={m.id} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                 <div
-                  className={`max-w-[82%] whitespace-pre-wrap rounded-2xl px-4 py-3 text-sm ${
+                  className={`max-w-[min(92%,420px)] whitespace-pre-wrap rounded-2xl px-4 py-3 text-sm ${
                     m.role === 'user'
                       ? 'bg-cyan-400/20 border border-cyan-300/30 isit-body'
                       : m.error
@@ -316,7 +316,7 @@ function TutorContent() {
           </div>
         </section>
 
-        <aside className="space-y-3">
+        <aside className="order-3 space-y-3 lg:order-none">
           <div className="isit-glass rounded-2xl p-4">
             <p className="mb-2 text-sm font-semibold isit-body">{tr('aiTutorSessionAssist')}</p>
             <div className="space-y-2">
@@ -392,9 +392,9 @@ export default function AITutorPage() {
 
   if (role === 'parent') {
     return (
-      <div className="isit-app-bg min-h-screen ">
+      <div className="isit-app-bg relative flex min-h-screen overflow-x-hidden">
         <ParentNav />
-        <main className="ml-[250px]">
+        <main className="isit-app-main isit-app-main--with-nav-toggle">
           <TutorContent />
         </main>
       </div>
@@ -405,7 +405,7 @@ export default function AITutorPage() {
     <div className="isit-cosmic-bg flex min-h-screen ">
       <Sidebar />
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="shrink-0 border-b border-slate-200 bg-white dark:border-slate-700 dark:bg-white dark:bg-slate-950/95">
+        <header className="isit-app-header shrink-0">
           <div className="px-4 py-3 sm:px-6">
             <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-2 text-sm">
               <Link href="/dashboard" className="font-medium text-sky-600 hover:underline dark:text-sky-400">
@@ -416,7 +416,7 @@ export default function AITutorPage() {
             </nav>
           </div>
         </header>
-        <main className="min-w-0 flex-1 overflow-x-hidden px-2 py-4 sm:px-4">
+        <main className="isit-app-main isit-app-main--with-nav-toggle min-w-0 flex-1">
           <TutorContent />
         </main>
       </div>

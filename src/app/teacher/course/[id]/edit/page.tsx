@@ -202,7 +202,7 @@ export default function TeacherEditCoursePage() {
 
   return (
     <div className="isit-app-bg min-h-screen font-sans relative">
-      <header className="bg-white border-b border-slate-200 sticky top-0 z-10 px-4 sm:px-6 py-4 flex flex-wrap items-center justify-between gap-4">
+      <header className="isit-app-header sticky top-0 z-10 px-4 sm:px-6 py-4 flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-4">
           <Link href="/teacher/dashboard" className="flex items-center gap-2 text-slate-600 dark:text-slate-300 hover:text-slate-800 font-medium text-sm">
             <ChevronLeft size={20} /> Back to Dashboard
@@ -220,7 +220,7 @@ export default function TeacherEditCoursePage() {
       </header>
 
       <main className="max-w-4xl mx-auto p-4 sm:p-6 space-y-6">
-        <section className="bg-white rounded-xl border border-slate-200 p-5 sm:p-6">
+        <section className="isit-app-panel rounded-xl p-5 sm:p-6">
           <h2 className="text-base font-bold text-slate-800 mb-4">Course details</h2>
           <div className="space-y-4">
             <div>
@@ -285,7 +285,7 @@ export default function TeacherEditCoursePage() {
           </div>
         </section>
 
-        <section className="bg-white rounded-xl border border-slate-200 p-5 sm:p-6">
+        <section className="isit-app-panel rounded-xl p-5 sm:p-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-base font-bold text-slate-800">Lessons</h2>
             <button

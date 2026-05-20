@@ -308,7 +308,7 @@ export default function SessionPlayerPage() {
   if (loadingSession) {
     return (
       <div className="min-h-[100dvh] flex flex-col isit-cosmic-bg overflow-x-hidden relative">
-        <div className="h-14 sm:h-16 border-b border-cyan-400/15 bg-slate-50 dark:bg-white dark:bg-slate-950/50 animate-pulse shrink-0" />
+        <div className="h-14 sm:h-16 isit-app-header animate-pulse shrink-0" />
         <div className="flex-1 flex flex-col lg:flex-row min-h-0 gap-0 p-3 sm:p-4">
           <div className="flex-1 min-h-[240px] rounded-2xl border border-cyan-400/15 bg-slate-50 dark:bg-white dark:bg-slate-950/40 animate-pulse" />
           <div className="hidden lg:block w-[min(100%,320px)] rounded-2xl bg-cyan-950/30 animate-pulse shrink-0" />
@@ -370,7 +370,7 @@ export default function SessionPlayerPage() {
   return (
     <div className="h-[100dvh] min-h-0 flex flex-col isit-cosmic-bg overflow-hidden overflow-x-hidden relative">
       {topicIdStr ? (
-        <div className="shrink-0 border-b border-slate-200 dark:border-cyan-400/20 bg-white dark:bg-white dark:bg-slate-950/90 px-3 py-2 sm:px-4">
+        <div className="shrink-0 isit-app-header px-3 py-2 sm:px-4">
           <Link
             href={`/topic/${topicIdStr}`}
             className="inline-flex max-w-full items-center gap-1.5 text-sm font-medium text-slate-600 dark:text-cyan-200 transition hover:text-slate-900 dark:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400 no-underline"
@@ -397,7 +397,7 @@ export default function SessionPlayerPage() {
         <section className="flex-1 lg:flex-[7] min-h-0 min-w-0 flex flex-col border-slate-200/90 lg:border-r lg:border-slate-200 bg-gradient-to-b from-white via-slate-50/50 to-slate-100/80 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.5)]">
           <div className="flex-1 min-h-0 overflow-y-auto p-3 sm:p-5 lg:p-6">
             {practiceComplete ? (
-              <div className="bg-white rounded-2xl border border-slate-200/90 p-8 sm:p-10 text-center shadow-md max-w-lg mx-auto">
+              <div className="isit-app-stat-card rounded-2xl/90 p-8 sm:p-10 text-center shadow-md max-w-lg mx-auto">
                 <p className="text-xl font-bold text-slate-900">Nice work!</p>
                 <p className="text-slate-600 dark:text-slate-300 text-sm mt-3 leading-relaxed">
                   You&apos;ve finished this practice set. Keep going with the AI Tutor or end the session when you&apos;re ready.

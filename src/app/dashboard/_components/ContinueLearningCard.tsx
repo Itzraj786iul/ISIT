@@ -14,7 +14,7 @@ type Props = {
 
 export function ContinueLearningCardSkeleton() {
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 p-4 sm:p-6 shadow-sm animate-pulse dark:bg-slate-900 dark:border-slate-700">
+    <div className="isit-app-stat-card rounded-2xl p-4 sm:p-6 shadow-sm animate-pulse dark:bg-slate-900 dark:border-slate-700">
       <div className="h-4 bg-slate-100 rounded w-32 mb-4 dark:bg-slate-800" />
       <div className="h-6 bg-slate-100 rounded w-2/3 mb-3 dark:bg-slate-800" />
       <div className="h-2 bg-slate-100 rounded-full w-full mb-2 dark:bg-slate-800" />
@@ -35,7 +35,7 @@ export default function ContinueLearningCard({ loading, lastSession, lastTopicNa
 
   if (!lastSession) {
     return (
-      <div className="bg-white rounded-2xl border border-slate-200 p-4 sm:p-6 shadow-sm text-center dark:bg-slate-900 dark:border-slate-700">
+      <div className="isit-app-stat-card rounded-2xl p-4 sm:p-6 shadow-sm text-center dark:bg-slate-900 dark:border-slate-700">
         <Sparkles className="w-10 h-10 text-violet-400 mx-auto mb-2" />
         <p className="text-slate-700 font-medium text-sm sm:text-base dark:text-slate-200">Start your next learning session</p>
         <p className="text-slate-500 text-xs sm:text-sm mt-1 dark:text-slate-400">Pick a subject and topic to build mastery.</p>

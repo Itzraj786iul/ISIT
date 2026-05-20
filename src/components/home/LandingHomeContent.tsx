@@ -31,7 +31,7 @@ import {
 } from 'lucide-react';
 import type { I18nKey } from '@/lib/t';
 import { RevealOnView, RevealStagger } from '@/components/RevealMotion';
-import HeroDashboardCards from '@/components/home/HeroDashboardCards';
+import HeroLearningScene from '@/components/home/HeroLearningScene';
 
 const PARTNER_NAMES = ['Atal Innovation', 'MIT Media Lab', 'NCERT', 'STEM India', 'UNESCO MGIEP', 'CBSE Board'] as const;
 
@@ -158,7 +158,7 @@ function LandingStatsCountUp() {
   return (
     <div
       ref={ref}
-      className="grid flex-1 grid-cols-2 gap-6 text-center sm:grid-cols-5 sm:gap-4"
+      className="grid flex-1 grid-cols-2 gap-4 text-center sm:grid-cols-3 sm:gap-4 lg:grid-cols-5"
       aria-label="Platform statistics"
     >
       {STATS_COUNT_CONFIG.map((s, i) => (
@@ -222,12 +222,12 @@ export default function LandingHomeContent({
   return (
     <div className="isit-landing-replica isit-text-primary">
       {/* Hero */}
-      <section className="relative overflow-hidden pt-8 pb-16 sm:pt-12 sm:pb-24">
+      <section className="isit-landing-hero relative overflow-hidden pb-14 pt-3 sm:pb-20 sm:pt-5 lg:pb-24">
         <div className="isit-landing-glow-orb -right-24 top-0 h-80 w-80 bg-purple-600/40" aria-hidden />
         <div className="isit-landing-glow-orb left-1/4 bottom-0 h-64 w-64 bg-cyan-500/30" aria-hidden />
 
-        <div className="relative z-10 mx-auto grid max-w-7xl items-start gap-8 px-4 sm:px-6 lg:grid-cols-2 lg:gap-10 xl:gap-12">
-          <div className="max-w-xl space-y-4 sm:space-y-5 lg:max-w-none">
+        <div className="relative z-10 mx-auto grid max-w-7xl items-center gap-8 px-4 sm:px-6 lg:grid-cols-2 lg:items-center lg:gap-10 xl:gap-12">
+          <div className="isit-hero-copy max-w-xl space-y-3 sm:space-y-4 lg:max-w-[34rem]">
             <div className="isit-hero-col flex flex-col gap-3">
               <div className="flex flex-wrap gap-2">
                 <LandingBadge>
@@ -249,7 +249,7 @@ export default function LandingHomeContent({
               </LandingBadge>
             </div>
 
-            <h1 className="isit-hero-main-title text-4xl font-bold leading-[1.06] tracking-tight sm:text-5xl md:text-6xl lg:text-[3.25rem] lg:leading-[1.05] xl:text-7xl xl:leading-[1.02]">
+            <h1 className="isit-hero-main-title text-[1.75rem] font-bold leading-[1.12] tracking-tight sm:text-4xl sm:leading-[1.1] md:text-[2.5rem] lg:text-[2.75rem] lg:leading-[1.08] xl:text-[3rem] xl:leading-[1.06]">
               <span className="block">
                 Where every child{' '}
                 <span className="relative inline-block">
@@ -279,7 +279,7 @@ export default function LandingHomeContent({
               <span className="mt-1 block text-slate-900 dark:text-white sm:mt-2">within them.</span>
             </h1>
 
-            <p className="max-w-xl text-base leading-relaxed text-slate-600 dark:text-slate-300 sm:text-lg">
+            <p className="max-w-lg text-sm leading-relaxed text-slate-600 dark:text-slate-300 sm:text-[0.9375rem] sm:leading-relaxed lg:text-base">
               India&apos;s future-first ed-tech ecosystem combining{' '}
               <strong className="font-semibold text-slate-900 dark:text-white">AI mentorship</strong>,{' '}
               <strong className="font-semibold text-slate-900 dark:text-white">neuroscience</strong> and{' '}
@@ -335,8 +335,8 @@ export default function LandingHomeContent({
             </div>
           </div>
 
-          {/* Hero visual — animated dashboard cards */}
-          <HeroDashboardCards />
+          {/* Hero visual — student + AI tutor scene */}
+          <HeroLearningScene />
         </div>
 
         <RevealOnView delayMs={40} className="relative z-10 mx-auto mt-16 max-w-6xl px-4 sm:px-6">

@@ -73,7 +73,7 @@ export default function TeacherShell({ children, user }: { children: React.React
   };
 
   return (
-    <div className="isit-app-bg min-h-screen flex font-sans relative">
+    <div className="isit-app-bg relative flex min-h-screen overflow-x-hidden font-sans">
       {open && (
         <div className="fixed inset-0 bg-black/50 z-20 md:hidden" onClick={() => setOpen(false)} />
       )}
@@ -156,7 +156,7 @@ export default function TeacherShell({ children, user }: { children: React.React
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="fixed left-0 top-4 z-40 isit-shell-header border dark:border-slate-200 dark:border-cyan-300/20 border-l-0 rounded-r-lg p-2.5 text-slate-800 shadow-sm hover:bg-slate-100 dark:text-cyan-100 dark:hover:bg-cyan-300/10"
+          className="fixed left-[max(0.75rem,env(safe-area-inset-left))] top-[max(1rem,env(safe-area-inset-top))] z-40 inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl isit-shell-header border border-l-0 p-2.5 text-slate-800 shadow-sm hover:bg-slate-100 active:scale-95 dark:border-cyan-300/20 dark:text-cyan-100 dark:hover:bg-cyan-300/10 md:hidden"
           aria-label="Open menu"
         >
           <ChevronRight className="w-5 h-5" />
@@ -164,7 +164,7 @@ export default function TeacherShell({ children, user }: { children: React.React
       )}
 
       {/* Main content */}
-      <main className="flex-1 p-4 sm:p-6 md:p-8 min-w-0 overflow-x-hidden relative z-[1]">
+      <main className="isit-app-main isit-app-main--with-nav-toggle">
         {children}
       </main>
     </div>

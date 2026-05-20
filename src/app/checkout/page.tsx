@@ -259,7 +259,7 @@ function CheckoutForm() {
 
   return (
     <div className="isit-app-bg min-h-screen flex flex-col relative">
-      <header className="border-b border-cyan-400/15 bg-slate-50 dark:bg-white dark:bg-slate-950/40 backdrop-blur-xl">
+      <header className="isit-app-header backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link href="/" className="text-slate-600 dark:text-cyan-200 font-bold text-xl no-underline hover:">
             ISIC
@@ -270,7 +270,7 @@ function CheckoutForm() {
         </div>
       </header>
 
-      <main className="flex-1 max-w-7xl mx-auto px-6 py-10 w-full">
+      <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6 sm:py-10">
         <div className="grid lg:grid-cols-3 gap-10">
           <div className="lg:col-span-2 space-y-8">
             <div>

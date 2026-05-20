@@ -77,7 +77,7 @@ export default function TeacherAssignedTopicsPage() {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
+        <div className="isit-app-panel rounded-2xl shadow-sm overflow-hidden">
           {loading ? (
             <div className="p-8 space-y-3 animate-pulse">
               <div className="h-12 bg-slate-100 dark:bg-slate-800 rounded-lg" />

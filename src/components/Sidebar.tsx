@@ -30,17 +30,18 @@ const moreNavItems: { iconId: string; href: string; labelKey: I18nKey }[] = [
   { iconId: 'Schedule', href: '/schedule', labelKey: 'activity' },
 ];
 
-function SidebarIcon({ name, color }: { name: string; color: string }) {
+function SidebarIcon({ name }: { name: string }) {
   const size = 16;
-  if (name === 'Dashboard') return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline points="9 22 9 12 15 12 15 22" /></svg>;
-  if (name === 'My Courses') return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" /></svg>;
-  if (name === 'Subjects') return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" /><path d="M12 6v6" /><path d="M9 9h6" /></svg>;
-  if (name === 'Browse All') return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>;
-  if (name === 'Analytics') return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10" /><line x1="12" y1="20" x2="12" y2="4" /><line x1="6" y1="20" x2="6" y2="14" /></svg>;
-  if (name === 'Learning Path') return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" /><path d="M20 19.5a2.5 2.5 0 0 1-2.5 2.5H2" /><path d="M6.5 2H2v20" /><path d="M8 7l3-3 3 3" /><path d="M12 10v12" /></svg>;
-  if (name === 'Achievements') return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8 21l4 0" /><path d="M12 21v-4" /><path d="M5 3h14v5a7 7 0 0 1-14 0V3z" /><path d="M5 7H3a2 2 0 0 0 0 4h2" /><path d="M19 7h2a2 2 0 0 1 0 4h-2" /></svg>;
-  if (name === 'Schedule') return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></svg>;
-  if (name === 'AI Tutor') return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="6" y="8" width="12" height="10" rx="3"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/><circle cx="10" cy="13" r="1"/><circle cx="14" cy="13" r="1"/><path d="M10 16h4"/></svg>;
+  const stroke = 'currentColor';
+  if (name === 'Dashboard') return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={stroke} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline points="9 22 9 12 15 12 15 22" /></svg>;
+  if (name === 'My Courses') return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={stroke} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" /></svg>;
+  if (name === 'Subjects') return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={stroke} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" /><path d="M12 6v6" /><path d="M9 9h6" /></svg>;
+  if (name === 'Browse All') return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={stroke} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>;
+  if (name === 'Analytics') return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={stroke} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10" /><line x1="12" y1="20" x2="12" y2="4" /><line x1="6" y1="20" x2="6" y2="14" /></svg>;
+  if (name === 'Learning Path') return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={stroke} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" /><path d="M20 19.5a2.5 2.5 0 0 1-2.5 2.5H2" /><path d="M6.5 2H2v20" /><path d="M8 7l3-3 3 3" /><path d="M12 10v12" /></svg>;
+  if (name === 'Achievements') return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={stroke} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8 21l4 0" /><path d="M12 21v-4" /><path d="M5 3h14v5a7 7 0 0 1-14 0V3z" /><path d="M5 7H3a2 2 0 0 0 0 4h2" /><path d="M19 7h2a2 2 0 0 1 0 4h-2" /></svg>;
+  if (name === 'Schedule') return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={stroke} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></svg>;
+  if (name === 'AI Tutor') return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={stroke} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="6" y="8" width="12" height="10" rx="3"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/><circle cx="10" cy="13" r="1"/><circle cx="14" cy="13" r="1"/><path d="M10 16h4"/></svg>;
   return null;
 }
 
@@ -145,7 +146,6 @@ export default function Sidebar() {
           </p>
           {primaryNavItems.map((item) => {
             const active = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
-            const color = active ? '#2563eb' : '#64748b';
             return (
               <Link
                 key={item.href}
@@ -153,7 +153,7 @@ export default function Sidebar() {
                 onClick={() => window.innerWidth < 768 && setOpen(false)}
                 className={`flex min-h-[44px] items-center gap-3 rounded-xl px-3 py-3 text-[13px] font-medium no-underline transition-colors active:scale-[0.99] ${active ? 'isit-nav-link-active' : 'isit-nav-link'}`}
               >
-                <SidebarIcon name={item.iconId} color={color} />
+                <SidebarIcon name={item.iconId} />
                 <span className="whitespace-nowrap">{tr(item.labelKey)}</span>
               </Link>
             );
@@ -163,7 +163,6 @@ export default function Sidebar() {
           </p>
           {moreNavItems.map((item) => {
             const active = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
-            const color = active ? '#2563eb' : '#64748b';
             return (
               <Link
                 key={item.href}
@@ -171,7 +170,7 @@ export default function Sidebar() {
                 onClick={() => window.innerWidth < 768 && setOpen(false)}
                 className={`flex min-h-[44px] items-center gap-3 rounded-xl px-3 py-3 text-[13px] font-medium no-underline transition-colors active:scale-[0.99] ${active ? 'isit-nav-link-active' : 'isit-nav-link'}`}
               >
-                <SidebarIcon name={item.iconId} color={color} />
+                <SidebarIcon name={item.iconId} />
                 <span className="whitespace-nowrap">{tr(item.labelKey)}</span>
               </Link>
             );
