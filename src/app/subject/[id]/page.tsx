@@ -145,7 +145,7 @@ export default function SubjectDetailPage() {
           <AlertCircle className="mb-4 h-12 w-12 text-amber-400" />
           <h1 className="text-xl font-semibold isit-text-primary">{tr('subjectAccessDeniedTitle')}</h1>
           <p className="mt-2 max-w-md text-center text-sm /80">{tr('subjectAccessDeniedLead')}</p>
-          <Link href="/subjects" className="mt-6 font-medium text-sky-400 hover:underline">
+          <Link href="/learn/subjects" className="mt-6 font-medium text-sky-400 hover:underline">
             ← {tr('subjects')}
           </Link>
         </main>
@@ -161,7 +161,7 @@ export default function SubjectDetailPage() {
           <AlertCircle className="mb-4 h-12 w-12 text-sky-600 dark:text-cyan-300/60" />
           <h1 className="text-xl font-semibold isit-text-primary">{tr('subjectNotFoundTitle')}</h1>
           <p className="mt-2 text-center text-sm /75">{tr('subjectNotFoundLead')}</p>
-          <Link href="/subjects" className="mt-6 font-medium text-sky-400 hover:underline">
+          <Link href="/learn/subjects" className="mt-6 font-medium text-sky-400 hover:underline">
             ← {tr('subjects')}
           </Link>
         </main>
@@ -181,7 +181,7 @@ export default function SubjectDetailPage() {
             <span className="text-slate-400" aria-hidden>
               /
             </span>
-            <Link href="/subjects" className="font-medium text-sky-600 hover:underline dark:text-sky-400">
+            <Link href="/learn/subjects" className="font-medium text-sky-600 hover:underline dark:text-sky-400">
               {tr('subjects')}
             </Link>
             <span className="text-slate-400" aria-hidden>

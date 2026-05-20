@@ -17,7 +17,7 @@ import type { I18nKey } from '@/lib/t';
 /** AI-first order: core path first; marketplace & extras grouped below (Part 4). */
 const primaryNavItems: { iconId: string; href: string; labelKey: I18nKey }[] = [
   { iconId: 'Dashboard', href: '/dashboard', labelKey: 'dashboard' },
-  { iconId: 'Subjects', href: '/subjects', labelKey: 'subjects' },
+  { iconId: 'Subjects', href: '/learn/subjects', labelKey: 'subjects' },
   { iconId: 'AI Tutor', href: '/ai-tutor', labelKey: 'aiTutor' },
 ];
 

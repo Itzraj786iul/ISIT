@@ -1,5 +1,7 @@
 import mongoose from 'mongoose';
 import { successResponse, errorResponse } from '@/lib/api-response';
+import { getAuthFromRequest } from '@/lib/auth';
+import { isSubjectPubliclyVisible } from '@/lib/curriculum-public';
 import { connectToDB } from '@/lib/db';
 import { requireTeacherOrganization } from '@/lib/teacher-org';
 import { enforceSubjectReadForScope, subjectAllowedForTeacherScope, requireTeacherScope } from '@/lib/teacher-scope';
@@ -17,6 +19,11 @@ export async function GET(
     const gate = await enforceSubjectReadForScope(req, id);
     if (!gate.ok) return gate.response;
     const subject = gate.subject;
+
+    const auth = await getAuthFromRequest(req);
+    if (!auth && !isSubjectPubliclyVisible(subject as { is_active?: boolean; status?: string })) {
+      return errorResponse('Subject not found', 404);
+    }
 
     const res = successResponse(subject, 200);
     res.headers.set('Cache-Control', `public, s-maxage=${CACHE_MAX_AGE}, stale-while-revalidate=${CACHE_MAX_AGE * 2}`);

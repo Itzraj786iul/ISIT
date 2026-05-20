@@ -1,4 +1,5 @@
 import { landingEn } from './landing';
+import { publicSubjectsEn } from './public-subjects';
 
 export const en = {
   dashboard: 'Dashboard',
@@ -530,4 +531,5 @@ export const en = {
   blogDetailRelatedHeading: 'Related articles',
   blogRelatedCategoryLabel: 'Career advice',
   ...landingEn,
+  ...publicSubjectsEn,
 } as const;

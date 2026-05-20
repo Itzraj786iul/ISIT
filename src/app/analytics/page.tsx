@@ -190,7 +190,7 @@ export default function AnalyticsPage() {
               <div className="text-sm font-medium text-slate-500 dark:text-slate-400">{tr('analyticsTopicsMasteredLabel')}</div>
             </div>
           </div>
-          <Link href="/subjects" className="block no-underline">
+          <Link href="/learn/subjects" className="block no-underline">
             <div className="isit-app-stat-card rounded-2xl p-6 shadow-sm hover:border-violet-200 hover:shadow transition cursor-pointer flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-violet-100 flex items-center justify-center flex-shrink-0">
                 <Layers className="w-6 h-6 text-violet-600" />

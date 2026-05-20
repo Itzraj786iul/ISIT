@@ -82,7 +82,7 @@ async function proxy(req: NextRequest) {
     '/dashboard', '/analytics', '/schedule', '/achievements',
     '/settings', '/help', '/my-courses', '/learning-path',
     '/certificate', '/lesson', '/checkout',
-    '/subjects', '/subject', '/topic', '/session', '/ai-tutor',
+    '/learn/subjects', '/subject', '/topic', '/session', '/ai-tutor',
   ];
   for (const prefix of protectedPages) {
     if (pathname === prefix || pathname.startsWith(prefix + '/')) {

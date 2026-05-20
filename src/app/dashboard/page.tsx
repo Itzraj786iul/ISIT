@@ -234,7 +234,7 @@ export default function Dashboard() {
               <p className="mt-3 max-w-2xl text-sm leading-relaxed text-sky-100 sm:text-base">{tr('dashboardHeroSubtitle')}</p>
               <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                 <Link
-                  href="/subjects"
+                  href="/learn/subjects"
                   className="inline-flex min-h-[48px] flex-1 items-center justify-center gap-2 rounded-xl bg-white px-5 py-3 text-base font-bold text-sky-700 no-underline shadow-sm hover:bg-sky-50 active:scale-[0.98] motion-safe-transition sm:flex-none sm:min-w-[200px]"
                 >
                   <BookOpen className="h-5 w-5 shrink-0" />
@@ -320,7 +320,7 @@ export default function Dashboard() {
                       No activity yet — start your first session from a subject.
                     </p>
                     <Link
-                      href="/subjects"
+                      href="/learn/subjects"
                       className="inline-flex items-center justify-center gap-1 min-h-[44px] px-4 rounded-xl text-sky-600 text-sm sm:text-base font-semibold hover:bg-sky-50 dark:hover:bg-sky-950/40 active:scale-[0.98] transition-transform w-full sm:w-auto"
                     >
                       {tr('startLearning')} <ChevronRight className="w-4 h-4 shrink-0" />
@@ -390,7 +390,7 @@ export default function Dashboard() {
               </div>
               <div className="space-y-2 p-4 sm:p-5">
                 <Link
-                  href="/subjects"
+                  href="/learn/subjects"
                   className="group flex min-h-[44px] items-center gap-3 rounded-xl bg-sky-50 px-4 py-3 text-sky-800 transition no-underline hover:bg-sky-100 active:scale-[0.99] dark:bg-sky-950/40 dark:text-sky-200"
                 >
                   <BookOpen className="h-5 w-5 shrink-0 text-sky-600" />

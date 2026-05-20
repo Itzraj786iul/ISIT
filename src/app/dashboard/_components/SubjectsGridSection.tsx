@@ -48,7 +48,7 @@ export default function SubjectsGridSection({ loading, subjects }: Props) {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3 sm:mb-4 min-w-0">
         <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-slate-800 dark:text-slate-100">Your subjects</h2>
         <Link
-          href="/subjects"
+          href="/learn/subjects"
           className="text-sky-600 text-sm sm:text-base font-semibold hover:underline inline-flex items-center gap-1 min-h-[44px] sm:min-h-0 rounded-xl px-1 -ml-1 sm:ml-0 active:scale-[0.98] w-fit"
         >
           View all <ChevronRight className="w-4 h-4 shrink-0" />
@@ -82,7 +82,7 @@ export default function SubjectsGridSection({ loading, subjects }: Props) {
           icon={BookOpen}
           title="No subjects yet"
           description="When your organization adds subjects, they will show up here. Open the full catalog to explore topics and start a session."
-          primaryAction={{ label: 'Explore subjects', href: '/subjects' }}
+          primaryAction={{ label: 'Explore subjects', href: '/learn/subjects' }}
         />
       )}
     </section>

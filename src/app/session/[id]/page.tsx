@@ -329,7 +329,7 @@ export default function SessionPlayerPage() {
           <Link href="/dashboard" className="btn-primary min-h-11 px-6 no-underline text-sm">
             Back to dashboard
           </Link>
-          <Link href="/subjects" className="btn-secondary min-h-11 px-6 no-underline text-sm">
+          <Link href="/learn/subjects" className="btn-secondary min-h-11 px-6 no-underline text-sm">
             Explore subjects
           </Link>
         </div>
@@ -341,7 +341,7 @@ export default function SessionPlayerPage() {
     return (
       <div className="isit-app-bg min-h-screen flex flex-col items-center justify-center px-4 relative">
         <p className="font-medium text-center">{loadError || 'Session unavailable'}</p>
-        <Link href="/subjects" className="mt-4 text-sky-600 dark:text-cyan-300 text-sm font-medium hover:underline">
+        <Link href="/learn/subjects" className="mt-4 text-sky-600 dark:text-cyan-300 text-sm font-medium hover:underline">
           Browse subjects
         </Link>
       </div>

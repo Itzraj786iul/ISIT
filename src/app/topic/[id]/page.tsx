@@ -535,7 +535,7 @@ export default function TopicLearningPage() {
                 {tr('dashboard')}
               </Link>
               <ChevronRight className="h-3.5 w-3.5 shrink-0 text-slate-400" aria-hidden />
-              <Link href="/subjects" className="font-medium text-sky-600 hover:underline dark:text-sky-400">
+              <Link href="/learn/subjects" className="font-medium text-sky-600 hover:underline dark:text-sky-400">
                 {tr('subjects')}
               </Link>
               {topic.subject_id ? (

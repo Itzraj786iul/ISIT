@@ -53,7 +53,7 @@ export default function SessionCompleteModal({
       : null;
 
   const continueItem = recommendationItems.find((i) => i.topicId);
-  const continueHref = continueItem?.topicId ? `/topic/${continueItem.topicId}` : '/subjects';
+  const continueHref = continueItem?.topicId ? `/topic/${continueItem.topicId}` : '/learn/subjects';
   const continueLabel = continueItem ? `Next: ${continueItem.name}` : 'Browse subjects';
 
   const firstWeak = weakAreaItems[0];

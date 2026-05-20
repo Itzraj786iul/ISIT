@@ -80,6 +80,7 @@ function isMoreNavActive(active?: PublicNavProps['active']) {
 
 export default function PublicNav({ active }: PublicNavProps) {
   const router = useRouter();
+  const [hydrated, setHydrated] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
@@ -88,6 +89,10 @@ export default function PublicNav({ active }: PublicNavProps) {
   const profileRef = useRef<HTMLDivElement>(null);
   const moreRef = useRef<HTMLDivElement>(null);
   const tr = useT();
+
+  useEffect(() => {
+    setHydrated(true);
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -151,7 +156,7 @@ export default function PublicNav({ active }: PublicNavProps) {
               className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-[color:var(--isit-nav-text-muted)] transition hover:bg-[var(--isit-nav-hover-bg)] hover:text-[color:var(--isit-text)] active:scale-95 lg:hidden"
               aria-label={mobileNavOpen ? 'Close menu' : 'Open menu'}
               aria-expanded={mobileNavOpen}
-              aria-controls="isit-mobile-nav-drawer"
+              aria-controls={hydrated ? 'isit-mobile-nav-drawer' : undefined}
             >
               {mobileNavOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
@@ -247,6 +252,7 @@ export default function PublicNav({ active }: PublicNavProps) {
         </div>
       </header>
 
+      {hydrated ? (
       <div
         className={`fixed inset-0 z-40 lg:hidden ${mobileNavOpen ? 'pointer-events-auto' : 'pointer-events-none'}`}
         aria-hidden={!mobileNavOpen}
@@ -353,7 +359,9 @@ export default function PublicNav({ active }: PublicNavProps) {
             </div>
         </div>
       </div>
+      ) : null}
 
+      {hydrated ? (
       <button
         type="button"
         onClick={handleAskTutor}
@@ -364,6 +372,7 @@ export default function PublicNav({ active }: PublicNavProps) {
         <Bot className="h-4 w-4 shrink-0 isit-accent-text" aria-hidden />
         <span className="hidden min-[400px]:inline">{openingTutor ? '…' : tr('askAiTutor')}</span>
       </button>
+      ) : null}
     </>
   );
 }

@@ -1,196 +1,53 @@
 'use client';
 
-/** AI-first subject catalog — entry to /subject/[id] → /topic/[id]. See docs/AI_FIRST_MIGRATION.md */
-import { useEffect, useState } from 'react';
+/**
+ * Public marketing subject catalog at /subjects (no login).
+ * Logged-in learners use /learn/subjects for org-scoped study list.
+ */
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import Sidebar from '@/components/LazySidebar';
-import { useRequireAuth } from '@/lib/use-require-auth';
-import EmptyState from '@/components/EmptyState';
-import ApiErrorState from '@/components/ApiErrorState';
-import { fetchWithAuth } from '@/lib/api-client';
-import { isLikelyNetworkError } from '@/lib/api-error-messages';
-import { BookOpen, ChevronRight } from 'lucide-react';
-import { useT } from '@/lib/t';
-
-type Subject = {
-  _id: string;
-  name: string;
-  grade: string;
-  board: string;
-  description?: string;
-  [key: string]: unknown;
-};
-
-type User = { _id: string; name?: string; email?: string; role?: string; organization_id?: string };
-
-type ErrState =
-  | { kind: 'network' }
-  | { kind: 'http'; status: number; detail?: string | null }
-  | null;
+import { useAuth } from '@/lib/auth-context';
+import PublicSubjectsCatalog from '@/components/public-subjects/PublicSubjectsCatalog';
 
 export default function SubjectsPage() {
-  const tr = useT();
   const router = useRouter();
-  const [subjects, setSubjects] = useState<Subject[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [err, setErr] = useState<ErrState>(null);
-  const [teacherScoped, setTeacherScoped] = useState(false);
-
-  const { user: authUser, loading: authLoading } = useRequireAuth();
+  const { user, loading } = useAuth();
 
   useEffect(() => {
-    if (authLoading) return;
-    const fetchSubjects = async () => {
-      setLoading(true);
-      setErr(null);
-      try {
-        const user = authUser as User | undefined;
-        if (!user) {
-          setLoading(false);
-          return;
-        }
-        const organizationId =
-          user?.organization_id ??
-          (typeof process.env.NEXT_PUBLIC_ORGANIZATION_ID === 'string'
-            ? process.env.NEXT_PUBLIC_ORGANIZATION_ID
-            : null);
+    if (loading || !user) return;
+    const role = user.role?.toLowerCase();
+    if (role === 'teacher') {
+      router.replace('/teacher/subjects');
+      return;
+    }
+    if (role === 'admin') {
+      router.replace('/organization');
+      return;
+    }
+    if (role === 'parent') {
+      router.replace('/parent/dashboard');
+      return;
+    }
+    if (role === 'student') {
+      router.replace('/learn/subjects');
+    }
+  }, [user, loading, router]);
 
-        if (!organizationId) {
-          setErr({ kind: 'http', status: 400, detail: 'Your account is not linked to an organization yet.' });
-          setLoading(false);
-          return;
-        }
-
-        setTeacherScoped(user?.role?.toLowerCase() === 'teacher');
-
-        const res = await fetchWithAuth(
-          `/api/subjects?organizationId=${encodeURIComponent(organizationId)}`,
-          { redirectOn401: true, returnUrl: '/subjects' }
-        );
-        const json = (await res.json()) as { success?: boolean; data?: Subject[]; error?: string };
-
-        if (!res.ok || !json.success) {
-          setErr({ kind: 'http', status: res.status, detail: json.error });
-          setSubjects([]);
-          setLoading(false);
-          return;
-        }
-
-        setSubjects(Array.isArray(json.data) ? json.data : []);
-      } catch (e: unknown) {
-        setSubjects([]);
-        setErr(isLikelyNetworkError(e) ? { kind: 'network' } : { kind: 'http', status: 0 });
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchSubjects();
-  }, [authUser, authLoading, router]);
-
-  return (
-    <div className="isit-cosmic-bg relative flex min-h-screen overflow-x-hidden font-sans">
-      <Sidebar />
-      <div className="flex min-w-0 flex-1 flex-col">
-        <header className="isit-app-header shrink-0">
-          <div className="px-4 py-3 sm:px-6 md:px-8">
-            <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-2 text-sm">
-              <Link href="/dashboard" className="isit-app-breadcrumb-link font-medium">
-                {tr('dashboard')}
-              </Link>
-              <ChevronRight className="h-3.5 w-3.5 shrink-0 text-slate-400" aria-hidden />
-              <span className="isit-app-breadcrumb-current font-medium">{tr('subjects')}</span>
-            </nav>
-          </div>
-        </header>
-      <main className="isit-app-main isit-app-main--with-nav-toggle">
-        <div className="max-w-6xl mx-auto">
-          <h1 className="mb-2 text-2xl font-bold text-slate-900 dark:text-slate-100">{tr('subjects')}</h1>
-          <p className={`text-sm text-slate-600 dark:text-slate-400 ${teacherScoped ? 'mb-2' : 'mb-8'}`}>
-            {tr('learningFlowSubjectsLead')}
-          </p>
-          {teacherScoped && (
-            <p className="text-amber-800 dark:text-amber-200/90 text-sm mb-8 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 rounded-2xl px-3 py-2">
-              Showing only subjects assigned to you in this organization.
-            </p>
-          )}
-
-          {loading && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6" data-testid="subjects-loading">
-              {[1, 2, 3, 4, 5, 6].map((i) => (
-                <div
-                  key={i}
-                  className="isit-app-panel rounded-2xl p-6 shadow-sm animate-pulse min-h-[140px]"
-                  aria-hidden
-                >
-                  <div className="h-6 bg-slate-200 dark:bg-slate-800 rounded w-3/4 mb-3" />
-                  <div className="flex gap-2 mb-3">
-                    <div className="h-5 bg-slate-100 dark:bg-slate-800 rounded w-16" />
-                    <div className="h-5 bg-slate-100 dark:bg-slate-800 rounded w-20" />
-                  </div>
-                  <div className="h-4 bg-slate-100 dark:bg-slate-800 rounded w-full mb-2" />
-                  <div className="h-4 bg-slate-100 dark:bg-slate-800 rounded w-2/3" />
-                </div>
-              ))}
-            </div>
-          )}
-
-          {!loading && err && (
-            <ApiErrorState
-              error={err.kind === 'network' ? new TypeError('Failed to fetch') : null}
-              status={err.kind === 'http' ? err.status : undefined}
-              serverMessage={err.kind === 'http' ? err.detail : null}
-              onRetry={() => window.location.reload()}
-            />
-          )}
-
-          {!loading && !err && subjects.length === 0 && (
-            <div data-testid="subjects-empty">
-              <EmptyState
-                icon={BookOpen}
-                title={tr('subjectsEmptyTitle')}
-                description={tr('subjectsEmptyDescription')}
-                primaryAction={{ label: tr('goToDashboard'), href: '/dashboard' }}
-                secondaryAction={{ label: tr('footerHowItWorksLink'), href: '/how-it-works' }}
-              />
-            </div>
-          )}
-
-          {!loading && !err && subjects.length > 0 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-              {subjects.map((subject) => (
-                <Link
-                  key={subject._id}
-                  href={`/subject/${subject._id}`}
-                  className="group block isit-app-panel rounded-2xl p-6 shadow-sm hover:border-sky-300 hover:shadow-md transition no-underline text-inherit min-h-[44px]"
-                >
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="min-w-0 flex-1">
-                      <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100 truncate group-hover:text-sky-700 dark:group-hover:text-sky-400">
-                        {subject.name}
-                      </h2>
-                      <div className="flex flex-wrap gap-2 mt-2">
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-medium">
-                          {subject.grade}
-                        </span>
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-medium">
-                          {subject.board}
-                        </span>
-                      </div>
-                      {subject.description && (
-                        <p className="mt-3 text-slate-600 dark:text-slate-400 text-sm line-clamp-3">{subject.description}</p>
-                      )}
-                    </div>
-                    <ChevronRight className="w-5 h-5 text-slate-600 dark:text-slate-300 flex-shrink-0 group-hover:text-sky-500 group-hover:translate-x-0.5 transition" />
-                  </div>
-                </Link>
-              ))}
-            </div>
-          )}
-        </div>
-      </main>
+  if (loading) {
+    return (
+      <div className="isit-app-bg flex min-h-screen items-center justify-center">
+        <div className="h-10 w-10 animate-spin rounded-full border-2 border-sky-500 border-t-transparent" />
       </div>
-    </div>
-  );
+    );
+  }
+
+  if (user) {
+    return (
+      <div className="isit-app-bg flex min-h-screen items-center justify-center">
+        <div className="h-10 w-10 animate-spin rounded-full border-2 border-sky-500 border-t-transparent" />
+      </div>
+    );
+  }
+
+  return <PublicSubjectsCatalog />;
 }

@@ -49,7 +49,7 @@ export default function WeakAreasSection({ loading, items }: Props) {
         <div className="isit-app-stat-card rounded-2xl border-dashed p-5 sm:p-8 text-center dark:bg-slate-900 dark:border-slate-700">
           <p className="text-slate-600 text-sm sm:text-base dark:text-slate-300">No weak spots detected yet. Keep learning — we will highlight topics that need work.</p>
           <Link
-            href="/subjects"
+            href="/learn/subjects"
             className="inline-flex items-center justify-center mt-4 min-h-[44px] px-4 rounded-xl text-sky-600 text-sm font-semibold hover:bg-sky-50 dark:hover:bg-sky-950/40 active:scale-[0.98] w-full sm:w-auto"
           >
             Explore topics

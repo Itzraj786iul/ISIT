@@ -4,6 +4,7 @@
  */
 import mongoose from 'mongoose';
 import { connectToDB } from '@/lib/db';
+import { PUBLIC_SUBJECT_QUERY } from '@/lib/curriculum-public';
 
 export type GetSubjectsOptions = {
   grade?: string;
@@ -34,7 +35,7 @@ export async function getSubjectsForOrganization(
 export async function getAllPublishedSubjects(options: GetSubjectsOptions = {}) {
   await connectToDB();
   const Subject = (await import('@/models/Subject')).default;
-  const query: Record<string, unknown> = { is_active: true };
+  const query: Record<string, unknown> = { ...PUBLIC_SUBJECT_QUERY };
   if (options.grade != null && options.grade !== '') query.grade = options.grade;
   if (options.board != null && options.board !== '') query.board = options.board;
   return Subject.find(query).sort({ name: 1 }).lean().exec();

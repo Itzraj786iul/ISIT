@@ -141,7 +141,7 @@ export default function MyCoursesPage() {
             {enrolled.length === 0 && (
               <div className="flex flex-wrap justify-center gap-3">
                 <Link
-                  href="/subjects"
+                  href="/learn/subjects"
                   className="btn-primary inline-flex items-center gap-2 px-5 py-2.5 no-underline"
                 >
                   {tr('myCoursesStartFirstSession')} <ChevronRight className="h-4 w-4" />

@@ -40,7 +40,7 @@ export default function ContinueLearningCard({ loading, lastSession, lastTopicNa
         <p className="text-slate-700 font-medium text-sm sm:text-base dark:text-slate-200">Start your next learning session</p>
         <p className="text-slate-500 text-xs sm:text-sm mt-1 dark:text-slate-400">Pick a subject and topic to build mastery.</p>
         <Link
-          href="/subjects"
+          href="/learn/subjects"
           className="btn-primary mt-4 w-full sm:w-auto min-h-11 px-6 no-underline rounded-2xl active:scale-[0.98] motion-safe-transition"
         >
           {tr('browseSubjects')}

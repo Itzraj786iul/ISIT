@@ -31,6 +31,7 @@ export default function BrandLogo({
         alt={ALT}
         width={isLockup ? 168 : 40}
         height={isLockup ? 44 : 40}
+        sizes={isLockup ? '(max-width: 640px) 152px, 168px' : '40px'}
         priority={priority}
         className={
           isLockup

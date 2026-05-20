@@ -41,7 +41,7 @@ export default function AssignedByTeacherSection({
           icon={GraduationCap}
           title="No assigned topics yet"
           description="When your teacher assigns topics to your class, they will show up here. You can still explore subjects and start learning on your own."
-          primaryAction={{ label: 'Explore subjects', href: '/subjects' }}
+          primaryAction={{ label: 'Explore subjects', href: '/learn/subjects' }}
           secondaryAction={{ label: 'Start learning', href: '/dashboard' }}
         />
       </section>

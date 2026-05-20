@@ -522,7 +522,7 @@ export default function LessonPlayerPage() {
                 <p className="mt-1 text-sm isit-body/70">{tr('lessonMoreCoursesLead')}</p>
                 <p className="mt-3 text-sm isit-body">
                   {tr('lessonPreferSubjects')}{' '}
-                  <Link href="/subjects" className="font-medium text-sky-600 dark:text-cyan-300 underline hover:isit-body">
+                  <Link href="/learn/subjects" className="font-medium text-sky-600 dark:text-cyan-300 underline hover:isit-body">
                     {tr('lessonOpenSubjects')}
                   </Link>
                 </p>

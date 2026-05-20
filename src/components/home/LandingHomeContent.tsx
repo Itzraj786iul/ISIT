@@ -33,7 +33,6 @@ import { useT } from '@/lib/t';
 import { useLanguage } from '@/lib/language-context';
 import {
   PARTNER_NAMES,
-  buildCoreCourses,
   buildFaq,
   buildFeatureBar,
   buildFeatureCards,
@@ -47,6 +46,7 @@ import {
 } from '@/lib/landing-content';
 import { RevealOnView, RevealStagger } from '@/components/RevealMotion';
 import HeroLearningScene from '@/components/home/HeroLearningScene';
+import LandingPublishedSubjects from '@/components/home/LandingPublishedSubjects';
 
 type Props = {
   authLoading: boolean;
@@ -202,7 +202,6 @@ export default function LandingHomeContent({
   const tutorFeatures = useMemo(() => buildTutorFeatures(tr), [tr, language]);
   const programsRow1 = useMemo(() => buildProgramsRow1(tr), [tr, language]);
   const programsRow2 = useMemo(() => buildProgramsRow2(tr), [tr, language]);
-  const coreCourses = useMemo(() => buildCoreCourses(tr), [tr, language]);
   const journeySteps = useMemo(() => buildJourneySteps(tr), [tr, language]);
   const faqItems = useMemo(() => buildFaq(tr), [tr, language]);
   const finalTrust = useMemo(() => buildFinalTrust(tr), [tr, language]);
@@ -598,37 +597,8 @@ export default function LandingHomeContent({
         </RevealOnView>
       </section>
 
-      {/* Core courses 4-up */}
-      <section className="py-16 sm:py-24">
-        <RevealOnView className="mx-auto max-w-7xl px-4 text-center sm:px-6">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-sky-400/90">{tr('landingLearnEyebrow')}</p>
-          <h2 className="mt-3 text-3xl font-bold text-slate-900 dark:text-white sm:text-4xl lg:text-5xl">
-            {tr('landingLearnTitle1')} <span className="isit-gradient-text-strong">{tr('landingLearnTitleAccent')}</span>
-          </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-slate-400 sm:text-base">{tr('landingLearnLead')}</p>
-
-          <RevealStagger className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {[
-              { ...coreCourses[0], gradient: 'from-violet-600 to-purple-400', icon: Brain },
-              { ...coreCourses[1], gradient: 'from-blue-600 to-cyan-400', icon: BookOpen },
-              { ...coreCourses[2], gradient: 'from-orange-500 to-fuchsia-500', icon: Lightbulb },
-              { ...coreCourses[3], gradient: 'from-emerald-500 to-teal-400', icon: Target },
-            ].map(({ n, lab, title, desc, gradient, icon: Icon }) => (
-              <Link key={n} href="/courses" className="group block overflow-hidden rounded-3xl border border-slate-200 dark:border-white/[0.06] bg-slate-100 dark:bg-[#0a0c14] text-left transition hover:border-slate-200 dark:border-cyan-400/20">
-                <div className={`relative h-40 bg-gradient-to-br ${gradient} px-4 pt-4`}>
-                  <span className="absolute right-3 top-2 text-5xl font-black text-white/15">{n}</span>
-                  <Icon className="absolute bottom-3 left-1/2 h-14 w-14 -translate-x-1/2 text-white/95" strokeWidth={1.15} />
-                </div>
-                <div className="p-5">
-                  <span className="inline-block rounded-full bg-white/[0.06] px-2.5 py-0.5 text-[10px] font-medium text-slate-600 dark:text-slate-300">{lab}</span>
-                  <h3 className="mt-3 text-lg font-bold text-slate-900 dark:text-white">{title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-slate-400">{desc}</p>
-                </div>
-              </Link>
-            ))}
-          </RevealStagger>
-        </RevealOnView>
-      </section>
+      {/* Published curriculum subjects (public, no login) */}
+      <LandingPublishedSubjects />
 
       {/* Student journey */}
       <section className="py-16 sm:py-24">

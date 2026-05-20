@@ -1,5 +1,7 @@
 import { getTopicsForSubject } from '@/lib/curriculum-api';
 import { successResponse, errorResponse } from '@/lib/api-response';
+import { getAuthFromRequest } from '@/lib/auth';
+import { isSubjectPubliclyVisible } from '@/lib/curriculum-public';
 import { enforceSubjectReadForScope } from '@/lib/teacher-scope';
 
 const CACHE_MAX_AGE = 120;
@@ -14,6 +16,11 @@ export async function GET(req: Request) {
 
     const subGate = await enforceSubjectReadForScope(req, subjectId);
     if (!subGate.ok) return subGate.response;
+
+    const auth = await getAuthFromRequest(req);
+    if (!auth && !isSubjectPubliclyVisible(subGate.subject as { is_active?: boolean; status?: string })) {
+      return errorResponse('Subject not found', 404);
+    }
 
     const topics = await getTopicsForSubject(subjectId, {
       organizationId: organizationId || undefined,
