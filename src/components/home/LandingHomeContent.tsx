@@ -25,7 +25,6 @@ import {
   Star,
   Target,
   Telescope,
-  TrendingUp,
   Wrench,
   Zap,
 } from 'lucide-react';
@@ -35,7 +34,6 @@ import {
   PARTNER_NAMES,
   buildFaq,
   buildFeatureBar,
-  buildFeatureCards,
   buildFinalTrust,
   buildJourneySteps,
   buildProgramsRow1,
@@ -198,7 +196,6 @@ export default function LandingHomeContent({
   const statsConfig = useMemo(() => buildStatsConfig(tr), [tr, language]);
   const testimonials = useMemo(() => buildTestimonials(tr), [tr, language]);
   const featureBar = useMemo(() => buildFeatureBar(tr), [tr, language]);
-  const featureCards = useMemo(() => buildFeatureCards(tr), [tr, language]);
   const tutorFeatures = useMemo(() => buildTutorFeatures(tr), [tr, language]);
   const programsRow1 = useMemo(() => buildProgramsRow1(tr), [tr, language]);
   const programsRow2 = useMemo(() => buildProgramsRow2(tr), [tr, language]);
@@ -374,36 +371,6 @@ export default function LandingHomeContent({
             ))}
           </div>
         </RevealOnView>
-      </section>
-
-      {/* Five feature cards */}
-      <section className="py-16 sm:py-20">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
-          <RevealStagger className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-            {[
-              { icon: Bot, ...featureCards[0] },
-              { icon: BarChart3, ...featureCards[1] },
-              { icon: Zap, ...featureCards[2] },
-              { icon: TrendingUp, ...featureCards[3] },
-              { icon: Sparkles, ...featureCards[4] },
-            ].map(({ icon: Icon, title, desc, highlight }) => (
-              <div
-                key={title}
-                className={`rounded-2xl border p-5 transition hover:-translate-y-0.5 ${
-                  highlight
-                    ? 'border-cyan-400/40 bg-cyan-500/[0.06] shadow-[0_0_30px_rgba(34,211,238,0.12)]'
-                    : 'border-slate-200 dark:border-white/[0.06] bg-white shadow-sm dark:bg-white/[0.02] dark:shadow-none'
-                }`}
-              >
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-cyan-500/15 text-cyan-400">
-                  <Icon className="h-5 w-5" />
-                </div>
-                <h3 className="mt-4 text-base font-bold text-slate-900 dark:text-white">{title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-slate-400">{desc}</p>
-              </div>
-            ))}
-          </RevealStagger>
-        </div>
       </section>
 
       {/* AI Tutor + chat */}

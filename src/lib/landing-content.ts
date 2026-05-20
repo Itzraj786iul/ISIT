@@ -50,16 +50,6 @@ export function buildFeatureBar(tr: Tr) {
   ] as const;
 }
 
-export function buildFeatureCards(tr: Tr) {
-  return [
-    { title: tr('landingCardAiTitle'), desc: tr('landingCardAiDesc'), highlight: false },
-    { title: tr('landingCardSmartTitle'), desc: tr('landingCardSmartDesc'), highlight: true },
-    { title: tr('landingCardFeedbackTitle'), desc: tr('landingCardFeedbackDesc'), highlight: false },
-    { title: tr('landingCardProgressTitle'), desc: tr('landingCardProgressDesc'), highlight: false },
-    { title: tr('landingCardSkillsTitle'), desc: tr('landingCardSkillsDesc'), highlight: false },
-  ] as const;
-}
-
 export function buildTutorFeatures(tr: Tr) {
   return [
     { title: tr('landingTutorFeat1Title'), desc: tr('landingTutorFeat1Desc') },
