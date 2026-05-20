@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Bot, Brain, Flame, Sparkles, Target, Timer, TrendingUp, Zap } from 'lucide-react';
 
 /* —— Hooks —— */
@@ -111,8 +111,7 @@ function SceneBackdrop() {
   );
 }
 
-function MasteryRing({ percent }: { percent: number }) {
-  const gradId = useId();
+function MasteryRing({ percent, gradId }: { percent: number; gradId: string }) {
   const r = 26;
   const c = 2 * Math.PI * r;
   const offset = c - (percent / 100) * c;
@@ -149,8 +148,7 @@ function MasteryRing({ percent }: { percent: number }) {
   );
 }
 
-function AnimatedSparkline() {
-  const gradId = useId();
+function AnimatedSparkline({ gradId }: { gradId: string }) {
   return (
     <svg viewBox="0 0 48 24" className="landing-hero-sparkline h-6 w-11 shrink-0" aria-hidden>
       <defs>
@@ -239,7 +237,10 @@ function AiTutorPanel({ enabled, prompt }: { enabled: boolean; prompt: string })
   );
 }
 
-function MasteryCard({ percent }: { percent: number }) {
+function MasteryCard({ percent, railId }: { percent: number; railId: string }) {
+  const ringGradId = `hero-mastery-ring-${railId}`;
+  const sparkGradId = `hero-sparkline-${railId}`;
+
   return (
     <FxCard accent="cyan" delay={0} className="landing-hero-fx-card--hover">
       <div className="flex items-center justify-between gap-2">
@@ -252,8 +253,8 @@ function MasteryCard({ percent }: { percent: number }) {
         <span className="landing-hero-chip">+12%</span>
       </div>
       <div className="mt-3 flex items-center justify-between gap-3">
-        <MasteryRing percent={percent} />
-        <AnimatedSparkline />
+        <MasteryRing percent={percent} gradId={ringGradId} />
+        <AnimatedSparkline gradId={sparkGradId} />
       </div>
       <p className="landing-hero-card-meta mt-2 flex items-center gap-1">
         <TrendingUp className="h-3 w-3 text-emerald-400" />
@@ -306,13 +307,13 @@ function FocusCard({ mins }: { mins: number }) {
   );
 }
 
-function StatsRail({ mastery, mins }: { mastery: number; mins: number }) {
+function StatsRail({ mastery, mins, railId }: { mastery: number; mins: number; railId: string }) {
   return (
     <div className="landing-hero-stats-rail">
       <div className="landing-hero-stats-bridge" aria-hidden />
       <div className="landing-hero-premium-stats flex flex-col gap-2.5">
         <div className="isit-float-delayed">
-          <MasteryCard percent={mastery} />
+          <MasteryCard percent={mastery} railId={railId} />
         </div>
         <div className="isit-float-delayed-2">
           <StrengthCard />
@@ -379,7 +380,8 @@ export default function HeroLearningScene({ tutorPrompt }: HeroLearningSceneProp
                   width={1200}
                   height={900}
                   priority
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 88vw, 540px"
+                  sizes="540px"
+                  unoptimized
                   className="landing-hero-premium-portal-img"
                 />
                 <div className="landing-hero-premium-portal-shine" aria-hidden />
@@ -388,12 +390,12 @@ export default function HeroLearningScene({ tutorPrompt }: HeroLearningSceneProp
             </div>
           </div>
 
-          <StatsRail mastery={mastery} mins={mins} />
+          <StatsRail mastery={mastery} mins={mins} railId="cluster" />
         </div>
       </div>
 
       <div className="landing-hero-premium-stats--mobile mt-3 lg:hidden">
-        <StatsRail mastery={mastery} mins={mins} />
+        <StatsRail mastery={mastery} mins={mins} railId="mobile" />
       </div>
     </div>
   );

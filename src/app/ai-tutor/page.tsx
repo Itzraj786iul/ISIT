@@ -8,10 +8,8 @@ import Sidebar from '@/components/Sidebar';
 import ParentNav from '@/components/ParentNav';
 import TeacherShell from '@/app/teacher/_components/TeacherShell';
 import {
-  Bot,
   Brain,
   Lightbulb,
-  SendHorizonal,
   Sparkles,
   Wand2,
   Gauge,
@@ -22,6 +20,7 @@ import {
   RotateCcw,
   ChevronRight,
 } from 'lucide-react';
+import AiTutorChatShell from '@/components/ai-tutor/AiTutorChatShell';
 import { useT, type I18nKey } from '@/lib/t';
 import { useLanguage } from '@/lib/language-context';
 
@@ -255,66 +254,30 @@ function TutorContent() {
           </div>
         </aside>
 
-        <section className="isit-app-panel order-1 flex min-h-[min(58dvh,560px)] flex-col rounded-2xl lg:order-none lg:min-h-[560px]">
-          <div className="border-b border-slate-200 dark:border-cyan-300/20 px-4 py-3 text-sm font-semibold isit-body">{tr('aiTutorConversation')}</div>
-          <div ref={scrollerRef} className="flex-1 space-y-3 overflow-y-auto p-4">
-            {messages.map((m) => (
-              <div key={m.id} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                <div
-                  className={`max-w-[min(92%,420px)] whitespace-pre-wrap rounded-2xl px-4 py-3 text-sm ${
-                    m.role === 'user'
-                      ? 'isit-app-chat-user'
-                      : m.error
-                        ? 'border border-red-300/40 bg-red-50 text-red-800 dark:bg-red-500/10 dark:text-red-200'
-                        : 'isit-app-chat-assistant'
-                  }`}
+        <div className="order-1 min-w-0 lg:order-none">
+          <AiTutorChatShell
+            live
+            messages={messages}
+            thinking={thinking}
+            inputValue={input}
+            onInputChange={setInput}
+            onSend={() => void sendMessage(input)}
+            canSend={canSend}
+            scrollRef={scrollerRef}
+            footerExtra={
+              networkError && lastPrompt ? (
+                <button
+                  type="button"
+                  onClick={() => void sendMessage(lastPrompt, true)}
+                  className="mt-3 inline-flex items-center gap-2 rounded-lg border border-cyan-500/30 bg-slate-900/60 px-3 py-2 text-xs text-cyan-200"
                 >
-                  {m.content}
-                  <p className="mt-2 text-[10px] opacity-60">
-                    {new Date(m.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                  </p>
-                </div>
-              </div>
-            ))}
-            {thinking && (
-              <div className="isit-app-inset inline-flex items-center gap-2 rounded-xl px-3 py-2 text-xs">
-                <Bot className="h-4 w-4" />
-                {tr('aiTutorThinking')}
-              </div>
-            )}
-            {networkError && lastPrompt && (
-              <button
-                type="button"
-                onClick={() => void sendMessage(lastPrompt, true)}
-                className="isit-app-inset inline-flex items-center gap-2 rounded-lg px-3 py-2 text-xs"
-              >
-                <RotateCcw className="h-3.5 w-3.5" />
-                {tr('aiTutorRetryLast')}
-              </button>
-            )}
-          </div>
-          <div className="border-t border-slate-200 dark:border-cyan-300/20 p-3">
-            <div className="isit-app-chat-input-wrap flex items-center gap-2 rounded-xl p-2">
-              <input
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && canSend) void sendMessage(input);
-                }}
-                placeholder={tr('aiTutorPlaceholderAsk')}
-                className="flex-1 border-0 bg-transparent px-2 py-2 text-sm isit-body outline-none placeholder:isit-body/50"
-              />
-              <button
-                type="button"
-                onClick={() => void sendMessage(input)}
-                disabled={!canSend}
-                className="isit-btn-primary px-4 py-2 disabled:opacity-60"
-              >
-                <SendHorizonal className="h-4 w-4" />
-              </button>
-            </div>
-          </div>
-        </section>
+                  <RotateCcw className="h-3.5 w-3.5" />
+                  {tr('aiTutorRetryLast')}
+                </button>
+              ) : null
+            }
+          />
+        </div>
 
         <aside className="order-3 space-y-3 lg:order-none">
           <div className="isit-app-panel rounded-2xl p-4">
@@ -322,14 +285,18 @@ function TutorContent() {
             <div className="space-y-2">
               <button
                 type="button"
-                className="isit-app-inset flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm"
+                onClick={() => void sendMessage(tr('aiTutorExplainSimpler'))}
+                disabled={thinking}
+                className="isit-app-inset flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm disabled:opacity-60"
               >
                 <Lightbulb className="h-4 w-4 text-sky-600 dark:text-cyan-300" />
                 {tr('aiTutorExplainSimpler')}
               </button>
               <button
                 type="button"
-                className="isit-app-inset flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm"
+                onClick={() => void sendMessage(tr('aiTutorStarter3'))}
+                disabled={thinking}
+                className="isit-app-inset flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm disabled:opacity-60"
               >
                 <Wand2 className="h-4 w-4 text-sky-600 dark:text-cyan-300" />
                 {tr('aiTutorGenQuiz')}

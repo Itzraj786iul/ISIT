@@ -19,7 +19,6 @@ import {
   Palette,
   Play,
   Rocket,
-  Send,
   Shield,
   Sparkles,
   Star,
@@ -45,6 +44,8 @@ import {
 import { RevealOnView, RevealStagger } from '@/components/RevealMotion';
 import HeroLearningScene from '@/components/home/HeroLearningScene';
 import LandingPublishedSubjects from '@/components/home/LandingPublishedSubjects';
+import AiTutorChatShell from '@/components/ai-tutor/AiTutorChatShell';
+import { buildAiTutorDemoMessages } from '@/components/ai-tutor/build-demo-messages';
 
 type Props = {
   authLoading: boolean;
@@ -203,6 +204,7 @@ export default function LandingHomeContent({
   const faqItems = useMemo(() => buildFaq(tr), [tr, language]);
   const finalTrust = useMemo(() => buildFinalTrust(tr), [tr, language]);
 
+  const tutorDemoMessages = useMemo(() => buildAiTutorDemoMessages(tr), [tr, language]);
   const tutorCtaHref = useMemo(() => (isAuthed ? '/ai-tutor' : '/signup'), [isAuthed]);
   const tutorCtaLabel = useMemo(
     () => (isAuthed ? tr('askAiTutor') : tr('landingHeroStartTutorFree')),
@@ -376,60 +378,13 @@ export default function LandingHomeContent({
       {/* AI Tutor + chat */}
       <section className="py-12 sm:py-20">
         <RevealOnView className="mx-auto grid max-w-7xl items-stretch gap-10 px-4 sm:px-6 lg:grid-cols-2 lg:gap-14 xl:gap-16">
-          <div className="flex h-full min-h-[22rem] flex-col lg:min-h-0">
-            <div className="landing-tutor-mock isit-card flex h-full min-h-0 flex-col overflow-hidden rounded-3xl motion-safe:transition dark:motion-safe:hover:border-cyan-500/25 dark:motion-safe:hover:shadow-[0_0_48px_rgba(34,211,238,0.1)]">
-              <div className="flex shrink-0 items-center justify-between gap-3 border-b border-slate-200 dark:border-white/[0.06] bg-slate-50 dark:bg-white dark:bg-slate-100 dark:bg-slate-950/40 px-5 py-4">
-                <div className="flex min-w-0 items-center gap-3">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-violet-600 to-indigo-600">
-                    <Bot className="h-5 w-5 text-slate-900 dark:text-white" />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="font-bold text-slate-900 dark:text-white">{tr('landingTutorMockName')}</p>
-                    <p className="text-xs text-emerald-400">{tr('landingTutorMockStatus')}</p>
-                  </div>
-                </div>
-                <span className="shrink-0 text-[10px] text-slate-500 dark:text-slate-400">{tr('landingTutorMockPowered')}</span>
-              </div>
-              <div className="landing-chat-stagger flex min-h-0 flex-1 flex-col bg-slate-50 dark:bg-slate-950/40 px-5 py-5">
-                <div className="space-y-4">
-                  <div className="flex gap-2">
-                    <Bot className="mt-1 h-4 w-4 shrink-0 text-slate-500 dark:text-slate-400" />
-                    <div className="max-w-[90%] rounded-2xl rounded-tl-sm border border-slate-200 dark:border-white/[0.06] bg-slate-100 dark:bg-slate-900/80 px-4 py-3 text-sm text-slate-600 dark:text-slate-200">
-                      {tr('landingTutorMockGreeting')}
-                    </div>
-                  </div>
-                  <div className="flex justify-end gap-2">
-                    <div className="max-w-[90%] rounded-2xl rounded-tr-sm border border-sky-200 bg-sky-50 px-4 py-3 text-sm text-sky-900 dark:border-cyan-500/20 dark:bg-cyan-500/10 dark:text-cyan-50">
-                      {tr('landingTutorMockUserMsg')}
-                    </div>
-                  </div>
-                  <div className="flex gap-2">
-                    <Bot className="mt-1 h-4 w-4 shrink-0 text-slate-500 dark:text-slate-400" />
-                    <div className="max-w-[95%] rounded-2xl rounded-tl-sm border border-slate-200 dark:border-white/[0.06] bg-slate-100 dark:bg-slate-900/80 px-4 py-3 text-sm leading-relaxed text-slate-600 dark:text-slate-200">
-                      {tr('landingTutorMockReply')}
-                    </div>
-                  </div>
-                </div>
-                <div className="min-h-6 flex-1" aria-hidden />
-              </div>
-              <div className="shrink-0 border-t border-slate-200 dark:border-white/[0.06] bg-slate-50 dark:bg-slate-950/50 p-3">
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    readOnly
-                    placeholder={tr('landingTutorInputPlaceholder')}
-                    className="min-h-11 flex-1 rounded-xl border border-slate-200 dark:border-white/[0.06] bg-white dark:bg-slate-900/70 px-4 text-sm text-slate-600 dark:text-slate-200 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/25"
-                  />
-                  <button
-                    type="button"
-                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-violet-600 text-white shadow-lg shadow-violet-600/40"
-                    aria-label={tr('landingTutorSendAria')}
-                  >
-                    <Send className="h-4 w-4" />
-                  </button>
-                </div>
-              </div>
-            </div>
+          <div className="flex h-full min-h-[28rem] flex-col lg:min-h-[32rem]">
+            <AiTutorChatShell
+              className="h-full min-h-[28rem] lg:min-h-[32rem]"
+              messages={tutorDemoMessages}
+              inputPlaceholder={tr('landingTutorInputPlaceholder')}
+              readOnlyInput
+            />
           </div>
 
           <div className="flex min-h-0 h-full flex-col justify-start lg:pl-2">

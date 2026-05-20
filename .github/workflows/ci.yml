@@ -5,6 +5,12 @@ on:
     branches: [main, master]
   pull_request:
 
+# Run from repo root where package.json + package-lock.json live.
+# If the app lives in a subfolder on GitHub, set `defaults.run.working-directory` to that path.
+defaults:
+  run:
+    working-directory: .
+
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
@@ -21,6 +27,7 @@ jobs:
       - name: Install
         run: npm ci
 
+      # Uses `eslint .` — Next.js 16 removed the `next lint` CLI subcommand.
       - name: Lint
         run: npm run lint
 

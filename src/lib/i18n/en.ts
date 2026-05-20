@@ -388,7 +388,7 @@ export const en = {
   aiTutorConversation: 'Conversation',
   aiTutorThinking: 'Thinking…',
   aiTutorRetryLast: 'Retry last message',
-  aiTutorPlaceholderAsk: 'Ask anything…',
+  aiTutorPlaceholderAsk: 'Ask anything... or tap 🎙️ to speak',
   aiTutorSessionAssist: 'Session assist',
   aiTutorExplainSimpler: 'Explain in a simpler way',
   aiTutorGenQuiz: 'Generate quick quiz',

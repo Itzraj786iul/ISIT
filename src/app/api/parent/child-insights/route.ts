@@ -223,7 +223,7 @@ export async function GET(req: Request) {
       topic_name: t.topic_name,
     }));
 
-    let ai_summary =
+    const ai_summary =
       (await generateParentInsightParagraph({
         childName,
         avgMastery: avg_mastery,

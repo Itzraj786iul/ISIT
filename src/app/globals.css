@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "../styles/isit-tokens.css";
+@import "../styles/ai-tutor-chat.css";
 @import "../styles/isit-dark-cosmic.css";
 @import "../styles/scroll-performance.css";
 @import "../styles/mobile-responsive.css";
