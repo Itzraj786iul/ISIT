@@ -5,18 +5,14 @@ import Link from 'next/link';
 import {
   Activity,
   Award,
-  BarChart3,
   BookOpen,
   Bot,
   Brain,
   ChevronRight,
   Code2,
-  GraduationCap,
   Layers,
   Lightbulb,
-  Megaphone,
   Microscope,
-  Palette,
   Play,
   Rocket,
   Shield,
@@ -25,7 +21,6 @@ import {
   Target,
   Telescope,
   Wrench,
-  Zap,
 } from 'lucide-react';
 import { useT } from '@/lib/t';
 import { useLanguage } from '@/lib/language-context';
@@ -35,17 +30,15 @@ import {
   buildFeatureBar,
   buildFinalTrust,
   buildJourneySteps,
-  buildProgramsRow1,
-  buildProgramsRow2,
   buildStatsConfig,
   buildTestimonials,
   buildTutorFeatures,
 } from '@/lib/landing-content';
 import { RevealOnView, RevealStagger } from '@/components/RevealMotion';
 import HeroLearningScene from '@/components/home/HeroLearningScene';
-import LandingPublishedSubjects from '@/components/home/LandingPublishedSubjects';
-import AiTutorChatShell from '@/components/ai-tutor/AiTutorChatShell';
-import { buildAiTutorDemoMessages } from '@/components/ai-tutor/build-demo-messages';
+import LandingExplorePrograms from '@/components/home/LandingExplorePrograms';
+import LandingCoreCourses from '@/components/home/LandingCoreCourses';
+import LandingAiTutorSection from '@/components/home/LandingAiTutorSection';
 
 type Props = {
   authLoading: boolean;
@@ -91,7 +84,6 @@ function LandingStatsCountUp({ stats, ariaLabel }: { stats: StatConfig; ariaLabe
 
     const start = () => {
       if (startedRef.current) return;
-      if (document.documentElement.classList.contains('is-scrolling')) return;
       startedRef.current = true;
       const durationMs = 1400;
       const t0 = performance.now();
@@ -198,13 +190,11 @@ export default function LandingHomeContent({
   const testimonials = useMemo(() => buildTestimonials(tr), [tr, language]);
   const featureBar = useMemo(() => buildFeatureBar(tr), [tr, language]);
   const tutorFeatures = useMemo(() => buildTutorFeatures(tr), [tr, language]);
-  const programsRow1 = useMemo(() => buildProgramsRow1(tr), [tr, language]);
-  const programsRow2 = useMemo(() => buildProgramsRow2(tr), [tr, language]);
   const journeySteps = useMemo(() => buildJourneySteps(tr), [tr, language]);
   const faqItems = useMemo(() => buildFaq(tr), [tr, language]);
   const finalTrust = useMemo(() => buildFinalTrust(tr), [tr, language]);
 
-  const tutorDemoMessages = useMemo(() => buildAiTutorDemoMessages(tr), [tr, language]);
+
   const tutorCtaHref = useMemo(() => (isAuthed ? '/ai-tutor' : '/signup'), [isAuthed]);
   const tutorCtaLabel = useMemo(
     () => (isAuthed ? tr('askAiTutor') : tr('landingHeroStartTutorFree')),
@@ -376,47 +366,15 @@ export default function LandingHomeContent({
       </section>
 
       {/* AI Tutor + chat */}
-      <section className="py-12 sm:py-20">
-        <RevealOnView className="mx-auto grid max-w-7xl items-stretch gap-10 px-4 sm:px-6 lg:grid-cols-2 lg:gap-14 xl:gap-16">
-          <div className="flex h-full min-h-[28rem] flex-col lg:min-h-[32rem]">
-            <AiTutorChatShell
-              className="h-full min-h-[28rem] lg:min-h-[32rem]"
-              messages={tutorDemoMessages}
-              inputPlaceholder={tr('landingTutorInputPlaceholder')}
-              readOnlyInput
-            />
-          </div>
+      <LandingAiTutorSection tr={tr} tutorFeatures={tutorFeatures} />
 
-          <div className="flex min-h-0 h-full flex-col justify-start lg:pl-2">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">{tr('landingTutorEyebrow')}</p>
-            <h2 className="mt-3 text-3xl font-bold leading-tight text-slate-900 dark:text-white sm:text-4xl lg:text-5xl">
-              {tr('landingTutorHeading')} <span className="isit-gradient-text-strong">{tr('landingTutorHeadingAccent')}</span>
-            </h2>
-            <p className="mt-5 text-base leading-relaxed text-slate-600 dark:text-slate-400">{tr('landingTutorLead')}</p>
-            <RevealStagger className="mt-8 space-y-4">
-              {[
-                { icon: Brain, ...tutorFeatures[0] },
-                { icon: Zap, ...tutorFeatures[1] },
-                { icon: BarChart3, ...tutorFeatures[2] },
-                { icon: Target, ...tutorFeatures[3] },
-              ].map(({ icon: Icon, title, desc }) => (
-                <div
-                  key={title}
-                  className="flex gap-4 rounded-2xl border border-slate-200 dark:border-white/[0.08] bg-white shadow-sm dark:bg-white/[0.02] dark:shadow-none p-4 backdrop-blur-sm"
-                >
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-sky-500/30 bg-sky-500/10">
-                    <Icon className="h-5 w-5 text-sky-300" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-slate-900 dark:text-white">{title}</h3>
-                    <p className="mt-1 text-sm leading-relaxed text-slate-400">{desc}</p>
-                  </div>
-                </div>
-              ))}
-            </RevealStagger>
-          </div>
-        </RevealOnView>
-      </section>
+      {/* Explore programs (6 cards) */}
+      <LandingExplorePrograms viewAllClassName={pillGhost} />
+
+      {/* Must-enroll core courses — replaces old "Explore subjects" block */}
+      <div id="core-courses">
+        <LandingCoreCourses />
+      </div>
 
       {/* Stats + CTA */}
       <section className="pb-16 sm:pb-24">
@@ -440,87 +398,6 @@ export default function LandingHomeContent({
           </div>
         </RevealOnView>
       </section>
-
-      {/* Explore programs */}
-      <section className="py-16 sm:py-24">
-        <RevealOnView className="mx-auto max-w-7xl px-4 sm:px-6">
-          <div className="mb-12 flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">{tr('landingProgramsEyebrow')}</p>
-              <h2 className="mt-2 text-3xl font-bold leading-tight text-slate-900 dark:text-white sm:text-4xl lg:text-5xl">
-                {tr('landingProgramsTitle1')}
-                <br />
-                {tr('landingProgramsTitle2')} <span className="isit-gradient-text-strong">{tr('landingProgramsTitleAccent')}</span>
-              </h2>
-            </div>
-            <Link href="/courses" className={pillGhost + ' shrink-0 self-start lg:self-auto'}>
-              {tr('landingProgramsViewAll')}
-              <ChevronRight className="h-4 w-4" />
-            </Link>
-          </div>
-
-          <RevealStagger className="grid gap-6 md:grid-cols-3">
-            {[
-              { ...programsRow1[0], gradient: 'from-blue-900 via-blue-600 to-sky-400', icon: Bot, href: '/courses' },
-              { ...programsRow1[1], gradient: 'from-teal-700 via-teal-500 to-emerald-300', icon: GraduationCap, href: '/courses' },
-              { ...programsRow1[2], gradient: 'from-fuchsia-600 via-rose-500 to-amber-400', icon: Megaphone, href: '/courses' },
-            ].map(({ tag, title, desc, gradient, icon: Icon, href }) => (
-              <Link key={title} href={href} className="group block overflow-hidden rounded-2xl border border-slate-200 dark:border-white/[0.06] bg-slate-100 dark:bg-[#0a0c14] transition hover:border-slate-200 dark:border-cyan-400/25">
-                <div className={`relative h-44 bg-gradient-to-br ${gradient} p-4`}>
-                  <span className="inline-block rounded-full bg-black/25 px-2.5 py-1 text-[10px] font-medium text-white/90 backdrop-blur-sm">{tag}</span>
-                  <Icon className="absolute bottom-4 right-4 h-16 w-16 text-white/90 transition group-hover:scale-105" strokeWidth={1.25} />
-                </div>
-                <div className="p-5">
-                  <h3 className="text-lg font-bold text-slate-900 dark:text-white">{title}</h3>
-                  <p className="mt-2 text-sm text-slate-400">{desc}</p>
-                  <span className="mt-4 inline-flex items-center text-sm font-medium text-cyan-400">
-                    {tr('landingExploreProgram')} <ChevronRight className="ml-0.5 h-4 w-4" />
-                  </span>
-                </div>
-              </Link>
-            ))}
-          </RevealStagger>
-        </RevealOnView>
-      </section>
-
-      {/* Second program row */}
-      <section className="pb-16 sm:pb-24">
-        <RevealOnView className="mx-auto max-w-7xl px-4 sm:px-6">
-          <div className="mb-6 flex justify-center">
-            <p className="text-center text-[10px] font-semibold uppercase tracking-[0.28em] text-sky-400/80">{tr('landingCoreEyebrow')}</p>
-          </div>
-          <RevealStagger className="grid gap-6 md:grid-cols-3">
-            {[
-              { ...programsRow2[0], gradient: 'from-violet-700 via-fuchsia-600 to-pink-500', icon: Rocket },
-              { ...programsRow2[1], gradient: 'from-sky-500 via-blue-600 to-indigo-700', icon: BookOpen },
-              { ...programsRow2[2], gradient: 'from-orange-500 via-amber-400 to-rose-300', icon: Palette },
-            ].map(({ tag, title, desc, gradient, icon: Icon, glow }) => (
-              <Link
-                key={title}
-                href="/courses"
-                className={`group block overflow-hidden rounded-2xl border bg-slate-100 dark:bg-[#0a0c14] transition hover:-translate-y-0.5 ${
-                  glow ? 'border-cyan-400/35 shadow-[0_20px_50px_rgba(34,211,238,0.12)]' : 'border-slate-200 dark:border-white/[0.06] hover:border-slate-300 dark:hover:border-white/15'
-                }`}
-              >
-                <div className={`relative h-44 bg-gradient-to-br ${gradient} p-4`}>
-                  <span className="inline-block rounded-full bg-black/25 px-2.5 py-1 text-[10px] font-medium text-white/90 backdrop-blur-sm">{tag}</span>
-                  <Icon className="absolute bottom-4 right-4 h-16 w-16 text-white/90" strokeWidth={1.25} />
-                </div>
-                <div className="p-5">
-                  <h3 className="text-lg font-bold text-slate-900 dark:text-white">{title}</h3>
-                  <p className="mt-2 text-sm text-slate-400">{desc}</p>
-                  <span className="mt-4 inline-flex items-center text-sm font-medium text-cyan-400">
-                    {tr('landingExploreProgram')} <ChevronRight className="ml-0.5 h-4 w-4" />
-                  </span>
-                </div>
-              </Link>
-            ))}
-          </RevealStagger>
-        </RevealOnView>
-      </section>
-
-      {/* Published curriculum subjects (public, no login) */}
-      <LandingPublishedSubjects />
 
       {/* Student journey */}
       <section className="py-16 sm:py-24">

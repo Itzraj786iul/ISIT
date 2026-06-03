@@ -213,7 +213,6 @@ html.dark .isit-cosmic-bg::before {
     radial-gradient(circle at 80% 70%, rgba(125, 211, 252, 0.16) 0, rgba(125, 211, 252, 0.16) 1px, transparent 1px),
     radial-gradient(circle at 60% 20%, rgba(255, 255, 255, 0.14) 0, rgba(255, 255, 255, 0.14) 1px, transparent 1px);
   background-size: 220px 220px, 260px 260px, 180px 180px;
-  animation: star-drift 28s linear infinite;
 }
 
 /* Extra ambient orbs (bottom-right cyan bloom from CEO reference) */
@@ -641,14 +640,12 @@ html.dark .isit-nav-link-active svg {
 /* —— Public marketing navbar —— */
 .isit-public-nav {
   border-bottom: 1px solid var(--isit-nav-border);
-  background: color-mix(in srgb, var(--isit-nav-bg) 92%, transparent);
+  background: var(--isit-nav-bg);
   box-shadow: var(--isit-shadow-sm);
-  backdrop-filter: blur(24px) saturate(1.25);
-  -webkit-backdrop-filter: blur(24px) saturate(1.25);
 }
 
 html.dark .isit-public-nav {
-  background: rgba(2, 6, 23, 0.82);
+  background: rgba(2, 6, 23, 0.97);
   border-bottom-color: rgba(255, 255, 255, 0.08);
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 0.05),

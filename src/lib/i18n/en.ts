@@ -1,5 +1,6 @@
 import { landingEn } from './landing';
 import { publicSubjectsEn } from './public-subjects';
+import { coreCoursesDetailEn } from './core-courses-detail';
 
 export const en = {
   dashboard: 'Dashboard',
@@ -532,4 +533,5 @@ export const en = {
   blogRelatedCategoryLabel: 'Career advice',
   ...landingEn,
   ...publicSubjectsEn,
+  ...coreCoursesDetailEn,
 } as const;

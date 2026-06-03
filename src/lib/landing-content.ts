@@ -1,4 +1,5 @@
 import type { I18nKey } from '@/lib/t';
+import { CORE_COURSE_VISUALS, coreCourseHref } from '@/lib/core-courses-data';
 
 export type Tr = (key: I18nKey) => string;
 
@@ -76,12 +77,35 @@ export function buildProgramsRow2(tr: Tr) {
 }
 
 export function buildCoreCourses(tr: Tr) {
-  return [
-    { n: '01', lab: tr('landingCourse1Lab'), title: tr('landingCourse1Title'), desc: tr('landingCourse1Desc') },
-    { n: '02', lab: tr('landingCourse2Lab'), title: tr('landingCourse2Title'), desc: tr('landingCourse2Desc') },
-    { n: '03', lab: tr('landingCourse3Lab'), title: tr('landingCourse3Title'), desc: tr('landingCourse3Desc') },
-    { n: '04', lab: tr('landingCourse4Lab'), title: tr('landingCourse4Title'), desc: tr('landingCourse4Desc') },
-  ] as const;
+  const labs = [
+    tr('landingCourse1Lab'),
+    tr('landingCourse2Lab'),
+    tr('landingCourse3Lab'),
+    tr('landingCourse4Lab'),
+  ];
+  const titles = [
+    tr('landingCourse1Title'),
+    tr('landingCourse2Title'),
+    tr('landingCourse3Title'),
+    tr('landingCourse4Title'),
+  ];
+  const descs = [
+    tr('landingCourse1Desc'),
+    tr('landingCourse2Desc'),
+    tr('landingCourse3Desc'),
+    tr('landingCourse4Desc'),
+  ];
+
+  return CORE_COURSE_VISUALS.map((visual, index) => ({
+    n: String(index + 1).padStart(2, '0'),
+    slug: visual.slug,
+    href: coreCourseHref(visual.slug),
+    headerClass: visual.headerClass,
+    detailPrefix: visual.detailPrefix,
+    lab: labs[index],
+    title: titles[index],
+    desc: descs[index],
+  }));
 }
 
 export function buildJourneySteps(tr: Tr) {

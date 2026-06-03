@@ -1,6 +1,7 @@
 import { en } from './en';
 import { landingHi } from './landing';
 import { publicSubjectsHi } from './public-subjects';
+import { coreCoursesDetailHi } from './core-courses-detail';
 
 export const hi = {
   dashboard: 'डैशबोर्ड',
@@ -527,4 +528,5 @@ export const hi = {
   blogRelatedCategoryLabel: 'करियर सलाह',
   ...landingHi,
   ...publicSubjectsHi,
+  ...coreCoursesDetailHi,
 } satisfies Record<keyof typeof en, string>;

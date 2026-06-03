@@ -29,20 +29,26 @@ export function AnimatedCursor() {
     let my = -100;
     let rx = -100;
     let ry = -100;
+    let moving = false;
+    let scrollIdleTimer: ReturnType<typeof setTimeout> | null = null;
+    let scrolling = false;
+
     const dot = dotRef.current;
     const ring = ringRef.current;
     if (!dot || !ring) return;
 
-    const onMove = (event: MouseEvent) => {
-      mx = event.clientX;
-      my = event.clientY;
-      dot.style.transform = `translate3d(${mx}px, ${my}px, 0)`;
+    const stopLoop = () => {
+      if (raf) {
+        window.cancelAnimationFrame(raf);
+        raf = 0;
+      }
     };
 
-    const onDown = () => setPressed(true);
-    const onUp = () => setPressed(false);
-
     const tick = () => {
+      if (!moving && !scrolling) {
+        stopLoop();
+        return;
+      }
       rx += (mx - rx) * 0.18;
       ry += (my - ry) * 0.18;
       if (Math.abs(mx - rx) > 0.05 || Math.abs(my - ry) > 0.05) {
@@ -51,43 +57,53 @@ export function AnimatedCursor() {
       raf = window.requestAnimationFrame(tick);
     };
 
-    const onVisibility = () => {
-      if (document.hidden) {
-        window.cancelAnimationFrame(raf);
-        raf = 0;
-      } else if (!document.documentElement.classList.contains('is-scrolling')) {
+    const startLoop = () => {
+      if (!raf && !document.hidden && !scrolling) {
         raf = window.requestAnimationFrame(tick);
       }
     };
 
-    const onScrollState = () => {
-      const scrolling = document.documentElement.classList.contains('is-scrolling');
-      if (scrolling) {
-        window.cancelAnimationFrame(raf);
-        raf = 0;
-      } else if (!document.hidden && !raf) {
-        raf = window.requestAnimationFrame(tick);
-      }
+    const onMove = (event: MouseEvent) => {
+      mx = event.clientX;
+      my = event.clientY;
+      moving = true;
+      dot.style.transform = `translate3d(${mx}px, ${my}px, 0)`;
+      startLoop();
+    };
+
+    const onScroll = () => {
+      scrolling = true;
+      stopLoop();
+      if (scrollIdleTimer) clearTimeout(scrollIdleTimer);
+      scrollIdleTimer = setTimeout(() => {
+        scrolling = false;
+        scrollIdleTimer = null;
+        if (moving) startLoop();
+      }, 150);
+    };
+
+    const onDown = () => setPressed(true);
+    const onUp = () => setPressed(false);
+
+    const onVisibility = () => {
+      if (document.hidden) stopLoop();
+      else if (moving && !scrolling) startLoop();
     };
 
     dot.style.transform = `translate3d(${mx}px, ${my}px, 0)`;
     ring.style.transform = `translate3d(${rx}px, ${ry}px, 0)`;
-    if (!document.documentElement.classList.contains('is-scrolling')) {
-      raf = window.requestAnimationFrame(tick);
-    }
 
     window.addEventListener('mousemove', onMove, { passive: true });
+    window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('mousedown', onDown);
     window.addEventListener('mouseup', onUp);
     document.addEventListener('visibilitychange', onVisibility);
 
-    const scrollObs = new MutationObserver(onScrollState);
-    scrollObs.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
-
     return () => {
-      window.cancelAnimationFrame(raf);
-      scrollObs.disconnect();
+      stopLoop();
+      if (scrollIdleTimer) clearTimeout(scrollIdleTimer);
       window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('scroll', onScroll);
       window.removeEventListener('mousedown', onDown);
       window.removeEventListener('mouseup', onUp);
       document.removeEventListener('visibilitychange', onVisibility);

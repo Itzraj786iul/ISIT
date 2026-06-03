@@ -1,8 +1,9 @@
 'use client';
 
 import { type ReactNode, type RefObject } from 'react';
-import { Bot, Mic, Play, Send, Volume2 } from 'lucide-react';
+import { Bot, Mic, Play, Send, User, Volume2 } from 'lucide-react';
 import { useT } from '@/lib/t';
+import { useLandingTutorT } from '@/lib/use-landing-tutor-t';
 
 export type AiTutorChatMessage = {
   id: string;
@@ -28,23 +29,35 @@ type AiTutorChatShellProps = {
   className?: string;
   readOnlyInput?: boolean;
   live?: boolean;
+  marketingMock?: boolean;
 };
 
-function TutorAvatar({ size = 'md' }: { size?: 'sm' | 'md' }) {
+function TutorAvatar({ size = 'md', square = false }: { size?: 'sm' | 'md'; square?: boolean }) {
   const dim = size === 'sm' ? 'h-6 w-6' : 'h-11 w-11';
   const icon = size === 'sm' ? 'h-3 w-3' : 'h-5 w-5';
   return (
-    <div className={`isit-ai-tutor-chat__avatar ${dim}`} aria-hidden>
+    <div
+      className={`isit-ai-tutor-chat__avatar ${dim} ${square ? 'isit-ai-tutor-chat__avatar--square' : ''}`.trim()}
+      aria-hidden
+    >
       <div className="isit-ai-tutor-chat__avatar-inner">
-        <Bot className={`${icon} text-cyan-100`} strokeWidth={1.75} />
+        <Bot className={`${icon} text-white`} strokeWidth={1.75} />
       </div>
+    </div>
+  );
+}
+
+function UserAvatar() {
+  return (
+    <div className="isit-ai-tutor-chat__user-avatar" aria-hidden>
+      <User className="h-3 w-3 text-slate-200" strokeWidth={2} />
     </div>
   );
 }
 
 function AudioBubble({ duration, caption }: { duration: string; caption: string }) {
   return (
-    <div>
+    <div className="isit-ai-tutor-chat__audio-block">
       <div className="isit-ai-tutor-chat__audio">
         <button type="button" className="isit-ai-tutor-chat__play" aria-label="Play voice message" tabIndex={-1}>
           <Play className="h-3.5 w-3.5 fill-current" />
@@ -79,25 +92,47 @@ export default function AiTutorChatShell({
   className = '',
   readOnlyInput = false,
   live = false,
+  marketingMock = false,
 }: AiTutorChatShellProps) {
   const tr = useT();
+  const trMock = useLandingTutorT();
   const placeholder = inputPlaceholder ?? tr('aiTutorPlaceholderAsk');
-  const powered = tr('landingTutorMockPowered');
-  const voiceMode = tr('landingTutorMockVoiceMode');
+  const shellClass = [
+    'isit-ai-tutor-chat',
+    live ? 'isit-ai-tutor-chat--live' : '',
+    marketingMock ? 'isit-ai-tutor-chat--marketing' : '',
+    className,
+  ]
+    .filter(Boolean)
+    .join(' ');
 
   return (
-    <div className={`isit-ai-tutor-chat ${live ? 'isit-ai-tutor-chat--live' : ''} ${className}`.trim()}>
+    <div className={shellClass}>
       <header className="isit-ai-tutor-chat__header">
         <div className="isit-ai-tutor-chat__header-left">
-          <TutorAvatar />
+          <TutorAvatar square={marketingMock} />
           <div className="min-w-0">
-            <p className="isit-ai-tutor-chat__title">{tr('landingTutorMockName')}</p>
-            <p className="isit-ai-tutor-chat__status">{tr('landingTutorMockStatus')}</p>
+            <p className="isit-ai-tutor-chat__title">{trMock('landingTutorMockName')}</p>
+            <p
+              className={`isit-ai-tutor-chat__status ${marketingMock ? 'isit-ai-tutor-chat__status--online' : ''}`.trim()}
+            >
+              {trMock('landingTutorMockStatus')}
+            </p>
           </div>
         </div>
         <div className="isit-ai-tutor-chat__badges">
-          <span className="isit-ai-tutor-chat__badge">{powered}</span>
-          <span className="isit-ai-tutor-chat__badge isit-ai-tutor-chat__badge--live">{voiceMode}</span>
+          <span
+            className={
+              marketingMock ? 'isit-ai-tutor-chat__powered-label' : 'isit-ai-tutor-chat__badge'
+            }
+          >
+            {trMock('landingTutorMockPowered')}
+          </span>
+          {!marketingMock ? (
+            <span className="isit-ai-tutor-chat__badge isit-ai-tutor-chat__badge--live">
+              {trMock('landingTutorMockVoiceMode')}
+            </span>
+          ) : null}
         </div>
       </header>
 
@@ -116,6 +151,7 @@ export default function AiTutorChatShell({
                     </p>
                   ) : null}
                 </div>
+                {marketingMock ? <UserAvatar /> : null}
               </div>
             ) : (
               <div key={m.id} className="isit-ai-tutor-chat__row">
@@ -156,15 +192,17 @@ export default function AiTutorChatShell({
 
       <footer className="isit-ai-tutor-chat__footer">
         <div className="isit-ai-tutor-chat__footer-row">
-          <button
-            type="button"
-            className="isit-ai-tutor-chat__mic"
-            disabled={readOnlyInput}
-            aria-label={tr('landingTutorMicAria')}
-            title={readOnlyInput ? undefined : tr('landingTutorMicHint')}
-          >
-            <Mic className="h-4 w-4" />
-          </button>
+          {!marketingMock ? (
+            <button
+              type="button"
+              className="isit-ai-tutor-chat__mic"
+              disabled={readOnlyInput}
+              aria-label={trMock('landingTutorMicAria')}
+              title={readOnlyInput ? undefined : trMock('landingTutorMicHint')}
+            >
+              <Mic className="h-4 w-4" />
+            </button>
+          ) : null}
           <input
             type="text"
             value={inputValue}
@@ -177,16 +215,16 @@ export default function AiTutorChatShell({
                     if (e.key === 'Enter' && canSend) onSend?.();
                   }
             }
-            placeholder={placeholder}
+            placeholder={readOnlyInput ? trMock('landingTutorInputPlaceholder') : placeholder}
             className="isit-ai-tutor-chat__input"
-            aria-label={placeholder}
+            aria-label={readOnlyInput ? trMock('landingTutorInputPlaceholder') : placeholder}
           />
           <button
             type="button"
             onClick={onSend}
             disabled={!canSend || readOnlyInput}
             className="isit-ai-tutor-chat__send"
-            aria-label={tr('landingTutorSendAria')}
+            aria-label={trMock('landingTutorSendAria')}
           >
             <Send className="h-4 w-4" />
           </button>

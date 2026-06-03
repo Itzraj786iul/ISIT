@@ -335,7 +335,7 @@ type HeroLearningSceneProps = {
 
 export default function HeroLearningScene({ tutorPrompt }: HeroLearningSceneProps) {
   const rootRef = useRef<HTMLDivElement>(null);
-  const [inView, setInView] = useState(true);
+  const [inView, setInView] = useState(false);
   const reduced = usePrefersReducedMotion();
   const motionEnabled = !reduced && inView;
   const prompt = tutorPrompt ?? 'What shall we learn today?';
