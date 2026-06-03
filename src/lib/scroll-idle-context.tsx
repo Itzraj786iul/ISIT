@@ -1,45 +1,30 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
+import { useSyncExternalStore, type ReactNode } from 'react';
 
-const SCROLL_IDLE_MS = 120;
+function subscribe(onStoreChange: () => void) {
+  if (typeof window === 'undefined') return () => {};
 
-const ScrollIdleContext = createContext(true);
-
-export function ScrollIdleProvider({ children }: { children: ReactNode }) {
-  const [idle, setIdle] = useState(true);
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-    let timer: ReturnType<typeof setTimeout> | null = null;
-
-    const onScroll = () => {
-      setIdle(false);
-      if (timer) clearTimeout(timer);
-      timer = setTimeout(() => {
-        setIdle(true);
-        timer = null;
-      }, SCROLL_IDLE_MS);
-    };
-
-    window.addEventListener('scroll', onScroll, { passive: true, capture: true });
-    window.addEventListener('wheel', onScroll, { passive: true, capture: true });
-    window.addEventListener('touchmove', onScroll, { passive: true, capture: true });
-
-    return () => {
-      window.removeEventListener('scroll', onScroll, true);
-      window.removeEventListener('wheel', onScroll, true);
-      window.removeEventListener('touchmove', onScroll, true);
-      if (timer) clearTimeout(timer);
-    };
-  }, []);
-
-  return <ScrollIdleContext.Provider value={idle}>{children}</ScrollIdleContext.Provider>;
+  const observer = new MutationObserver(onStoreChange);
+  observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+  return () => observer.disconnect();
 }
 
-/** True when the user is not actively scrolling (single shared listener). */
+function getSnapshot() {
+  if (typeof document === 'undefined') return true;
+  return !document.documentElement.classList.contains('is-scrolling');
+}
+
+function getServerSnapshot() {
+  return true;
+}
+
+/** True when the user is not actively scrolling (reads `html.is-scrolling` from ScrollPerformance). */
 export function useScrollIdle() {
-  return useContext(ScrollIdleContext);
+  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+}
+
+/** @deprecated ScrollPerformance toggles `html.is-scrolling` — provider not required. */
+export function ScrollIdleProvider({ children }: { children: ReactNode }) {
+  return children;
 }

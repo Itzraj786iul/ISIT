@@ -115,6 +115,26 @@ html.is-mobile .isit-reveal-stagger > * {
   }
 }
 
+/* Pause decorative motion while user scrolls (class toggled in ScrollPerformance.tsx) */
+html.is-scrolling .landing-marquee-track,
+html.is-scrolling .isit-landing-tutor-mock-float,
+html.is-scrolling .isit-landing-replica .landing-hero-premium-orb,
+html.is-scrolling .isit-landing-replica .landing-hero-premium-particle,
+html.is-scrolling .isit-landing-replica .landing-hero-premium-scan,
+html.is-scrolling .isit-landing-replica .landing-hero-portal-glow,
+html.is-scrolling .isit-landing-replica .landing-hero-premium-portal-ring,
+html.is-scrolling .landing-orbit-slow,
+html.is-scrolling .isit-hero-orbit,
+html.is-scrolling .animate-float-soft,
+html.is-scrolling .isit-float-delayed,
+html.is-scrolling .isit-float-delayed-2,
+html.is-scrolling .isit-float-delayed-3,
+html.is-scrolling .animate-pulse-cyan,
+html.is-scrolling .landing-hero-glow-pulse,
+html.is-scrolling .isit-ai-tutor-chat__wave-bar {
+  animation-play-state: paused !important;
+}
+
 /* Custom cursor — isolated layer */
 .isit-cursor-dot,
 .isit-cursor-ring {

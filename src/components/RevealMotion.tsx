@@ -9,9 +9,52 @@ type RevealOnViewProps = {
   once?: boolean;
 };
 
+type ObserverEntry = {
+  onShow: () => void;
+  once: boolean;
+};
+
+let sharedObserver: IntersectionObserver | null = null;
+const observerEntries = new Map<Element, ObserverEntry>();
+
+function getSharedObserver() {
+  if (typeof window === 'undefined') return null;
+  if (sharedObserver) return sharedObserver;
+
+  sharedObserver = new IntersectionObserver(
+    (records) => {
+      for (const record of records) {
+        const entry = observerEntries.get(record.target);
+        if (!entry || !record.isIntersecting) continue;
+        entry.onShow();
+        if (entry.once) {
+          sharedObserver?.unobserve(record.target);
+          observerEntries.delete(record.target);
+        }
+      }
+    },
+    { root: null, rootMargin: '0px 0px 8% 0px', threshold: 0.08 }
+  );
+
+  return sharedObserver;
+}
+
+function observeElement(el: Element, onShow: () => void, once: boolean) {
+  const observer = getSharedObserver();
+  if (!observer) return () => {};
+
+  observerEntries.set(el, { onShow, once });
+  observer.observe(el);
+
+  return () => {
+    observer.unobserve(el);
+    observerEntries.delete(el);
+  };
+}
+
 /**
  * Fades/slides content up when it enters the viewport.
- * Content stays visible once revealed (no scroll-idle hiding).
+ * Uses one shared IntersectionObserver for all reveal blocks on the page.
  */
 export function RevealOnView({ children, className = '', delayMs = 0, once = true }: RevealOnViewProps) {
   const ref = useRef<HTMLDivElement>(null);
@@ -26,22 +69,7 @@ export function RevealOnView({ children, className = '', delayMs = 0, once = tru
       return;
     }
 
-    const ob = new IntersectionObserver(
-      (entries) => {
-        for (const e of entries) {
-          if (e.isIntersecting) {
-            setVisible(true);
-            if (once) ob.disconnect();
-            break;
-          } else if (!once) {
-            setVisible(false);
-          }
-        }
-      },
-      { root: null, rootMargin: '0px 0px 0px 0px', threshold: 0.08 }
-    );
-    ob.observe(el);
-    return () => ob.disconnect();
+    return observeElement(el, () => setVisible(true), once);
   }, [once]);
 
   return (
@@ -73,20 +101,7 @@ export function RevealStagger({ children, className = '' }: RevealStaggerProps) 
       return;
     }
 
-    const ob = new IntersectionObserver(
-      (entries) => {
-        for (const e of entries) {
-          if (e.isIntersecting) {
-            setVisible(true);
-            ob.disconnect();
-            break;
-          }
-        }
-      },
-      { root: null, rootMargin: '0px 0px 0px 0px', threshold: 0.08 }
-    );
-    ob.observe(el);
-    return () => ob.disconnect();
+    return observeElement(el, () => setVisible(true), true);
   }, []);
 
   return (

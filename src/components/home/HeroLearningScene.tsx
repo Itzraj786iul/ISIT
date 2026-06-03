@@ -347,7 +347,12 @@ export default function HeroLearningScene({ tutorPrompt }: HeroLearningSceneProp
     if (!el || reduced) return;
 
     const ob = new IntersectionObserver(
-      ([entry]) => setInView(entry?.isIntersecting ?? false),
+      ([entry]) => {
+        if (entry?.isIntersecting) {
+          setInView(true);
+          ob.disconnect();
+        }
+      },
       { root: null, rootMargin: '80px 0px', threshold: 0.05 }
     );
     ob.observe(el);
@@ -380,8 +385,7 @@ export default function HeroLearningScene({ tutorPrompt }: HeroLearningSceneProp
                   width={1200}
                   height={900}
                   priority
-                  sizes="540px"
-                  unoptimized
+                  sizes="(max-width: 1024px) 100vw, 540px"
                   className="landing-hero-premium-portal-img"
                 />
                 <div className="landing-hero-premium-portal-shine" aria-hidden />

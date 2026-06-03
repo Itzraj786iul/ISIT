@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { memo, useMemo } from 'react';
 import Link from 'next/link';
 import { BookOpen, Brain, ChevronRight, Lightbulb, Target } from 'lucide-react';
 import { useLanguage } from '@/lib/language-context';
@@ -12,7 +12,7 @@ import { RevealOnView, RevealStagger } from '@/components/RevealMotion';
 
 const CORE_COURSE_ICONS = [Brain, BookOpen, Lightbulb, Target] as const;
 
-export default function LandingCoreCourses() {
+function LandingCoreCourses() {
   const tr = useLandingCoreCoursesT();
   const trGlobal = useT();
   const { language } = useLanguage();
@@ -81,3 +81,5 @@ export default function LandingCoreCourses() {
     </section>
   );
 }
+
+export default memo(LandingCoreCourses);

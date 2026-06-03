@@ -1,5 +1,6 @@
 'use client';
 
+import { memo } from 'react';
 import { BarChart3, Brain, Target, Zap, type LucideIcon } from 'lucide-react';
 import type { I18nKey } from '@/lib/t';
 import { RevealOnView, RevealStagger } from '@/components/RevealMotion';
@@ -19,7 +20,7 @@ type Props = {
 
 const FEATURE_ICONS: LucideIcon[] = [Brain, Zap, BarChart3, Target];
 
-export default function LandingAiTutorSection({ tr, tutorFeatures }: Props) {
+function LandingAiTutorSection({ tr, tutorFeatures }: Props) {
   return (
     <section className="isit-landing-tutor-section relative py-16 sm:py-24">
       <RevealOnView className="isit-landing-tutor-section__inner relative mx-auto max-w-7xl px-4 sm:px-6">
@@ -58,3 +59,5 @@ export default function LandingAiTutorSection({ tr, tutorFeatures }: Props) {
     </section>
   );
 }
+
+export default memo(LandingAiTutorSection);

@@ -1,5 +1,6 @@
 'use client';
 
+import { memo } from 'react';
 import Link from 'next/link';
 import { ChevronRight, type LucideIcon } from 'lucide-react';
 import type { LandingProgramGradientKey } from '@/lib/landing-program-gradients';
@@ -20,7 +21,7 @@ type LandingProgramCardProps = {
   exploreLabel: string;
 };
 
-export default function LandingProgramCard({ card, exploreLabel }: LandingProgramCardProps) {
+function LandingProgramCard({ card, exploreLabel }: LandingProgramCardProps) {
   const { tag, title, desc, gradientKey, icon: Icon, href = '/courses', glow = false } = card;
 
   return (
@@ -34,7 +35,7 @@ export default function LandingProgramCard({ card, exploreLabel }: LandingProgra
         className="relative h-48 p-5 sm:h-52"
         style={{ background: LANDING_PROGRAM_GRADIENTS[gradientKey] }}
       >
-        <span className="inline-block rounded-full bg-black/30 px-2.5 py-1 text-[10px] font-medium tracking-wide text-white/95 backdrop-blur-sm">
+        <span className="inline-block rounded-full bg-black/35 px-2.5 py-1 text-[10px] font-medium tracking-wide text-white/95">
           {tag}
         </span>
         <Icon
@@ -53,3 +54,5 @@ export default function LandingProgramCard({ card, exploreLabel }: LandingProgra
     </Link>
   );
 }
+
+export default memo(LandingProgramCard);

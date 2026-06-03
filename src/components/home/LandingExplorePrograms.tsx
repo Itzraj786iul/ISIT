@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { memo, useMemo } from 'react';
 import Link from 'next/link';
 import { BookOpenCheck, Bot, ChevronRight, Laptop, Megaphone, Palette, Rocket } from 'lucide-react';
 import { useT } from '@/lib/t';
@@ -13,7 +13,7 @@ type Props = {
   viewAllClassName: string;
 };
 
-export default function LandingExplorePrograms({ viewAllClassName }: Props) {
+function LandingExplorePrograms({ viewAllClassName }: Props) {
   const tr = useT();
   const { language } = useLanguage();
   const programsRow1 = useMemo(() => buildProgramsRow1(tr), [tr, language]);
@@ -61,3 +61,5 @@ export default function LandingExplorePrograms({ viewAllClassName }: Props) {
     </section>
   );
 }
+
+export default memo(LandingExplorePrograms);

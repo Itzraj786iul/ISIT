@@ -1,5 +1,6 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import Link from 'next/link';
 import {
@@ -36,9 +37,18 @@ import {
 } from '@/lib/landing-content';
 import { RevealOnView, RevealStagger } from '@/components/RevealMotion';
 import HeroLearningScene from '@/components/home/HeroLearningScene';
-import LandingExplorePrograms from '@/components/home/LandingExplorePrograms';
-import LandingCoreCourses from '@/components/home/LandingCoreCourses';
-import LandingAiTutorSection from '@/components/home/LandingAiTutorSection';
+
+const LandingAiTutorSection = dynamic(() => import('@/components/home/LandingAiTutorSection'), {
+  loading: () => <div className="min-h-[700px] w-full" aria-hidden />,
+});
+
+const LandingExplorePrograms = dynamic(() => import('@/components/home/LandingExplorePrograms'), {
+  loading: () => <div className="min-h-[52rem] w-full" aria-hidden />,
+});
+
+const LandingCoreCourses = dynamic(() => import('@/components/home/LandingCoreCourses'), {
+  loading: () => <div className="min-h-[36rem] w-full" aria-hidden />,
+});
 
 type Props = {
   authLoading: boolean;
@@ -93,7 +103,11 @@ function LandingStatsCountUp({ stats, ariaLabel }: { stats: StatConfig; ariaLabe
       const tick = (now: number) => {
         const raw = Math.min(1, (now - t0) / durationMs);
         const eased = easeOutCubic(raw);
-        setValues(stats.map((s) => Math.round(s.end * eased)));
+        const next = stats.map((s) => Math.round(s.end * eased));
+        setValues((prev) => {
+          if (prev.every((v, i) => v === next[i])) return prev;
+          return next;
+        });
         if (raw < 1) requestAnimationFrame(tick);
         else setValues(stats.map((s) => s.end));
       };
@@ -379,7 +393,7 @@ export default function LandingHomeContent({
       {/* Stats + CTA */}
       <section className="pb-16 sm:pb-24">
         <RevealOnView delayMs={60} className="mx-auto max-w-7xl px-4 sm:px-6">
-          <div className="flex flex-col gap-8 rounded-3xl border border-slate-200 dark:border-white/[0.08] bg-white shadow-sm dark:bg-white/[0.02] dark:shadow-none p-6 backdrop-blur-md lg:flex-row lg:items-center lg:justify-between lg:p-8">
+          <div className="flex flex-col gap-8 rounded-3xl border border-slate-200 dark:border-white/[0.08] bg-white shadow-sm dark:bg-[#0a0c14]/95 dark:shadow-none p-6 lg:flex-row lg:items-center lg:justify-between lg:p-8">
             <LandingStatsCountUp stats={statsConfig} ariaLabel={tr('landingStatsAria')} />
             <div className="shrink-0 rounded-2xl border border-violet-500/30 bg-gradient-to-br from-violet-950/80 to-indigo-950/60 p-5 shadow-[0_0_40px_rgba(124,58,237,0.2)] motion-safe:transition motion-safe:hover:shadow-[0_0_50px_rgba(124,58,237,0.28)]">
               <p className="max-w-[220px] text-sm font-medium leading-snug text-slate-900 dark:text-white">{tr('landingStatsCta')}</p>

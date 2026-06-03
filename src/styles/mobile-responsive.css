@@ -37,8 +37,12 @@
 /* —— Public navbar (mobile) —— */
 @media (max-width: 1023px) {
   .isit-public-nav {
-    backdrop-filter: blur(12px) saturate(1.1);
-    -webkit-backdrop-filter: blur(12px) saturate(1.1);
+    /* Opaque nav — backdrop-filter removed (scroll jank); matches glass look via solid fill */
+    background: rgba(248, 250, 252, 0.98);
+  }
+
+  html.dark .isit-public-nav {
+    background: rgba(2, 6, 23, 0.98);
   }
 
   .isit-public-nav-inner {
